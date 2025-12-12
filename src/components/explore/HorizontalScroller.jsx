@@ -107,7 +107,6 @@ export default function HorizontalScroller({
         className="flex gap-4 overflow-x-auto hide-scrollbar px-1 py-2 scroll-smooth"
         dir="ltr"
         role="list"
-        onLoad={updateArrows}
       >
         {children}
       </div>
