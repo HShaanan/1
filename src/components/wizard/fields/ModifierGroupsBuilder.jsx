@@ -1,0 +1,305 @@
+import React, { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Plus, Trash2, GripVertical, X, ChevronDown, ChevronUp, Settings2 } from 'lucide-react';
+import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+
+export default function ModifierGroupsBuilder({ groups = [], onChange }) {
+  const [expandedGroups, setExpandedGroups] = useState({});
+
+  const toggleGroupExpand = (groupId) => {
+    setExpandedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }));
+  };
+
+  const addGroup = () => {
+    const newGroup = {
+      id: `mod-group-${Date.now()}`,
+      name: '',
+      type: 'single', // 'single' (radio) or 'multiple' (checkbox)
+      required: true,
+      min_selection: 1,
+      max_selection: 1,
+      options: [
+        { id: `opt-${Date.now()}-1`, name: '', price: '' },
+        { id: `opt-${Date.now()}-2`, name: '', price: '' }
+      ]
+    };
+    onChange([...groups, newGroup]);
+    setExpandedGroups(prev => ({ ...prev, [newGroup.id]: true }));
+  };
+
+  const updateGroup = (groupId, field, val) => {
+    const updated = groups.map(g => {
+      if (g.id === groupId) {
+        // Auto-adjust min/max based on type/required changes logic could go here
+        let updatedGroup = { ...g, [field]: val };
+        
+        // Smart defaults
+        if (field === 'type') {
+          if (val === 'single') {
+            updatedGroup.max_selection = 1;
+            updatedGroup.min_selection = updatedGroup.required ? 1 : 0;
+          } else {
+            updatedGroup.max_selection = 0; // 0 means unlimited
+          }
+        }
+        if (field === 'required') {
+          if (updatedGroup.type === 'single') {
+            updatedGroup.min_selection = val ? 1 : 0;
+          }
+        }
+
+        return updatedGroup;
+      }
+      return g;
+    });
+    onChange(updated);
+  };
+
+  const removeGroup = (groupId) => {
+    onChange(groups.filter(g => g.id !== groupId));
+  };
+
+  const addOption = (groupId) => {
+    const updated = groups.map(g => {
+      if (g.id === groupId) {
+        return {
+          ...g,
+          options: [...g.options, { id: `opt-${Date.now()}`, name: '', price: '' }]
+        };
+      }
+      return g;
+    });
+    onChange(updated);
+  };
+
+  const updateOption = (groupId, optionId, field, val) => {
+    const updated = groups.map(g => {
+      if (g.id === groupId) {
+        return {
+          ...g,
+          options: g.options.map(opt => 
+            opt.id === optionId ? { ...opt, [field]: val } : opt
+          )
+        };
+      }
+      return g;
+    });
+    onChange(updated);
+  };
+
+  const removeOption = (groupId, optionId) => {
+    const updated = groups.map(g => {
+      if (g.id === groupId) {
+        return {
+          ...g,
+          options: g.options.filter(opt => opt.id !== optionId)
+        };
+      }
+      return g;
+    });
+    onChange(updated);
+  };
+
+  const onDragEnd = (result) => {
+    if (!result.destination) return;
+    
+    const newGroups = Array.from(groups);
+    const [reorderedItem] = newGroups.splice(result.source.index, 1);
+    newGroups.splice(result.destination.index, 0, reorderedItem);
+    
+    onChange(newGroups);
+  };
+
+  return (
+    <div className="space-y-6" dir="rtl">
+      <div className="flex justify-between items-center">
+        <div>
+          <h3 className="font-semibold text-lg">קבוצות הרכבה (Modifiers)</h3>
+          <p className="text-sm text-slate-500">הגדר אפשרויות בחירה ללקוח (למשל: סוג לחם, תוספות, הסרה)</p>
+        </div>
+        <Button onClick={addGroup} size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+          <Plus className="w-4 h-4 ml-2" />
+          הוסף קבוצה
+        </Button>
+      </div>
+
+      {groups.length === 0 && (
+        <div className="text-center py-8 border-2 border-dashed border-slate-200 rounded-xl bg-slate-50">
+          <Settings2 className="w-10 h-10 mx-auto text-slate-300 mb-2" />
+          <p className="text-slate-500 mb-4">אין קבוצות הרכבה לפריט זה</p>
+          <Button variant="outline" onClick={addGroup}>התחל להוסיף</Button>
+        </div>
+      )}
+
+      <DragDropContext onDragEnd={onDragEnd}>
+        <Droppable droppableId="modifier-groups">
+          {(provided) => (
+            <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
+              {groups.map((group, index) => (
+                <Draggable key={group.id} draggableId={group.id} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      className="group"
+                    >
+                      <Collapsible 
+                        open={expandedGroups[group.id]} 
+                        onOpenChange={() => toggleGroupExpand(group.id)}
+                        className="border rounded-xl bg-white shadow-sm overflow-hidden"
+                      >
+                        <div className="flex items-center gap-3 p-3 bg-slate-50 border-b">
+                          <div {...provided.dragHandleProps} className="cursor-move text-slate-400 hover:text-slate-600">
+                            <GripVertical className="w-5 h-5" />
+                          </div>
+                          
+                          <CollapsibleTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 rounded-full hover:bg-slate-200">
+                              {expandedGroups[group.id] ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            </Button>
+                          </CollapsibleTrigger>
+
+                          <div className="flex-1 font-medium">
+                            {group.name || '(קבוצה ללא שם)'}
+                          </div>
+
+                          <div className="flex items-center gap-2 text-xs text-slate-500 bg-white px-2 py-1 rounded border">
+                            <span>{group.type === 'single' ? 'בחירה יחידה' : 'בחירה מרובה'}</span>
+                            <span className="mx-1">•</span>
+                            <span>{group.required ? 'חובה' : 'רשות'}</span>
+                          </div>
+
+                          <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            onClick={() => removeGroup(group.id)}
+                            className="text-slate-400 hover:text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </Button>
+                        </div>
+
+                        <CollapsibleContent className="p-4 space-y-4">
+                          {/* Group Settings */}
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-slate-50/50 rounded-lg border">
+                            <div className="space-y-2">
+                              <Label>שם הקבוצה (למשל: "בחר סוג לחם")</Label>
+                              <Input 
+                                value={group.name} 
+                                onChange={(e) => updateGroup(group.id, 'name', e.target.value)}
+                                placeholder="כותרת הקבוצה"
+                                className="bg-white"
+                              />
+                            </div>
+
+                            <div className="space-y-2">
+                              <Label>סוג בחירה</Label>
+                              <Select 
+                                value={group.type} 
+                                onValueChange={(val) => updateGroup(group.id, 'type', val)}
+                              >
+                                <SelectTrigger className="bg-white">
+                                  <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectItem value="single">בחירה יחידה (Radio)</SelectItem>
+                                  <SelectItem value="multiple">בחירה מרובה (Checkbox)</SelectItem>
+                                </SelectContent>
+                              </Select>
+                            </div>
+
+                            <div className="flex items-center justify-between md:col-span-2 bg-white p-3 rounded border">
+                              <div className="flex items-center gap-2">
+                                <Switch 
+                                  checked={group.required}
+                                  onCheckedChange={(checked) => updateGroup(group.id, 'required', checked)}
+                                  id={`req-${group.id}`}
+                                />
+                                <Label htmlFor={`req-${group.id}`} className="cursor-pointer">חובת בחירה?</Label>
+                              </div>
+
+                              {group.type === 'multiple' && (
+                                <div className="flex items-center gap-4">
+                                  <div className="flex items-center gap-2">
+                                    <Label className="text-xs whitespace-nowrap">מינימום:</Label>
+                                    <Input 
+                                      type="number" 
+                                      min="0"
+                                      value={group.min_selection}
+                                      onChange={(e) => updateGroup(group.id, 'min_selection', parseInt(e.target.value) || 0)}
+                                      className="w-16 h-8"
+                                    />
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    <Label className="text-xs whitespace-nowrap">מקסימום (0=ללא):</Label>
+                                    <Input 
+                                      type="number" 
+                                      min="0"
+                                      value={group.max_selection}
+                                      onChange={(e) => updateGroup(group.id, 'max_selection', parseInt(e.target.value) || 0)}
+                                      className="w-16 h-8"
+                                    />
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Options List */}
+                          <div className="space-y-2">
+                            <div className="flex justify-between items-center">
+                              <Label className="text-slate-600">אפשרויות</Label>
+                              <Button variant="ghost" size="sm" onClick={() => addOption(group.id)} className="text-indigo-600 h-8">
+                                <Plus className="w-3 h-3 ml-1" /> הוסף אפשרות
+                              </Button>
+                            </div>
+                            
+                            <div className="space-y-2">
+                              {group.options.map((option) => (
+                                <div key={option.id} className="flex items-center gap-2 animate-fadeIn">
+                                  <Input
+                                    value={option.name}
+                                    onChange={(e) => updateOption(group.id, option.id, 'name', e.target.value)}
+                                    placeholder="שם האפשרות (לדוגמה: לחם מלא)"
+                                    className="flex-1 h-9"
+                                  />
+                                  <div className="relative w-24">
+                                    <Input
+                                      value={option.price}
+                                      onChange={(e) => updateOption(group.id, option.id, 'price', e.target.value)}
+                                      placeholder="0"
+                                      className="h-9 pl-6"
+                                    />
+                                    <span className="absolute left-2 top-2.5 text-xs text-slate-400">₪</span>
+                                  </div>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => removeOption(group.id, option.id)}
+                                    className="h-9 w-9 text-slate-400 hover:text-red-500"
+                                  >
+                                    <X className="w-4 h-4" />
+                                  </Button>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </CollapsibleContent>
+                      </Collapsible>
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
+    </div>
+  );
+}
