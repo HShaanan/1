@@ -4,17 +4,24 @@ import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LazyImage } from "@/components/PerformanceOptimizations";
 import {
-  MapPin, Phone, Heart, Share2, Star, Globe, AlertTriangle, Loader2,
-  Edit, Building, Plus, Navigation, Settings, ClipboardList
+  MapPin, Phone, ExternalLink, Heart, Share2, Star,
+  Clock, Globe, AlertTriangle, ChevronLeft, Flag,
+  MessageSquare, MessageCircle, ThumbsUp, Loader2, Calendar, ImageIcon,
+  Edit, Menu as MenuIcon, Info, DollarSign, Camera, Utensils, Building, ShoppingCart, Plus, Minus,
+  Copy, Mail, Link as LinkIcon, Navigation, Settings, ClipboardList
 } from
   "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import ImageGallery from "@/components/ImageGallery";
 import BusinessHoursDisplay from "@/components/BusinessHoursDisplay";
+import SpecialFieldsDisplay from "@/components/listing/SpecialFieldsDisplay";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import ReviewList from "@/components/reviews/ReviewList";
+import StarRating from "@/components/reviews/StarRating";
+import KashrutBox from "@/components/kashrut/KashrutBox";
 import InfiniteImageMarquee from "@/components/listing/InfiniteImageMarquee";
 import EmojiReviewPrompt from "@/components/reviews/EmojiReviewPrompt";
 import BrandsCarousel from "@/components/listing/BrandsCarousel";
@@ -1324,7 +1331,7 @@ export default function BusinessPageView() {
         theme={theme}
       />
 
-      <style jsx>{`
+      <style>{`
         .hide-scrollbar {
           -ms-overflow-style: none;
           scrollbar-width: none;

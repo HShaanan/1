@@ -1,9 +1,8 @@
-
 import React from 'react';
 
 export default function AccessibilityStyles() {
   return (
-    <style jsx global>{`
+    <style>{`
       /* High Contrast */
       .high-contrast body {
         background-color: #000000 !important;

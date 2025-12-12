@@ -2,12 +2,15 @@ import React, { useState, useEffect, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
 import { 
-  ChevronLeft
+  ChevronLeft, ChevronRight, Store, Truck, Clock, Shield, Star, 
+  CheckCircle, Phone, Sparkles, ShoppingCart, MapPin, Search,
+  Zap, Heart, ArrowLeft, Play, Users, TrendingUp, Award
 } from "lucide-react";
 // Star is already imported for billboard decorations
-import { ScrollReveal, StaggerContainer } from "@/components/landing/ScrollAnimations";
+import { ScrollReveal, StaggerContainer, CountUp, RevealOnScroll } from "@/components/landing/ScrollAnimations";
 import WordSlider from "@/components/landing/WordSlider";
 
 // Hero images for Orthodox Jewish audience (no women)
@@ -349,7 +352,7 @@ export default function LandingPage() {
       </footer>
 
       {/* ============== ANIMATIONS ============== */}
-      <style jsx global>{`
+      <style>{`
         @keyframes marquee {
           0% { transform: translateX(0); }
           100% { transform: translateX(-50%); }

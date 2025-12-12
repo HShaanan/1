@@ -1,4 +1,3 @@
-
 import React from "react";
 import AnimatedCounter from "./AnimatedCounter";
 import { Users, FileText, Layers } from "lucide-react";
@@ -37,13 +36,13 @@ export default function StatsBar({ stats, loading }) {
         setStable(nextStableState);
       }
     }
-     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stats]); // Effect depends only on 'stats' prop
 
   return (
     <section className="bg-white/80 backdrop-blur border-y">
       {/* אנימציית נשימה עדינה להילה */}
-      <style jsx>{`
+      <style>{`
         @keyframes neonPulse {
           0% { transform: scale(1); opacity: .55; }
           50% { transform: scale(1.06); opacity: .85; }

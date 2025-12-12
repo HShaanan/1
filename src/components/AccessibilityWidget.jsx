@@ -113,7 +113,7 @@ export default function AccessibilityWidget() {
   return (
     <>
       {/* סגנונות נגישות גלובליים */}
-      <style jsx global>{`
+      <style>{`
         /* ניגודיות גבוהה */
         .high-contrast {
           filter: contrast(1.4) !important;

@@ -1,7 +1,7 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import ListingGrid from "@/components/explore/ListingGrid";
+import CategoryGallery from "@/components/explore/CategoryGallery";
 import SubcategoryChips from "@/components/explore/SubcategoryChips";
 import ProfessionalsGrouping from "@/components/explore/ProfessionalsGrouping";
 import MobileTopBar from "@/components/explore/MobileTopBar";
@@ -226,7 +226,7 @@ export default function BrowsePage() {
         <div className="bubble bubble-8"></div>
       </div>
 
-      <style jsx global>{`
+      <style>{`
         .animate-gradient-smooth {
           background: linear-gradient(
             -45deg, 

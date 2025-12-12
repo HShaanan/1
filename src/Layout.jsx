@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
 import SupportWidget from "@/components/SupportWidget";
 import { Link } from "react-router-dom";
@@ -6,8 +6,11 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { createPageUrl } from "@/utils";
 import {
-  Menu, X, Store, Plus, Search, User as UserIcon, Heart, UserCircle, LogOut, Shield,
-  AlertTriangle, Users, FileText, Settings, Sparkles, Zap, Key, Megaphone, ListChecks, Clock, Truck
+  Menu, X, Store, Plus, Search, User as UserIcon, Heart,
+  Tag, UserCircle, LogOut, Shield,
+  AlertTriangle, Users, FileText, Settings, Sparkles, Zap, Mail, Wand2, Layers,
+  MessageSquare, Activity, Key, ImageIcon, Megaphone, FileText as ReviewsIcon,
+  Bug, Bot, ListChecks, Clock, Truck
   } from "lucide-react";
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
@@ -200,7 +203,7 @@ export default function Layout({ children, currentPageName }) {
         <div className="absolute bottom-[-10rem] right-1/4 w-[28rem] h-[28rem] bg-blue-300/10 blur-3xl rounded-full" />
       </div>
 
-      <style jsx global>{`
+      <style>{`
         html, body {
           -webkit-font-smoothing: antialiased;
           -moz-osx-font-smoothing: grayscale;
