@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -24,7 +23,32 @@ export default function BusinessHoursDisplay({ hours, isBlackTheme }) {
   if (typeof hours === 'string') {
     try {
       const parsed = JSON.parse(hours);
+      // Check if it's the new format (with isOpen/timeRanges) or old format (with open/close/closed)
       schedule = parsed.schedule || parsed;
+      
+      // Convert old format to new if needed
+      if (schedule && Object.keys(schedule).length > 0) {
+        const firstKey = Object.keys(schedule)[0];
+        const firstDay = schedule[firstKey];
+        
+        // If old format detected (has 'open'/'close' or 'closed' properties)
+        if (firstDay && (firstDay.hasOwnProperty('open') || firstDay.hasOwnProperty('closed'))) {
+          const newSchedule = {};
+          Object.keys(schedule).forEach(day => {
+            const oldDay = schedule[day];
+            if (oldDay.closed) {
+              newSchedule[day] = { isOpen: false };
+            } else if (oldDay.open && oldDay.close) {
+              newSchedule[day] = {
+                isOpen: true,
+                is24Hours: false,
+                timeRanges: [{ open: oldDay.open, close: oldDay.close }]
+              };
+            }
+          });
+          schedule = newSchedule;
+        }
+      }
     } catch (e) {
       // If it's just a string description
       return (
@@ -36,6 +60,29 @@ export default function BusinessHoursDisplay({ hours, isBlackTheme }) {
     }
   } else if (hours && typeof hours === 'object') {
     schedule = hours.schedule || hours;
+    
+    // Convert old format to new if needed
+    if (schedule && Object.keys(schedule).length > 0) {
+      const firstKey = Object.keys(schedule)[0];
+      const firstDay = schedule[firstKey];
+      
+      if (firstDay && (firstDay.hasOwnProperty('open') || firstDay.hasOwnProperty('closed'))) {
+        const newSchedule = {};
+        Object.keys(schedule).forEach(day => {
+          const oldDay = schedule[day];
+          if (oldDay.closed) {
+            newSchedule[day] = { isOpen: false };
+          } else if (oldDay.open && oldDay.close) {
+            newSchedule[day] = {
+              isOpen: true,
+              is24Hours: false,
+              timeRanges: [{ open: oldDay.open, close: oldDay.close }]
+            };
+          }
+        });
+        schedule = newSchedule;
+      }
+    }
   }
 
   if (!schedule || Object.keys(schedule).length === 0) {
