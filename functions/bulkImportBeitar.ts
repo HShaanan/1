@@ -183,10 +183,67 @@ Deno.serve(async (req) => {
           }
         }
 
-        // Format opening hours
-        let hoursText = '';
+        // Format opening hours - convert to proper JSON structure
+        let hoursData = null;
         if (business.opening_hours && business.opening_hours.weekday_text) {
-          hoursText = business.opening_hours.weekday_text.join('\n');
+          // Map Hebrew day names to English keys
+          const dayMapping = {
+            'יום ראשון': 'sunday',
+            'יום שני': 'monday',
+            'יום שלישי': 'tuesday',
+            'יום רביעי': 'wednesday',
+            'יום חמישי': 'thursday',
+            'יום שישי': 'friday',
+            'יום שבת': 'saturday',
+            'ראשון': 'sunday',
+            'שני': 'monday',
+            'שלישי': 'tuesday',
+            'רביעי': 'wednesday',
+            'חמישי': 'thursday',
+            'שישי': 'friday',
+            'שבת': 'saturday'
+          };
+          
+          hoursData = {};
+          
+          business.opening_hours.weekday_text.forEach(dayText => {
+            // Parse format like "יום ראשון: 09:00–17:00" or "יום ראשון: סגור"
+            let dayName = null;
+            let hoursInfo = null;
+            
+            // Try to extract day name and hours
+            for (const [hebrewDay, englishDay] of Object.entries(dayMapping)) {
+              if (dayText.includes(hebrewDay)) {
+                dayName = englishDay;
+                // Extract hours after the colon
+                const parts = dayText.split(':');
+                if (parts.length > 1) {
+                  hoursInfo = parts.slice(1).join(':').trim();
+                }
+                break;
+              }
+            }
+            
+            if (!dayName) return;
+            
+            // Check if closed
+            if (!hoursInfo || hoursInfo.includes('סגור') || hoursInfo.includes('Closed')) {
+              hoursData[dayName] = { closed: true };
+            } else {
+              // Try to parse hours like "09:00–17:00" or "09:00-17:00"
+              const timeMatch = hoursInfo.match(/(\d{1,2}:\d{2})\s*[-–]\s*(\d{1,2}:\d{2})/);
+              if (timeMatch) {
+                hoursData[dayName] = {
+                  open: timeMatch[1],
+                  close: timeMatch[2],
+                  closed: false
+                };
+              } else {
+                // If can't parse, mark as closed
+                hoursData[dayName] = { closed: true };
+              }
+            }
+          });
         }
 
         // Generate URL slug
@@ -209,7 +266,7 @@ Deno.serve(async (req) => {
           lat: business.geometry?.location?.lat || null,
           lng: business.geometry?.location?.lng || null,
           website_url: business.website || null,
-          hours: hoursText || null,
+          hours: hoursData ? JSON.stringify(hoursData) : null,
           images: images.length > 0 ? images : [],
           url_slug: urlSlug,
           is_active: false,
