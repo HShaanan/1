@@ -443,6 +443,7 @@ export default function BusinessPageView() {
   const urlParams = new URLSearchParams(window.location.search);
   const pageId = urlParams.get("id");
   const pageSlug = urlParams.get("slug");
+  const isPreview = urlParams.get("preview") === "true";
 
   // Update URL to friendly format without redirect (SEO-friendly)
   useEffect(() => {
@@ -722,10 +723,19 @@ export default function BusinessPageView() {
         return;
       }
 
+      // בדיקה אם המשתמש יכול לראות את העמוד
+      const currentUser = await base44.auth.me().catch(() => null);
+      const isOwner = currentUser && page.business_owner_email?.toLowerCase() === currentUser.email?.toLowerCase();
+      const isAdmin = currentUser && currentUser.role === 'admin';
+      const canPreview = isOwner || isAdmin;
+
+      // אם העמוד לא פעיל או לא מאושר, רק הבעלים/אדמין יכולים לראות (במצב preview)
       if (!page.is_active || page.approval_status !== 'approved') {
-        setError("עמוד העסק אינו זמין כעת");
-        setIsLoading(false);
-        return;
+        if (!isPreview || !canPreview) {
+          setError("עמוד העסק אינו זמין כעת");
+          setIsLoading(false);
+          return;
+        }
       }
 
       // If loaded by ID and has slug, redirect to slug URL

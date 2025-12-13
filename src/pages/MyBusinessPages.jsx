@@ -1,6 +1,7 @@
-
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
+import { BusinessPage } from "@/entities/BusinessPage";
+import { Category } from "@/entities/Category";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -14,11 +15,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Plus, Edit, Eye, Clock, CheckCircle, XCircle, AlertTriangle,
-  MapPin, Phone, Globe, Star, Snowflake, Play, Loader2
+  MapPin, Phone, Globe, Star, Trash2, Search, Snowflake, Play, Loader2
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import ListingGrid from "@/components/explore/ListingGrid";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -332,7 +336,7 @@ export default function MyBusinessPagesPage() {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => window.location.href = createPageUrl(`BusinessPage?id=${page.id}`)}
+                          onClick={() => window.location.href = createPageUrl(`BusinessPage?id=${page.id}&preview=true`)}
                           className="flex-1"
                         >
                           <Eye className="w-4 h-4 ml-1" />
