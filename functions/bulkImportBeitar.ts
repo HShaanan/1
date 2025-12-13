@@ -196,24 +196,22 @@ Deno.serve(async (req) => {
           .replace(/\s+/g, '-')
           .substring(0, 50);
 
-        // Create business page
+        // Create business page - without ratings from Google
         const newBusiness = {
           business_name: business.name,
           display_title: business.name,
-          description: `${business.name} בביתר עילית. ${business.user_ratings_total ? `מדורג ${business.rating} כוכבים (${business.user_ratings_total} ביקורות)` : ''}`,
+          description: `${business.name} בביתר עילית`,
           category_id: categoryId,
           category_name: categoryName,
-          contact_phone: business.formatted_phone_number || 'לא זמין',
+          contact_phone: business.formatted_phone_number || '',
           address: business.formatted_address || 'ביתר עילית',
           city: 'ביתר-עילית',
           lat: business.geometry?.location?.lat || null,
           lng: business.geometry?.location?.lng || null,
           website_url: business.website || null,
           hours: hoursText || null,
-          images: images.length > 0 ? images : null,
+          images: images.length > 0 ? images : [],
           url_slug: urlSlug,
-          smart_rating: business.rating || 0,
-          reviews_count: business.user_ratings_total || 0,
           is_active: false,
           approval_status: 'pending',
           business_owner_email: user.email,
