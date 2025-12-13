@@ -15,36 +15,76 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Google Maps API key not configured' }, { status: 500 });
     }
 
-    const query = 'עסקים ביתר עילית';
+    // Multiple search queries to cover more businesses
+    const queries = [
+      'עסקים ביתר עילית',
+      'מסעדות ביתר עילית',
+      'חנויות ביתר עילית',
+      'שירותים ביתר עילית',
+      'קפה ביתר עילית',
+      'מזון ביתר עילית',
+      'ביגוד ביתר עילית',
+      'אלקטרוניקה ביתר עילית',
+      'בריאות ביתר עילית',
+      'חינוך ביתר עילית',
+      'בניה ביתר עילית',
+      'רהיטים ביתר עילית',
+      'קוסמטיקה ביתר עילית',
+      'ספרים ביתר עילית',
+      'נעליים ביתר עילית'
+    ];
+    
     const results = [];
     const errors = [];
+    const processedNames = new Set(); // To avoid duplicates
 
-    console.log(`Starting bulk import for: ${query}`);
+    console.log(`Starting bulk import with ${queries.length} search queries`);
 
-    // Search Google Places
-    const searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_MAPS_API_KEY}&language=he`;
-    
-    const searchResponse = await fetch(searchUrl);
-    const searchData = await searchResponse.json();
+    for (const query of queries) {
+      console.log(`Searching: ${query}`);
+      let nextPageToken = null;
+      let pageCount = 0;
 
-    if (searchData.status !== 'OK') {
-      return Response.json({ 
-        error: 'Google Places API error', 
-        details: searchData.status 
-      }, { status: 500 });
-    }
+      do {
+        // Build search URL with pagination
+        let searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_MAPS_API_KEY}&language=he`;
+        if (nextPageToken) {
+          searchUrl += `&pagetoken=${nextPageToken}`;
+          // Google requires a short delay before using next_page_token
+          await new Promise(resolve => setTimeout(resolve, 2000));
+        }
+        
+        const searchResponse = await fetch(searchUrl);
+        const searchData = await searchResponse.json();
 
-    console.log(`Found ${searchData.results.length} businesses`);
+        if (searchData.status !== 'OK' && searchData.status !== 'ZERO_RESULTS') {
+          console.log(`API error for ${query}: ${searchData.status}`);
+          break;
+        }
 
-    // Get all categories for mapping
-    const categories = await base44.asServiceRole.entities.Category.list();
-    const categoryMap = {};
-    categories.forEach(cat => {
-      categoryMap[cat.name.toLowerCase()] = cat;
-    });
+        if (!searchData.results || searchData.results.length === 0) {
+          console.log(`No results for ${query}`);
+          break;
+        }
 
-    // Process each business
-    for (const place of searchData.results) {
+        console.log(`Found ${searchData.results.length} businesses (page ${pageCount + 1})`);
+        
+        // Process results from this page
+        const places = searchData.results;
+        nextPageToken = searchData.next_page_token || null;
+        pageCount++;
+
+        // Get all categories for mapping (once, outside loops)
+        const categories = await base44.asServiceRole.entities.Category.list();
+
+        // Process each business from this page
+        for (const place of places) {
+          // Skip if already processed
+          if (processedNames.has(place.name)) {
+            console.log(`Skipping duplicate: ${place.name}`);
+            continue;
+          }
+          processedNames.add(place.name);
       try {
         // Get detailed info
         const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,formatted_address,formatted_phone_number,website,opening_hours,rating,user_ratings_total,photos,types,geometry&key=${GOOGLE_MAPS_API_KEY}&language=he`;
@@ -153,10 +193,15 @@ Deno.serve(async (req) => {
         
         console.log(`Created: ${business.name}`);
 
-      } catch (error) {
-        console.error(`Error processing ${place.name}:`, error);
-        errors.push({ name: place.name, error: error.message });
+        } catch (error) {
+          console.error(`Error processing ${place.name}:`, error);
+          errors.push({ name: place.name, error: error.message });
+        }
       }
+
+      } while (nextPageToken && pageCount < 3); // Google allows max 3 pages (60 results) per query
+      
+      console.log(`Completed search for: ${query}`);
     }
 
     return Response.json({
