@@ -443,7 +443,6 @@ export default function BusinessPageView() {
   const urlParams = new URLSearchParams(window.location.search);
   const pageId = urlParams.get("id");
   const pageSlug = urlParams.get("slug");
-  const isPreview = urlParams.get("preview") === "true";
 
   // Update URL to friendly format without redirect (SEO-friendly)
   useEffect(() => {
@@ -699,6 +698,9 @@ export default function BusinessPageView() {
       setIsLoading(false);
       return;
     }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const isPreview = urlParams.get("preview") === "true";
 
     try {
       let pageData;
