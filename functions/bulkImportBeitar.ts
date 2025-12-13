@@ -15,8 +15,11 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Google Maps API key not configured' }, { status: 500 });
     }
 
+    // Get batch parameter from request
+    const { batch = 0, max_per_batch = 30 } = await req.json().catch(() => ({}));
+    
     // Multiple search queries to cover more businesses
-    const queries = [
+    const allQueries = [
       'עסקים ביתר עילית',
       'מסעדות ביתר עילית',
       'חנויות ביתר עילית',
@@ -34,11 +37,25 @@ Deno.serve(async (req) => {
       'נעליים ביתר עילית'
     ];
     
+    // Run only 2-3 queries per batch to avoid rate limits
+    const queriesPerBatch = 3;
+    const startIdx = batch * queriesPerBatch;
+    const queries = allQueries.slice(startIdx, startIdx + queriesPerBatch);
+    
+    if (queries.length === 0) {
+      return Response.json({
+        success: true,
+        message: 'All batches completed',
+        total_batches: Math.ceil(allQueries.length / queriesPerBatch)
+      });
+    }
+    
     const results = [];
     const errors = [];
-    const processedNames = new Set(); // To avoid duplicates
+    const processedNames = new Set();
+    let totalProcessed = 0;
 
-    console.log(`Starting bulk import with ${queries.length} search queries`);
+    console.log(`Batch ${batch}: Processing queries ${startIdx + 1}-${startIdx + queries.length} of ${allQueries.length}`);
 
     for (const query of queries) {
       console.log(`Searching: ${query}`);
@@ -46,16 +63,25 @@ Deno.serve(async (req) => {
       let pageCount = 0;
 
       do {
+        // Check if we've reached the batch limit
+        if (totalProcessed >= max_per_batch) {
+          console.log(`Reached batch limit of ${max_per_batch} businesses`);
+          break;
+        }
+
         // Build search URL with pagination
         let searchUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?query=${encodeURIComponent(query)}&key=${GOOGLE_MAPS_API_KEY}&language=he`;
         if (nextPageToken) {
           searchUrl += `&pagetoken=${nextPageToken}`;
           // Google requires a short delay before using next_page_token
-          await new Promise(resolve => setTimeout(resolve, 2000));
+          await new Promise(resolve => setTimeout(resolve, 2500));
         }
         
         const searchResponse = await fetch(searchUrl);
         const searchData = await searchResponse.json();
+        
+        // Add delay between API calls to avoid rate limits
+        await new Promise(resolve => setTimeout(resolve, 1000));
 
         if (searchData.status !== 'OK' && searchData.status !== 'ZERO_RESULTS') {
           console.log(`API error for ${query}: ${searchData.status}`);
@@ -79,18 +105,28 @@ Deno.serve(async (req) => {
 
         // Process each business from this page
         for (const place of places) {
+          // Check batch limit
+          if (totalProcessed >= max_per_batch) {
+            console.log(`Stopping - reached batch limit`);
+            break;
+          }
+
           // Skip if already processed
           if (processedNames.has(place.name)) {
             console.log(`Skipping duplicate: ${place.name}`);
             continue;
           }
           processedNames.add(place.name);
-      try {
-        // Get detailed info
-        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,formatted_address,formatted_phone_number,website,opening_hours,rating,user_ratings_total,photos,types,geometry&key=${GOOGLE_MAPS_API_KEY}&language=he`;
-        
-        const detailsResponse = await fetch(detailsUrl);
-        const detailsData = await detailsResponse.json();
+          
+          try {
+            // Get detailed info
+            const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${place.place_id}&fields=name,formatted_address,formatted_phone_number,website,opening_hours,rating,user_ratings_total,photos,types,geometry&key=${GOOGLE_MAPS_API_KEY}&language=he`;
+            
+            const detailsResponse = await fetch(detailsUrl);
+            const detailsData = await detailsResponse.json();
+            
+            // Delay between detail requests to avoid rate limits
+            await new Promise(resolve => setTimeout(resolve, 500));
 
         if (detailsData.status !== 'OK' || !detailsData.result) {
           errors.push({ name: place.name, error: 'Failed to fetch details' });
@@ -188,10 +224,11 @@ Deno.serve(async (req) => {
           }
         };
 
-        const created = await base44.asServiceRole.entities.BusinessPage.create(newBusiness);
-        results.push({ name: business.name, id: created.id, status: 'created' });
-        
-        console.log(`Created: ${business.name}`);
+            const created = await base44.asServiceRole.entities.BusinessPage.create(newBusiness);
+            results.push({ name: business.name, id: created.id, status: 'created' });
+            totalProcessed++;
+            
+            console.log(`Created: ${business.name} (${totalProcessed}/${max_per_batch})`);
 
         } catch (error) {
           console.error(`Error processing ${place.name}:`, error);
@@ -204,12 +241,20 @@ Deno.serve(async (req) => {
       console.log(`Completed search for: ${query}`);
     }
 
+    const hasMore = startIdx + queries.length < allQueries.length || totalProcessed >= max_per_batch;
+    
     return Response.json({
       success: true,
+      batch: batch,
+      next_batch: hasMore ? batch + 1 : null,
       imported: results.length,
       failed: errors.length,
+      total_processed: totalProcessed,
+      max_per_batch: max_per_batch,
+      progress: `${startIdx + queries.length}/${allQueries.length} queries completed`,
       results,
-      errors
+      errors,
+      message: hasMore ? `יובאו ${results.length} עסקים. הרץ שוב עם batch=${batch + 1} להמשך` : 'ייבוא הושלם!'
     });
 
   } catch (error) {
