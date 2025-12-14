@@ -18,7 +18,8 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
     navigate(createPageUrl("BusinessPage") + `?slug=${slug}`);
   };
 
-  const displayImage = businessPage.preview_image || businessPage.images?.[0] || "";
+  const defaultImage = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/e8b173c76_image2.jpg";
+  const displayImage = businessPage.preview_image || businessPage.images?.[0] || defaultImage;
   const kashrutLogo = businessPage.kashrut_logo_url;
 
   return (
@@ -31,18 +32,12 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
     >
       {/* תמונה ראשית */}
       <div className="relative w-full aspect-[21/9] overflow-hidden bg-slate-100">
-        {displayImage ? (
-          <LazyImage
-            src={displayImage}
-            alt={businessPage.business_name}
-            className="w-full h-full"
-            imgClassName="object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-slate-100 to-slate-200">
-            <span className="text-5xl">🏪</span>
-          </div>
-        )}
+        <LazyImage
+          src={displayImage}
+          alt={businessPage.business_name}
+          className="w-full h-full"
+          imgClassName="object-cover group-hover:scale-105 transition-transform duration-500"
+        />
 
         {/* Badge כשר */}
         {businessPage.kashrut_authority_type && (

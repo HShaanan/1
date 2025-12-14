@@ -49,7 +49,8 @@ const hexToRgba = (hex, alpha) => {
 };
 
 const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onShare, onEditClick, onManageClick, onLogoClick, onKashrutLogoClick, theme, onOrdersManageClick }) => {
-  const mainImage = businessPage.images?.[0]; // This is the main hero image
+  const defaultHeroImage = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/e8b173c76_image2.jpg";
+  const mainImage = businessPage.images?.[0] || defaultHeroImage; // This is the main hero image with fallback
   const croppedLogo = Array.isArray(businessPage?.images) ? businessPage.images[1] : null; // This is the explicitly cropped logo image (images[1])
   const kashrutLogo = businessPage.kashrut_logo_url || null;
 
@@ -67,14 +68,12 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
     <section className="relative" aria-label="כותרת עמוד העסק">
       {/* HERO - תמונה ראשית ממורכזת */}
       <div className="h-64 sm:h-80 md:h-[420px] lg:h-[500px] xl:h-[560px] 2xl:h-[600px] bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
-        {mainImage && (
-          <LazyImage
-            src={mainImage}
-            alt={`תמונה ראשית של ${title}`}
-            className="w-full h-full"
-            imgClassName="object-contain object-center w-full h-full"
-          />
-        )}
+        <LazyImage
+          src={mainImage}
+          alt={`תמונה ראשית של ${title}`}
+          className="w-full h-full"
+          imgClassName="object-contain object-center w-full h-full"
+        />
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
