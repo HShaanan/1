@@ -54,6 +54,7 @@ import CourierLanding from './pages/CourierLanding';
 import AdminSettings from './pages/AdminSettings';
 import AdminBulkImprove from './pages/AdminBulkImprove';
 import AdminAddDefaultLogo from './pages/AdminAddDefaultLogo';
+import AdminDeleteRecent from './pages/AdminDeleteRecent';
 import __Layout from './Layout.jsx';
 
 
@@ -114,6 +115,7 @@ export const PAGES = {
     "AdminSettings": AdminSettings,
     "AdminBulkImprove": AdminBulkImprove,
     "AdminAddDefaultLogo": AdminAddDefaultLogo,
+    "AdminDeleteRecent": AdminDeleteRecent,
 }
 
 export const pagesConfig = {
