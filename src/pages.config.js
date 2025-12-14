@@ -52,6 +52,7 @@ import AccessibilityStatement from './pages/AccessibilityStatement';
 import BusinessLanding from './pages/BusinessLanding';
 import CourierLanding from './pages/CourierLanding';
 import AdminSettings from './pages/AdminSettings';
+import AdminBulkImprove from './pages/AdminBulkImprove';
 import __Layout from './Layout.jsx';
 
 
@@ -110,6 +111,7 @@ export const PAGES = {
     "BusinessLanding": BusinessLanding,
     "CourierLanding": CourierLanding,
     "AdminSettings": AdminSettings,
+    "AdminBulkImprove": AdminBulkImprove,
 }
 
 export const pagesConfig = {
