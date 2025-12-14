@@ -40,19 +40,16 @@ Deno.serve(async (req) => {
       try {
         console.log(`\n🔄 Processing: ${business.name}`);
 
-        // בדיקה אם העסק כבר קיים
+        // בדיקה אם העסק כבר קיים לפי place_id
         const allPages = await base44.asServiceRole.entities.BusinessPage.list();
-        const existingPages = allPages.filter(p => 
-          p.metadata?.google_place_id === business.place_id ||
-          p.url_slug === business.url_slug
-        );
-
-        if (existingPages.length > 0) {
-          console.log(`⏭️ Skipping: ${business.name} - already exists`);
+        const existingByPlaceId = allPages.find(p => p.metadata?.google_place_id === business.place_id);
+        
+        if (existingByPlaceId) {
+          console.log(`⏭️ Skipping: ${business.name} - place_id exists`);
           errors.push({
             name: business.name,
-            error: 'העסק כבר קיים במערכת',
-            existing_id: existingPages[0].id
+            error: 'העסק כבר קיים במערכת (לפי place_id)',
+            existing_id: existingByPlaceId.id
           });
           continue;
         }
