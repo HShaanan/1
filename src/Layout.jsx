@@ -563,6 +563,13 @@ export default function Layout({ children, currentPageName }) {
                         </Link>
                       </DropdownMenuItem>
 
+                      <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminAddDefaultLogo')} className="flex items-center gap-2 cursor-pointer">
+                          <ImageIcon className="w-4 h-4 text-blue-600" aria-hidden="true" />
+                          <span>הוסף לוגו ברירת מחדל</span>
+                        </Link>
+                      </DropdownMenuItem>
+
                       <div className="border-t border-gray-100 my-1"></div>
 
                       <DropdownMenuItem asChild role="menuitem">
