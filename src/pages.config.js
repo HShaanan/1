@@ -53,6 +53,7 @@ import BusinessLanding from './pages/BusinessLanding';
 import CourierLanding from './pages/CourierLanding';
 import AdminSettings from './pages/AdminSettings';
 import AdminBulkImprove from './pages/AdminBulkImprove';
+import AdminAddDefaultLogo from './pages/AdminAddDefaultLogo';
 import __Layout from './Layout.jsx';
 
 
@@ -112,6 +113,7 @@ export const PAGES = {
     "CourierLanding": CourierLanding,
     "AdminSettings": AdminSettings,
     "AdminBulkImprove": AdminBulkImprove,
+    "AdminAddDefaultLogo": AdminAddDefaultLogo,
 }
 
 export const pagesConfig = {
