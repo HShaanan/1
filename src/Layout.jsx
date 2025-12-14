@@ -570,6 +570,13 @@ export default function Layout({ children, currentPageName }) {
                         </Link>
                       </DropdownMenuItem>
 
+                      <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminDeleteRecent')} className="flex items-center gap-2 cursor-pointer">
+                          <AlertTriangle className="w-4 h-4 text-red-600" aria-hidden="true" />
+                          <span>מחק עסקים חדשים</span>
+                        </Link>
+                      </DropdownMenuItem>
+
                       <div className="border-t border-gray-100 my-1"></div>
 
                       <DropdownMenuItem asChild role="menuitem">
