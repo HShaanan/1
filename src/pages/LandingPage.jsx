@@ -283,38 +283,7 @@ export default function LandingPage() {
               </div>
             </Link>
 
-            {/* White LED divider between images */}
-            <div className="relative h-[2px] w-full">
-              <div className="absolute inset-0 bg-white"></div>
-              <div className="absolute -inset-1 bg-white/80 blur-md"></div>
-              <div className="absolute -inset-3 bg-white/50 blur-xl"></div>
-              <div className="absolute -inset-6 bg-white/30 blur-2xl"></div>
-            </div>
 
-            {/* Courier Image */}
-            <Link
-              to={createPageUrl("CourierLanding")}
-              className="block touch-manipulation group relative"
-            >
-              <div className="relative overflow-hidden">
-                <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/8db6d631b_image22.png"
-                  alt="הצטרף לנבחרת השליחים של משלנו - לפרטים והגשת מועמדות"
-                  className="w-full h-auto transform group-hover:scale-[1.02] transition-transform duration-700 ease-out"
-                />
-
-                {/* Light sweep effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
-              </div>
-            </Link>
-
-            {/* White LED bottom glow */}
-            <div className="relative h-[2px] w-full">
-              <div className="absolute inset-0 bg-white"></div>
-              <div className="absolute -inset-1 bg-white/80 blur-md"></div>
-              <div className="absolute -inset-3 bg-white/50 blur-xl"></div>
-              <div className="absolute -inset-6 bg-white/30 blur-2xl"></div>
-            </div>
 
           </div>
         </div>
