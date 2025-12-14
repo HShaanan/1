@@ -58,7 +58,50 @@ export default function EditBusinessHoursPage() {
         }
 
         setBusinessPage(page);
-        setHours(typeof page.hours === 'string' ? JSON.parse(page.hours) : page.hours);
+        
+        // Parse hours and convert old format to new if needed
+        let parsedHours = null;
+        if (page.hours) {
+          if (typeof page.hours === 'string') {
+            try {
+              parsedHours = JSON.parse(page.hours);
+            } catch (e) {
+              console.error('Error parsing hours:', e);
+            }
+          } else {
+            parsedHours = page.hours;
+          }
+          
+          // Convert old format to new format if needed
+          if (parsedHours) {
+            const schedule = parsedHours.schedule || parsedHours;
+            
+            if (schedule && Object.keys(schedule).length > 0) {
+              const firstKey = Object.keys(schedule)[0];
+              const firstDay = schedule[firstKey];
+              
+              // If old format detected (has 'open'/'close' or 'closed' properties)
+              if (firstDay && (firstDay.hasOwnProperty('open') || firstDay.hasOwnProperty('closed'))) {
+                const newSchedule = {};
+                Object.keys(schedule).forEach(day => {
+                  const oldDay = schedule[day];
+                  if (oldDay.closed) {
+                    newSchedule[day] = { isOpen: false };
+                  } else if (oldDay.open && oldDay.close) {
+                    newSchedule[day] = {
+                      isOpen: true,
+                      is24Hours: false,
+                      timeRanges: [{ open: oldDay.open, close: oldDay.close }]
+                    };
+                  }
+                });
+                parsedHours = { schedule: newSchedule };
+              }
+            }
+          }
+        }
+        
+        setHours(parsedHours);
 
       } catch (err) {
         setError("שגיאה בטעינת הנתונים: " + err.message);
