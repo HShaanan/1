@@ -268,130 +268,90 @@ export default function EditBusinessPage() {
   }, [pageId]);
 
   const runAIImprove = async () => {
-    // Changed from businessPage?.category_id to form.category_id to reflect unsaved changes
-    const categoryName = categories.find(c => c.id === form.category_id)?.name || "";
-    // Using the first selected subcategory for AI improvement context
-    const subcategoryName = (Array.isArray(form.subcategory_ids) && form.subcategory_ids.length > 0)
-      ? categories.find(c => c.id === form.subcategory_ids[0])?.name || ""
-      : "";
+    if (!form.business_name && !form.description) {
+      setError("נא למלא לפחות שם עסק או תיאור לשיפור");
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
 
-    if (!businessPage) return;
     setImproving(true);
     setAiError("");
     setSuccessMessage("");
 
     try {
-      const payload = {
-        title: form.display_title || form.business_name || "",
-        description: form.description || "",
-        business_name: form.business_name || "",
-        address: form.address || "",
-        category_name: categoryName,
-        subcategory_name: subcategoryName,
-        price_range: form.price_range || "",
-        tags: Array.isArray(form.special_fields?.tags) ? form.special_fields.tags : []
-      };
+      const categoryName = categories.find(c => c.id === form.category_id)?.name || "";
+      const subcategoryName = (Array.isArray(form.subcategory_ids) && form.subcategory_ids.length > 0)
+        ? categories.find(c => c.id === form.subcategory_ids[0])?.name || ""
+        : "";
 
-      const conversation = await Promise.resolve(agentSDK.createConversation({
-        agent_name: "ad_copy_expert",
-        metadata: {
-          name: `שיפור תוכן לעסק: ${payload.business_name || "ללא שם"}`,
-          business_page_id: businessPage?.id || pageId
-        }
-      }));
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `שפר את התוכן הבא לעמוד עסק בשפה עברית צנועה ומקצועית.
 
-      const jsonSchemaInstruction = `
-חובה להחזיר JSON בלבד לפי הסכמה הבאה:
-{
-  "improved_title": "string (עד ~70 תווים)",
-  "improved_description": "string (220–600 תווים, עם תועלות ו-CTA)",
-  "whatsapp_button_text": "string (עד ~40 תווים)",
-  "whatsapp_message": "string (עד ~140 תווים)",
-  "tags_suggestions": ["string", "..."]
-}`;
-
-      const userPrompt = `
-שפר את התוכן לעמוד העסק בהתאם לקהל החרדי, בשפה צנועה וברורה, ללא הבטחות מוגזמות.
 נתוני העסק:
-${JSON.stringify(payload, null, 2)}
+- שם: ${form.business_name || ""}
+- כותרת: ${form.display_title || ""}
+- תיאור: ${form.description || ""}
+- קטגוריה: ${categoryName}
+- תת-קטגוריה: ${subcategoryName}
+- כתובת: ${form.address || ""}
 
-${jsonSchemaInstruction}
-      `.trim();
+הנחיות:
+1. שפר את הכותרת (עד 70 תווים)
+2. שפר את התיאור (200-400 תווים, ברור ואטרקטיבי)
+3. הצע טקסט לכפתור ווטסאפ (עד 40 תווים)
+4. הצע הודעת ווטסאפ (עד 140 תווים)
+5. הצע 3-5 תגיות רלוונטיות
 
-      await Promise.resolve(agentSDK.addMessage(conversation, {
-        role: "user",
-        content: userPrompt
-      }));
-
-      const extractJson = (text) => {
-        if (!text) return null;
-        const cleaned = String(text).replace(/```json|```/g, "").trim();
-        try { return JSON.parse(cleaned); } catch (_) {}
-        const match = cleaned.match(/\{[\s\S]*\}/);
-        if (match) {
-          try { return JSON.parse(match[0]); } catch (_) {}
+החזר JSON בלבד בפורמט הזה:
+{
+  "improved_title": "...",
+  "improved_description": "...",
+  "whatsapp_button_text": "...",
+  "whatsapp_message": "...",
+  "tags": ["תגית1", "תגית2", "תגית3"]
+}`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            improved_title: { type: "string" },
+            improved_description: { type: "string" },
+            whatsapp_button_text: { type: "string" },
+            whatsapp_message: { type: "string" },
+            tags: { type: "array", items: { type: "string" } }
+          }
         }
-        return null;
-      };
-      const toArray = (val) => {
-        if (!val) return [];
-        if (Array.isArray(val)) return val;
-        if (typeof val === "string" && val.trim()) return [val.trim()];
-        return [];
-      };
+      });
 
-      let assistantMsg = null;
-      const start = Date.now();
-      while (Date.now() - start < 20000) {
-        const fresh = await Promise.resolve(agentSDK.getConversation(conversation.id));
-        const msgs = fresh?.messages || [];
-        assistantMsg = msgs.slice().reverse().find(m => m.role === "assistant" && m.content);
-        if (assistantMsg) break;
-        await new Promise(r => setTimeout(r, 800));
+      const improved = result;
+
+      if (improved.improved_title) {
+        setForm(prev => ({ ...prev, display_title: improved.improved_title.slice(0, 80) }));
       }
-
-      let improved = extractJson(assistantMsg?.content || "");
-      if (!improved || typeof improved !== "object") {
-        const { data } = await aiImproveBusinessContent(payload);
-        if (!data?.success) {
-          setAiError(data?.error || "שגיאה בשיפור באמצעות AI");
-          setImproving(false);
-          return;
-        }
-        improved = data.improved || {};
+      if (improved.improved_description) {
+        setForm(prev => ({ ...prev, description: improved.improved_description }));
+      }
+      if (improved.whatsapp_button_text) {
+        setForm(prev => ({ ...prev, whatsapp_button_text: improved.whatsapp_button_text.slice(0, 40) }));
+      }
+      if (improved.whatsapp_message) {
+        setForm(prev => ({ ...prev, whatsapp_message: improved.whatsapp_message.slice(0, 140) }));
+      }
+      if (Array.isArray(improved.tags) && improved.tags.length > 0) {
+        setForm(prev => ({
+          ...prev,
+          special_fields: {
+            ...prev.special_fields,
+            tags: [...new Set([...(prev.special_fields?.tags || []), ...improved.tags])]
+          }
+        }));
       }
 
-      const improvedTitle = typeof improved.improved_title === "string" ? improved.improved_title.trim() : "";
-      const improvedDesc = typeof improved.improved_description === "string" ? improved.improved_description.trim() : "";
-      const improvedBtn = typeof improved.whatsapp_button_text === "string" ? improved.whatsapp_button_text.trim() : "";
-      const improvedMsg = typeof improved.whatsapp_message === "string" ? improved.whatsapp_message.trim() : "";
-      const suggestedTags = toArray(improved?.tags_suggestions || []);
-
-      const updated = { ...form };
-      if (improvedTitle) {
-        updated.display_title = improvedTitle.slice(0, 80);
-      }
-      if (improvedDesc) {
-        updated.description = improvedDesc;
-      }
-      if (improvedBtn) {
-        updated.whatsapp_button_text = improvedBtn.slice(0, 40);
-      }
-      if (improvedMsg) {
-        updated.whatsapp_message = improvedMsg.slice(0, 140);
-      }
-      if (Array.isArray(suggestedTags) && suggestedTags.length > 0) {
-        const currentTags = Array.isArray(updated.special_fields?.tags) ? updated.special_fields.tags : [];
-        const safeSuggestedTags = Array.isArray(suggestedTags) ? suggestedTags : [];
-        const merged = Array.from(new Set([...currentTags, ...safeSuggestedTags]));
-        updated.special_fields = { ...(updated.special_fields || {}), tags: merged };
-      }
-
-      setForm(updated);
-      setSuccessMessage("הטקסטים שודרגו בהצלחה עם AI ✔");
+      setSuccessMessage("✨ התוכן שופר בהצלחה עם AI!");
       setTimeout(() => setSuccessMessage(""), 3000);
-    } catch (e) {
-      setAiError(e?.message || "אירעה שגיאה בפניה ל-AI");
+
+    } catch (err) {
+      setAiError("שגיאה בשיפור עם AI: " + (err.message || ""));
+      setTimeout(() => setAiError(""), 5000);
     } finally {
       setImproving(false);
     }
@@ -930,16 +890,20 @@ ${jsonSchemaInstruction}
                 בחירת צבע נושא
               </Button>
               <Button
-                type="button"
                 onClick={runAIImprove}
                 disabled={improving}
-                className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white"
-                title="שפר את הטקסטים עם AI"
+                className="bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
               >
                 {improving ? (
-                  <><Loader2 className="w-4 h-4 ml-2 animate-spin" /> משפר...</>
+                  <>
+                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                    משפר...
+                  </>
                 ) : (
-                  <><Wand2 className="w-4 h-4 ml-2" /> שפר עם AI</>
+                  <>
+                    <Wand2 className="w-4 h-4 ml-2" />
+                    שפר תוכן עם AI
+                  </>
                 )}
               </Button>
               {/* כפתור שמירה */}
