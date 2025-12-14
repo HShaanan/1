@@ -57,31 +57,36 @@ Deno.serve(async (req) => {
         // הכנת שעות פעילות אם יש
         let hoursData = null;
         if (business.opening_hours) {
-          const daysMap = {
-            'Sunday': 'sunday',
-            'Monday': 'monday',
-            'Tuesday': 'tuesday',
-            'Wednesday': 'wednesday',
-            'Thursday': 'thursday',
-            'Friday': 'friday',
-            'Saturday': 'saturday'
-          };
+          // Google Places מחזיר day כמספר 0-6 (0=ראשון, 6=שבת)
+          const daysMap = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
           
           const schedule = {};
-          Object.keys(daysMap).forEach(day => {
-            schedule[daysMap[day]] = { isOpen: false };
+          daysMap.forEach(day => {
+            schedule[day] = { isOpen: false };
           });
           
           if (business.opening_hours.periods) {
             business.opening_hours.periods.forEach(period => {
-              const day = Object.keys(daysMap).find(d => d.startsWith(period.open?.day || ''));
-              if (day && period.open && period.close) {
-                schedule[daysMap[day]] = {
+              const dayIndex = period.open?.day;
+              if (dayIndex !== undefined && dayIndex >= 0 && dayIndex <= 6 && period.open) {
+                const dayKey = daysMap[dayIndex];
+                
+                // המרת פורמט Google (0900) לפורמט HH:MM (09:00)
+                const formatTime = (time) => {
+                  if (!time) return '';
+                  const str = String(time).padStart(4, '0');
+                  return `${str.slice(0, 2)}:${str.slice(2, 4)}`;
+                };
+                
+                const openTime = formatTime(period.open.time);
+                const closeTime = period.close ? formatTime(period.close.time) : openTime;
+                
+                schedule[dayKey] = {
                   isOpen: true,
                   is24Hours: false,
                   timeRanges: [{
-                    open: period.open.time,
-                    close: period.close.time
+                    open: openTime,
+                    close: closeTime
                   }]
                 };
               }
@@ -89,6 +94,7 @@ Deno.serve(async (req) => {
           }
           
           hoursData = JSON.stringify({ schedule });
+          console.log('⏰ Hours processed:', hoursData);
         }
 
         const businessPageData = {
