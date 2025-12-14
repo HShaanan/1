@@ -90,8 +90,8 @@ Deno.serve(async (req) => {
 
     for (const business of allBusinesses.slice(0, 200)) {
       try {
-        // קבלת פרטים מלאים - רק השדות הנדרשים ללא תמונות
-        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${business.place_id}&fields=name,formatted_address,international_phone_number,website,types,geometry&key=${API_KEY}&language=he`;
+        // קבלת פרטים מלאים - כולל שעות פעילות
+        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${business.place_id}&fields=name,formatted_address,international_phone_number,website,types,geometry,opening_hours&key=${API_KEY}&language=he`;
         
         const detailsResponse = await fetch(detailsUrl);
         const detailsData = await detailsResponse.json();
@@ -119,7 +119,8 @@ Deno.serve(async (req) => {
           types: details.types || [],
           lat: details.geometry?.location?.lat || business.geometry?.location?.lat,
           lng: details.geometry?.location?.lng || business.geometry?.location?.lng,
-          url_slug: urlSlug
+          url_slug: urlSlug,
+          opening_hours: details.opening_hours
         });
 
         // המתנה מינימלית
