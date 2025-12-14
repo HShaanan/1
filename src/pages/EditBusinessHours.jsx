@@ -59,14 +59,66 @@ export default function EditBusinessHoursPage() {
 
         setBusinessPage(page);
         
-        // Parse hours and convert old format to new if needed
+        // Parse and convert hours to the correct format
         let parsedHours = null;
+        
         if (page.hours) {
           if (typeof page.hours === 'string') {
             try {
+              // Try to parse as JSON first
               parsedHours = JSON.parse(page.hours);
             } catch (e) {
-              console.error('Error parsing hours:', e);
+              // If parsing fails, it might be plain text format from Google
+              // Convert text format to JSON format
+              const textHours = page.hours;
+              const schedule = {};
+              
+              const dayMapping = {
+                'ראשון': 'sunday',
+                'שני': 'monday',
+                'שלישי': 'tuesday',
+                'רביעי': 'wednesday',
+                'חמישי': 'thursday',
+                'שישי': 'friday',
+                'שבת': 'saturday'
+              };
+              
+              const lines = textHours.split('\n');
+              lines.forEach(line => {
+                // Parse lines like "יום ראשון: 13:00–21:00" or "יום שבת: סגור"
+                const match = line.match(/יום\s+(\S+):\s+(.+)/);
+                if (match) {
+                  const hebrewDay = match[1];
+                  const timeStr = match[2].trim();
+                  const dayKey = dayMapping[hebrewDay];
+                  
+                  if (dayKey) {
+                    if (timeStr === 'סגור') {
+                      schedule[dayKey] = { isOpen: false };
+                    } else {
+                      // Parse time ranges like "13:00–21:00" or "10:00-14:00, 16:00-20:00"
+                      const ranges = timeStr.split(',').map(r => r.trim());
+                      const timeRanges = ranges.map(range => {
+                        const times = range.split(/[–-]/).map(t => t.trim());
+                        if (times.length === 2) {
+                          return { open: times[0], close: times[1] };
+                        }
+                        return null;
+                      }).filter(Boolean);
+                      
+                      if (timeRanges.length > 0) {
+                        schedule[dayKey] = {
+                          isOpen: true,
+                          is24Hours: false,
+                          timeRanges
+                        };
+                      }
+                    }
+                  }
+                }
+              });
+              
+              parsedHours = { schedule };
             }
           } else {
             parsedHours = page.hours;
