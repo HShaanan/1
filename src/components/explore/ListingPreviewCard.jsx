@@ -69,6 +69,13 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
           {businessPage.business_name}
         </h3>
 
+        {/* כתובת */}
+        {businessPage.address && (
+          <p className="text-xs text-slate-500 mb-1 line-clamp-1">
+            📍 {businessPage.address}
+          </p>
+        )}
+
         {/* תיאור קצר */}
         {businessPage.description && (
           <p className="text-xs text-slate-600 line-clamp-2">
