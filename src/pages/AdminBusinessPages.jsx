@@ -72,6 +72,7 @@ export default function AdminBusinessPages() {
   const [importSuccess, setImportSuccess] = useState(null);
   // הוספה: state לבחירת קטגוריה
   const [selectedCategoryForImport, setSelectedCategoryForImport] = useState("");
+  const [selectedSubcategoryForImport, setSelectedSubcategoryForImport] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); // Added for success messages in import dialog
 
   // Multi-select state
@@ -424,6 +425,8 @@ export default function AdminBusinessPages() {
     setSearchTopic("");
     setSearchResults([]);
     setSelectedBusinesses([]);
+    setSelectedCategoryForImport("");
+    setSelectedSubcategoryForImport("");
     setError("");
     setSuccessMessage("");
   };
@@ -454,10 +457,12 @@ export default function AdminBusinessPages() {
       console.log('📥 Starting import of', selectedBusinesses.length, 'businesses');
       console.log('📋 Businesses to import:', selectedBusinesses.map(b => b.name));
       console.log('📋 Category ID:', selectedCategoryForImport);
+      console.log('📋 Subcategory ID:', selectedSubcategoryForImport);
 
       const { data } = await base44.functions.invoke('importSelectedBusinesses', {
         businesses: selectedBusinesses,
-        category_id: selectedCategoryForImport // הוספה: שליחת הקטגוריה
+        category_id: selectedCategoryForImport,
+        subcategory_id: selectedSubcategoryForImport || null
       });
 
       console.log('📊 Import result:', data);
@@ -499,6 +504,7 @@ export default function AdminBusinessPages() {
         setSearchResults([]);
         setSelectedBusinesses([]);
         setSelectedCategoryForImport(""); // איפוס הקטגוריה
+        setSelectedSubcategoryForImport(""); // איפוס תת-קטגוריה
 
         // Show "pending" filter to see new businesses
         setStatusFilter('pending');
@@ -534,6 +540,11 @@ export default function AdminBusinessPages() {
     categories.filter(c => !c.parent_id),
     [categories]
   );
+
+  const subcategoriesForImport = useMemo(() => {
+    if (!selectedCategoryForImport) return [];
+    return categories.filter(c => c.parent_id === selectedCategoryForImport);
+  }, [selectedCategoryForImport, categories]);
 
   const handleRefresh = async () => {
     console.log("🔄 Manual refresh triggered");
@@ -1045,6 +1056,7 @@ export default function AdminBusinessPages() {
             setSelectedBusinesses([]);
             setImportSuccess(null);
             setSelectedCategoryForImport(""); // איפוס הקטגוריה
+            setSelectedSubcategoryForImport(""); // איפוס תת-קטגוריה
             setSearchCity(""); // Reset search city on close
             setSearchTopic(""); // Reset search topic on close
             setError(""); // Clear error message when closing
@@ -1127,32 +1139,61 @@ export default function AdminBusinessPages() {
                 </Alert>
               )}
 
-              {/* בחירת קטגוריה - רק אם יש תוצאות */}
+              {/* בחירת קטגוריה ותת-קטגוריה - רק אם יש תוצאות */}
               {searchResults.length > 0 && (
-                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                  <label className="text-sm font-medium mb-2 block text-blue-900">
-                    <Tag className="w-4 h-4 inline ml-1" />
-                    בחר קטגוריה עבור העסקים שתייבא:
-                  </label>
-                  <Select
-                    value={selectedCategoryForImport}
-                    onValueChange={setSelectedCategoryForImport}
-                  >
-                    <SelectTrigger className="bg-white">
-                      <SelectValue placeholder="בחר קטגוריה..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {mainCategories.map((cat) => (
-                        <SelectItem key={cat.id} value={cat.id}>
-                          {cat.icon} {cat.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  {!selectedCategoryForImport && (
-                    <p className="text-xs text-blue-700 mt-1">
-                      ⚠️ חובה לבחור קטגוריה לפני הייבוא
-                    </p>
+                <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg space-y-3">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block text-blue-900">
+                      <Tag className="w-4 h-4 inline ml-1" />
+                      בחר קטגוריה עבור העסקים שתייבא:
+                    </label>
+                    <Select
+                      value={selectedCategoryForImport}
+                      onValueChange={(value) => {
+                        setSelectedCategoryForImport(value);
+                        setSelectedSubcategoryForImport(""); // איפוס תת-קטגוריה בשינוי קטגוריה
+                      }}
+                    >
+                      <SelectTrigger className="bg-white">
+                        <SelectValue placeholder="בחר קטגוריה..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {mainCategories.map((cat) => (
+                          <SelectItem key={cat.id} value={cat.id}>
+                            {cat.icon} {cat.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    {!selectedCategoryForImport && (
+                      <p className="text-xs text-blue-700 mt-1">
+                        ⚠️ חובה לבחור קטגוריה לפני הייבוא
+                      </p>
+                    )}
+                  </div>
+
+                  {subcategoriesForImport.length > 0 && selectedCategoryForImport && (
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-blue-900">
+                        תת-קטגוריה (אופציונלי):
+                      </label>
+                      <Select
+                        value={selectedSubcategoryForImport}
+                        onValueChange={setSelectedSubcategoryForImport}
+                      >
+                        <SelectTrigger className="bg-white">
+                          <SelectValue placeholder="בחר תת-קטגוריה (אופציונלי)..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value={null}>ללא תת-קטגוריה</SelectItem>
+                          {subcategoriesForImport.map((subcat) => (
+                            <SelectItem key={subcat.id} value={subcat.id}>
+                              {subcat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   )}
                 </div>
               )}
@@ -1261,6 +1302,7 @@ export default function AdminBusinessPages() {
                 setSelectedBusinesses([]);
                 setImportSuccess(null);
                 setSelectedCategoryForImport("");
+                setSelectedSubcategoryForImport("");
                 setSearchCity("");
                 setSearchTopic("");
                 setError("");
