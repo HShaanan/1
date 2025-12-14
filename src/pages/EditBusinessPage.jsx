@@ -53,6 +53,7 @@ export default function EditBusinessPage() {
   const [aiError, setAiError] = useState("");
   const [isGeneratorOpen, setIsGeneratorOpen] = useState(false);
   const [loadingGooglePhotos, setLoadingGooglePhotos] = useState(false);
+  const [fixingHours, setFixingHours] = useState(false);
 
   const [isLogoEditorOpen, setIsLogoEditorOpen] = useState(false);
   const [editingLogoUrl, setEditingLogoUrl] = useState(null);
@@ -591,6 +592,113 @@ ${jsonSchemaInstruction}
       setError('שגיאה בשאיבת תמונות: ' + (err.message || ''));
     } finally {
       setLoadingGooglePhotos(false);
+    }
+  };
+
+  const handleFixHours = () => {
+    if (!form.hours) {
+      setError("אין שעות פעילות לתיקון");
+      setTimeout(() => setError(""), 3000);
+      return;
+    }
+
+    setFixingHours(true);
+
+    try {
+      let parsedHours = form.hours;
+      
+      // If it's a string, try to parse and convert
+      if (typeof parsedHours === 'string') {
+        try {
+          parsedHours = JSON.parse(parsedHours);
+        } catch (e) {
+          // It's plain text format - convert it
+          const textHours = parsedHours;
+          const schedule = {};
+          
+          const dayMapping = {
+            'ראשון': 'sunday',
+            'שני': 'monday',
+            'שלישי': 'tuesday',
+            'רביעי': 'wednesday',
+            'חמישי': 'thursday',
+            'שישי': 'friday',
+            'שבת': 'saturday'
+          };
+          
+          const lines = textHours.split('\n');
+          lines.forEach(line => {
+            const match = line.match(/יום\s+(\S+):\s+(.+)/);
+            if (match) {
+              const hebrewDay = match[1];
+              const timeStr = match[2].trim();
+              const dayKey = dayMapping[hebrewDay];
+              
+              if (dayKey) {
+                if (timeStr === 'סגור') {
+                  schedule[dayKey] = { isOpen: false };
+                } else {
+                  const ranges = timeStr.split(',').map(r => r.trim());
+                  const timeRanges = ranges.map(range => {
+                    const times = range.split(/[–-]/).map(t => t.trim());
+                    if (times.length === 2) {
+                      return { open: times[0], close: times[1] };
+                    }
+                    return null;
+                  }).filter(Boolean);
+                  
+                  if (timeRanges.length > 0) {
+                    schedule[dayKey] = {
+                      isOpen: true,
+                      is24Hours: false,
+                      timeRanges
+                    };
+                  }
+                }
+              }
+            }
+          });
+          
+          parsedHours = { schedule };
+        }
+      }
+      
+      // Convert old format to new if needed
+      if (parsedHours) {
+        const schedule = parsedHours.schedule || parsedHours;
+        
+        if (schedule && Object.keys(schedule).length > 0) {
+          const firstKey = Object.keys(schedule)[0];
+          const firstDay = schedule[firstKey];
+          
+          if (firstDay && (firstDay.hasOwnProperty('open') || firstDay.hasOwnProperty('closed'))) {
+            const newSchedule = {};
+            Object.keys(schedule).forEach(day => {
+              const oldDay = schedule[day];
+              if (oldDay.closed) {
+                newSchedule[day] = { isOpen: false };
+              } else if (oldDay.open && oldDay.close) {
+                newSchedule[day] = {
+                  isOpen: true,
+                  is24Hours: false,
+                  timeRanges: [{ open: oldDay.open, close: oldDay.close }]
+                };
+              }
+            });
+            parsedHours = { schedule: newSchedule };
+          }
+        }
+      }
+      
+      setForm(prev => ({ ...prev, hours: parsedHours }));
+      setSuccessMessage("✅ שעות הפעילות תוקנו בהצלחה!");
+      setTimeout(() => setSuccessMessage(""), 3000);
+      
+    } catch (err) {
+      setError("שגיאה בתיקון שעות: " + err.message);
+      setTimeout(() => setError(""), 5000);
+    } finally {
+      setFixingHours(false);
     }
   };
 
@@ -1306,10 +1414,31 @@ ${jsonSchemaInstruction}
             {form.hours && (
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Clock className="w-5 h-5" />
-                    שעות פעילות
-                  </CardTitle>
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="flex items-center gap-2">
+                      <Clock className="w-5 h-5" />
+                      שעות פעילות
+                    </CardTitle>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={handleFixHours}
+                      disabled={fixingHours}
+                      className="gap-2 hover:bg-blue-50 hover:text-blue-700"
+                    >
+                      {fixingHours ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin" />
+                          מתקן...
+                        </>
+                      ) : (
+                        <>
+                          <Wand2 className="w-4 h-4" />
+                          תקן שעות
+                        </>
+                      )}
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent>
                   <BusinessHoursComponent
