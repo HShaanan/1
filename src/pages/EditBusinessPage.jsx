@@ -332,7 +332,12 @@ ${jsonSchemaInstruction}
         }
         return null;
       };
-      const toArray = (val) => Array.isArray(val) ? val : (typeof val === "string" && val.trim() ? [val.trim()] : []);
+      const toArray = (val) => {
+        if (!val) return [];
+        if (Array.isArray(val)) return val;
+        if (typeof val === "string" && val.trim()) return [val.trim()];
+        return [];
+      };
 
       let assistantMsg = null;
       const start = Date.now();
@@ -359,7 +364,7 @@ ${jsonSchemaInstruction}
       const improvedDesc = typeof improved.improved_description === "string" ? improved.improved_description.trim() : "";
       const improvedBtn = typeof improved.whatsapp_button_text === "string" ? improved.whatsapp_button_text.trim() : "";
       const improvedMsg = typeof improved.whatsapp_message === "string" ? improved.whatsapp_message.trim() : "";
-      const suggestedTags = toArray(improved.tags_suggestions).filter(Boolean);
+      const suggestedTags = toArray(improved?.tags_suggestions || []);
 
       const updated = { ...form };
       if (improvedTitle) {
@@ -374,9 +379,10 @@ ${jsonSchemaInstruction}
       if (improvedMsg) {
         updated.whatsapp_message = improvedMsg.slice(0, 140);
       }
-      if (suggestedTags.length > 0) {
+      if (Array.isArray(suggestedTags) && suggestedTags.length > 0) {
         const currentTags = Array.isArray(updated.special_fields?.tags) ? updated.special_fields.tags : [];
-        const merged = Array.from(new Set([...(Array.isArray(currentTags) ? currentTags : []), ...suggestedTags]));
+        const safeSuggestedTags = Array.isArray(suggestedTags) ? suggestedTags : [];
+        const merged = Array.from(new Set([...currentTags, ...safeSuggestedTags]));
         updated.special_fields = { ...(updated.special_fields || {}), tags: merged };
       }
 
