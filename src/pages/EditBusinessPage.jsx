@@ -1,14 +1,19 @@
-
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
+import { User } from "@/entities/User";
+import { BusinessPage } from "@/entities/BusinessPage";
+import { Category } from "@/entities/Category";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
-import { Save, AlertTriangle, Loader2, MapPin, Tag, Clock, X, Wand2, Shield,
-  Upload, Plus, ImageIcon, Sparkles, Download, Palette, Trash2, Check, ChevronLeft,
+import {
+  ArrowLeft, Save, AlertTriangle, Loader2,
+  Phone, Globe, MapPin, Tag, Clock, X, Wand2, Shield,
+  Upload, Plus, ImageIcon, Sparkles, Download, Palette, Trash2, ChevronDown, Check, ChevronLeft,
   Search, // Added Search icon
   Star,   // Added Star icon
 } from "lucide-react";
@@ -24,8 +29,13 @@ import InlineImageEditor from "@/components/images/InlineImageEditor";
 import ImageGeneratorModal from "@/components/ImageGeneratorModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import ColorPicker from "@/components/theme/ColorPicker";
-
-
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 
 export default function EditBusinessPage() {
@@ -260,7 +270,7 @@ export default function EditBusinessPage() {
     // Changed from businessPage?.category_id to form.category_id to reflect unsaved changes
     const categoryName = categories.find(c => c.id === form.category_id)?.name || "";
     // Using the first selected subcategory for AI improvement context
-    const subcategoryName = form.subcategory_ids.length > 0
+    const subcategoryName = (Array.isArray(form.subcategory_ids) && form.subcategory_ids.length > 0)
       ? categories.find(c => c.id === form.subcategory_ids[0])?.name || ""
       : "";
 
