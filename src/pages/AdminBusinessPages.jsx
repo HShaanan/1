@@ -1,6 +1,7 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { BusinessPage } from "@/entities/BusinessPage";
+import { Category } from "@/entities/Category";
+import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -16,7 +17,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import {
-  FileText, Search, X, Edit, Eye, AlertTriangle, Check, Ban, Clock, Star, ChevronDown, ChevronUp, Loader2, Snowflake, Play, MapPin, Download, Tag
+  FileText, Search, X, Edit, Eye, AlertTriangle, Check, Ban, Clock, Users,
+  Mail, Phone, Star, ChevronDown, ChevronUp, Loader2, Snowflake, Play, MapPin, Download, Tag, Trash2, CheckSquare, Square
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import {
@@ -72,6 +74,8 @@ export default function AdminBusinessPages() {
   const [selectedCategoryForImport, setSelectedCategoryForImport] = useState("");
   const [successMessage, setSuccessMessage] = useState(""); // Added for success messages in import dialog
 
+  // Multi-select state
+  const [selectedPageIds, setSelectedPageIds] = useState([]);
 
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
@@ -550,6 +554,101 @@ export default function AdminBusinessPages() {
     }
   };
 
+  const togglePageSelection = (pageId) => {
+    setSelectedPageIds(prev => 
+      prev.includes(pageId) 
+        ? prev.filter(id => id !== pageId)
+        : [...prev, pageId]
+    );
+  };
+
+  const toggleSelectAllPages = () => {
+    if (selectedPageIds.length === filteredAndSortedPages.length && filteredAndSortedPages.length > 0) {
+      setSelectedPageIds([]);
+    } else {
+      setSelectedPageIds(filteredAndSortedPages.map(p => p.id));
+    }
+  };
+
+  const handleBulkApprove = async () => {
+    if (selectedPageIds.length === 0) return;
+    
+    const confirmed = confirm(`לאשר ${selectedPageIds.length} עמודים?`);
+    if (!confirmed) return;
+
+    setIsLoading(true);
+    try {
+      for (const pageId of selectedPageIds) {
+        await BusinessPage.update(pageId, {
+          approval_status: 'approved',
+          is_active: true,
+          rejection_reason: null
+        });
+      }
+      
+      await loadAllData();
+      setSelectedPageIds([]);
+      alert(`✅ ${selectedPageIds.length} עמודים אושרו בהצלחה!`);
+    } catch (err) {
+      setError("שגיאה באישור קבוצתי: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBulkReject = async () => {
+    if (selectedPageIds.length === 0) return;
+    
+    const reason = prompt(`הזן סיבת דחייה עבור ${selectedPageIds.length} עמודים:`);
+    if (!reason) return;
+
+    setIsLoading(true);
+    try {
+      for (const pageId of selectedPageIds) {
+        await BusinessPage.update(pageId, {
+          approval_status: 'rejected',
+          is_active: false,
+          rejection_reason: reason
+        });
+      }
+      
+      await loadAllData();
+      setSelectedPageIds([]);
+      alert(`✅ ${selectedPageIds.length} עמודים נדחו`);
+    } catch (err) {
+      setError("שגיאה בדחייה קבוצתית: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBulkDelete = async () => {
+    if (selectedPageIds.length === 0) return;
+    
+    const confirmed = confirm(
+      `⚠️ האם למחוק ${selectedPageIds.length} עמודים?\n\nפעולה זו אינה הפיכה!`
+    );
+    if (!confirmed) return;
+
+    const doubleConfirm = confirm(`האם אתה בטוח לגמרי? זה ימחק ${selectedPageIds.length} עמודים לצמיתות!`);
+    if (!doubleConfirm) return;
+
+    setIsLoading(true);
+    try {
+      for (const pageId of selectedPageIds) {
+        await base44.entities.BusinessPage.delete(pageId);
+      }
+      
+      await loadAllData();
+      setSelectedPageIds([]);
+      alert(`✅ ${selectedPageIds.length} עמודים נמחקו`);
+    } catch (err) {
+      setError("שגיאה במחיקה קבוצתית: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) {
     return <div className="p-8">טוען נתונים...</div>;
   }
@@ -598,6 +697,51 @@ export default function AdminBusinessPages() {
             <AlertTriangle className="h-4 w-4" />
             <AlertDescription>{error}</AlertDescription>
           </Alert>
+        )}
+
+        {/* Bulk Actions Bar */}
+        {selectedPageIds.length > 0 && (
+          <div className="mb-4 p-4 bg-blue-50 border-2 border-blue-200 rounded-lg flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <CheckSquare className="w-5 h-5 text-blue-600" />
+              <span className="font-semibold text-blue-900">
+                נבחרו {selectedPageIds.length} עמודים
+              </span>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleBulkApprove}
+                size="sm"
+                className="bg-green-600 hover:bg-green-700"
+              >
+                <Check className="w-4 h-4 ml-1" />
+                אשר הכל
+              </Button>
+              <Button
+                onClick={handleBulkReject}
+                size="sm"
+                className="bg-orange-600 hover:bg-orange-700"
+              >
+                <Ban className="w-4 h-4 ml-1" />
+                דחה הכל
+              </Button>
+              <Button
+                onClick={handleBulkDelete}
+                size="sm"
+                variant="destructive"
+              >
+                <Trash2 className="w-4 h-4 ml-1" />
+                מחק הכל
+              </Button>
+              <Button
+                onClick={() => setSelectedPageIds([])}
+                size="sm"
+                variant="outline"
+              >
+                בטל בחירה
+              </Button>
+            </div>
+          </div>
         )}
 
         {/* Filters */}
@@ -651,6 +795,15 @@ export default function AdminBusinessPages() {
           <table className="w-full text-sm text-right">
             <thead className="bg-gray-100 text-gray-600">
               <tr>
+                <th className="p-3 text-center w-12">
+                  <input
+                    type="checkbox"
+                    checked={selectedPageIds.length === filteredAndSortedPages.length && filteredAndSortedPages.length > 0}
+                    onChange={toggleSelectAllPages}
+                    className="w-4 h-4 cursor-pointer"
+                    aria-label="בחר הכל"
+                  />
+                </th>
                 <th className="p-3" onClick={() => requestSort('business_name')}>
                   <div className="flex items-center gap-1 cursor-pointer">שם העסק {getSortIcon('business_name')}</div>
                 </th>
@@ -668,7 +821,16 @@ export default function AdminBusinessPages() {
             <tbody>
               {filteredAndSortedPages.map(page => (
                 <React.Fragment key={page.id}>
-                  <tr className="border-b hover:bg-gray-50">
+                  <tr className={`border-b hover:bg-gray-50 ${selectedPageIds.includes(page.id) ? 'bg-blue-50' : ''}`}>
+                    <td className="p-3 text-center">
+                      <input
+                        type="checkbox"
+                        checked={selectedPageIds.includes(page.id)}
+                        onChange={() => togglePageSelection(page.id)}
+                        className="w-4 h-4 cursor-pointer"
+                        aria-label={`בחר ${page.business_name}`}
+                      />
+                    </td>
                     <td className="p-3 font-medium">
                       <div className="flex items-center gap-2">
                         {page.business_name}
@@ -726,7 +888,7 @@ export default function AdminBusinessPages() {
                   </tr>
                   {expandedPageId === page.id && (
                     <tr className="bg-red-50">
-                      <td colSpan="6" className="p-4">
+                      <td colSpan="7" className="p-4">
                         <h4 className="font-semibold mb-2">סיבת דחייה:</h4>
                         <Input
                           placeholder="לדוגמה: תיאור העסק חסר, תמונות לא רלוונטיות וכו'."
