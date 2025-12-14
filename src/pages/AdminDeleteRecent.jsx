@@ -35,6 +35,14 @@ export default function AdminDeleteRecentPage() {
 
       if (data?.success) {
         setResults(data.results);
+        
+        // ניקוי cache של Browse
+        localStorage.removeItem('meshlanoo_browse_location');
+        
+        // רענון הדף אחרי 2 שניות
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
       } else {
         setError(data?.error || "שגיאה לא ידועה");
       }

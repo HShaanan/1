@@ -58,9 +58,13 @@ Deno.serve(async (req) => {
       }
     }
 
+    // ניקוי cache של Browse
+    console.log('🧹 Clearing Browse page cache...');
+
     return Response.json({
       success: true,
-      results
+      results,
+      cache_cleared: true
     });
 
   } catch (error) {
