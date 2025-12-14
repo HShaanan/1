@@ -81,10 +81,11 @@ Deno.serve(async (req) => {
         };
 
         console.log('📝 Creating:', businessPageData.business_name);
+        console.log('📋 Data:', JSON.stringify(businessPageData, null, 2));
 
         const newPage = await base44.asServiceRole.entities.BusinessPage.create(businessPageData);
 
-        console.log(`✅ Created: ${newPage.id}`);
+        console.log(`✅ Created successfully: ${newPage.id}`);
 
         imported.push({
           name: business.name,

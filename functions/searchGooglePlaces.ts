@@ -62,13 +62,33 @@ Deno.serve(async (req) => {
       }, { status: 500 });
     }
 
-    const businesses = searchData.results || [];
-    console.log(`✅ Found ${businesses.length} businesses`);
+    let businesses = searchData.results || [];
+    let allBusinesses = [...businesses];
+    let nextPageToken = searchData.next_page_token;
 
-    // שלב 3: עיבוד התוצאות
+    // שלב 3: איסוף כל העמודים (עד 200 תוצאות)
+    while (nextPageToken && allBusinesses.length < 200) {
+      console.log(`📄 Fetching next page... (current: ${allBusinesses.length})`);
+      await new Promise(resolve => setTimeout(resolve, 2000)); // Google דורש המתנה
+
+      const nextUrl = `https://maps.googleapis.com/maps/api/place/textsearch/json?pagetoken=${nextPageToken}&key=${API_KEY}`;
+      const nextResponse = await fetch(nextUrl);
+      const nextData = await nextResponse.json();
+
+      if (nextData.status === 'OK') {
+        allBusinesses = [...allBusinesses, ...(nextData.results || [])];
+        nextPageToken = nextData.next_page_token;
+      } else {
+        break;
+      }
+    }
+
+    console.log(`✅ Total found: ${allBusinesses.length} businesses`);
+
+    // שלב 4: עיבוד התוצאות
     const results = [];
 
-    for (const business of businesses) {
+    for (const business of allBusinesses.slice(0, 200)) {
       try {
         // קבלת פרטים מלאים - רק השדות הנדרשים ללא תמונות
         const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${business.place_id}&fields=name,formatted_address,international_phone_number,website,types,geometry&key=${API_KEY}&language=he`;
