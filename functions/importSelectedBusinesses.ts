@@ -62,24 +62,22 @@ Deno.serve(async (req) => {
           display_title: business.name,
           description: business.address || `${business.name}`,
           url_slug: business.url_slug,
-          category_id: category_id, // ✅ הוספת הקטגוריה
+          category_id: category_id,
           business_owner_email: user.email,
           contact_phone: business.phone || '',
           website_url: business.website || '',
           address: business.address || '',
           lat: business.lat || null,
           lng: business.lng || null,
-          images: business.images || [],
-          hours: Array.isArray(business.opening_hours) ? business.opening_hours.join('\n') : '',
+          images: [],
           is_active: false,
           approval_status: 'pending',
           metadata: {
             google_place_id: business.place_id,
+            google_types: business.types || [],
             imported_from: 'google_places',
             imported_at: new Date().toISOString()
-          },
-          smart_rating: business.rating || 0,
-          reviews_count: business.reviews_count || 0
+          }
         };
 
         console.log('📝 Creating:', businessPageData.business_name);

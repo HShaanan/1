@@ -61,10 +61,10 @@ Deno.serve(async (req) => {
     const imported = [];
     const errors = [];
 
-    for (const business of businesses.slice(0, 50)) { // הגבלה ל-50 עסקים ראשונים
+    for (const business of businesses.slice(0, 200)) { // הגדלה ל-200 עסקים (ללא תמונות = יותר מקום)
       try {
-        // קבלת פרטים מלאים
-        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${business.place_id}&fields=name,formatted_address,formatted_phone_number,website,opening_hours,photos,types,rating,user_ratings_total&key=${API_KEY}&language=he`;
+        // קבלת פרטים מלאים - רק השדות הנדרשים ללא תמונות
+        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${business.place_id}&fields=name,formatted_address,international_phone_number,website,types,geometry&key=${API_KEY}&language=he`;
         
         const detailsResponse = await fetch(detailsUrl);
         const detailsData = await detailsResponse.json();
@@ -76,15 +76,7 @@ Deno.serve(async (req) => {
 
         const details = detailsData.result;
 
-        // המרת תמונות
-        const images = (details.photos || []).slice(0, 5).map(photo => 
-          `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&photoreference=${photo.photo_reference}&key=${API_KEY}`
-        );
-
-        // המרת שעות פעילות
-        const openingHours = details.opening_hours?.weekday_text?.join('\n') || '';
-
-        // קביעת קטגוריה (ניתן לשפר לאחר מכן)
+        // קביעת קטגוריה לפי types
         const categoryName = mapGoogleTypeToCategory(details.types);
 
         // יצירת URL slug
@@ -94,12 +86,11 @@ Deno.serve(async (req) => {
           .replace(/^-+|-+$/g, '')
           .substring(0, 50);
 
-        // בדיקה אם העסק כבר קיים
-        const existing = await base44.asServiceRole.entities.BusinessPage.filter({ 
-          url_slug: urlSlug 
-        });
+        // בדיקה אם העסק כבר קיים לפי place_id
+        const allPages = await base44.asServiceRole.entities.BusinessPage.list();
+        const existing = allPages.find(p => p.metadata?.google_place_id === business.place_id);
 
-        if (existing && existing.length > 0) {
+        if (existing) {
           console.log(`⏭️ Skipping existing: ${details.name}`);
           continue;
         }
@@ -110,23 +101,21 @@ Deno.serve(async (req) => {
           display_title: details.name,
           description: `${details.name} - ${details.formatted_address}`,
           url_slug: urlSlug,
-          business_owner_email: user.email, // האדמין שמייבא
-          contact_phone: details.formatted_phone_number || '',
+          business_owner_email: user.email,
+          contact_phone: details.international_phone_number || '',
           website_url: details.website || '',
           address: details.formatted_address,
-          lat: business.geometry?.location?.lat,
-          lng: business.geometry?.location?.lng,
-          images: images,
-          hours: openingHours,
-          is_active: false, // יחכה לאישור
+          lat: details.geometry?.location?.lat || business.geometry?.location?.lat,
+          lng: details.geometry?.location?.lng || business.geometry?.location?.lng,
+          images: [],
+          is_active: false,
           approval_status: 'pending',
           metadata: {
             google_place_id: business.place_id,
+            google_types: details.types,
             imported_from: 'google_places',
             imported_at: new Date().toISOString()
-          },
-          smart_rating: details.rating || 0,
-          reviews_count: details.user_ratings_total || 0
+          }
         });
 
         imported.push({
@@ -136,8 +125,8 @@ Deno.serve(async (req) => {
 
         console.log(`✅ Imported: ${details.name}`);
 
-        // המתנה קצרה כדי לא לעבור על Rate Limit
-        await new Promise(resolve => setTimeout(resolve, 200));
+        // המתנה מינימלית
+        await new Promise(resolve => setTimeout(resolve, 100));
 
       } catch (error) {
         console.error(`❌ Error importing ${business.name}:`, error);

@@ -70,8 +70,8 @@ Deno.serve(async (req) => {
 
     for (const business of businesses) {
       try {
-        // קבלת פרטים מלאים
-        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${business.place_id}&fields=name,formatted_address,formatted_phone_number,website,opening_hours,photos,types,rating,user_ratings_total&key=${API_KEY}&language=he`;
+        // קבלת פרטים מלאים - רק השדות הנדרשים ללא תמונות
+        const detailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${business.place_id}&fields=name,formatted_address,international_phone_number,website,types,geometry&key=${API_KEY}&language=he`;
         
         const detailsResponse = await fetch(detailsUrl);
         const detailsData = await detailsResponse.json();
@@ -82,11 +82,6 @@ Deno.serve(async (req) => {
         }
 
         const details = detailsData.result;
-
-        // המרת תמונות
-        const images = (details.photos || []).slice(0, 5).map(photo => 
-          `https://maps.googleapis.com/maps/api/place/photo?maxwidth=1024&photoreference=${photo.photo_reference}&key=${API_KEY}`
-        );
 
         // יצירת URL slug
         const urlSlug = details.name
@@ -99,20 +94,16 @@ Deno.serve(async (req) => {
           place_id: business.place_id,
           name: details.name,
           address: details.formatted_address,
-          phone: details.formatted_phone_number || '',
+          phone: details.international_phone_number || '',
           website: details.website || '',
-          rating: details.rating || 0,
-          reviews_count: details.user_ratings_total || 0,
-          images: images,
-          opening_hours: details.opening_hours?.weekday_text || [],
           types: details.types || [],
-          lat: business.geometry?.location?.lat,
-          lng: business.geometry?.location?.lng,
+          lat: details.geometry?.location?.lat || business.geometry?.location?.lat,
+          lng: details.geometry?.location?.lng || business.geometry?.location?.lng,
           url_slug: urlSlug
         });
 
-        // המתנה קצרה כדי לא לעבור על Rate Limit
-        await new Promise(resolve => setTimeout(resolve, 200));
+        // המתנה מינימלית
+        await new Promise(resolve => setTimeout(resolve, 100));
 
       } catch (error) {
         console.error(`❌ Error processing ${business.name}:`, error);
