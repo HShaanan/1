@@ -556,6 +556,13 @@ export default function Layout({ children, currentPageName }) {
                         </Link>
                       </DropdownMenuItem>
 
+                      <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminBulkImprove')} className="flex items-center gap-2 cursor-pointer">
+                          <Wand2 className="w-4 h-4 text-purple-600" aria-hidden="true" />
+                          <span>שיפור אוטומטי</span>
+                        </Link>
+                      </DropdownMenuItem>
+
                       <div className="border-t border-gray-100 my-1"></div>
 
                       <DropdownMenuItem asChild role="menuitem">
