@@ -54,6 +54,43 @@ Deno.serve(async (req) => {
           continue;
         }
 
+        // הכנת שעות פעילות אם יש
+        let hoursData = null;
+        if (business.opening_hours) {
+          const daysMap = {
+            'Sunday': 'sunday',
+            'Monday': 'monday',
+            'Tuesday': 'tuesday',
+            'Wednesday': 'wednesday',
+            'Thursday': 'thursday',
+            'Friday': 'friday',
+            'Saturday': 'saturday'
+          };
+          
+          const schedule = {};
+          Object.keys(daysMap).forEach(day => {
+            schedule[daysMap[day]] = { isOpen: false };
+          });
+          
+          if (business.opening_hours.periods) {
+            business.opening_hours.periods.forEach(period => {
+              const day = Object.keys(daysMap).find(d => d.startsWith(period.open?.day || ''));
+              if (day && period.open && period.close) {
+                schedule[daysMap[day]] = {
+                  isOpen: true,
+                  is24Hours: false,
+                  timeRanges: [{
+                    open: period.open.time,
+                    close: period.close.time
+                  }]
+                };
+              }
+            });
+          }
+          
+          hoursData = JSON.stringify({ schedule });
+        }
+
         const businessPageData = {
           business_name: business.name,
           display_title: business.name,
@@ -66,6 +103,7 @@ Deno.serve(async (req) => {
           address: business.address || '',
           lat: business.lat || null,
           lng: business.lng || null,
+          hours: hoursData,
           images: [],
           is_active: false,
           approval_status: 'pending',

@@ -50,8 +50,10 @@ const hexToRgba = (hex, alpha) => {
 
 const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onShare, onEditClick, onManageClick, onLogoClick, onKashrutLogoClick, theme, onOrdersManageClick }) => {
   const defaultHeroImage = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/e8b173c76_image2.jpg";
+  const defaultLogo = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/3f9cfac9b_Gemini_Generated_Image_xr0kiexr0kiexr0k.png";
+  
   const mainImage = businessPage.images?.[0] || defaultHeroImage; // This is the main hero image with fallback
-  const croppedLogo = Array.isArray(businessPage?.images) ? businessPage.images[1] : null; // This is the explicitly cropped logo image (images[1])
+  const croppedLogo = businessPage.images?.[1] || defaultLogo; // This is the explicitly cropped logo image (images[1]) with fallback
   const kashrutLogo = businessPage.kashrut_logo_url || null;
 
   // קריאת הגדרות מיקום לוגו מה-metadata
@@ -152,39 +154,14 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
             <button
               type="button"
               onClick={onLogoClick}
-              className="h-24 w-24 sm:h-32 sm:w-32 rounded-2xl overflow-hidden flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="h-24 w-24 sm:h-32 sm:w-32 rounded-2xl overflow-hidden flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-lg"
               aria-label={`הגדלת לוגו ${title}`}>
-
-              {croppedLogo ?
-                // אם יש לוגו חתוך – מציגים ישירות; זהה לעורך
-                <img
-                  src={croppedLogo}
-                  alt={`לוגו ${title}`}
-                  className="w-full h-full object-cover select-none"
-                  draggable={false} /> :
-
-                mainImage ?
-                  // אין לוגo חתוך – משתמשים במיצוב שנשמר על תמונת המקור
-                  <div className="w-full h-full relative overflow-hidden">
-                    <img
-                      src={mainImage}
-                      alt={`לוגו ${title}`}
-                      className="absolute select-none"
-                      style={{
-                        left: `${logoPosition.x}%`,
-                        top: `${logoPosition.y}%`,
-                        transform: `translate(-50%, -50%) scale(${logoPosition.zoom || 1}) rotate(${logoPosition.rotation || 0}deg)`,
-                        transformOrigin: 'center center',
-                        maxWidth: 'none',
-                        maxHeight: 'none',
-                        willChange: 'transform'
-                      }}
-                      draggable={false} />
-
-                  </div> :
-
-                  <Building className="w-16 h-16 text-gray-300" aria-hidden="true" />
-              }
+              <img
+                src={croppedLogo}
+                alt={`לוגו ${title}`}
+                className="w-full h-full object-cover select-none"
+                draggable={false}
+              />
             </button>
           </div>
 
