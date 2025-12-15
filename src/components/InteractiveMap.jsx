@@ -6,7 +6,7 @@ import { MapPin, Loader2, AlertTriangle, Navigation } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { getGoogleMapsKey } from "@/functions/getGoogleMapsKey";
 
-const libraries = ["marker", "geometry", "places"];
+const libraries = ["geometry", "places"];
 
 const mapContainerStyle = {
   width: '100%',
@@ -28,13 +28,13 @@ const mapOptions = {
   zoomControl: true,
   clickableIcons: false,
   mapTypeControlOptions: {
-    position: 3, // TOP_CENTER
+    position: 3,
   },
   zoomControlOptions: {
-    position: 6 // RIGHT_CENTER
+    position: 6
   },
   streetViewControlOptions: {
-    position: 8 // RIGHT_BOTTOM
+    position: 8
   },
   styles: [
     { featureType: "poi.business", stylers: [{ visibility: "off" }] },
@@ -45,37 +45,13 @@ const mapOptions = {
   ]
 };
 
-export default function InteractiveMap({ 
-  listings = [], 
-  userLocation,
-  onMarkerClick,
-  className = "" 
-}) {
-  const [apiKey, setApiKey] = useState(null);
-  const [keyError, setKeyError] = useState(null);
+// Inner component that uses the API key
+function MapContent({ apiKey, listings, userLocation, onMarkerClick, className }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [map, setMap] = useState(null);
 
-  // Fetch API key
-  useEffect(() => {
-    const fetchKey = async () => {
-      try {
-        const response = await getGoogleMapsKey({});
-        const data = response?.data || {};
-        if (data.apiKey) {
-          setApiKey(data.apiKey);
-        } else {
-          setKeyError("לא ניתן לטעון מפתח Google Maps");
-        }
-      } catch (err) {
-        setKeyError("שגיאה בטעינת מפתח API");
-      }
-    };
-    fetchKey();
-  }, []);
-
   const { isLoaded, loadError } = useJsApiLoader({
-    googleMapsApiKey: apiKey || "",
+    googleMapsApiKey: apiKey,
     libraries: libraries,
     language: 'he',
     region: 'IL'
@@ -111,7 +87,6 @@ export default function InteractiveMap({
     if (hasPoints) {
       map.fitBounds(bounds);
       
-      // Prevent over-zooming
       const listener = window.google.maps.event.addListener(map, "idle", () => {
         if (map.getZoom() > 16) map.setZoom(16);
         window.google.maps.event.removeListener(listener);
@@ -126,63 +101,40 @@ export default function InteractiveMap({
     }
   }, [onMarkerClick]);
 
-  // Memoize valid listings with coordinates
   const validListings = useMemo(() => 
     listings.filter(l => l.lat != null && l.lng != null && !isNaN(l.lat) && !isNaN(l.lng)),
     [listings]
   );
 
-  if (keyError) {
-    return (
-      <Card className={`flex items-center justify-center ${className}`} style={{ minHeight: '400px' }}>
-        <div className="text-center p-6">
-          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-3" />
-          <p className="text-red-700 font-medium">{keyError}</p>
-        </div>
-      </Card>
-    );
-  }
-
-  if (!apiKey) {
-    return (
-      <Card className={`flex items-center justify-center ${className}`} style={{ minHeight: '400px' }}>
-        <div className="text-center">
-          <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
-          <p className="text-slate-600 text-sm">טוען מפתח API...</p>
-        </div>
-      </Card>
-    );
-  }
-
   if (loadError) {
     return (
-      <Card className={`flex items-center justify-center ${className}`} style={{ minHeight: '400px' }}>
-        <div className="text-center p-6">
+      <div className="flex items-center justify-center h-full p-6 bg-red-50">
+        <div className="text-center">
           <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-3" />
           <p className="text-red-700 font-medium">שגיאה בטעינת Google Maps</p>
           <Button variant="outline" onClick={() => window.location.reload()} className="mt-4">
             נסה שוב
           </Button>
         </div>
-      </Card>
+      </div>
     );
   }
 
   if (!isLoaded) {
     return (
-      <Card className={`flex items-center justify-center ${className}`} style={{ minHeight: '400px' }}>
+      <div className="flex items-center justify-center h-full">
         <div className="text-center">
           <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
           <p className="text-slate-600 text-sm">טוען מפה...</p>
         </div>
-      </Card>
+      </div>
     );
   }
 
   const center = userLocation || defaultCenter;
 
   return (
-    <Card className={`overflow-hidden relative ${className}`} style={{ minHeight: '400px' }}>
+    <>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={center}
@@ -294,14 +246,77 @@ export default function InteractiveMap({
       </GoogleMap>
 
       {/* Results Counter */}
-      {!keyError && !loadError && (
-        <div className="absolute top-4 right-4 bg-white px-3 py-2 rounded-lg shadow-lg z-10">
-          <div className="flex items-center gap-2 text-sm text-gray-700">
-            <MapPin className="w-4 h-4 text-blue-600" />
-            <span className="font-medium">{validListings.length} עסקים</span>
-          </div>
+      <div className="absolute top-4 right-4 bg-white px-3 py-2 rounded-lg shadow-lg z-10">
+        <div className="flex items-center gap-2 text-sm text-gray-700">
+          <MapPin className="w-4 h-4 text-blue-600" />
+          <span className="font-medium">{validListings.length} עסקים</span>
         </div>
-      )}
+      </div>
+    </>
+  );
+}
+
+// Main component - fetches API key first
+export default function InteractiveMap({ 
+  listings = [], 
+  userLocation,
+  onMarkerClick,
+  className = "" 
+}) {
+  const [apiKey, setApiKey] = useState(null);
+  const [keyError, setKeyError] = useState(null);
+  const [isLoadingKey, setIsLoadingKey] = useState(true);
+
+  useEffect(() => {
+    const fetchKey = async () => {
+      try {
+        const response = await getGoogleMapsKey({});
+        const data = response?.data || {};
+        if (data.apiKey) {
+          setApiKey(data.apiKey);
+        } else {
+          setKeyError("לא ניתן לטעון מפתח Google Maps");
+        }
+      } catch (err) {
+        setKeyError("שגיאה בטעינת מפתח API");
+      } finally {
+        setIsLoadingKey(false);
+      }
+    };
+    fetchKey();
+  }, []);
+
+  if (keyError) {
+    return (
+      <Card className={`flex items-center justify-center ${className}`} style={{ minHeight: '400px' }}>
+        <div className="text-center p-6">
+          <AlertTriangle className="w-12 h-12 text-red-500 mx-auto mb-3" />
+          <p className="text-red-700 font-medium">{keyError}</p>
+        </div>
+      </Card>
+    );
+  }
+
+  if (isLoadingKey || !apiKey) {
+    return (
+      <Card className={`flex items-center justify-center ${className}`} style={{ minHeight: '400px' }}>
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 text-blue-600 animate-spin mx-auto mb-2" />
+          <p className="text-slate-600 text-sm">מכין מפה...</p>
+        </div>
+      </Card>
+    );
+  }
+
+  return (
+    <Card className={`overflow-hidden relative ${className}`} style={{ minHeight: '400px' }}>
+      <MapContent 
+        apiKey={apiKey}
+        listings={listings}
+        userLocation={userLocation}
+        onMarkerClick={onMarkerClick}
+        className={className}
+      />
     </Card>
   );
 }
