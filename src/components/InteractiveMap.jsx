@@ -46,7 +46,7 @@ const mapOptions = {
 };
 
 // Inner component that uses the API key
-function MapContent({ apiKey, listings, userLocation, onMarkerClick, className }) {
+function MapContent({ apiKey, listings, userLocation, onMarkerClick, className, mapRef }) {
   const [selectedMarker, setSelectedMarker] = useState(null);
   const [map, setMap] = useState(null);
 
@@ -59,7 +59,10 @@ function MapContent({ apiKey, listings, userLocation, onMarkerClick, className }
 
   const onLoad = useCallback((mapInstance) => {
     setMap(mapInstance);
-  }, []);
+    if (mapRef) {
+      mapRef.current = mapInstance;
+    }
+  }, [mapRef]);
 
   const onUnmount = useCallback(() => {
     setMap(null);
@@ -100,6 +103,10 @@ function MapContent({ apiKey, listings, userLocation, onMarkerClick, className }
       onMarkerClick(listing);
     }
   }, [onMarkerClick]);
+
+  const handleMarkerDoubleClick = useCallback((listing) => {
+    window.location.href = createPageUrl(`BusinessPage?slug=${listing.url_slug || listing.id}`);
+  }, []);
 
   const validListings = useMemo(() => 
     listings.filter(l => l.lat != null && l.lng != null && !isNaN(l.lat) && !isNaN(l.lng)),
@@ -179,6 +186,7 @@ function MapContent({ apiKey, listings, userLocation, onMarkerClick, className }
             key={listing.id}
             position={{ lat: listing.lat, lng: listing.lng }}
             onClick={() => handleMarkerClick(listing)}
+            onDblClick={() => handleMarkerDoubleClick(listing)}
             icon={{
               path: window.google.maps.SymbolPath.CIRCLE,
               scale: listing.is_promoted ? 12 : 8,
@@ -261,7 +269,8 @@ export default function InteractiveMap({
   listings = [], 
   userLocation,
   onMarkerClick,
-  className = "" 
+  className = "",
+  mapRef
 }) {
   const [apiKey, setApiKey] = useState(null);
   const [keyError, setKeyError] = useState(null);
@@ -316,6 +325,7 @@ export default function InteractiveMap({
         userLocation={userLocation}
         onMarkerClick={onMarkerClick}
         className={className}
+        mapRef={mapRef}
       />
     </Card>
   );
