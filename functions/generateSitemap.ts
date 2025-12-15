@@ -5,7 +5,7 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     
     // Base URL of the site
-    const baseUrl = 'https://meshlanoo.base44.app';
+    const baseUrl = 'https://meshelanu.co.il';
     
     // Get all active and approved business pages
     const businessPages = await base44.asServiceRole.entities.BusinessPage.filter({
@@ -41,7 +41,7 @@ Deno.serve(async (req) => {
     
     staticPages.forEach(page => {
       sitemap += `  <url>
-    <loc>${baseUrl}/${page.path}</loc>
+    <loc>${baseUrl}/page/${page.path}</loc>
     <changefreq>${page.changefreq}</changefreq>
     <priority>${page.priority}</priority>
   </url>\n`;
@@ -54,7 +54,7 @@ Deno.serve(async (req) => {
       const date = new Date(lastmod).toISOString().split('T')[0];
       
       sitemap += `  <url>
-    <loc>${baseUrl}/BusinessPage?slug=${encodeURIComponent(slug)}</loc>
+    <loc>${baseUrl}/page/BusinessPage?slug=${encodeURIComponent(slug)}</loc>
     <lastmod>${date}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
       if (category.parent_id) return; // Skip subcategories for now
       
       sitemap += `  <url>
-    <loc>${baseUrl}/Browse?category=${encodeURIComponent(category.id)}</loc>
+    <loc>${baseUrl}/page/Browse?category=${encodeURIComponent(category.id)}</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>\n`;
