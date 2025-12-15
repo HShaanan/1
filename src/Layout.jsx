@@ -338,7 +338,7 @@ export default function Layout({ children, currentPageName }) {
                         <button
                           className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
                           onClick={() => {
-                            alert('איזור אישי יהיה זמין בקרוב');
+                            window.location.href = createPageUrl('UserProfile');
                             handleDropdownClose();
                           }}
                           role="menuitem"

@@ -55,6 +55,7 @@ import AdminSettings from './pages/AdminSettings';
 import AdminBulkImprove from './pages/AdminBulkImprove';
 import AdminAddDefaultLogo from './pages/AdminAddDefaultLogo';
 import AdminDeleteRecent from './pages/AdminDeleteRecent';
+import UserProfile from './pages/UserProfile';
 import __Layout from './Layout.jsx';
 
 
@@ -116,6 +117,7 @@ export const PAGES = {
     "AdminBulkImprove": AdminBulkImprove,
     "AdminAddDefaultLogo": AdminAddDefaultLogo,
     "AdminDeleteRecent": AdminDeleteRecent,
+    "UserProfile": UserProfile,
 }
 
 export const pagesConfig = {
