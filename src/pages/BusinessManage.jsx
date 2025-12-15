@@ -3,9 +3,12 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   ArrowRight, Settings, Image, Clock, Shield, Tag,
-  UtensilsCrossed, Sparkles, Palette, ChevronLeft, AlertTriangle, BarChart3
+  UtensilsCrossed, Sparkles, Palette, ChevronLeft, AlertTriangle, Edit, BarChart3,
+  TrendingUp, Truck, ShoppingBag, Loader2, Check
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 
@@ -17,6 +20,12 @@ export default function BusinessManagePage() {
   const [businessPage, setBusinessPage] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [promotionSettings, setPromotionSettings] = useState({
+    is_promoted: false,
+    has_delivery: false,
+    has_pickup: false
+  });
+  const [isSavingSettings, setIsSavingSettings] = useState(false);
 
   useEffect(() => {
     const loadData = async () => {
@@ -58,6 +67,11 @@ export default function BusinessManagePage() {
         }
 
         setBusinessPage(page);
+        setPromotionSettings({
+          is_promoted: page.is_promoted || false,
+          has_delivery: page.has_delivery || false,
+          has_pickup: page.has_pickup || false
+        });
       } catch (err) {
         setError("שגיאה בטעינת הנתונים: " + err.message);
       } finally {
@@ -67,6 +81,19 @@ export default function BusinessManagePage() {
 
     loadData();
   }, [pageId]);
+
+  const handleSavePromotionSettings = async () => {
+    setIsSavingSettings(true);
+    try {
+      await base44.entities.BusinessPage.update(pageId, promotionSettings);
+      alert('✅ הגדרות עודכנו בהצלחה');
+      window.location.reload();
+    } catch (err) {
+      alert('שגיאה בעדכון הגדרות: ' + err.message);
+    } finally {
+      setIsSavingSettings(false);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -170,6 +197,77 @@ export default function BusinessManagePage() {
             </p>
           </div>
         </div>
+
+        {/* Promotion & Delivery Settings */}
+        <Card className="mb-6 bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200 shadow-xl">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-amber-900">
+              <TrendingUp className="w-6 h-6" />
+              הגדרות קידום ומשלוחים
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-amber-200">
+              <div className="flex items-center gap-3">
+                <TrendingUp className="w-5 h-5 text-amber-600" />
+                <div>
+                  <Label className="font-semibold text-slate-900 cursor-pointer">קידום לשורה ראשונה</Label>
+                  <p className="text-sm text-slate-600">העסק יופיע ראשון ברשימות עם סימון מיוחד</p>
+                </div>
+              </div>
+              <Switch
+                checked={promotionSettings.is_promoted}
+                onCheckedChange={(checked) => setPromotionSettings(prev => ({ ...prev, is_promoted: checked }))}
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-blue-200">
+              <div className="flex items-center gap-3">
+                <Truck className="w-5 h-5 text-blue-600" />
+                <div>
+                  <Label className="font-semibold text-slate-900 cursor-pointer">שירות משלוחים</Label>
+                  <p className="text-sm text-slate-600">סמן שהעסק מספק משלוחים עד הבית</p>
+                </div>
+              </div>
+              <Switch
+                checked={promotionSettings.has_delivery}
+                onCheckedChange={(checked) => setPromotionSettings(prev => ({ ...prev, has_delivery: checked }))}
+              />
+            </div>
+
+            <div className="flex items-center justify-between p-4 bg-white rounded-xl border border-green-200">
+              <div className="flex items-center gap-3">
+                <ShoppingBag className="w-5 h-5 text-green-600" />
+                <div>
+                  <Label className="font-semibold text-slate-900 cursor-pointer">איסוף עצמי</Label>
+                  <p className="text-sm text-slate-600">סמן שהעסק מאפשר טייק אווי/איסוף עצמי</p>
+                </div>
+              </div>
+              <Switch
+                checked={promotionSettings.has_pickup}
+                onCheckedChange={(checked) => setPromotionSettings(prev => ({ ...prev, has_pickup: checked }))}
+              />
+            </div>
+
+            <Button
+              onClick={handleSavePromotionSettings}
+              disabled={isSavingSettings}
+              className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600"
+            >
+              {isSavingSettings ? (
+                <>
+                  <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                  שומר...
+                </>
+              ) : (
+                <>
+                  <Check className="w-4 h-4 ml-2" />
+                  שמור הגדרות
+                </>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
 
         {/* Management Grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">

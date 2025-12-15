@@ -1,6 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { TrendingUp, Truck, ShoppingBag } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { LazyImage } from "@/components/PerformanceOptimizations";
 
@@ -24,7 +26,11 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
 
   return (
     <Card
-      className="group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden bg-white border-slate-200 hover:-translate-y-1"
+      className={`group cursor-pointer hover:shadow-xl transition-all duration-300 overflow-hidden bg-white hover:-translate-y-1 ${
+        businessPage.is_promoted 
+          ? 'border-2 border-amber-400 ring-2 ring-amber-200 shadow-amber-200/50' 
+          : 'border-slate-200'
+      }`}
       onClick={handleClick}
       role="button"
       tabIndex={0}
@@ -39,10 +45,36 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
           imgClassName="object-cover group-hover:scale-105 transition-transform duration-500"
         />
 
+        {/* Promoted Badge */}
+        {businessPage.is_promoted && (
+          <div className="absolute top-2 right-2 bg-gradient-to-r from-amber-500 to-yellow-500 text-white px-3 py-1 rounded-full shadow-lg flex items-center gap-1 font-bold text-xs">
+            <TrendingUp className="w-3 h-3" />
+            מקודם
+          </div>
+        )}
+
         {/* Badge כשר */}
         {businessPage.kashrut_authority_type && (
-          <div className="absolute top-2 right-2 bg-white px-2 py-1 rounded-md shadow-sm">
+          <div className="absolute top-2 left-2 bg-white px-2 py-1 rounded-md shadow-sm">
             <span className="text-xs font-semibold text-slate-700">כשר</span>
+          </div>
+        )}
+
+        {/* Delivery & Pickup Badges */}
+        {(businessPage.has_delivery || businessPage.has_pickup) && (
+          <div className="absolute bottom-2 left-2 flex gap-1">
+            {businessPage.has_delivery && (
+              <Badge className="bg-blue-600 text-white shadow-md flex items-center gap-1 text-xs">
+                <Truck className="w-3 h-3" />
+                משלוח
+              </Badge>
+            )}
+            {businessPage.has_pickup && (
+              <Badge className="bg-green-600 text-white shadow-md flex items-center gap-1 text-xs">
+                <ShoppingBag className="w-3 h-3" />
+                איסוף
+              </Badge>
+            )}
           </div>
         )}
 
