@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from "react";
-import { BusinessPage } from "@/entities/BusinessPage";
-import { Category } from "@/entities/Category";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
+import { base44 } from "@/api/base44Client";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search } from "lucide-react";
+import { MapPin, Phone, ExternalLink, Navigation, Star, Search, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import InteractiveMap from "../components/InteractiveMap";
 import AdvancedSearchBar from "../components/search/AdvancedSearchBar";
+import { useDebounce, dataCache, LazyImage } from "@/components/PerformanceOptimizations";
 
 export default function SearchPage() {
-  const [user, setUser] = useState(null);
   const [listings, setListings] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [searchResults, setSearchResults] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [sortBy, setSortBy] = useState("best");
-  // עדכון ברירת מחדל לרדיוס עירוני
   const [selectedRadius, setSelectedRadius] = useState("10");
   const [priceRange, setPriceRange] = useState("all");
   const [userLocation, setUserLocation] = useState(null);
   const [locationError, setLocationError] = useState("");
-  // דגל כדי לא לבצע אוטומציה יותר מפעם אחת
   const [autoRadiusApplied, setAutoRadiusApplied] = useState(false);
   const DEFAULT_CITY_RADIUS_KM = 10;
+
+  // Debounce search query for better performance
+  const debouncedSearchQuery = useDebounce(searchQuery, 300);
 
 
   useEffect(() => {
@@ -42,7 +42,6 @@ export default function SearchPage() {
 
   useEffect(() => {
     loadData();
-    // שליפת מיקום אוטומטית כאשר נכנסים למסך
     getUserLocation();
   }, []);
 
@@ -54,36 +53,50 @@ export default function SearchPage() {
     }
   }, [userLocation, autoRadiusApplied]);
 
-  const filterAndSortResults = React.useCallback(() => {
-    if (!listings) return;
+  // Calculate distance using Haversine formula
+  const calculateDistance = useCallback((pos1, pos2) => {
+    if (!pos1 || !pos2) return Infinity;
+    const valid = (p) => p && p.lat != null && p.lng != null && !isNaN(p.lat) && !isNaN(p.lng);
+    if (!valid(pos1) || !valid(pos2)) return Infinity;
 
-    let results = [...listings];
+    const toRad = (val) => (val * Math.PI) / 180;
+    const R = 6371;
+    const dLat = toRad(pos2.lat - pos1.lat);
+    const dLng = toRad(pos2.lng - pos1.lng);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(toRad(pos1.lat)) * Math.cos(toRad(pos2.lat)) *
+      Math.sin(dLng / 2) * Math.sin(dLng / 2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }, []);
 
-    if (userLocation) {
-      results = results.map(listing => {
-        if (listing.lat != null && listing.lng != null && !isNaN(listing.lat) && !isNaN(listing.lng)) {
-          return {
-            ...listing,
-            distance: calculateDistance(userLocation, { lat: listing.lat, lng: listing.lng })
-          };
-        }
-        return { ...listing, distance: Infinity };
-      });
-    } else {
-      results = results.map(listing => ({ ...listing, distance: Infinity }));
-    }
+  // Memoize filtered and sorted results
+  const searchResults = useMemo(() => {
+    if (!listings || listings.length === 0) return [];
 
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase();
+    let results = listings.map(listing => {
+      if (userLocation && listing.lat != null && listing.lng != null && !isNaN(listing.lat) && !isNaN(listing.lng)) {
+        return {
+          ...listing,
+          distance: calculateDistance(userLocation, { lat: listing.lat, lng: listing.lng })
+        };
+      }
+      return { ...listing, distance: Infinity };
+    });
+
+    // Filter by search query (debounced)
+    if (debouncedSearchQuery.trim()) {
+      const query = debouncedSearchQuery.toLowerCase();
       results = results.filter(listing =>
-        listing.title?.toLowerCase().includes(query) ||
+        listing.business_name?.toLowerCase().includes(query) ||
+        listing.display_title?.toLowerCase().includes(query) ||
         listing.description?.toLowerCase().includes(query) ||
-        listing.address?.toLowerCase().includes(query) ||
-        listing.display_title?.toLowerCase().includes(query) || // New: search by display_title
-        listing.business_name?.toLowerCase().includes(query) // New: search by business_name
+        listing.address?.toLowerCase().includes(query)
       );
     }
 
+    // Filter by category/subcategory
     if (selectedSubcategory) {
       results = results.filter(listing =>
         listing.subcategory_id === selectedSubcategory ||
@@ -93,6 +106,7 @@ export default function SearchPage() {
       results = results.filter(listing => listing.category_id === selectedCategory);
     }
 
+    // Filter by price range
     if (priceRange !== "all") {
       switch (priceRange) {
         case "free":
@@ -110,13 +124,13 @@ export default function SearchPage() {
       }
     }
 
+    // Filter by radius
     if (userLocation && selectedRadius !== "all") {
-        const radiusInKm = parseInt(selectedRadius, 10);
-        results = results.filter(listing => {
-            return listing.distance !== Infinity && listing.distance <= radiusInKm;
-        });
+      const radiusInKm = parseInt(selectedRadius, 10);
+      results = results.filter(listing => listing.distance !== Infinity && listing.distance <= radiusInKm);
     }
 
+    // Sort results
     if (sortBy === "newest") {
       results.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
     } else if (sortBy === "price_low") {
@@ -124,9 +138,10 @@ export default function SearchPage() {
     } else if (sortBy === "price_high") {
       results.sort((a, b) => (b.price || 0) - (a.price || 0));
     } else {
+      // Best: promoted first, then by distance
       results.sort((a, b) => {
-        if (a.is_paid && !b.is_paid) return -1;
-        if (!a.is_paid && b.is_paid) return 1;
+        if (a.is_promoted && !b.is_promoted) return -1;
+        if (!a.is_promoted && b.is_promoted) return 1;
 
         if (userLocation) {
           if (a.distance !== Infinity && b.distance !== Infinity) {
@@ -140,38 +155,58 @@ export default function SearchPage() {
       });
     }
 
-    setSearchResults(results);
-  }, [searchQuery, selectedCategory, selectedSubcategory, sortBy, priceRange, listings, userLocation, selectedRadius]);
-
-  useEffect(() => {
-    filterAndSortResults();
-  }, [filterAndSortResults]);
+    return results;
+  }, [listings, debouncedSearchQuery, selectedCategory, selectedSubcategory, sortBy, priceRange, userLocation, selectedRadius, calculateDistance]);
 
   const loadData = async () => {
     try {
       setLocationError("");
+
+      // Check cache first
+      const cachedListings = dataCache.get('active_business_pages');
+      const cachedCategories = dataCache.get('categories_list');
+
+      if (cachedListings && cachedCategories) {
+        setListings(cachedListings);
+        setCategories(cachedCategories);
+        setIsLoading(false);
+        // Continue to fetch fresh data in background
+      }
+
       const [listingsData, categoriesData] = await Promise.all([
-        BusinessPage.filter({ is_active: true, approval_status: "approved" }),
-        Category.list("sort_order")
+        base44.entities.BusinessPage.filter({ 
+          is_active: true, 
+          approval_status: "approved",
+          is_frozen: false 
+        }),
+        base44.entities.Category.list()
       ]);
+
+      // Cache the results
+      dataCache.set('active_business_pages', listingsData || []);
+      dataCache.set('categories_list', categoriesData || []);
 
       setListings(listingsData || []);
       setCategories(categoriesData || []);
-
-      setSearchResults(listingsData || []); 
       
     } catch (err) {
       console.error("Error loading data:", err);
-      setLocationError("שגיאה בטעינת הנתונים: " + err.message);
+      setLocationError("שגיאה בטעינת הנתונים");
+      
+      // Fallback to emergency cache
+      const emergency = dataCache.getEmergency('active_business_pages');
+      if (emergency) {
+        setListings(emergency);
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getUserLocation = () => {
+  const getUserLocation = useCallback(() => {
     setLocationError("");
     if (!navigator.geolocation) {
-      setLocationError("שירותי מיקום אינם נתמכים בדפדפן זה.");
+      setLocationError("שירותי מיקום אינם נתמכים");
       return;
     }
     navigator.geolocation.getCurrentPosition(
@@ -183,50 +218,16 @@ export default function SearchPage() {
         setLocationError("");
       },
       (error) => {
-        let errorMessage = "לא ניתן היה לקבל את מיקומך. אנא אשר הרשאות מיקום.";
-        if (error.code === error.PERMISSION_DENIED) {
-          errorMessage = "נדרשת הרשאת מיקום. אנא אפשר גישה למיקום בהגדרות הדפדפן.";
-        } else if (error.code === error.POSITION_UNAVAILABLE) {
-          errorMessage = "מידע מיקום אינו זמין.";
-        } else if (error.code === error.TIMEOUT) {
-          errorMessage = "פסק זמן בקבלת מיקום.";
-        }
-        setLocationError(errorMessage);
+        setLocationError("לא ניתן לקבל מיקום");
         setUserLocation(null);
       },
       {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
+        enableHighAccuracy: false,
+        timeout: 5000,
+        maximumAge: 300000
       }
     );
-  };
-
-  // חישוב מרחק – עם גיבוי Haversine אם Google לא זמין
-  const calculateDistance = (pos1, pos2) => {
-      if (!pos1 || !pos2) return Infinity;
-      const valid = (p) => p && p.lat != null && p.lng != null && !isNaN(p.lat) && !isNaN(p.lng);
-      if (!valid(pos1) || !valid(pos2)) return Infinity;
-
-      // אם יש Google Geometry – השתמש בו
-      if (window.google && window.google.maps && window.google.maps.geometry) {
-        const point1 = new window.google.maps.LatLng(pos1.lat, pos1.lng);
-        const point2 = new window.google.maps.LatLng(pos2.lat, pos2.lng);
-        return window.google.maps.geometry.spherical.computeDistanceBetween(point1, point2) / 1000;
-      }
-
-      // גיבוי: Haversine בק״מ
-      const toRad = (val) => (val * Math.PI) / 180;
-      const R = 6371; // רדיוס כדוה״א בק״מ
-      const dLat = toRad(pos2.lat - pos1.lat);
-      const dLng = toRad(pos2.lng - pos1.lng);
-      const a =
-        Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-        Math.cos(toRad(pos1.lat)) * Math.cos(toRad(pos2.lat)) *
-        Math.sin(dLng / 2) * Math.sin(dLng / 2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-      return R * c;
-  };
+  }, []);
 
   const getCategoryById = (categoryId) => {
     return categories.find(cat => cat.id === categoryId);
@@ -256,29 +257,35 @@ export default function SearchPage() {
     }
   };
 
-  const handleClearFilters = () => {
+  const handleClearFilters = useCallback(() => {
     setSearchQuery('');
     setSelectedCategory(null);
     setSelectedSubcategory(null);
     setSortBy("best");
     setPriceRange("all");
-    setSelectedRadius("10"); // Reset to default "10"
-    setAutoRadiusApplied(false); // Allow re-application if user location changes/refreshes
-  };
+    setSelectedRadius("10");
+    setAutoRadiusApplied(false);
+  }, []);
+
+  // Memoize filtered map markers
+  const mapMarkers = useMemo(() => 
+    searchResults.filter(l => l.lat != null && l.lng != null && !isNaN(l.lat) && !isNaN(l.lng)),
+    [searchResults]
+  );
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 mx-auto mb-4 bg-white/20 rounded-full animate-pulse"></div>
-          <p className="text-white text-lg">טוען נתונים...</p>
+          <Loader2 className="w-12 h-12 mx-auto mb-4 text-blue-600 animate-spin" />
+          <p className="text-slate-700 text-lg">טוען...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col md:flex-row gap-4 p-4">
+    <div className="flex flex-col md:flex-row gap-4 p-4" dir="rtl">
       {/* Search Panel & Results */}
       <div className="w-full md:w-96 lg:w-[450px] space-y-4 order-2 md:order-1">
         <AdvancedSearchBar
@@ -301,50 +308,68 @@ export default function SearchPage() {
           onClearFilters={handleClearFilters}
         />
 
+        {/* Results Count */}
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <p className="text-sm font-medium text-blue-900">
+            נמצאו {searchResults.length} תוצאות
+          </p>
+        </div>
+
         {/* Results List */}
-        <div className="space-y-4">
+        <div className="space-y-3 max-h-[calc(100vh-300px)] overflow-y-auto">
           {searchResults.length === 0 ? (
-            <div className="text-center py-12">
+            <div className="text-center py-12 bg-white rounded-xl shadow">
               <Search className="w-12 h-12 mx-auto text-gray-400 mb-4" />
               <h3 className="text-lg font-semibold text-gray-700">לא נמצאו תוצאות</h3>
-              <p className="text-sm text-gray-500">נסה להרחיב את החיפוש או לשנות את המסננים</p>
+              <p className="text-sm text-gray-500">נסה להרחיב את החיפוש</p>
             </div>
           ) : (
             searchResults.map((listing) => {
               const category = categories.find(c => c.id === listing.category_id);
-              const subcategory = categories.find(c => c.id === listing.subcategory_id);
+              const imageUrl = listing.preview_image || listing.images?.[0];
+              
               return (
                 <Card 
                   key={listing.id} 
                   id={`listing-${listing.id}`}
-                  className="transition-all duration-300 hover:shadow-xl cursor-pointer"
+                  className="transition-all hover:shadow-lg cursor-pointer border-2 hover:border-blue-300"
                   onClick={() => {
-                    // Updated to BusinessPage
-                    window.location.href = createPageUrl(`BusinessPage?id=${listing.id}`);
+                    window.location.href = createPageUrl(`BusinessPage?slug=${listing.url_slug || listing.id}`);
                   }}
                 >
-                  <CardContent className="p-4 flex gap-4">
-                    {listing.images && listing.images.length > 0 ? (
-                      <img src={listing.images[0]} alt={listing.display_title || listing.business_name} className="w-24 h-24 object-cover rounded-lg" />
-                    ) : (
-                      <div className="w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center">
-                        <span className="text-3xl">{category?.icon || '📷'}</span>
-                      </div>
-                    )}
+                  <CardContent className="p-3 flex gap-3">
+                    <div className="w-20 h-20 flex-shrink-0">
+                      {imageUrl ? (
+                        <LazyImage
+                          src={imageUrl}
+                          alt={listing.business_name}
+                          className="w-full h-full rounded-lg"
+                          imgClassName="object-cover"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-gray-100 rounded-lg flex items-center justify-center">
+                          <span className="text-2xl">{category?.icon || '📷'}</span>
+                        </div>
+                      )}
+                    </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="font-bold text-base truncate">{listing.display_title || listing.business_name}</h3>
-                      <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
-                         <span>{category?.name}</span>
-                         {subcategory && <span>&gt; {subcategory.name}</span>}
-                      </div>
-                      <p className="text-sm text-gray-600 line-clamp-2 mt-1">{listing.description}</p>
-                      <div className="flex items-center justify-between mt-2">
-                         <div className="font-bold text-blue-600">
-                            {listing.price ? `₪${listing.price.toLocaleString()}` : "מחיר לפי פניה"}
-                         </div>
-                         {typeof listing.distance === 'number' && listing.distance !== Infinity && (
-                            <Badge variant="outline" className="text-xs">{listing.distance.toFixed(1)} ק"מ</Badge>
-                         )}
+                      <h3 className="font-bold text-sm truncate">{listing.business_name}</h3>
+                      {category && (
+                        <p className="text-xs text-gray-500 mt-0.5">{category.name}</p>
+                      )}
+                      <p className="text-xs text-gray-600 line-clamp-2 mt-1">{listing.description}</p>
+                      <div className="flex items-center gap-2 mt-2">
+                        {listing.smart_rating > 0 && (
+                          <Badge variant="outline" className="text-xs gap-1">
+                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            {listing.smart_rating.toFixed(1)}
+                          </Badge>
+                        )}
+                        {typeof listing.distance === 'number' && listing.distance !== Infinity && (
+                          <Badge variant="outline" className="text-xs">
+                            {listing.distance.toFixed(1)} ק"מ
+                          </Badge>
+                        )}
                       </div>
                     </div>
                   </CardContent>
@@ -357,17 +382,17 @@ export default function SearchPage() {
 
       {/* Map Area */}
       <div className="flex-1 h-96 md:h-[calc(100vh-120px)] order-1 md:order-2">
-         <div className="sticky top-[96px] h-full w-full rounded-2xl overflow-hidden shadow-lg">
+         <div className="sticky top-24 h-full w-full rounded-2xl overflow-hidden shadow-lg">
             <InteractiveMap
-                listings={searchResults.filter(l => l.lat != null && l.lng != null && !isNaN(l.lat) && !isNaN(l.lng))}
+                listings={mapMarkers}
                 userLocation={userLocation}
                 onMarkerClick={(listing) => {
                   const element = document.getElementById(`listing-${listing.id}`);
                   if (element) {
                     element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    element.classList.add('animate-pulse-once', 'ring-2', 'ring-blue-500');
+                    element.classList.add('ring-2', 'ring-blue-500');
                     setTimeout(() => {
-                        element.classList.remove('animate-pulse-once', 'ring-2', 'ring-blue-500');
+                        element.classList.remove('ring-2', 'ring-blue-500');
                     }, 2000);
                   }
                 }}
