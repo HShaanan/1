@@ -11,7 +11,7 @@ import {
   Clock, Globe, AlertTriangle, ChevronLeft, Flag,
   MessageSquare, MessageCircle, ThumbsUp, Loader2, Calendar, ImageIcon,
   Edit, Menu as MenuIcon, Info, DollarSign, Camera, Utensils, Building, ShoppingCart, Plus, Minus,
-  Copy, Mail, Link as LinkIcon, Navigation, Settings, ClipboardList
+  Copy, Mail, Link as LinkIcon, Navigation, Settings, ClipboardList, Store
 } from
   "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -474,6 +474,7 @@ export default function BusinessPageView() {
   const [cart, setCart] = React.useState([]);
   const [modificationModalOpen, setModificationModalOpen] = React.useState(false);
   const [selectedItemForMods, setSelectedItemForMods] = React.useState(null);
+  const [relatedBusinesses, setRelatedBusinesses] = useState([]);
 
   const reviewsRef = useRef(null);
   const menuSectionRefs = useRef({});
@@ -756,6 +757,69 @@ export default function BusinessPageView() {
   useEffect(() => {
     loadBusinessPage();
   }, [loadBusinessPage]);
+
+  // Load related businesses from same category
+  useEffect(() => {
+    if (!businessPage?.category_id || !businessPage?.id) return;
+
+    const loadRelated = async () => {
+      try {
+        const related = await base44.entities.BusinessPage.filter({
+          category_id: businessPage.category_id,
+          is_active: true,
+          approval_status: "approved",
+          is_frozen: false
+        });
+        
+        // Exclude current business and take random 4
+        const filtered = related.filter(b => b.id !== businessPage.id);
+        const shuffled = filtered.sort(() => 0.5 - Math.random());
+        setRelatedBusinesses(shuffled.slice(0, 4));
+      } catch (err) {
+        console.error("Error loading related businesses:", err);
+      }
+    };
+
+    loadRelated();
+  }, [businessPage?.category_id, businessPage?.id]);
+
+  // Inject JSON-LD Schema for SEO
+  useEffect(() => {
+    if (!businessPage) return;
+
+    const schema = {
+      "@context": "https://schema.org/",
+      "@type": "LocalBusiness",
+      "name": businessPage.display_title || businessPage.business_name,
+      "description": (businessPage.description || "").substring(0, 160),
+      "image": businessPage.images?.[0] || businessPage.preview_image || "",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": businessPage.address || "",
+        "addressLocality": businessPage.city || "ביתר-עילית",
+        "addressCountry": "IL"
+      },
+      "telephone": businessPage.contact_phone || "",
+      "url": window.location.href,
+      "priceRange": businessPage.price_range || "$$",
+      "aggregateRating": businessPage.smart_rating > 0 ? {
+        "@type": "AggregateRating",
+        "ratingValue": businessPage.smart_rating,
+        "reviewCount": businessPage.reviews_count || 0
+      } : undefined
+    };
+
+    const scriptTag = document.createElement('script');
+    scriptTag.type = 'application/ld+json';
+    scriptTag.textContent = JSON.stringify(schema);
+    scriptTag.id = 'business-schema';
+    document.head.appendChild(scriptTag);
+
+    return () => {
+      const existing = document.getElementById('business-schema');
+      if (existing) existing.remove();
+    };
+  }, [businessPage]);
 
 
   // עדכון כל הפונקציות עם tracking:
@@ -1273,6 +1337,67 @@ export default function BusinessPageView() {
                 </div>
               )}
             </div>
+
+            {/* SEO Content Footer - Only for thin content */}
+            {businessPage.description && businessPage.description.split(' ').length < 50 && (
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-2xl shadow-lg border border-blue-100">
+                <p className="text-sm text-slate-700 leading-relaxed">
+                  מחפשים <strong>{businessPage.category_name || 'עסקים'}</strong> ב<strong>{businessPage.city || 'ביתר-עילית'}</strong>? 
+                  משֻלנו מחבר אותך עם העסקים והמקצוענים הטובים ביותר בקהילה החרדית. 
+                  מצא עוד <strong>{businessPage.category_name || 'עסקים'}</strong> ב<strong>{businessPage.city || 'ביתר-עילית'}</strong> היום בפלטפורמה שלנו.
+                </p>
+              </div>
+            )}
+
+            {/* Related Businesses Section */}
+            {relatedBusinesses.length > 0 && (
+              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-slate-200/80">
+                <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                  <Store className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />
+                  עוד עסקים בקטגוריה
+                </h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                  {relatedBusinesses.map((related) => (
+                    <a
+                      key={related.id}
+                      href={createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`)}
+                      className="group block bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-slate-200"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        safeTrackEvent('related_business_click', { business_id: related.id });
+                        window.location.href = createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`);
+                      }}
+                    >
+                      <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
+                        {related.preview_image || related.images?.[0] ? (
+                          <LazyImage
+                            src={related.preview_image || related.images?.[0]}
+                            alt={related.business_name}
+                            className="w-full h-full"
+                            imgClassName="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center">
+                            <Store className="w-12 h-12 text-slate-400" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="p-3">
+                        <h4 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                          {related.business_name}
+                        </h4>
+                        {related.smart_rating > 0 && (
+                          <div className="flex items-center gap-1 mt-1">
+                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                            <span className="text-xs text-slate-600">{related.smart_rating.toFixed(1)}</span>
+                          </div>
+                        )}
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* ביקורות */}
             <div id="reviews-section" ref={reviewsRef} className="pt-8 border-t">
