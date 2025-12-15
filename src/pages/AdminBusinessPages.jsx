@@ -72,7 +72,7 @@ export default function AdminBusinessPages() {
   const [importSuccess, setImportSuccess] = useState(null);
   // הוספה: state לבחירת קטגוריה
   const [selectedCategoryForImport, setSelectedCategoryForImport] = useState("");
-  const [selectedSubcategoryForImport, setSelectedSubcategoryForImport] = useState("");
+  const [selectedSubcategoriesForImport, setSelectedSubcategoriesForImport] = useState([]); // שונה למערך
   const [successMessage, setSuccessMessage] = useState(""); // Added for success messages in import dialog
 
   // Multi-select state
@@ -462,7 +462,7 @@ export default function AdminBusinessPages() {
     setSearchResults([]);
     setSelectedBusinesses([]);
     setSelectedCategoryForImport("");
-    setSelectedSubcategoryForImport("");
+    setSelectedSubcategoriesForImport([]);
     setError("");
     setSuccessMessage("");
   };
@@ -493,12 +493,12 @@ export default function AdminBusinessPages() {
       console.log('📥 Starting import of', selectedBusinesses.length, 'businesses');
       console.log('📋 Businesses to import:', selectedBusinesses.map(b => b.name));
       console.log('📋 Category ID:', selectedCategoryForImport);
-      console.log('📋 Subcategory ID:', selectedSubcategoryForImport);
+      console.log('📋 Subcategory IDs:', selectedSubcategoriesForImport);
 
       const { data } = await base44.functions.invoke('importSelectedBusinesses', {
         businesses: selectedBusinesses,
         category_id: selectedCategoryForImport,
-        subcategory_id: selectedSubcategoryForImport || null
+        subcategory_ids: selectedSubcategoriesForImport.length > 0 ? selectedSubcategoriesForImport : null
       });
 
       console.log('📊 Import result:', data);
@@ -540,7 +540,7 @@ export default function AdminBusinessPages() {
         setSearchResults([]);
         setSelectedBusinesses([]);
         setSelectedCategoryForImport(""); // איפוס הקטגוריה
-        setSelectedSubcategoryForImport(""); // איפוס תת-קטגוריה
+        setSelectedSubcategoriesForImport([]); // איפוס תתי-קטגוריות
 
         // Show "pending" filter to see new businesses
         setStatusFilter('pending');
@@ -1187,7 +1187,7 @@ export default function AdminBusinessPages() {
                       value={selectedCategoryForImport}
                       onValueChange={(value) => {
                         setSelectedCategoryForImport(value);
-                        setSelectedSubcategoryForImport(""); // איפוס תת-קטגוריה בשינוי קטגוריה
+                        setSelectedSubcategoriesForImport([]); // איפוס תתי-קטגוריות בשינוי קטגוריה
                       }}
                     >
                       <SelectTrigger className="bg-white">
@@ -1211,24 +1211,44 @@ export default function AdminBusinessPages() {
                   {subcategoriesForImport.length > 0 && selectedCategoryForImport && (
                     <div>
                       <label className="text-sm font-medium mb-2 block text-blue-900">
-                        תת-קטגוריה (אופציונלי):
+                        תתי-קטגוריות (בחר אחת או יותר):
                       </label>
-                      <Select
-                        value={selectedSubcategoryForImport}
-                        onValueChange={setSelectedSubcategoryForImport}
-                      >
-                        <SelectTrigger className="bg-white">
-                          <SelectValue placeholder="בחר תת-קטגוריה (אופציונלי)..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value={null}>ללא תת-קטגוריה</SelectItem>
-                          {subcategoriesForImport.map((subcat) => (
-                            <SelectItem key={subcat.id} value={subcat.id}>
-                              {subcat.name}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 bg-white rounded-lg p-3 border border-blue-200">
+                        {subcategoriesForImport.map((subcat) => {
+                          const isSelected = selectedSubcategoriesForImport.includes(subcat.id);
+                          return (
+                            <button
+                              key={subcat.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedSubcategoriesForImport(prev => 
+                                  prev.includes(subcat.id)
+                                    ? prev.filter(id => id !== subcat.id)
+                                    : [...prev, subcat.id]
+                                );
+                              }}
+                              className={`p-3 rounded-lg border-2 transition-all text-right flex items-center gap-2 ${
+                                isSelected
+                                  ? 'border-green-500 bg-green-50 shadow-sm'
+                                  : 'border-gray-200 hover:border-green-300 hover:bg-gray-50'
+                              }`}
+                            >
+                              <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                                isSelected ? 'bg-green-500 border-green-500' : 'border-gray-300'
+                              }`}>
+                                {isSelected && <Check className="w-3 h-3 text-white" />}
+                              </div>
+                              <span className="text-xl">{subcat.icon || '📌'}</span>
+                              <span className="font-medium text-sm">{subcat.name}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      {selectedSubcategoriesForImport.length > 0 && (
+                        <p className="text-xs text-green-700 mt-2 font-medium">
+                          ✅ נבחרו {selectedSubcategoriesForImport.length} תתי-קטגוריות
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -1338,7 +1358,7 @@ export default function AdminBusinessPages() {
                 setSelectedBusinesses([]);
                 setImportSuccess(null);
                 setSelectedCategoryForImport("");
-                setSelectedSubcategoryForImport("");
+                setSelectedSubcategoriesForImport([]);
                 setSearchCity("");
                 setSearchTopic("");
                 setError("");

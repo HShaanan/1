@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
       }, { status: 403 });
     }
 
-    const { businesses, category_id, subcategory_id } = await req.json();
+    const { businesses, category_id, subcategory_ids } = await req.json();
 
     if (!businesses || !Array.isArray(businesses) || businesses.length === 0) {
       return Response.json({ 
@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     console.log(`📊 Total businesses: ${businesses.length}`);
     console.log(`👤 User: ${user.email}`);
     console.log(`📁 Category ID: ${category_id}`);
-    console.log(`📁 Subcategory ID: ${subcategory_id || 'none'}`);
+    console.log(`📁 Subcategory IDs: ${subcategory_ids ? JSON.stringify(subcategory_ids) : 'none'}`);
 
     const imported = [];
     const errors = [];
@@ -122,9 +122,9 @@ Deno.serve(async (req) => {
           }
         };
 
-        // הוספת תת-קטגוריה אם נבחרה
-        if (subcategory_id) {
-          businessPageData.subcategory_ids = [subcategory_id];
+        // הוספת תתי-קטגוריות אם נבחרו
+        if (subcategory_ids && Array.isArray(subcategory_ids) && subcategory_ids.length > 0) {
+          businessPageData.subcategory_ids = subcategory_ids;
         }
 
         console.log('📝 Creating:', businessPageData.business_name);
