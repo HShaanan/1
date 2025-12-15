@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { 
@@ -185,26 +185,28 @@ export default function UserProfile() {
         )}
 
         {/* Tabs */}
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 lg:grid-cols-2 bg-white shadow-md">
-            <TabsTrigger 
-              value="favorites" 
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+        <div className="space-y-6">
+          <div className="grid w-full grid-cols-2 lg:grid-cols-2 bg-white shadow-md rounded-lg p-1">
+            <Button
+              variant={activeTab === "favorites" ? "default" : "ghost"}
+              onClick={() => setActiveTab("favorites")}
+              className={activeTab === "favorites" ? "bg-blue-600 text-white" : ""}
             >
               <Heart className="w-4 h-4 ml-2" />
               מועדפים ({favorites.length})
-            </TabsTrigger>
-            <TabsTrigger 
-              value="settings"
-              className="data-[state=active]:bg-blue-600 data-[state=active]:text-white"
+            </Button>
+            <Button
+              variant={activeTab === "settings" ? "default" : "ghost"}
+              onClick={() => setActiveTab("settings")}
+              className={activeTab === "settings" ? "bg-blue-600 text-white" : ""}
             >
               <Settings className="w-4 h-4 ml-2" />
               הגדרות
-            </TabsTrigger>
-          </TabsList>
+            </Button>
+          </div>
 
           {/* Favorites Tab */}
-          <TabsContent value="favorites" className="space-y-4">
+          {activeTab === "favorites" && <div className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -258,10 +260,10 @@ export default function UserProfile() {
                 )}
               </CardContent>
             </Card>
-          </TabsContent>
+          </div>}
 
           {/* Settings Tab */}
-          <TabsContent value="settings" className="space-y-4">
+          {activeTab === "settings" && <div className="space-y-4">
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
@@ -354,8 +356,8 @@ export default function UserProfile() {
                 </div>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          </div>}
+        </div>
       </div>
     </div>
   );
