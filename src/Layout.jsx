@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
+import { HelmetProvider } from "react-helmet-async";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
 import SupportWidget from "@/components/SupportWidget";
 import { Link } from "react-router-dom";
@@ -183,6 +184,7 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
+    <HelmetProvider>
     <div
       dir="rtl"
       lang="he"
@@ -929,5 +931,6 @@ export default function Layout({ children, currentPageName }) {
       {/* וידג'ט תמיכה וצ'אט */}
       <SupportWidget />
       </div>
+      </HelmetProvider>
       );
       }

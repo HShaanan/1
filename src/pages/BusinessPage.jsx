@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LazyImage } from "@/components/PerformanceOptimizations";
+import SeoMeta from "@/components/SeoMeta";
 import {
   MapPin, Phone, ExternalLink, Heart, Share2, Star,
   Clock, Globe, AlertTriangle, ChevronLeft, Flag,
@@ -1140,6 +1141,14 @@ export default function BusinessPageView() {
       '--bubble-bg-color-end': hexToRgba(theme.colors.primaryLight, 0.15),
       '--bubble-shadow-color': hexToRgba(theme.colors.primaryLight, 0.15),
     }}>
+      {/* SEO Meta Tags */}
+      <SeoMeta
+        title={businessPage.display_title || businessPage.business_name}
+        description={(businessPage.description || "").substring(0, 160)}
+        imageUrl={businessPage.preview_image || businessPage.images?.[0]}
+        url={window.location.href}
+      />
+
       {/* Animated Gradient Background with Bubbles */}
       <div className="fixed inset-0 -z-10">
         {/* Main Gradient - דינמי לפי עסק */}
