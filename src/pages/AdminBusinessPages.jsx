@@ -374,18 +374,54 @@ export default function AdminBusinessPages() {
       console.log('📊 Search results:', data);
 
       if (data.success) {
-        const newBusinesses = data.businesses || [];
+        const foundBusinesses = data.businesses || [];
+
+        // זיהוי כפילויות - סינון מול עסקים קיימים במערכת
+        console.log('🔍 Checking for duplicates against existing businesses...');
+        
+        const filteredBusinesses = foundBusinesses.filter(business => {
+          // בדיקה מול העסקים שכבר קיימים במערכת
+          const existsByPlaceId = businessPages.some(page => 
+            page.metadata?.google_place_id === business.place_id
+          );
+
+          if (existsByPlaceId) {
+            console.log(`⏭️ Skipping duplicate: ${business.name} (place_id exists in system)`);
+            return false;
+          }
+
+          // בדיקה לפי שם + כתובת (לעסקים ישנים בלי place_id)
+          const existsByNameAndAddress = businessPages.some(page => 
+            page.business_name?.trim().toLowerCase() === business.name?.trim().toLowerCase() &&
+            page.address?.trim().toLowerCase() === business.address?.trim().toLowerCase()
+          );
+
+          if (existsByNameAndAddress) {
+            console.log(`⏭️ Skipping duplicate: ${business.name} (name+address match in system)`);
+            return false;
+          }
+
+          return true;
+        });
+
+        const duplicatesCount = foundBusinesses.length - filteredBusinesses.length;
 
         // הוספת העסקים החדשים לרשימה הקיימת (ללא כפילויות)
         setSearchResults(prev => {
           const existingPlaceIds = new Set(prev.map(b => b.place_id));
-          const uniqueNew = newBusinesses.filter(b => !existingPlaceIds.has(b.place_id));
+          const uniqueNew = filteredBusinesses.filter(b => !existingPlaceIds.has(b.place_id));
           return [...prev, ...uniqueNew];
         });
 
-        if (newBusinesses.length > 0) {
-          setSuccessMessage(`✅ נמצאו ${newBusinesses.length} עסקים חדשים והתווספו לרשימה!`);
-          setTimeout(() => setSuccessMessage(""), 3000);
+        if (filteredBusinesses.length > 0) {
+          let message = `✅ נמצאו ${filteredBusinesses.length} עסקים חדשים והתווספו לרשימה!`;
+          if (duplicatesCount > 0) {
+            message += ` (${duplicatesCount} עסקים כבר קיימים באתר)`;
+          }
+          setSuccessMessage(message);
+          setTimeout(() => setSuccessMessage(""), 5000);
+        } else if (duplicatesCount > 0) {
+          setError(`כל ${duplicatesCount} העסקים שנמצאו כבר קיימים באתר`);
         } else {
           setError("לא נמצאו עסקים נוספים עבור חיפוש זה");
         }
