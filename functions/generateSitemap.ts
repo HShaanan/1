@@ -19,6 +19,14 @@ Deno.serve(async (req) => {
       is_active: true
     });
     
+    // Extract unique cities from business pages
+    const citiesSet = new Set();
+    businessPages.forEach(b => {
+      const city = b.city || 'ביתר-עילית';
+      citiesSet.add(city);
+    });
+    const cities = Array.from(citiesSet);
+    
     // Build sitemap XML
     let sitemap = '<?xml version="1.0" encoding="UTF-8"?>\n';
     sitemap += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
@@ -47,29 +55,42 @@ Deno.serve(async (req) => {
   </url>\n`;
     });
     
-    // Business pages
+    // City-based business pages (SEO-friendly URLs)
     businessPages.forEach(page => {
       const slug = page.url_slug || page.id;
+      const city = (page.city || 'ביתר-עילית')
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\u0590-\u05FFa-z0-9-]/g, '');
+      const categorySlug = page.category_slug || 'business';
       const lastmod = page.updated_date || page.created_date;
       const date = new Date(lastmod).toISOString().split('T')[0];
       
       sitemap += `  <url>
-    <loc>${baseUrl}/page/BusinessPage?slug=${encodeURIComponent(slug)}</loc>
+    <loc>${baseUrl}/${city}/${categorySlug}/${slug}</loc>
     <lastmod>${date}</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>\n`;
     });
     
-    // Category pages (Browse with category filter)
-    categories.forEach(category => {
-      if (category.parent_id) return; // Skip subcategories for now
+    // City-based category pages
+    const mainCategories = categories.filter(c => !c.parent_id);
+    cities.forEach(city => {
+      const citySlug = city
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/[^\u0590-\u05FFa-z0-9-]/g, '');
       
-      sitemap += `  <url>
-    <loc>${baseUrl}/page/Browse?category=${encodeURIComponent(category.id)}</loc>
+      mainCategories.forEach(category => {
+        const categorySlug = category.slug || category.id;
+        
+        sitemap += `  <url>
+    <loc>${baseUrl}/${citySlug}/${categorySlug}</loc>
     <changefreq>daily</changefreq>
     <priority>0.7</priority>
   </url>\n`;
+      });
     });
     
     sitemap += '</urlset>';
