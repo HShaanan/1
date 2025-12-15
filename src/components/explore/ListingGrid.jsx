@@ -27,11 +27,18 @@ export default function ListingGrid({ listings = [], loading, onOpen, categories
     );
   }
 
+  // מיון - עסקים מקודמים ראשונים
+  const sortedListings = [...listings].sort((a, b) => {
+    if (a.is_promoted && !b.is_promoted) return -1;
+    if (!a.is_promoted && b.is_promoted) return 1;
+    return 0;
+  });
+
   const insertAfter = 3;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-      {listings.map((page, i) => (
+      {sortedListings.map((page, i) => (
         <React.Fragment key={page.id}>
           <ListingPreviewCard
             businessPage={page}
