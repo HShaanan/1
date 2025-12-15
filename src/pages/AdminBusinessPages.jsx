@@ -78,6 +78,10 @@ export default function AdminBusinessPages() {
   // Multi-select state
   const [selectedPageIds, setSelectedPageIds] = useState([]);
 
+  // Quick subcategory assignment
+  const [subcatDialog, setSubcatDialog] = useState({ open: false, page: null, isBulk: false });
+  const [selectedSubcatsForAssignment, setSelectedSubcatsForAssignment] = useState([]);
+
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const loadAllData = useCallback(async () => {
@@ -696,6 +700,58 @@ export default function AdminBusinessPages() {
     }
   };
 
+  const handleOpenSubcatDialog = (page = null) => {
+    if (page) {
+      // Single page mode
+      setSubcatDialog({ open: true, page, isBulk: false });
+      setSelectedSubcatsForAssignment(page.subcategory_ids || []);
+    } else if (selectedPageIds.length > 0) {
+      // Bulk mode
+      setSubcatDialog({ open: true, page: null, isBulk: true });
+      setSelectedSubcatsForAssignment([]);
+    }
+  };
+
+  const handleSaveSubcategories = async () => {
+    setIsLoading(true);
+    try {
+      if (subcatDialog.isBulk) {
+        // Bulk assignment
+        for (const pageId of selectedPageIds) {
+          await base44.entities.BusinessPage.update(pageId, {
+            subcategory_ids: selectedSubcatsForAssignment,
+            subcategory_id: selectedSubcatsForAssignment.length > 0 ? selectedSubcatsForAssignment[0] : null
+          });
+        }
+        alert(`✅ תתי-קטגוריות עודכנו עבור ${selectedPageIds.length} עמודים`);
+        setSelectedPageIds([]);
+      } else if (subcatDialog.page) {
+        // Single page assignment
+        await base44.entities.BusinessPage.update(subcatDialog.page.id, {
+          subcategory_ids: selectedSubcatsForAssignment,
+          subcategory_id: selectedSubcatsForAssignment.length > 0 ? selectedSubcatsForAssignment[0] : null
+        });
+        alert(`✅ תתי-קטגוריות עודכנו עבור ${subcatDialog.page.business_name}`);
+      }
+      
+      await loadAllData();
+      setSubcatDialog({ open: false, page: null, isBulk: false });
+      setSelectedSubcatsForAssignment([]);
+    } catch (err) {
+      setError("שגיאה בעדכון תתי-קטגוריות: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const toggleSubcatForAssignment = (subcatId) => {
+    setSelectedSubcatsForAssignment(prev =>
+      prev.includes(subcatId)
+        ? prev.filter(id => id !== subcatId)
+        : [...prev, subcatId]
+    );
+  };
+
   if (isLoading) {
     return <div className="p-8">טוען נתונים...</div>;
   }
@@ -771,6 +827,14 @@ export default function AdminBusinessPages() {
               >
                 <Ban className="w-4 h-4 ml-1" />
                 דחה הכל
+              </Button>
+              <Button
+                onClick={() => handleOpenSubcatDialog(null)}
+                size="sm"
+                className="bg-indigo-600 hover:bg-indigo-700"
+              >
+                <Tag className="w-4 h-4 ml-1" />
+                שייך לתתי-קטגוריות
               </Button>
               <Button
                 onClick={handleBulkDelete}
@@ -910,6 +974,9 @@ export default function AdminBusinessPages() {
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => setExpandedPageId(page.id === expandedPageId ? null : page.id)} className="text-red-600">
                             <Ban className="w-4 h-4 ml-2" /> דחה
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleOpenSubcatDialog(page)} className="text-indigo-600">
+                            <Tag className="w-4 h-4 ml-2" /> שייך לתתי-קטגוריות
                           </DropdownMenuItem>
 
                           {page.is_frozen ? (
@@ -1058,7 +1125,7 @@ export default function AdminBusinessPages() {
             <DialogFooter>
               <Button
                 variant="outline"
-                onClick={() => setUnfreezeDialog({ open: false, page: null })}
+                onClick={() => setUnfreezeDialog({ open, page: null })}
                 disabled={processingFreeze}
               >
                 ביטול
@@ -1079,6 +1146,124 @@ export default function AdminBusinessPages() {
                     הפשר עמוד
                   </>
                 )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Subcategory Assignment Dialog */}
+        <Dialog open={subcatDialog.open} onOpenChange={(open) => {
+          setSubcatDialog({ open, page: null, isBulk: false });
+          if (!open) setSelectedSubcatsForAssignment([]);
+        }}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-auto" dir="rtl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Tag className="w-5 h-5 text-indigo-600" />
+                שיוך לתתי-קטגוריות
+              </DialogTitle>
+              <DialogDescription>
+                {subcatDialog.isBulk 
+                  ? `בחר תתי-קטגוריות עבור ${selectedPageIds.length} עמודים`
+                  : `בחר תתי-קטגוריות עבור ${subcatDialog.page?.business_name || 'עמוד זה'}`
+                }
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-4">
+              {/* בחירת קטגוריה ראשית */}
+              <div>
+                <Label className="text-sm font-medium mb-2 block">
+                  בחר קטגוריה ראשית:
+                </Label>
+                <Select
+                  value={subcatDialog.page?.category_id || ""}
+                  onValueChange={(value) => {
+                    if (subcatDialog.page) {
+                      setSubcatDialog(prev => ({
+                        ...prev,
+                        page: { ...prev.page, category_id: value }
+                      }));
+                    }
+                    setSelectedSubcatsForAssignment([]);
+                  }}
+                  disabled={subcatDialog.isBulk}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="בחר קטגוריה..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {mainCategories.map(cat => (
+                      <SelectItem key={cat.id} value={cat.id}>
+                        {cat.icon} {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {subcatDialog.isBulk && (
+                  <p className="text-xs text-yellow-700 mt-1">
+                    💡 בבחירה קבוצתית, בחר תתי-קטגוריות מכל הקטגוריות
+                  </p>
+                )}
+              </div>
+
+              {/* תתי-קטגוריות */}
+              <div>
+                <Label className="text-sm font-medium mb-2 block">
+                  תתי-קטגוריות (בחר אחת או יותר):
+                </Label>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 bg-gray-50 rounded-lg p-3 border max-h-96 overflow-y-auto">
+                  {(subcatDialog.isBulk 
+                    ? categories.filter(c => c.parent_id)
+                    : categories.filter(c => c.parent_id === subcatDialog.page?.category_id)
+                  ).map(subcat => {
+                    const isSelected = selectedSubcatsForAssignment.includes(subcat.id);
+                    return (
+                      <button
+                        key={subcat.id}
+                        type="button"
+                        onClick={() => toggleSubcatForAssignment(subcat.id)}
+                        className={`p-3 rounded-lg border-2 transition-all text-right flex items-center gap-2 ${
+                          isSelected
+                            ? 'border-indigo-500 bg-indigo-50 shadow-sm'
+                            : 'border-gray-200 hover:border-indigo-300 hover:bg-white'
+                        }`}
+                      >
+                        <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                          isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-gray-300'
+                        }`}>
+                          {isSelected && <Check className="w-3 h-3 text-white" />}
+                        </div>
+                        <span className="text-xl">{subcat.icon || '📌'}</span>
+                        <span className="font-medium text-sm flex-1">{subcat.name}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                {selectedSubcatsForAssignment.length > 0 && (
+                  <p className="text-xs text-indigo-700 mt-2 font-medium">
+                    ✅ נבחרו {selectedSubcatsForAssignment.length} תתי-קטגוריות
+                  </p>
+                )}
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setSubcatDialog({ open: false, page: null, isBulk: false });
+                  setSelectedSubcatsForAssignment([]);
+                }}
+              >
+                ביטול
+              </Button>
+              <Button
+                onClick={handleSaveSubcategories}
+                className="bg-indigo-600 hover:bg-indigo-700"
+              >
+                <Tag className="w-4 h-4 ml-2" />
+                שמור
               </Button>
             </DialogFooter>
           </DialogContent>
