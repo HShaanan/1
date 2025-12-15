@@ -577,13 +577,13 @@ export default function BusinessPageView() {
       }
     }
 
-    // ברירת מחדל - רקע לבן אלגנטי תמיד
+    // ברירת מחדל - כחול (רקע לבן אלגנטי תמיד)
     return {
       colors: {
-        primary: '#EC4899',
-        primaryHover: '#DB2777',
-        primaryLight: '#FCE7F3',
-        primaryDark: '#831843'
+        primary: '#3B82F6',
+        primaryHover: '#2563EB',
+        primaryLight: '#DBEAFE',
+        primaryDark: '#1E40AF'
       },
       gradient: 'bg-white-elegant',
       name: 'ברירת מחדל'
