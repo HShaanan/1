@@ -52,7 +52,7 @@ export default function ShoppingSubcategoryGallery({ categories = [], loading, o
                 }`}
               >
                 {/* תמונה מלאה בראש הכרטיס ביחס 4:3 */}
-                <div className="w-full aspect-[4/3] bg-gray-50 overflow-hidden">
+                <div className="w-full aspect-[4/3] bg-gradient-to-br from-pink-50 to-purple-50 overflow-hidden">
                   {sc.image ? (
                     <LazyImage
                       src={sc.image}
@@ -61,8 +61,8 @@ export default function ShoppingSubcategoryGallery({ categories = [], loading, o
                       imgClassName="object-cover group-hover:scale-[1.02] transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-5xl">{sc.icon || "🛍️"}</span>
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-pink-100 via-purple-50 to-indigo-50">
+                      <span className="text-6xl drop-shadow-sm">{sc.icon || "🛍️"}</span>
                     </div>
                   )}
                 </div>

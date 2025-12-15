@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LazyImage } from "@/components/PerformanceOptimizations";
@@ -55,7 +54,7 @@ export default function FoodSubcategoryGallery({ categories = [], loading, onSel
                 }`}
               >
                 {/* תמונה מלאה בראש הכרטיס ביחס 4:3 */}
-                <div className="w-full aspect-[4/3] bg-gray-50 overflow-hidden">
+                <div className="w-full aspect-[4/3] bg-gradient-to-br from-blue-50 to-indigo-50 overflow-hidden">
                   {sc.image ? (
                     <LazyImage
                       src={sc.image}
@@ -64,8 +63,8 @@ export default function FoodSubcategoryGallery({ categories = [], loading, onSel
                       imgClassName="object-cover group-hover:scale-[1.02] transition-transform duration-300"
                     />
                   ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <span className="text-5xl">{sc.icon || "🍽️"}</span>
+                    <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-blue-100 via-indigo-50 to-purple-50">
+                      <span className="text-6xl drop-shadow-sm">{sc.icon || "🍽️"}</span>
                     </div>
                   )}
                 </div>
