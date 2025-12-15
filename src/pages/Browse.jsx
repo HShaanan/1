@@ -8,6 +8,7 @@ import MobileTopBar from "@/components/explore/MobileTopBar";
 import StickyChips from "@/components/explore/StickyChips";
 import { dataCache } from "@/components/PerformanceOptimizations";
 import { buildProfessionalsGroups } from "@/components/explore/ProfessionalsGrouping";
+import SeoMeta from "@/components/SeoMeta";
 
 // New imports
 import TopTabs from "@/components/explore/TopTabs";
@@ -215,8 +216,26 @@ export default function BrowsePage() {
     return base;
   }, [activeListings, activeTab, selectedCategory, selectedSubcategory, selectedProfGroup, categories, isFoodCatId, isShopCatId]);
 
+  // Dynamic SEO based on selected filters
+  const seoTitle = selectedSubcategory 
+    ? selectedSubcategory.name 
+    : selectedCategory 
+      ? selectedCategory.name 
+      : activeTab === "food" 
+        ? "אוכל ומסעדות" 
+        : "קניות ושירותים";
+  
+  const seoCity = userLocation?.city || "ביתר עילית";
+
   return (
     <div dir="rtl" className="min-h-screen relative">
+      {/* Dynamic SEO Meta Tags */}
+      <SeoMeta
+        category={seoTitle}
+        city={seoCity}
+        description={`מצא ${seoTitle} ב${seoCity} | משלנו - פלטפורמת העסקים והשירותים המקומיים`}
+      />
+
       {/* רקע כחלחל-לבן בהיר מואר עם אנימציות */}
       <div className="fixed inset-0 -z-10 overflow-hidden">
         {/* גרדיאנט כחלחל-לבן חלק */}

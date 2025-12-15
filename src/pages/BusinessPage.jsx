@@ -1147,6 +1147,9 @@ export default function BusinessPageView() {
         description={(businessPage.description || "").substring(0, 160)}
         imageUrl={businessPage.preview_image || businessPage.images?.[0]}
         url={window.location.href}
+        city={businessPage.city || "ביתר עילית"}
+        category={businessPage.category_name || ""}
+        kashrut={businessPage.kashrut_authority_type || ""}
       />
 
       {/* Animated Gradient Background with Bubbles */}

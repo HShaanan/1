@@ -5,10 +5,35 @@ export default function SeoMeta({
   title, 
   description, 
   imageUrl, 
-  url = typeof window !== 'undefined' ? window.location.href : ''
+  url = typeof window !== 'undefined' ? window.location.href : '',
+  city = "ביתר עילית",
+  category = "",
+  kashrut = ""
 }) {
-  const fullTitle = title ? `${title} | משלנו` : "משלנו - פלטפורמת עסקים וקהילה";
-  const finalDescription = description || "משלנו - המקום למצוא עסקים, מקצוענים ושירותים בקהילה החרדית";
+  // Build dynamic SEO-optimized title
+  let fullTitle = "";
+  
+  if (title) {
+    // Business page - enhanced with city and kashrut
+    const cityPart = city ? `ב${city}` : "";
+    const kashrutPart = kashrut ? `כשר ${kashrut}` : "";
+    
+    if (kashrutPart && cityPart) {
+      fullTitle = `${title} ${cityPart} | ${kashrutPart} | משלנו`;
+    } else if (cityPart) {
+      fullTitle = `${title} ${cityPart} | משלנו`;
+    } else {
+      fullTitle = `${title} | משלנו`;
+    }
+  } else if (category && city) {
+    // Category page
+    fullTitle = `${category} ב${city} | משלנו`;
+  } else {
+    // Default homepage
+    fullTitle = "משלנו - פלטפורמת עסקים וקהילה";
+  }
+  
+  const finalDescription = description || `משלנו - המקום למצוא עסקים, מקצוענים ושירותים בקהילה החרדית${city ? ` ב${city}` : ''}`;
   const finalImage = imageUrl || "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png";
 
   return (
