@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
+import React, { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +23,7 @@ export default function SearchPage() {
   const [locationError, setLocationError] = useState("");
   const [autoRadiusApplied, setAutoRadiusApplied] = useState(false);
   const DEFAULT_CITY_RADIUS_KM = 10;
+  const mapRef = useRef(null);
 
   // Debounce search query for better performance
   const debouncedSearchQuery = useDebounce(searchQuery, 300);
@@ -334,6 +335,12 @@ export default function SearchPage() {
                   id={`listing-${listing.id}`}
                   className="transition-all hover:shadow-lg cursor-pointer border-2 hover:border-blue-300"
                   onClick={() => {
+                    if (listing.lat && listing.lng && mapRef.current) {
+                      mapRef.current.panTo({ lat: listing.lat, lng: listing.lng });
+                      mapRef.current.setZoom(16);
+                    }
+                  }}
+                  onDoubleClick={() => {
                     window.location.href = createPageUrl(`BusinessPage?slug=${listing.url_slug || listing.id}`);
                   }}
                 >
@@ -384,20 +391,21 @@ export default function SearchPage() {
       <div className="flex-1 h-96 md:h-[calc(100vh-120px)] order-1 md:order-2">
          <div className="sticky top-24 h-full w-full rounded-2xl overflow-hidden shadow-lg">
             <InteractiveMap
-                listings={mapMarkers}
-                userLocation={userLocation}
-                onMarkerClick={(listing) => {
-                  const element = document.getElementById(`listing-${listing.id}`);
-                  if (element) {
-                    element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    element.classList.add('ring-2', 'ring-blue-500');
-                    setTimeout(() => {
-                        element.classList.remove('ring-2', 'ring-blue-500');
-                    }, 2000);
-                  }
-                }}
-                className="w-full h-full border-0"
-              />
+               listings={mapMarkers}
+               userLocation={userLocation}
+               mapRef={mapRef}
+               onMarkerClick={(listing) => {
+                 const element = document.getElementById(`listing-${listing.id}`);
+                 if (element) {
+                   element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                   element.classList.add('ring-2', 'ring-blue-500');
+                   setTimeout(() => {
+                       element.classList.remove('ring-2', 'ring-blue-500');
+                   }, 2000);
+                 }
+               }}
+               className="w-full h-full border-0"
+             />
          </div>
       </div>
     </div>
