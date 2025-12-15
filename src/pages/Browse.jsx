@@ -35,6 +35,13 @@ export default function BrowsePage() {
     } catch { return null; }
   });
 
+  // איפוס בחירות כשעוברים בין טאבים
+  useEffect(() => {
+    setSelectedCategory(null);
+    setSelectedSubcategory(null);
+    setSelectedProfGroup(null);
+  }, [activeTab]);
+
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 80);
