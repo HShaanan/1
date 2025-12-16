@@ -21,6 +21,43 @@ export default function DynamicCategoryPage() {
   const [categoryData, setCategoryData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [relatedCategories, setRelatedCategories] = useState([]);
+  const [pageViewId, setPageViewId] = useState(null);
+  const [startTime] = useState(Date.now());
+
+  // Track page view
+  useEffect(() => {
+    const trackPageView = async () => {
+      try {
+        const user = await base44.auth.me().catch(() => null);
+        const sessionId = sessionStorage.getItem('session_id') || `session-${Date.now()}-${Math.random()}`;
+        sessionStorage.setItem('session_id', sessionId);
+
+        const viewData = {
+          city,
+          category,
+          subcategory: subcategory || null,
+          user_email: user?.email || null,
+          session_id: sessionId,
+          referrer: document.referrer || null
+        };
+
+        const view = await base44.entities.DynamicPageView.create(viewData);
+        setPageViewId(view.id);
+      } catch (error) {
+        console.error("Failed to track page view:", error);
+      }
+    };
+
+    trackPageView();
+
+    // Track time on page when leaving
+    return () => {
+      if (pageViewId) {
+        const timeOnPage = Math.floor((Date.now() - startTime) / 1000);
+        base44.entities.DynamicPageView.update(pageViewId, { time_on_page: timeOnPage }).catch(() => {});
+      }
+    };
+  }, [city, category, subcategory]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -50,6 +87,15 @@ export default function DynamicCategoryPage() {
         // Load businesses
         const results = await base44.entities.BusinessPage.filter(filter, "-is_promoted,-created_date", 50);
         setBusinesses(results || []);
+
+        // Update page view with results
+        if (pageViewId) {
+          await base44.entities.DynamicPageView.update(pageViewId, {
+            category_name: cats[0]?.name || category,
+            results_count: results?.length || 0,
+            has_results: (results?.length || 0) > 0
+          }).catch(() => {});
+        }
 
         // Load related categories for suggestions
         if (cats[0]) {
@@ -132,7 +178,12 @@ export default function DynamicCategoryPage() {
             </div>
             
             <Button
-              onClick={() => window.location.href = createPageUrl("Add")}
+              onClick={() => {
+                if (pageViewId) {
+                  base44.entities.DynamicPageView.update(pageViewId, { converted: true }).catch(() => {});
+                }
+                window.location.href = createPageUrl("Add");
+              }}
               className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all"
             >
               <Plus className="w-5 h-5 ml-2" />
@@ -166,7 +217,12 @@ export default function DynamicCategoryPage() {
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
                   <Button
                     size="lg"
-                    onClick={() => window.location.href = createPageUrl("Add")}
+                    onClick={() => {
+                      if (pageViewId) {
+                        base44.entities.DynamicPageView.update(pageViewId, { converted: true }).catch(() => {});
+                      }
+                      window.location.href = createPageUrl("Add");
+                    }}
                     className="bg-white text-blue-700 hover:bg-blue-50 shadow-xl hover:shadow-2xl text-lg px-8 py-6 h-auto"
                   >
                     <Plus className="w-6 h-6 ml-2" />
