@@ -56,14 +56,15 @@ export default function AdminDynamicPagesAnalytics() {
   const existingPages = useMemo(() => {
     if (categories.length === 0 || businesses.length === 0) return [];
 
+    const baseUrl = 'https://meshelanu.co.il';
     const cities = [...new Set(businesses.map(b => b.city))].filter(Boolean);
     
-    // סינון קטגוריות - רק אוכל וקניות (לא אנשי מקצוע, לא נדל"ן)
-    const foodKeywords = /אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|מאפ|קונדיט|חלבי|בשרי|שף|טבח/i;
+    // סינון קטגוריות - רק אוכל וקניות (לא מאפיות/קפה, אנשי מקצוע, נדל"ן)
+    const foodKeywords = /אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|קונדיט|חלבי|בשרי|שף|טבח/i;
     const shopKeywords = /חנות|קניות|ציוד|חשמל|אלקטרוניקה|מחשבים|ביגוד|אופנה|לבוש|הנעלה|ספרים|צעצוע|ריהוט|בית|קוסמטיקה|פארם|מתנות|כלי|מוצר/i;
     
     // קטגוריות להחרגה
-    const excludedKeywords = /קפה|אנשי מקצוע|נדל"ן|מקצוע|שירות.*מקצוע/i;
+    const excludedKeywords = /קפה|מאפ|אנשי מקצוע|נדל"ן|מקצוע|שירות.*מקצוע|בית קפה/i;
     
     const relevantCategories = categories.filter(c => 
       !c.parent_id && 
@@ -93,7 +94,7 @@ export default function AdminDynamicPagesAnalytics() {
           subcategory: null,
           businessCount,
           viewCount,
-          url: `/page/DynamicCategoryPage?city=${encodeURIComponent(city)}&category=${encodeURIComponent(category.slug)}`,
+          url: `${baseUrl}/page/DynamicCategoryPage?city=${encodeURIComponent(city)}&category=${encodeURIComponent(category.slug)}`,
           type: 'main'
         });
         
@@ -119,7 +120,7 @@ export default function AdminDynamicPagesAnalytics() {
             subcategorySlug: subcat.slug,
             businessCount: subcatBusinessCount,
             viewCount: subcatViewCount,
-            url: `/page/DynamicCategoryPage?city=${encodeURIComponent(city)}&category=${encodeURIComponent(category.slug)}&subcategory=${encodeURIComponent(subcat.slug)}`,
+            url: `${baseUrl}/page/DynamicCategoryPage?city=${encodeURIComponent(city)}&category=${encodeURIComponent(category.slug)}&subcategory=${encodeURIComponent(subcat.slug)}`,
             type: 'sub'
           });
         });
