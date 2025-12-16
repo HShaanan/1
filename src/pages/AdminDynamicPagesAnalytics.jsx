@@ -52,23 +52,36 @@ export default function AdminDynamicPagesAnalytics() {
     return pageViews.filter(v => new Date(v.created_date).getTime() > cutoff);
   }, [pageViews, dateFilter]);
 
-  // חישוב דפים קיימים במערכת
+  // חישוב דפים קיימים במערכת - כל הדפים שב-sitemap
   const existingPages = useMemo(() => {
     if (categories.length === 0 || businesses.length === 0) return [];
 
     const cities = [...new Set(businesses.map(b => b.city))].filter(Boolean);
-    const mainCategories = categories.filter(c => !c.parent_id);
+    
+    // סינון קטגוריות - רק אוכל וקניות (לא אנשי מקצוע, לא נדל"ן)
+    const foodKeywords = /אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|מאפ|קונדיט|חלבי|בשרי|שף|טבח/i;
+    const shopKeywords = /חנות|קניות|ציוד|חשמל|אלקטרוניקה|מחשבים|ביגוד|אופנה|לבוש|הנעלה|ספרים|צעצוע|ריהוט|בית|קוסמטיקה|פארם|מתנות|כלי|מוצר/i;
+    
+    // קטגוריות להחרגה
+    const excludedKeywords = /קפה|אנשי מקצוע|נדל"ן|מקצוע|שירות.*מקצוע/i;
+    
+    const relevantCategories = categories.filter(c => 
+      !c.parent_id && 
+      (foodKeywords.test(c.name) || shopKeywords.test(c.name)) &&
+      !excludedKeywords.test(c.name)
+    );
+    
+    const allSubcategories = categories.filter(c => c.parent_id);
     
     const pages = [];
     
+    // דפי קטגוריה ראשית
     cities.forEach(city => {
-      mainCategories.forEach(category => {
-        // ספירת עסקים בצירוף זה
+      relevantCategories.forEach(category => {
         const businessCount = businesses.filter(b => 
           b.city === city && b.category_id === category.id
         ).length;
         
-        // ספירת צפיות בצירוף זה
         const viewCount = pageViews.filter(v => 
           v.city === city && v.category === category.slug
         ).length;
@@ -77,14 +90,43 @@ export default function AdminDynamicPagesAnalytics() {
           city,
           category: category.name,
           categorySlug: category.slug,
+          subcategory: null,
           businessCount,
           viewCount,
-          url: `/${city.replace(/\s+/g, '-')}/${category.slug}`
+          url: `/page/DynamicCategoryPage?city=${encodeURIComponent(city)}&category=${encodeURIComponent(category.slug)}`,
+          type: 'main'
+        });
+        
+        // דפי תת-קטגוריה
+        const subcats = allSubcategories.filter(s => s.parent_id === category.id);
+        subcats.forEach(subcat => {
+          const subcatBusinessCount = businesses.filter(b => 
+            b.city === city && 
+            (b.subcategory_ids?.includes(subcat.id) || b.subcategory_id === subcat.id)
+          ).length;
+          
+          const subcatViewCount = pageViews.filter(v => 
+            v.city === city && 
+            v.category === category.slug && 
+            v.subcategory === subcat.slug
+          ).length;
+          
+          pages.push({
+            city,
+            category: category.name,
+            categorySlug: category.slug,
+            subcategory: subcat.name,
+            subcategorySlug: subcat.slug,
+            businessCount: subcatBusinessCount,
+            viewCount: subcatViewCount,
+            url: `/page/DynamicCategoryPage?city=${encodeURIComponent(city)}&category=${encodeURIComponent(category.slug)}&subcategory=${encodeURIComponent(subcat.slug)}`,
+            type: 'sub'
+          });
         });
       });
     });
     
-    return pages.sort((a, b) => b.businessCount - a.businessCount);
+    return pages.sort((a, b) => b.viewCount - a.viewCount);
   }, [categories, businesses, pageViews]);
 
   const stats = useMemo(() => {
@@ -363,34 +405,46 @@ export default function AdminDynamicPagesAnalytics() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5 text-green-600" />
-              כל הדפים הדינמיים במערכת ({existingPages.length} דפים)
+              כל דפי הנחיתה הדינמיים ב-Sitemap ({existingPages.length} דפים)
             </CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-sm text-slate-600 mb-4">
-              אלו כל הצירופים האפשריים של עיר + קטגוריה שקיימים באתר, מסודרים לפי כמות העסקים
+              כל הצירופים של עיר + קטגוריה/תת-קטגוריה שנמצאים ב-sitemap (אוכל וקניות בלבד), מסודרים לפי צפיות
             </p>
-            <div className="overflow-x-auto">
+            <div className="mb-4 flex gap-2">
+              <Badge variant="outline">
+                דפים עם עסקים: {existingPages.filter(p => p.businessCount > 0).length}
+              </Badge>
+              <Badge variant="destructive">
+                דפים ללא עסקים (לידים): {existingPages.filter(p => p.businessCount === 0).length}
+              </Badge>
+            </div>
+            <div className="overflow-x-auto max-h-[600px] overflow-y-auto border rounded-lg">
               <table className="w-full text-sm">
-                <thead className="bg-slate-50 border-b">
+                <thead className="bg-slate-50 border-b sticky top-0">
                   <tr>
                     <th className="text-right p-3 font-semibold text-slate-700">עיר</th>
                     <th className="text-right p-3 font-semibold text-slate-700">קטגוריה</th>
+                    <th className="text-right p-3 font-semibold text-slate-700">תת-קטגוריה</th>
                     <th className="text-center p-3 font-semibold text-slate-700">עסקים</th>
                     <th className="text-center p-3 font-semibold text-slate-700">צפיות</th>
-                    <th className="text-center p-3 font-semibold text-slate-700">URL</th>
+                    <th className="text-center p-3 font-semibold text-slate-700">פעולה</th>
                   </tr>
                 </thead>
                 <tbody>
                   {existingPages.map((page, idx) => (
                     <tr 
-                      key={`${page.city}-${page.categorySlug}`}
+                      key={`${page.city}-${page.categorySlug}-${page.subcategorySlug || 'main'}`}
                       className={`border-b hover:bg-slate-50 transition-colors ${
                         page.businessCount === 0 ? 'bg-red-50' : ''
                       }`}
                     >
                       <td className="p-3">{page.city}</td>
                       <td className="p-3">{page.category}</td>
+                      <td className="p-3 text-slate-500 text-xs">
+                        {page.subcategory || '-'}
+                      </td>
                       <td className="p-3 text-center">
                         <Badge 
                           variant={page.businessCount > 0 ? 'default' : 'destructive'}
@@ -409,7 +463,7 @@ export default function AdminDynamicPagesAnalytics() {
                           rel="noopener noreferrer"
                           className="text-blue-600 hover:underline text-xs"
                         >
-                          {page.url}
+                          לדף
                         </a>
                       </td>
                     </tr>
