@@ -9,6 +9,7 @@ import StickyChips from "@/components/explore/StickyChips";
 import { dataCache } from "@/components/PerformanceOptimizations";
 import { buildProfessionalsGroups } from "@/components/explore/ProfessionalsGrouping";
 import SeoMeta from "@/components/SeoMeta";
+import { WebsiteSchema } from "@/components/seo/SchemaOrg";
 
 // New imports
 import TopTabs from "@/components/explore/TopTabs";
@@ -233,6 +234,10 @@ export default function BrowsePage() {
       <SeoMeta
         category={seoTitle}
         city={seoCity}
+        description={`מצא ${seoTitle} ב${seoCity} | משלנו - פלטפורמת העסקים והשירותים המקומיים`}
+      />
+      <WebsiteSchema 
+        name={`משלנו - ${seoTitle}`}
         description={`מצא ${seoTitle} ב${seoCity} | משלנו - פלטפורמת העסקים והשירותים המקומיים`}
       />
 

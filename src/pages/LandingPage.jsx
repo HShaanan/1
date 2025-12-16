@@ -12,6 +12,7 @@ import {
 // Star is already imported for billboard decorations
 import { ScrollReveal, StaggerContainer, CountUp, RevealOnScroll } from "@/components/landing/ScrollAnimations";
 import WordSlider from "@/components/landing/WordSlider";
+import { WebsiteSchema, OrganizationSchema } from "@/components/seo/SchemaOrg";
 
 // Hero images for Orthodox Jewish audience (no women)
 const HERO_IMAGES = {
@@ -177,6 +178,8 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFBFC] overflow-x-hidden" dir="rtl">
+      <WebsiteSchema />
+      <OrganizationSchema />
       
       {/* ============== HERO SECTION - FULL IMAGE ============== */}
       <section className="relative w-full overflow-hidden">

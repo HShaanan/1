@@ -8,15 +8,20 @@ import { JsonLd } from 'react-schemaorg';
 export const LocalBusinessSchema = ({ business }) => {
   if (!business) return null;
 
+  // Use the clean slug URL if available, otherwise fallback to current URL but strip query params if possible
+  const canonicalUrl = business.url_slug 
+    ? (typeof window !== 'undefined' ? `${window.location.origin}/BusinessPage?slug=${business.url_slug}` : undefined)
+    : (typeof window !== 'undefined' ? window.location.href : undefined);
+
   const schema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: business.business_name, // שם העסק בלבד, ללא סלוגנים
+    name: business.business_name || business.display_title, // שם העסק בלבד
     description: business.description ? business.description.substring(0, 160) : undefined,
     image: business.images && business.images.length > 0 ? business.images : [business.preview_image],
     telephone: business.contact_phone,
     email: business.business_owner_email,
-    url: typeof window !== 'undefined' ? window.location.href : undefined,
+    url: canonicalUrl,
     address: {
       "@type": "PostalAddress",
       streetAddress: business.address,
@@ -47,8 +52,61 @@ export const LocalBusinessSchema = ({ business }) => {
     };
   }
 
-  // הוספת שעות פתיחה אם קיימות בפורמט שגוגל מבין (דורש פירסור אם הפורמט מורכב, כרגע נשאיר בסיסי)
-  // כאן אפשר להרחיב בעתיד פונקציה שמפרסרת את ה-hours string למערך של OpeningHoursSpecification
+  // הוספת שעות פתיחה אם קיימות
+  if (business.hours) {
+      // Basic implementation - ideally parse the hours string
+      schema.openingHours = business.hours; 
+  }
 
   return <JsonLd item={schema} />;
+};
+
+/**
+ * סכמה כללית לאתר - לדף הבית ודפי קטגוריה
+ */
+export const WebsiteSchema = ({ name = "משלנו", description, url }) => {
+    const siteUrl = url || (typeof window !== 'undefined' ? window.location.origin : 'https://meshelanu.co.il');
+    
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": name,
+        "url": siteUrl,
+        "description": description || "הפלטפורמה הכשרה למשלוחים, מסעדות ועסקים בביתר עילית והסביבה.",
+        "potentialAction": {
+            "@type": "SearchAction",
+            "target": `${siteUrl}/Browse?q={search_term_string}`,
+            "query-input": "required name=search_term_string"
+        }
+    };
+
+    return <JsonLd item={schema} />;
+};
+
+/**
+ * סכמה לארגון/מותג
+ */
+export const OrganizationSchema = () => {
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://meshelanu.co.il';
+    
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "משלנו",
+        "url": siteUrl,
+        "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png",
+        "sameAs": [
+            "https://www.facebook.com/meshelanu",
+            "https://www.instagram.com/meshelanu"
+        ],
+        "contactPoint": {
+            "@type": "ContactPoint",
+            "telephone": "+972-50-1234567", // Example placeholder
+            "contactType": "customer service",
+            "areaServed": "IL",
+            "availableLanguage": "Hebrew"
+        }
+    };
+
+    return <JsonLd item={schema} />;
 };
