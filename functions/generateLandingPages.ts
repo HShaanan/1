@@ -41,6 +41,9 @@ Deno.serve(async (req) => {
     // Generate landing pages for each city × category × subcategory
     for (const city of cities) {
       for (const category of relevantCategories) {
+        // Skip categories without slug
+        if (!category.slug) continue;
+        
         // Main category page
         const mainSlug = `${city.replace(/\s+/g, '-').toLowerCase()}-${category.slug}`;
         
