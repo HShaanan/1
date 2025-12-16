@@ -32,12 +32,22 @@ export default function BrowsePage() {
 
   // New state variables
   const [activeTab, setActiveTab] = useState("food");
+  const [searchQuery, setSearchQuery] = useState("");
   const [userLocation, setUserLocation] = useState(() => {
     try {
       const raw = localStorage.getItem("meshlanoo_browse_location");
       return raw ? JSON.parse(raw) : null;
     } catch { return null; }
   });
+
+  // Handle URL search param
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const q = params.get("q");
+    if (q) {
+      setSearchQuery(q);
+    }
+  }, []);
 
   // Advanced Filters State
   const [filters, setFilters] = useState({
@@ -195,9 +205,50 @@ export default function BrowsePage() {
     setSelectedSubcategory(null);
   };
 
+  // Auto-switch tab if empty and other tab has results (only on initial load or search)
+  useEffect(() => {
+    if (loading || activeListings.length === 0) return;
+
+    // Helper to check counts
+    const countFood = activeListings.filter(l => 
+      isFoodCatId(l.category_id) || (Array.isArray(l.subcategory_ids) && l.subcategory_ids.some(isFoodCatId))
+    ).length;
+    const countShop = activeListings.filter(l => 
+      isShopCatId(l.category_id) || (Array.isArray(l.subcategory_ids) && l.subcategory_ids.some(isShopCatId))
+    ).length;
+
+    if (activeTab === "food" && countFood === 0 && countShop > 0) {
+      setActiveTab("shopping");
+    } else if (activeTab === "shopping" && countShop === 0 && countFood > 0) {
+      setActiveTab("food");
+    }
+  }, [loading, activeListings, isFoodCatId, isShopCatId]); // Run once when data loads
+
   const filteredListings = useMemo(() => {
     let base = activeListings;
 
+    // Text Search
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      base = base.filter(l => 
+        (l.business_name && l.business_name.toLowerCase().includes(q)) ||
+        (l.description && l.description.toLowerCase().includes(q)) ||
+        (l.special_fields?.tags && l.special_fields.tags.some(t => t.toLowerCase().includes(q)))
+      );
+    }
+
+    // Category Tabs (Only if NOT searching, or force tab even when searching? 
+    // Usually better to search globally if query exists, but UI has tabs. 
+    // Let's relax tabs if searching, OR keep tabs but show badge counts. 
+    // For now, respect tabs to keep UI consistent, but maybe auto-switch tab logic above handles it.)
+    
+    // Note: If we want search to be global, we should ignore activeTab when searchQuery is present.
+    // However, the UI structure is rigid. Let's stick to tab filtering but rely on the useEffect above to switch tabs if needed.
+    // Actually, if I search "shoes" and I'm on Food, I want to see results. 
+    // Let's DISABLE tab filtering if there is a search query, OR show "Results in Shopping" if current tab is empty.
+    // Simplest approach: Search overrides tabs? No, tabs are top level.
+    // Compromise: We keep filtering by tab. The user can switch tabs. The useEffect above helps initial state.
+    
     if (activeTab === "food") {
       base = base.filter(l => 
         isFoodCatId(l.category_id) || 
@@ -263,7 +314,7 @@ export default function BrowsePage() {
     }
 
     return base;
-  }, [activeListings, activeTab, selectedCategory, selectedSubcategory, selectedProfGroup, categories, isFoodCatId, isShopCatId, filters]);
+  }, [activeListings, activeTab, selectedCategory, selectedSubcategory, selectedProfGroup, categories, isFoodCatId, isShopCatId, filters, searchQuery]);
 
   // Dynamic SEO based on selected filters
   const seoTitle = selectedSubcategory 
@@ -433,8 +484,10 @@ export default function BrowsePage() {
           categories={categories.filter(c => !c.parent_id)} 
           selectedCategoryName={selectedCategory?.name || selectedProfGroup?.label}
           onBackToCategories={() => { setSelectedCategory(null); setSelectedSubcategory(null); setSelectedProfGroup(null); }}
-          onClearAll={() => { setSelectedCategory(null); setSelectedSubcategory(null); setSelectedProfGroup(null); }}
-          allowSearch={!!selectedSubcategory || !!selectedProfGroup}
+          onClearAll={() => { setSelectedCategory(null); setSelectedSubcategory(null); setSelectedProfGroup(null); setSearchQuery(""); }}
+          allowSearch={true}
+          searchTerm={searchQuery}
+          onSearchChange={setSearchQuery}
       />
       
       <nav className="bg-white/80 border-b sticky top-[64px] z-30" aria-label="ניווט עליון - לשוניות וסינון">
