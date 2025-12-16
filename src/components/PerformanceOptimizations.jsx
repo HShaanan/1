@@ -1,6 +1,6 @@
-
-
 import React, { memo, useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 
 // Hook לדיבאונס חיפוש
 export const useDebounce = (value, delay) => {
@@ -296,227 +296,22 @@ export const useCachedData = (key, fetchFunction, deps = [], options = {}) => {
   return { data, isLoading, error };
 };
 
-// Hook לטעינה עצלה משופרת למובייל
-const useLazyLoading = () => {
-  const [isIntersecting, setIsIntersecting] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    // אופטימיזציה למובייל - margins קטנים יותר
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-    const rootMargin = isMobile ? "50px 0px 50px 0px" : "100px 0px 100px 0px";
-    
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsIntersecting(true);
-          observer.disconnect();
-        }
-      },
-      { 
-        rootMargin,
-        threshold: 0.1
-      }
-    );
-
-    const currentRef = ref.current;
-    if (currentRef) {
-      observer.observe(currentRef);
-    }
-
-    return () => {
-      if (currentRef) {
-        observer.unobserve(currentRef);
-      }
-    };
-  }, []); // Empty dependency array as ref and observer setup should run once
-
-  return [ref, isIntersecting];
-};
-
-// קומפוננט תמונה מותנית עם cache מתקדם ומהירות גבוהה למובייל
+// רכיב LazyImage המבוסס על react-lazy-load-image-component לאופטימיזציה מקסימלית
 export const LazyImage = memo(({ src, alt, className, imgClassName, placeholderSrc, ...props }) => {
-  const [imageRef, isVisible] = useLazyLoading();
-  const [isLoaded, setIsLoaded] = useState(false);
-  const [hasError, setHasError] = useState(false);
-  const [imageSrc, setImageSrc] = useState(null);
-
-  // בדיקה אם התמונה כבר נטענה ב-cache
-  const isImageCached = useMemo(() => {
-    if (!src || typeof window === 'undefined') return false;
-    
-    const img = new Image();
-    img.src = src;
-    return img.complete && img.naturalHeight !== 0;
-  }, [src]);
-
-  useEffect(() => {
-    if (isImageCached) {
-      setIsLoaded(true);
-      setImageSrc(src);
-    } else if (placeholderSrc) {
-      // If original image isn't cached, but placeholder exists, show placeholder initially
-      setImageSrc(placeholderSrc);
-      setIsLoaded(true); // Treat placeholder as "loaded" for initial display
-    }
-  }, [isImageCached, src, placeholderSrc]);
-
-  // טוענים את התמונה גם אם לא נכנסה עדיין ל-viewport (פתרון למקרים בהם IO לא מתרחש או אלמנטים נמצאים במכולות חדשות)
-  useEffect(() => {
-    if (!src || isLoaded || hasError) return;
-
-    const img = new Image();
-    const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-    const timeout = isMobile ? 3000 : 8000;
-
-    img.onload = () => {
-      setImageSrc(src);
-      setIsLoaded(true);
-      setHasError(false);
-    };
-
-    img.onerror = () => {
-      setHasError(true);
-      setIsLoaded(false);
-      if (placeholderSrc) {
-        setImageSrc(placeholderSrc);
-        setIsLoaded(true);
-      }
-    };
-
-    const timeoutId = setTimeout(() => {
-      if (!isLoaded && !hasError) {
-        setHasError(true);
-        if (placeholderSrc) {
-          setImageSrc(placeholderSrc);
-          setIsLoaded(true);
-        }
-      }
-    }, timeout);
-
-    // טעינה מוקדמת – גם אם לא נראה עדיין
-    try {
-      // חלק מהדפדפנים תומכים במאפיינים הללו
-      // אם לא, זה פשוט יתעלם מהם
-      // (לא קריטי לפונקציונליות)
-      // @ts-ignore
-      img.loading = isMobile ? 'eager' : 'lazy';
-      // @ts-ignore
-      img.decoding = isMobile ? 'sync' : 'async';
-    } catch {}
-
-    img.src = src;
-
-    return () => clearTimeout(timeoutId);
-  }, [src, isLoaded, hasError, placeholderSrc]);
-
-  useEffect(() => {
-    if (isVisible && src && !isLoaded && !hasError) {
-      // יצירת תמונה חדשה לטעינה מקדימה עם אופטימיזציה למובייל
-      const img = new Image();
-      
-      // אופטימיזציה למובייל - קטן timeout וטעינה מהירה יותר
-      const isMobile = typeof window !== 'undefined' && window.innerWidth <= 768;
-      const timeout = isMobile ? 3000 : 8000; // 3 שניות במובייל, 8 בדסקטופ
-      
-      img.onload = () => {
-        setImageSrc(src);
-        setIsLoaded(true);
-        setHasError(false);
-      };
-      
-      img.onerror = () => {
-        setHasError(true);
-        setIsLoaded(false);
-        // אם יש placeholder, נטען אותו במקום
-        if (placeholderSrc) {
-          setImageSrc(placeholderSrc);
-          setIsLoaded(true);
-        }
-      };
-
-      // הגדרת timeout קצר יותר למובייל
-      const timeoutId = setTimeout(() => {
-        if (!isLoaded && !hasError) {
-          setHasError(true);
-          if (placeholderSrc) {
-            setImageSrc(placeholderSrc);
-            setIsLoaded(true);
-          }
-        }
-      }, timeout);
-
-      // במובייל - טען תמונות בצורה מיידית יותר
-      if (isMobile) {
-        img.loading = 'eager'; // Suggests browser fetch immediately
-        img.decoding = 'sync'; // Suggests synchronous decoding
-      }
-
-      img.src = src;
-      
-      return () => clearTimeout(timeoutId);
-    }
-  }, [isVisible, src, isLoaded, hasError, placeholderSrc]);
-
   return (
-    <div ref={imageRef} className={`relative overflow-hidden ${className || ''}`} {...props}>
-      {/* Skeleton loader - פשוט יותר למובייל */}
-      {!isLoaded && !hasError && (
-        <div className="absolute inset-0 w-full h-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse rounded-lg">
-          {/* הסרת האנימציה הכבדה במובייל */}
-          {typeof window !== 'undefined' && window.innerWidth > 768 && (
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/60 to-transparent animate-pulse"></div>
-          )}
-        </div>
-      )}
-      
-      {/* התמונה עצמה */}
-      {imageSrc && (
-        <img
-          src={imageSrc}
-          alt={alt}
-          className={`w-full h-full object-cover transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          } ${imgClassName || ''}`}
-          onLoad={() => {
-            setIsLoaded(true);
-            setHasError(false);
-          }}
-          onError={() => {
-            // If the current image source is not the placeholder and a placeholder exists, try loading the placeholder.
-            // Otherwise, set hasError to true.
-            if (imageSrc !== placeholderSrc && placeholderSrc) {
-              setImageSrc(placeholderSrc);
-              setIsLoaded(true); // Placeholder is loaded
-              setHasError(false); // No error if placeholder is shown
-            } else {
-              setHasError(true);
-              setIsLoaded(false);
-            }
-          }}
-          loading="lazy"
-          decoding="async"
-          // אופטימיזציה נוספת למובייל
-          style={{ 
-            contentVisibility: 'auto',
-            containIntrinsicSize: '200px'
-          }}
-        />
-      )}
-      
-      {/* Fallback במקרה של שגיאה */}
-      {hasError && !placeholderSrc && (
-        <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-          <span className="text-2xl md:text-4xl text-gray-400">📷</span>
-        </div>
-      )}
-      
-      {/* אינדיקטור טעינה פשוט יותר למובייל */}
-      {isVisible && !isLoaded && !hasError && typeof window !== 'undefined' && window.innerWidth <= 768 && (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-6 h-6 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
-        </div>
-      )}
+    <div className={`relative overflow-hidden ${className || ''}`} {...props}>
+      <LazyLoadImage
+        alt={alt}
+        src={src}
+        effect="blur"
+        wrapperClassName="w-full h-full block"
+        className={`w-full h-full object-cover ${imgClassName || ''}`}
+        placeholderSrc={placeholderSrc || "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=50&q=10"}
+        onError={(e) => {
+          e.target.src = 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80';
+        }}
+        threshold={300} // טוען 300px לפני שרואים
+      />
     </div>
   );
 });
