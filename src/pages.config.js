@@ -1,4 +1,3 @@
-import Browse from './pages/Browse';
 import Add from './pages/Add';
 import AdminUsers from './pages/AdminUsers';
 import AdminStats from './pages/AdminStats';
@@ -58,11 +57,11 @@ import AdminDeleteRecent from './pages/AdminDeleteRecent';
 import UserProfile from './pages/UserProfile';
 import DynamicCategoryPage from './pages/DynamicCategoryPage';
 import AdminDynamicPagesAnalytics from './pages/AdminDynamicPagesAnalytics';
+import Browse from './pages/Browse';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Browse": Browse,
     "Add": Add,
     "AdminUsers": AdminUsers,
     "AdminStats": AdminStats,
@@ -122,6 +121,7 @@ export const PAGES = {
     "UserProfile": UserProfile,
     "DynamicCategoryPage": DynamicCategoryPage,
     "AdminDynamicPagesAnalytics": AdminDynamicPagesAnalytics,
+    "Browse": Browse,
 }
 
 export const pagesConfig = {
