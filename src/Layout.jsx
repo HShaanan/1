@@ -540,6 +540,13 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminDynamicPagesAnalytics')} className="flex items-center gap-2 cursor-pointer">
+                          <Activity className="w-4 h-4 text-purple-600" aria-hidden="true" />
+                          <span>דפים דינמיים</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('DeliveryManagement')} className="flex items-center gap-2 cursor-pointer">
                           <Truck className="w-4 h-4 text-indigo-600" aria-hidden="true" />
                           <span>ניהול משלוחים</span>
