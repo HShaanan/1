@@ -71,6 +71,9 @@ Deno.serve(async (req) => {
         // Subcategory pages
         const subcats = allSubcategories.filter(s => s.parent_id === category.id && s.is_active);
         for (const subcat of subcats) {
+          // Skip subcategories without slug
+          if (!subcat.slug) continue;
+          
           const subSlug = `${city.replace(/\s+/g, '-').toLowerCase()}-${category.slug}-${subcat.slug}`;
           
           if (!existingSlugs.has(subSlug)) {
