@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { 
   TrendingUp, Eye, Target, Clock, ChevronLeft, Filter,
-  BarChart3, MapPin, Store, Users
+  BarChart3, MapPin, Store, Users, ExternalLink, FileCode, Loader2
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
@@ -12,7 +12,9 @@ export default function AdminDynamicPagesAnalytics() {
   const [pageViews, setPageViews] = useState([]);
   const [categories, setCategories] = useState([]);
   const [businesses, setBusinesses] = useState([]);
+  const [sitemapContent, setSitemapContent] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [isSitemapLoading, setIsSitemapLoading] = useState(false);
   const [dateFilter, setDateFilter] = useState('7days');
 
   useEffect(() => {
@@ -129,6 +131,19 @@ export default function AdminDynamicPagesAnalytics() {
     
     return pages.sort((a, b) => b.viewCount - a.viewCount);
   }, [categories, businesses, pageViews]);
+
+  const loadSitemap = async () => {
+    setIsSitemapLoading(true);
+    try {
+      const response = await base44.functions.invoke('generateExpandedSitemap', {});
+      setSitemapContent(response.data || "");
+    } catch (error) {
+      console.error("Error loading sitemap:", error);
+      setSitemapContent("שגיאה בטעינת ה-sitemap");
+    } finally {
+      setIsSitemapLoading(false);
+    }
+  };
 
   const stats = useMemo(() => {
     const total = filteredViews.length;
@@ -458,20 +473,77 @@ export default function AdminDynamicPagesAnalytics() {
                         <Badge variant="outline">{page.viewCount}</Badge>
                       </td>
                       <td className="p-3 text-center">
-                        <a
-                          href={page.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline text-xs"
-                        >
-                          לדף
-                        </a>
+                        <div className="flex gap-2 justify-center">
+                          <a
+                            href={page.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline text-xs flex items-center gap-1"
+                          >
+                            <ExternalLink className="w-3 h-3" />
+                            פתח
+                          </a>
+                        </div>
                       </td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Sitemap Viewer */}
+        <Card className="mt-8">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle className="flex items-center gap-2">
+                <FileCode className="w-5 h-5 text-indigo-600" />
+                קובץ Sitemap המלא
+              </CardTitle>
+              <Button
+                onClick={loadSitemap}
+                disabled={isSitemapLoading}
+                variant="outline"
+              >
+                {isSitemapLoading ? (
+                  <>
+                    <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                    טוען...
+                  </>
+                ) : (
+                  <>
+                    <Eye className="w-4 h-4 ml-2" />
+                    טען Sitemap
+                  </>
+                )}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {sitemapContent ? (
+              <div className="space-y-4">
+                <div className="flex justify-end">
+                  <Button
+                    onClick={() => {
+                      navigator.clipboard.writeText(sitemapContent);
+                      alert('ה-Sitemap הועתק ללוח');
+                    }}
+                    size="sm"
+                    variant="outline"
+                  >
+                    העתק
+                  </Button>
+                </div>
+                <pre className="bg-slate-900 text-green-400 p-4 rounded-lg overflow-x-auto text-xs max-h-96 overflow-y-auto">
+                  {sitemapContent}
+                </pre>
+              </div>
+            ) : (
+              <p className="text-center text-slate-500 py-8">
+                לחץ על "טען Sitemap" כדי לראות את קובץ ה-XML המלא
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
