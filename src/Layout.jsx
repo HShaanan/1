@@ -783,6 +783,16 @@ export default function Layout({ children, currentPageName }) {
                         </Link>
 
                         <Link
+                          to={createPageUrl("AdminDynamicPagesAnalytics")}
+                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
+                          onClick={handleDropdownClose}
+                          role="menuitem"
+                        >
+                          <Activity className="w-4 h-4 ml-2 text-purple-600" aria-hidden="true" />
+                          <span>דפים דינמיים</span>
+                        </Link>
+
+                        <Link
                           to={createPageUrl("DeliveryManagement")}
                           className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
                           onClick={handleDropdownClose}
