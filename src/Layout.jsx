@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { createPageUrl } from "@/utils";
+import { HelmetProvider } from "react-helmet-async";
 import {
   Menu, X, Store, Plus, Search, User as UserIcon, Heart,
   Tag, UserCircle, LogOut, Shield,
@@ -183,12 +184,13 @@ export default function Layout({ children, currentPageName }) {
   }
 
   return (
-    <div
-      dir="rtl"
-      lang="he"
-      className="min-h-screen font-sans text-text-primary"
-      style={{ fontFamily: '"Ronda", "Heebo", "Noto Sans Hebrew", system-ui, -apple-system, "Rubik", Arial, Helvetica, sans-serif' }}
-    >
+    <HelmetProvider>
+      <div
+        dir="rtl"
+        lang="he"
+        className="min-h-screen font-sans text-text-primary"
+        style={{ fontFamily: '"Ronda", "Heebo", "Noto Sans Hebrew", system-ui, -apple-system, "Rubik", Arial, Helvetica, sans-serif' }}
+      >
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link
@@ -928,6 +930,7 @@ export default function Layout({ children, currentPageName }) {
       <AccessibilityWidget />
       {/* וידג'ט תמיכה וצ'אט */}
       <SupportWidget />
-      </div>
-      );
-      }
+        </div>
+      </HelmetProvider>
+    );
+  }
