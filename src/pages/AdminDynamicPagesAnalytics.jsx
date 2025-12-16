@@ -10,14 +10,26 @@ import { Badge } from "@/components/ui/badge";
 
 export default function AdminDynamicPagesAnalytics() {
   const [pageViews, setPageViews] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [businesses, setBusinesses] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [dateFilter, setDateFilter] = useState('7days');
 
   useEffect(() => {
     const loadData = async () => {
       try {
-        const views = await base44.entities.DynamicPageView.list("-created_date", 1000);
+        const [views, cats, biz] = await Promise.all([
+          base44.entities.DynamicPageView.list("-created_date", 1000),
+          base44.entities.Category.list(),
+          base44.entities.BusinessPage.filter({ 
+            is_active: true, 
+            approval_status: 'approved',
+            is_frozen: false 
+          })
+        ]);
         setPageViews(views || []);
+        setCategories(cats || []);
+        setBusinesses(biz || []);
       } catch (error) {
         console.error("Error loading analytics:", error);
       } finally {
@@ -39,6 +51,41 @@ export default function AdminDynamicPagesAnalytics() {
 
     return pageViews.filter(v => new Date(v.created_date).getTime() > cutoff);
   }, [pageViews, dateFilter]);
+
+  // חישוב דפים קיימים במערכת
+  const existingPages = useMemo(() => {
+    if (categories.length === 0 || businesses.length === 0) return [];
+
+    const cities = [...new Set(businesses.map(b => b.city))].filter(Boolean);
+    const mainCategories = categories.filter(c => !c.parent_id);
+    
+    const pages = [];
+    
+    cities.forEach(city => {
+      mainCategories.forEach(category => {
+        // ספירת עסקים בצירוף זה
+        const businessCount = businesses.filter(b => 
+          b.city === city && b.category_id === category.id
+        ).length;
+        
+        // ספירת צפיות בצירוף זה
+        const viewCount = pageViews.filter(v => 
+          v.city === city && v.category === category.slug
+        ).length;
+        
+        pages.push({
+          city,
+          category: category.name,
+          categorySlug: category.slug,
+          businessCount,
+          viewCount,
+          url: `/${city.replace(/\s+/g, '-')}/${category.slug}`
+        });
+      });
+    });
+    
+    return pages.sort((a, b) => b.businessCount - a.businessCount);
+  }, [categories, businesses, pageViews]);
 
   const stats = useMemo(() => {
     const total = filteredViews.length;
@@ -307,6 +354,68 @@ export default function AdminDynamicPagesAnalytics() {
                   🎉 מעולה! כל החיפושים מצאו תוצאות
                 </p>
               )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* כל הדפים הדינמיים הקיימים */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Users className="w-5 h-5 text-green-600" />
+              כל הדפים הדינמיים במערכת ({existingPages.length} דפים)
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-sm text-slate-600 mb-4">
+              אלו כל הצירופים האפשריים של עיר + קטגוריה שקיימים באתר, מסודרים לפי כמות העסקים
+            </p>
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-slate-50 border-b">
+                  <tr>
+                    <th className="text-right p-3 font-semibold text-slate-700">עיר</th>
+                    <th className="text-right p-3 font-semibold text-slate-700">קטגוריה</th>
+                    <th className="text-center p-3 font-semibold text-slate-700">עסקים</th>
+                    <th className="text-center p-3 font-semibold text-slate-700">צפיות</th>
+                    <th className="text-center p-3 font-semibold text-slate-700">URL</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {existingPages.map((page, idx) => (
+                    <tr 
+                      key={`${page.city}-${page.categorySlug}`}
+                      className={`border-b hover:bg-slate-50 transition-colors ${
+                        page.businessCount === 0 ? 'bg-red-50' : ''
+                      }`}
+                    >
+                      <td className="p-3">{page.city}</td>
+                      <td className="p-3">{page.category}</td>
+                      <td className="p-3 text-center">
+                        <Badge 
+                          variant={page.businessCount > 0 ? 'default' : 'destructive'}
+                          className={page.businessCount === 0 ? 'bg-red-500' : ''}
+                        >
+                          {page.businessCount}
+                        </Badge>
+                      </td>
+                      <td className="p-3 text-center">
+                        <Badge variant="outline">{page.viewCount}</Badge>
+                      </td>
+                      <td className="p-3 text-center">
+                        <a
+                          href={page.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-600 hover:underline text-xs"
+                        >
+                          {page.url}
+                        </a>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </CardContent>
         </Card>
