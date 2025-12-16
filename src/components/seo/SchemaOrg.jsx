@@ -11,7 +11,7 @@ export const LocalBusinessSchema = ({ business }) => {
   const schema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    name: business.display_title || business.business_name,
+    name: business.business_name, // שם העסק בלבד, ללא סלוגנים
     description: business.description ? business.description.substring(0, 160) : undefined,
     image: business.images && business.images.length > 0 ? business.images : [business.preview_image],
     telephone: business.contact_phone,
@@ -21,6 +21,7 @@ export const LocalBusinessSchema = ({ business }) => {
       "@type": "PostalAddress",
       streetAddress: business.address,
       addressLocality: business.city || "ביתר עילית",
+      postalCode: "90500", // חובה לגוגל - ברירת מחדל לביתר עילית
       addressCountry: "IL"
     },
     priceRange: business.price_range || "$$",
