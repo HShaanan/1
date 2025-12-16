@@ -81,10 +81,11 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
         {/* לוגו כשרות - שמאל למטה */}
         {kashrutLogo && (
           <div className="absolute bottom-2 right-2 bg-white/90 p-0.5 rounded shadow-md">
-            <img 
-              src={kashrutLogo} 
-              alt="לוגו כשרות" 
-              className="w-12 h-12 object-contain"
+            <LazyImage
+              src={kashrutLogo}
+              alt="לוגו כשרות"
+              className="w-12 h-12"
+              imgClassName="object-contain"
             />
           </div>
         )}
