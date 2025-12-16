@@ -126,11 +126,11 @@ export default function SupportWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 left-6 z-[9999] flex flex-col items-start font-sans" dir="rtl">
+    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-start font-sans" dir="rtl">
       {/* חלון הצ'אט */}
       <div 
         className={cn(
-          "transition-all duration-300 ease-in-out transform origin-bottom-left mb-4",
+          "transition-all duration-300 ease-in-out transform origin-bottom-right mb-4",
           isOpen 
             ? "scale-100 opacity-100 translate-y-0" 
             : "scale-95 opacity-0 translate-y-4 pointer-events-none absolute bottom-0"
