@@ -29,6 +29,7 @@ import BrandsCarousel from "@/components/listing/BrandsCarousel";
 import { useBusinessAnalytics } from "@/components/analytics/useBusinessAnalytics";
 import OrderSidebar from "@/components/order/OrderSidebar";
 import ModificationModal from "@/components/order/ModificationModal";
+import { LocalBusinessSchema } from "@/components/seo/SchemaOrg";
 
 // Helper function to convert hex to rgba
 const hexToRgba = (hex, alpha) => {
@@ -784,43 +785,7 @@ export default function BusinessPageView() {
     loadRelated();
   }, [businessPage?.category_id, businessPage?.id]);
 
-  // Inject JSON-LD Schema for SEO
-  useEffect(() => {
-    if (!businessPage) return;
-
-    const schema = {
-      "@context": "https://schema.org/",
-      "@type": "LocalBusiness",
-      "name": businessPage.display_title || businessPage.business_name,
-      "description": (businessPage.description || "").substring(0, 160),
-      "image": businessPage.images?.[0] || businessPage.preview_image || "",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": businessPage.address || "",
-        "addressLocality": businessPage.city || "ביתר-עילית",
-        "addressCountry": "IL"
-      },
-      "telephone": businessPage.contact_phone || "",
-      "url": window.location.href,
-      "priceRange": businessPage.price_range || "$$",
-      "aggregateRating": businessPage.smart_rating > 0 ? {
-        "@type": "AggregateRating",
-        "ratingValue": businessPage.smart_rating,
-        "reviewCount": businessPage.reviews_count || 0
-      } : undefined
-    };
-
-    const scriptTag = document.createElement('script');
-    scriptTag.type = 'application/ld+json';
-    scriptTag.textContent = JSON.stringify(schema);
-    scriptTag.id = 'business-schema';
-    document.head.appendChild(scriptTag);
-
-    return () => {
-      const existing = document.getElementById('business-schema');
-      if (existing) existing.remove();
-    };
-  }, [businessPage]);
+  // JSON-LD Schema is now handled by the LocalBusinessSchema component
 
 
   // עדכון כל הפונקציות עם tracking:
@@ -1151,6 +1116,7 @@ export default function BusinessPageView() {
         category={businessPage.category_name || ""}
         kashrut={businessPage.kashrut_authority_type || ""}
       />
+      <LocalBusinessSchema business={businessPage} />
 
       {/* Animated Gradient Background with Bubbles */}
       <div className="fixed inset-0 -z-10">
