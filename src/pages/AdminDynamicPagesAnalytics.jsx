@@ -42,13 +42,26 @@ export default function AdminDynamicPagesAnalytics() {
 
   const stats = useMemo(() => {
     const total = filteredViews.length;
+    
+    if (total === 0) {
+      return {
+        total: 0,
+        withResults: 0,
+        withoutResults: 0,
+        converted: 0,
+        conversionRate: 0,
+        avgTime: 0,
+        topCities: [],
+        topCategories: [],
+        topNoResults: []
+      };
+    }
+
     const withResults = filteredViews.filter(v => v.has_results).length;
     const withoutResults = total - withResults;
     const converted = filteredViews.filter(v => v.converted).length;
-    const conversionRate = total > 0 ? ((converted / total) * 100).toFixed(1) : 0;
-    const avgTime = filteredViews.length > 0 
-      ? (filteredViews.reduce((sum, v) => sum + (v.time_on_page || 0), 0) / filteredViews.length).toFixed(0)
-      : 0;
+    const conversionRate = ((converted / total) * 100).toFixed(1);
+    const avgTime = (filteredViews.reduce((sum, v) => sum + (v.time_on_page || 0), 0) / filteredViews.length).toFixed(0);
 
     // Top searches
     const cityCounts = {};
@@ -176,7 +189,7 @@ export default function AdminDynamicPagesAnalytics() {
             <CardContent>
               <div className="text-3xl font-bold text-blue-600">{stats.withResults}</div>
               <p className="text-sm text-slate-500 mt-1">
-                {((stats.withResults / stats.total) * 100).toFixed(0)}% מהצפיות
+                {stats.total > 0 ? ((stats.withResults / stats.total) * 100).toFixed(0) : 0}% מהצפיות
               </p>
             </CardContent>
           </Card>
@@ -218,7 +231,7 @@ export default function AdminDynamicPagesAnalytics() {
                       <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-blue-500"
-                          style={{ width: `${(count / stats.topCities[0][1]) * 100}%` }}
+                          style={{ width: `${stats.topCities[0] ? (count / stats.topCities[0][1]) * 100 : 0}%` }}
                         />
                       </div>
                       <span className="text-sm font-bold text-slate-700 w-12 text-left">{count}</span>
@@ -251,7 +264,7 @@ export default function AdminDynamicPagesAnalytics() {
                       <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
                         <div 
                           className="h-full bg-indigo-500"
-                          style={{ width: `${(count / stats.topCategories[0][1]) * 100}%` }}
+                          style={{ width: `${stats.topCategories[0] ? (count / stats.topCategories[0][1]) * 100 : 0}%` }}
                         />
                       </div>
                       <span className="text-sm font-bold text-slate-700 w-12 text-left">{count}</span>
