@@ -175,11 +175,11 @@ export default function AdminDynamicPagesAnalytics() {
 
     filteredViews.forEach(v => {
       cityCounts[v.city] = (cityCounts[v.city] || 0) + 1;
-      const catName = v.category_name || v.category;
+      const catName = v.category_name || v.category || 'לא צוין';
       categoryCounts[catName] = (categoryCounts[catName] || 0) + 1;
-      
+
       if (!v.has_results) {
-        const key = `${v.city} - ${catName}${v.subcategory ? ` - ${v.subcategory}` : ''}`;
+        const key = `${v.city || 'לא צוין'} - ${catName}${v.subcategory ? ` - ${v.subcategory}` : ''}`;
         noResultsCombos[key] = (noResultsCombos[key] || 0) + 1;
       }
     });
