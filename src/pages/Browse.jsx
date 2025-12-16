@@ -17,6 +17,8 @@ import LocationSelector from "@/components/explore/LocationSelector";
 import BannerDuo from "@/components/banners/BannerDuo";
 import FoodSubcategoryGallery from "@/components/explore/FoodSubcategoryGallery";
 import ShoppingSubcategoryGallery from "@/components/explore/ShoppingSubcategoryGallery";
+import FilterBar from "@/components/explore/FilterBar";
+import { isOpenNow } from "@/utils/businessTime";
 
 export default function BrowsePage() {
   const [activeListings, setActiveListings] = useState([]);
@@ -37,11 +39,36 @@ export default function BrowsePage() {
     } catch { return null; }
   });
 
+  // Advanced Filters State
+  const [filters, setFilters] = useState({
+    kashrut: [],
+    price: [],
+    delivery: false,
+    pickup: false,
+    openNow: false,
+  });
+
+  const handleFilterChange = (key, value) => {
+    if (key === 'reset') {
+      setFilters({
+        kashrut: [],
+        price: [],
+        delivery: false,
+        pickup: false,
+        openNow: false,
+      });
+    } else {
+      setFilters(prev => ({ ...prev, [key]: value }));
+    }
+  };
+
   // איפוס בחירות כשעוברים בין טאבים
   useEffect(() => {
     setSelectedCategory(null);
     setSelectedSubcategory(null);
     setSelectedProfGroup(null);
+    // Optional: Reset advanced filters on tab change? 
+    // setFilters({ kashrut: [], price: [], delivery: false, pickup: false, openNow: false });
   }, [activeTab]);
 
   useEffect(() => {
@@ -214,8 +241,29 @@ export default function BrowsePage() {
       });
     }
 
+    // Apply Advanced Filters
+    if (filters.kashrut.length > 0) {
+      base = base.filter(l => filters.kashrut.includes(l.kashrut_authority_type));
+    }
+
+    if (filters.price.length > 0) {
+      base = base.filter(l => filters.price.includes(l.price_range));
+    }
+
+    if (filters.delivery) {
+      base = base.filter(l => l.has_delivery);
+    }
+
+    if (filters.pickup) {
+      base = base.filter(l => l.has_pickup);
+    }
+
+    if (filters.openNow) {
+      base = base.filter(l => isOpenNow(l.hours));
+    }
+
     return base;
-  }, [activeListings, activeTab, selectedCategory, selectedSubcategory, selectedProfGroup, categories, isFoodCatId, isShopCatId]);
+  }, [activeListings, activeTab, selectedCategory, selectedSubcategory, selectedProfGroup, categories, isFoodCatId, isShopCatId, filters]);
 
   // Dynamic SEO based on selected filters
   const seoTitle = selectedSubcategory 
@@ -398,6 +446,11 @@ export default function BrowsePage() {
           />
         </div>
       </nav>
+
+      <FilterBar 
+        filters={filters} 
+        onFilterChange={handleFilterChange} 
+      />
 
       <StickyChips>
          <SubcategoryChips 
