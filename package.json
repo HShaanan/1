@@ -81,7 +81,8 @@
     "react-helmet-async": "^2.0.4",
     "react-lazy-load-image-component": "^1.6.0",
     "react-schemaorg": "^2.0.0",
-    "schema-dts": "^1.1.0"
+    "schema-dts": "^1.1.0",
+    "fuse.js": "^7.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
