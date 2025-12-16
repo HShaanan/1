@@ -103,9 +103,13 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.LandingPage.delete(page.id);
     }
 
-    // Bulk insert new landing pages
-    for (const page of landingPages) {
-      await base44.asServiceRole.entities.LandingPage.create(page);
+    // Bulk insert new landing pages in batches
+    const batchSize = 50;
+    for (let i = 0; i < landingPages.length; i += batchSize) {
+      const batch = landingPages.slice(i, i + batchSize);
+      await Promise.all(
+        batch.map(page => base44.asServiceRole.entities.LandingPage.create(page))
+      );
     }
 
     return Response.json({
