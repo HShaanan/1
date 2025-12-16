@@ -56,6 +56,7 @@ import AdminBulkImprove from './pages/AdminBulkImprove';
 import AdminAddDefaultLogo from './pages/AdminAddDefaultLogo';
 import AdminDeleteRecent from './pages/AdminDeleteRecent';
 import UserProfile from './pages/UserProfile';
+import DynamicCategoryPage from './pages/DynamicCategoryPage';
 import __Layout from './Layout.jsx';
 
 
@@ -118,6 +119,7 @@ export const PAGES = {
     "AdminAddDefaultLogo": AdminAddDefaultLogo,
     "AdminDeleteRecent": AdminDeleteRecent,
     "UserProfile": UserProfile,
+    "DynamicCategoryPage": DynamicCategoryPage,
 }
 
 export const pagesConfig = {
