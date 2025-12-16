@@ -18,7 +18,7 @@ import BannerDuo from "@/components/banners/BannerDuo";
 import FoodSubcategoryGallery from "@/components/explore/FoodSubcategoryGallery";
 import ShoppingSubcategoryGallery from "@/components/explore/ShoppingSubcategoryGallery";
 import FilterBar from "@/components/explore/FilterBar";
-import { isOpenNow } from "@/utils/businessTime";
+import { isOpenNow } from "@/components/utils/businessTime";
 
 export default function BrowsePage() {
   const [activeListings, setActiveListings] = useState([]);
