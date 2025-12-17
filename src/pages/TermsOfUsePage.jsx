@@ -331,12 +331,12 @@ export default function TermsOfUsePage() {
                                 {submitting ? (
                                     <><Loader2 className="w-5 h-5 ml-2 animate-spin" /> מעבד...</>
                                 ) : (
-                                    <>המשך <ArrowRight className="w-5 h-5 mr-2" /></>
+                                    <>אשר והמשך <ArrowRight className="w-5 h-5 mr-2" /></>
                                 )}
                             </Button>
                             
                             <p className="text-xs text-center text-slate-500">
-                                * בלחיצה על כפתור "המשך" אני מצהיר/ה כי קראתי את התקנון ואני מסכים/ה לו.
+                                * אישור זה נדרש באופן חד-פעמי בעת הכניסה הראשונה למערכת.
                             </p>
                         </div>
                     </div>
