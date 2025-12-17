@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { Kashrut } from "@/entities/Kashrut";
 import { UploadFile } from "@/integrations/Core";
@@ -6,7 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Upload, Image as ImageIcon, Shield, Pencil } from "lucide-react";
+import { Trash2, Upload, Image as ImageIcon, Shield, Pencil, Crop } from "lucide-react";
+import ImageCropper from "@/components/ImageCropper";
 
 const TYPES = ["בד\"צ", "רבנות מהדרין", "רבנות", "אחר"];
 
@@ -15,6 +15,7 @@ export default function AdminKashrut() {
   const [form, setForm] = useState({ authority_type: "", name: "", logo_url: "" });
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null); // מצב עריכה
+  const [isCropperOpen, setIsCropperOpen] = useState(false);
 
   const load = async () => {
     const rows = await Kashrut.list("name");
@@ -53,6 +54,21 @@ export default function AdminKashrut() {
       }
     };
     input.click();
+  };
+
+  const handleCropSave = async (blob) => {
+    setLoading(true);
+    setIsCropperOpen(false);
+    try {
+      const file = new File([blob], "logo_positioned.jpg", { type: "image/jpeg" });
+      const { file_url } = await UploadFile({ file });
+      setForm((p) => ({ ...p, logo_url: file_url }));
+    } catch (e) {
+      console.error("Error uploading cropped image:", e);
+      alert("שגיאה בשמירת התמונה");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const save = async () => {
@@ -119,9 +135,16 @@ export default function AdminKashrut() {
                 <Input value={form.name} onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))} placeholder="שם גוף הכשרות" />
               </div>
               <div className="flex items-end gap-2">
-                <Button variant="outline" onClick={uploadLogo} className="gap-2" disabled={loading}>
-                  <Upload className="w-4 h-4" /> העלה לוגו
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" onClick={uploadLogo} className="gap-2" disabled={loading}>
+                    <Upload className="w-4 h-4" /> העלה לוגו
+                  </Button>
+                  {form.logo_url && (
+                    <Button variant="outline" onClick={() => setIsCropperOpen(true)} className="gap-2" disabled={loading}>
+                      <Crop className="w-4 h-4" /> מיצוב לוגו
+                    </Button>
+                  )}
+                </div>
                 <Button onClick={save} disabled={loading} className="bg-emerald-600 hover:bg-emerald-700">
                   {editingId ? "עדכן" : "הוסף"}
                 </Button>
@@ -184,6 +207,17 @@ export default function AdminKashrut() {
           </CardContent>
         </Card>
       </div>
+
+      <ImageCropper
+        isOpen={isCropperOpen}
+        imageUrl={form.logo_url}
+        onCropComplete={handleCropSave}
+        onCancel={() => setIsCropperOpen(false)}
+        aspectRatioOptions={[
+          { name: "ריבוע", ratio: 1, icon: Shield },
+          { name: "חופשי", ratio: null, icon: ImageIcon }
+        ]}
+      />
     </div>
   );
 }
