@@ -18,12 +18,13 @@ export default function AccessibilityStyles({ settings }) {
       #accessibility-widget * {
         filter: none !important;
         font-family: system-ui, -apple-system, sans-serif !important;
-        /* Ensure widget text size stays readable but not double-scaled if using rems inside */
         font-size: 16px !important; 
         line-height: 1.5 !important;
         letter-spacing: normal !important;
         background-color: transparent; /* Reset specifically for high contrast modes */
         color: inherit;
+        text-shadow: none !important;
+        box-shadow: none;
       }
       
       /* Force widget panel background and text */
@@ -35,14 +36,25 @@ export default function AccessibilityStyles({ settings }) {
         color: #1f2937 !important;
       }
       #accessibility-panel button {
-         background-color: #f3f4f6; /* Default gray for buttons */
+         background-color: #ffffff;
+      }
+      #accessibility-panel button:hover {
+         background-color: #f9fafb;
       }
       #accessibility-panel button[aria-pressed="true"] {
-         background-color: #2563eb !important; /* Blue for active */
-         color: #ffffff !important;
+         background-color: #eff6ff !important; /* Light blue bg */
+         color: #1e40af !important; /* Dark blue text */
+         border-color: #bfdbfe !important;
       }
       #accessibility-panel button[aria-pressed="true"] * {
-         color: #ffffff !important;
+         color: #1e40af !important;
+      }
+      #accessibility-panel .bg-blue-600 {
+         background-color: #2563eb !important;
+         color: white !important;
+      }
+      #accessibility-panel .bg-blue-600 * {
+         color: white !important;
       }
 
 
@@ -50,8 +62,12 @@ export default function AccessibilityStyles({ settings }) {
 
       ${settings.grayscale ? `
         html { filter: grayscale(100%); }
-        /* Fix fixed elements getting weird with filters */
         body { position: relative; } 
+      ` : ''}
+
+      ${settings.invertColors ? `
+        html { filter: invert(100%); }
+        img, video, iframe, #accessibility-widget { filter: invert(100%); }
       ` : ''}
 
       ${settings.highContrast ? `
@@ -61,12 +77,13 @@ export default function AccessibilityStyles({ settings }) {
            border-color: #ffff00 !important;
         }
         img, video, svg:not(#accessibility-widget svg) {
-           filter: invert(1) grayscale(100%) contrast(200%);
+           filter: grayscale(100%) contrast(150%);
         }
         /* Buttons in high contrast */
         button, a.button {
            border: 2px solid #ffff00 !important;
            background: #000000 !important;
+           color: #ffff00 !important;
         }
         a {
            text-decoration: underline !important;
@@ -81,23 +98,26 @@ export default function AccessibilityStyles({ settings }) {
            text-underline-offset: 4px !important;
            background-color: rgba(255, 255, 0, 0.2) !important;
            color: inherit !important;
-           padding: 0 4px;
+           font-weight: 700 !important;
         }
       ` : ''}
 
       ${settings.readableFont ? `
         body, h1, h2, h3, h4, h5, h6, p, a, span, div, button, input, textarea, select {
-           font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+           font-family: "Segoe UI", "Roboto", "Arial", sans-serif !important;
            letter-spacing: 0.5px !important;
            word-spacing: 2px !important;
+           line-height: 1.8 !important;
         }
       ` : ''}
 
       ${settings.highlightHeaders ? `
         h1, h2, h3, h4, h5, h6 {
-           background-color: rgba(0, 0, 255, 0.1) !important;
+           background-color: rgba(37, 99, 235, 0.1) !important;
            border-right: 4px solid #2563eb !important;
-           padding-right: 8px !important;
+           padding: 8px 12px !important;
+           width: fit-content;
+           border-radius: 4px;
         }
       ` : ''}
 
@@ -120,18 +140,32 @@ export default function AccessibilityStyles({ settings }) {
         *:focus-visible {
            outline: 4px solid #ff0000 !important;
            outline-offset: 4px !important;
-           box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.8) !important;
+           box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.9) !important;
            z-index: 99999;
         }
       ` : ''}
       
       ${settings.hideImages ? `
-        img, video, [role="img"] {
+        img, video, [role="img"], [style*="background-image"] {
            opacity: 0 !important;
            visibility: hidden !important;
         }
-        /* Show alt text if possible, though CSS can't easily force alt text display for hidden imgs. 
-           Instead we usually hide the image. Users use screen readers. */
+      ` : ''}
+
+      ${settings.readingGuide ? `
+        body::after {
+           content: "";
+           display: block;
+           position: fixed;
+           top: var(--reading-guide-top, 50%);
+           left: 0;
+           width: 100vw;
+           height: 4px;
+           background-color: rgba(255, 0, 0, 0.7);
+           z-index: 999999;
+           pointer-events: none;
+           box-shadow: 0 0 0 100vh rgba(0, 0, 0, 0.5);
+        }
       ` : ''}
 
     `}</style>
