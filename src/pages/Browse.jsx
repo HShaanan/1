@@ -113,7 +113,7 @@ export default function BrowsePage() {
   const loadData = useCallback(async () => {
     setLoading(true);
     try {
-      const cacheKey = "browse_data_v2";
+      const cacheKey = "browse_data_v3";
       let cached = dataCache.get(cacheKey);
 
       if (cached) {
