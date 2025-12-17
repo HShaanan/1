@@ -17,6 +17,7 @@ import {
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 
 
 function AnimatedCounter({ value, className = "" }) {
@@ -56,6 +57,7 @@ export default function Layout({ children, currentPageName }) {
   const [newReportsCount, setNewReportsCount] = useState(0);
   const [onlineUsers, setOnlineUsers] = useState(0);
   const statsFetchInProgress = useRef(false);
+  const navigate = useNavigate();
 
   const isWizardPage = currentPageName === "Add" || currentPageName === "AddWizard";
 
@@ -128,6 +130,37 @@ export default function Layout({ children, currentPageName }) {
     loadUser();
     loadCategories();
   }, [currentPageName, loadAdminStats]);
+
+  // Terms of Use Enforcement
+  useEffect(() => {
+    const CURRENT_TERMS_VERSION = '1.0'; // Must match the version in TermsOfUsePage
+    
+    if (user && !isLoading && currentPageName !== 'TermsOfUsePage' && currentPageName !== 'LandingPage') {
+        const checkTerms = async () => {
+             // Check session cache first to avoid API spam
+             const cached = sessionStorage.getItem(`terms_accepted_${CURRENT_TERMS_VERSION}`);
+             if (cached === 'true') return;
+
+             try {
+                 const agreements = await base44.entities.UserAgreement.filter({
+                     user_email: user.email,
+                     agreement_type: 'terms_of_use',
+                     agreement_version: CURRENT_TERMS_VERSION
+                 });
+                 
+                 if (agreements.length === 0) {
+                     // Redirect to terms page with accept mode
+                     navigate(createPageUrl('TermsOfUsePage') + '?mode=accept');
+                 } else {
+                     sessionStorage.setItem(`terms_accepted_${CURRENT_TERMS_VERSION}`, 'true');
+                 }
+             } catch (e) {
+                 console.error("Failed to check terms:", e);
+             }
+        };
+        checkTerms();
+    }
+  }, [user, isLoading, currentPageName, navigate]);
 
   useEffect(() => {
     if (isWizardPage) {

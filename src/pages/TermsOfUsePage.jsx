@@ -1,161 +1,185 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { Checkbox } from "@/components/ui/checkbox";
+import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { ArrowRight, FileText } from "lucide-react";
-import { AppSettings } from "@/entities/AppSettings";
+import { FileText, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
+import { base44 } from "@/api/base44Client";
+import { toast } from "sonner";
 
 export default function TermsOfUsePage() {
   const navigate = useNavigate();
-  const [appSettings, setAppSettings] = useState({});
-  const [loading, setLoading] = useState(true);
+  const location = useLocation();
+  const [agreed, setAgreed] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [user, setUser] = useState(null);
+  
+  // Parse mode from URL
+  const queryParams = new URLSearchParams(location.search);
+  const mode = queryParams.get('mode'); // 'accept' or null
+  const isAcceptMode = mode === 'accept';
+
+  const TERMS_VERSION = '1.0';
 
   useEffect(() => {
-    const loadSettings = async () => {
-      try {
-        const settings = await AppSettings.list();
-        const settingsMap = settings.reduce((acc, setting) => {
-          acc[setting.setting_key] = setting.setting_value;
-          return acc;
-        }, {});
-        
-        // הגדרות ברירת מחדל
-        const defaultSettings = {
-          company_name: 'משלנו',
-          company_email: 'info@meshlanoo.co.il',
-          company_address: 'ביתר עילית, ישראל',
-          terms_last_updated: new Date().toLocaleDateString('he-IL', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-          }),
-          terms_version: '1.0',
-          ...settingsMap
-        };
-        
-        setAppSettings(defaultSettings);
-      } catch (error) {
-        console.error('Error loading app settings:', error);
-        // הגדרות חירום
-        setAppSettings({
-          company_name: 'משלנו',
-          company_email: 'info@meshlanoo.co.il', 
-          company_address: 'ביתר עילית, ישראל',
-          terms_last_updated: new Date().toLocaleDateString('he-IL', {
-            year: 'numeric',
-            month: 'long', 
-            day: 'numeric'
-          }),
-          terms_version: '1.0'
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadSettings();
+    base44.auth.me().then(setUser).catch(() => setUser(null));
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  const handleAgree = async () => {
+    if (!agreed) {
+        toast.error("יש לאשר את תנאי השימוש כדי להמשיך");
+        return;
+    }
+    
+    setSubmitting(true);
+    try {
+        // Use backend function to record acceptance with IP
+        await base44.functions.invoke('acceptTerms', {
+            version: TERMS_VERSION,
+            text: document.getElementById('terms-content')?.innerText || 'Full text displayed on screen',
+            userAgent: navigator.userAgent
+        });
+
+        // Update local cache to prevent redirect loop
+        sessionStorage.setItem(`terms_accepted_${TERMS_VERSION}`, 'true');
+        
+        toast.success("תנאי השימוש אושרו בהצלחה");
+        navigate(createPageUrl("Browse"));
+    } catch (error) {
+        console.error("Error accepting terms:", error);
+        toast.error("אירעה שגיאה באישור התנאים. אנא נסה שנית.");
+    } finally {
+        setSubmitting(false);
+    }
+  };
 
   return (
-    <div className="min-h-screen p-4 md:p-8 bg-gradient-to-br from-slate-50 via-white to-blue-50" dir="rtl">
+    <div className="min-h-screen p-4 md:p-8 bg-slate-50" dir="rtl">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <FileText className="w-8 h-8 text-blue-600" />
-            <h1 className="text-4xl font-bold bg-gradient-to-l from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-              תנאי שימוש
+            <FileText className="w-10 h-10 text-blue-600" />
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900">
+              תקנון ותנאי שימוש
             </h1>
           </div>
-          <p className="text-gray-600 text-lg">{appSettings.company_name} - לוח המודעות הקהילתי שלנו</p>
-          <p className="text-sm text-gray-500 mt-2">
-            עדכון אחרון: {appSettings.terms_last_updated} | גרסה: {appSettings.terms_version}
-          </p>
+          <p className="text-gray-600">משלנו - הפלטפורמה הקהילתית</p>
+          <p className="text-sm text-gray-500 mt-1">גרסה {TERMS_VERSION} | עודכן: דצמבר 2025</p>
         </div>
 
-        <Card className="bg-white/90 backdrop-blur-sm shadow-xl mb-6">
-          <CardContent className="p-8 prose prose-slate max-w-none text-right space-y-8">
-            
-            <section>
-              <h2 className="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-4">1. מבוא והגדרות</h2>
-              <p>ברוכים הבאים ל"{appSettings.company_name}" (להלן: "האתר"), לוח מודעות קהילתי המיועד לשרת את תושבי ביתר עילית והסביבה. השימוש באתר, לרבות התכנים והשירותים המוצעים בו, כפוף לתנאים המפורטים להלן ("תנאי השימוש"). אנא קרא אותם בעיון, שכן עצם השימוש באתר מהווה הסכמה לתנאים אלו.</p>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-4">2. הגבלת אחריות</h2>
-              <p>האתר משמש כפלטפורמה להצגת מודעות בלבד. המידע והתוכן במודעות מסופקים על ידי המפרסמים והם באחריותם הבלעדית. הנהלת האתר אינה בודקת, מאמתת או נושאת באחריות לתוכן המודעות, לדיוקן, למהימנותן, לטיב המוצרים או השירותים המוצעים, או לכל התקשרות שתיווצר בין המשתמשים.</p>
-              <p>השימוש באתר הינו על אחריותו הבלעדית של המשתמש. הנהלת האתר לא תישא באחריות לכל נזק, ישיר או עקיף, שייגרם למשתמש או לכל צד שלישי כתוצאה מהשימוש באתר.</p>
-            </section>
+        {/* Content Card */}
+        <Card className="bg-white shadow-lg mb-6 overflow-hidden">
+          <CardContent className="p-0">
+            {/* Scrollable Terms Text */}
+            <div 
+                id="terms-content"
+                className="h-[60vh] overflow-y-auto p-6 md:p-10 text-right space-y-6 text-slate-800 leading-relaxed border-b scroll-smooth"
+                style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 #f1f5f9' }}
+            >
+                <section>
+                    <h2 className="text-xl font-bold text-blue-800 mb-3">כללי</h2>
+                    <p>אתר האינטרנט אליו נכנסת ("האתר") מופעל על-ידי HS טכנולוגיות ("החברה"). המשתמש באתר ("המשתמש") מתבקש לקרוא בעיון רב את כל תנאי השימוש המפורטים להלן ("תנאי השימוש"), שכן השימוש והגלישה באתר מותנים בקבלה והסכמה מצדו של המשתמש לכל תנאי השימוש וכן למדיניות הפרטיות של החברה ("מדיניות הפרטיות"), לרבות כפי שישונו ו/או יתעדכנו מעת לעת.</p>
+                    <p>ככל שהמשתמש אינו מסכים לתנאי השימוש, כולם או חלקם, הוא אינו רשאי לגלוש באתר ו/או לעשות בו כל שימוש לכל מטרה שהיא. כל משתמש אשר יגלוש או יעשה שימוש באתר ייחשב כמי שהסכים לכל תנאי השימוש ולכל תנאי מדיניות הפרטיות. מובהר בזאת כי מדיניות הפרטיות מהווה חלק בלתי נפרד מתנאי השימוש.</p>
+                    <p>החברה מפעילה פלטפורמה טכנולוגית לתיווך בין משתמשים לבין בתי עסק. אלא אם צוין אחרת במפורש, החברה אינה מוכרת את המוצרים/המנות ואינה מספקת שירותי משלוח/מסירה; בית העסק הוא המוכר והאחראי הבלעדי להזמנה, להכנה, לאריזה ולמסירה.</p>
+                    <p>האתר מיועד למשתמשים מגיל 18 ואילך בלבד, ואינו מיועד למשתמשים צעירים יותר. השימוש על ידי משתמש שטרם מלאו לו 18 ייעשה אך ורק לאחר שניתן אישור הוריו/אפוטרופוסיו לכך. כמו כן, המשתמש אחראי לקבל אישור מתאים.</p>
+                </section>
 
-            <section>
-              <h2 className="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-4">3. כללי התנהגות ופרסום באתר</h2>
-              <p>אנו שואפים לשמור על מרחב נעים, מכבד ובטוח. על כן, חל איסור מוחלט על פרסום תכנים העונים על אחד או יותר מהבאים:</p>
-              <ul className="list-disc pr-5 space-y-2 mt-2">
-                <li>תוכן פוגעני, מעליב, משמיץ, מאיים או המפר את פרטיותו של אדם אחר.</li>
-                <li>תוכן שאינו הולם את רוח המקום וערכי הקהילה, לרבות תכנים המפרים את כללי הצניעות.</li>
-                <li>מידע כוזב, שקרי או מטעה.</li>
-                <li>תוכן המהווה הפרה של זכויות יוצרים, סימני מסחר או קניין רוחני אחר.</li>
-                <li>פרסום חוזר ונשנה של אותה מודעה ("ספאם").</li>
-                <li>כל תוכן אחר המהווה עבירה על חוקי מדינת ישראל.</li>
-              </ul>
-              <p className="mt-2">הנהלת האתר שומרת לעצמה את הזכות המלאה להסיר, לערוך או לדחות כל מודעה לפי שיקול דעתה הבלעדי, ללא צורך במתן הסבר או הודעה מוקדמת.</p>
-            </section>
+                <section>
+                    <h2 className="text-xl font-bold text-blue-800 mb-3">רכישת מוצרים/שירותים באמצעות האתר</h2>
+                    <p>האתר מאפשר למשתמשים לרכוש באמצעותו מוצרים או שירותים של החברה או של צדדים שלישיים. ככל שהמשתמש ירכוש מוצרים או שירותים באמצעות האתר, תבוצע הרכישה באמצעות כרטיס אשראי ("אמצעי התשלום") ובהתאם לנהלים של החברה ושל חברות האשראי/ספקי אמצעי התשלום.</p>
+                    <p>המשתמש בלבד יהיה אחראי לכל נזק שעלול להיגרם לחברה ו/או לכל צד שלישי כתוצאה מביטול החיובים שבוצעו באמצעי התשלום, הן כשהביטול בוצע בהוראת המשתמש והן על-פי החלטת חברת האשראי.</p>
+                    <p>המחירים באתר כוללים מע"מ. המחירים באתר אינם כוללים דמי משלוח, אלא אם כן מצוין במפורש אחרת על ידי בית העסק.</p>
+                    <p>החברה אינה מבטיחה זמני הכנה או זמני משלוח קבועים, זמני האספקה מהווים הערכות בלבד.</p>
+                </section>
 
-            <section>
-              <h2 className="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-4">4. שירותים בתשלום ומדיניות החזרים</h2>
-              <p>האתר עשוי להציע שירותי פרסום בתשלום, כגון הקפצת מודעות או הבלטתן. התשלום הינו עבור שירות הפרסום עצמו (כלומר, עבור חשיפה משופרת), ואינו מהווה ערובה לתוצאות עסקיות כלשהן (כגון פניות או מכירות).</p>
-              <p><strong>מדיניות החזרים:</strong> מרגע שהמודעה פורסמה והשירות סופק, לא יינתן החזר כספי. במקרה של תקלה טכנית שמקורה באתר ומנעה את מתן השירות, ייבחן כל מקרה לגופו ותישקל האפשרות למתן זיכוי.</p>
-            </section>
+                <section>
+                    <h2 className="text-xl font-bold text-blue-800 mb-3">ביטול עסקה והחזרות</h2>
+                    <p>המשתמש רשאי לבטל עסקה בהתאם לחוק הגנת הצרכן, תשמ"א–1981. עם זאת, מוצרים פסידים – לרבות מוצרי מזון מוכנים, מזון טרי, מוצרים הדורשים קירור או מוצרים שאינם ניתנים למכירה מחדש – מוחרגים מזכות הביטול על פי דין. לפיכך, לאחר ביצוע הזמנה למוצרים אלה לא ניתן לבטלה, לשנותה או להחזירה, אלא במקרה שבו סופק מוצר פגום או שאינו תואם את ההזמנה.</p>
+                </section>
 
-            <section>
-              <h2 className="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-4">5. קניין רוחני</h2>
-              <p>כל זכויות היוצרים והקניין הרוחני באתר, לרבות עיצובו, הקוד, התכנים והסימנים המסחריים, שייכים להנהלת האתר. אין להעתיק, לשכפל, להפיץ או לעשות כל שימוש מסחרי במידע מהאתר ללא קבלת אישור מפורש בכתב מהנהלת האתר.</p>
-              <p>בעת העלאת תוכן לאתר, המשתמש מצהיר כי הוא בעל הזכויות בתוכן ומעניק לאתר רישיון חינמי, כלל-עולמי ובלתי מוגבל בזמן להציג, להפיץ ולעבד את התוכן במסגרת פעילות האתר.</p>
-            </section>
+                <section>
+                    <h2 className="text-xl font-bold text-blue-800 mb-3">זכויות יוצרים וקניין רוחני</h2>
+                    <p>כל זכויות היוצרים, זכויות הקניין הרוחני והזכויות אשר דומות במהותן לזכויות יוצרים או זכויות קניין רוחני באתר, במידע, בתכנים הכלולים בו ובשירותים המוצעים בו, לרבות טקסט, איורים, אלמנטים גרפיים, צליל, יישומי תוכנה, גרפים ותמונות, שייכות באופן בלעדי לחברה או לצדדים שלישיים שהקנו לחברה את הזכות לפרסמם באתר.</p>
+                    <p>אין להעתיק, לשכפל, לשנות, להפיץ, לשדר, להציג בפומבי, להעביר לציבור, לפרסם, לעבד, ליצור יצירות נגזרות, להעניק רישיון, למכור, להשכיר או לאחסן את תוכנו של האתר וכל תוכן אחר שהתקבל באמצעותו ללא קבלת רשות מפורשת לכך מאת החברה, מראש ובכתב.</p>
+                </section>
 
-            <section>
-              <h2 className="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-4">6. יצירת קשר ותמיכה</h2>
-              <p>לכל שאלה, הצעה או תלונה בנוגע לתנאי השימוש או לפעילות האתר, ניתן ליצור קשר עמנו:</p>
-              <ul className="list-none pr-0 space-y-1 mt-2">
-                <li><strong>אימייל:</strong> {appSettings.company_email}</li>
-                <li><strong>כתובת:</strong> {appSettings.company_address}</li>
-              </ul>
-            </section>
-            
-            <section>
-              <h2 className="text-2xl font-bold text-blue-800 border-b-2 border-blue-200 pb-2 mb-4">7. סמכות שיפוט</h2>
-              <p>על השימוש באתר ועל תנאי שימוש אלו יחולו אך ורק דיני מדינת ישראל. סמכות השיפוט הבלעדית בכל מחלוקת הנוגעת לאתר ו/או לשימוש בו תהיה נתונה לבתי המשפט המוסמכים במחוז ירושלים.</p>
-            </section>
+                <section>
+                    <h2 className="text-xl font-bold text-blue-800 mb-3">פרסום ותכנים של צדדים שלישיים</h2>
+                    <p>האתר עשוי להכיל תכנים או מידע אשר שייכים לצדדים שלישיים ו/או למשתמשים. החברה לא תישא בכל אחריות לתכנים הללו, לרבות לעניין הנכונות שלהם, העדכניות שלהם, השלמות שלהם וההשלכות הנובעות מהשימוש בהם.</p>
+                    <p>אין לעשות שימוש באתר או בתכנים המוצגים בו למטרות לא חוקיות ו/או באופן העומד בניגוד לתנאי השימוש. בתוך כך, חל איסור לבצע כל שימוש אשר עלול לגרום לפגיעה באתר ו/או בתכנים המוצגים בו ו/או לפעול באופן שיפריע או ישבש את השימוש של משתמשים אחרים באתר.</p>
+                </section>
 
-            <section className="border-t pt-6">
-              <p className="text-sm text-gray-600">
-                <strong>הערה:</strong> תנאי השימוש עשויים להתעדכן מעת לעת. המשתמשים יקבלו הודעה על שינויים משמעותיים. 
-                המשך השימוש באתר לאחר עדכון התנאים מהווה הסכמה לתנאים המעודכנים.
-              </p>
-            </section>
+                <section>
+                    <h2 className="text-xl font-bold text-blue-800 mb-3">הגבלת אחריות</h2>
+                    <p>החברה אינה אחראית לכל שיבוש, עיכוב או תקלה הנובעים מהסתמכות על מערכות, שירותים או תשתיות של צדדים שלישיים, לרבות שירותי מיפוי, ניתוב, דיווח מיקום, תקשורת סלולרית או כל שירות חיצוני אחר.</p>
+                    <p>החברה אינה נושאת בכל חבות או אחריות ביחס לטעויות, שינויים או שגיאות הנוגעים לתכנים המוצגים באתר, לרבות כאלו שהוזנו לאתר על-ידי המשתמשים.</p>
+                </section>
 
+                <section>
+                    <h2 className="text-xl font-bold text-blue-800 mb-3">דין וסמכות שיפוט</h2>
+                    <p>הדין החל על האתר, השימוש בו, תנאי השימוש וכל עניין בנוגע לאתר וליחסים בין המשתמש והחברה הנו דין מדינת ישראל. סמכות השיפוט הייחודית והבלעדית לעניין האתר, השימוש בו וכל עניין בנוגע אליו נתונה אך ורק לבתי המשפט המוסמכים לכך בתל-אביב-יפו.</p>
+                </section>
+            </div>
+
+            {/* Action Area */}
+            <div className="p-6 md:p-8 bg-slate-50 border-t">
+                {isAcceptMode ? (
+                    <div className="space-y-6">
+                        <div className="flex items-start gap-3 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                            <Checkbox 
+                                id="agree-terms" 
+                                checked={agreed}
+                                onCheckedChange={(c) => setAgreed(!!c)}
+                                className="mt-1"
+                            />
+                            <label 
+                                htmlFor="agree-terms" 
+                                className="text-sm md:text-base text-slate-700 cursor-pointer font-medium leading-tight"
+                            >
+                                קראתי את תנאי השימוש ואני מסכים/ה להם. ידוע לי כי השימוש באתר כפוף לתנאים אלו.
+                            </label>
+                        </div>
+
+                        <Button 
+                            onClick={handleAgree}
+                            disabled={!agreed || submitting}
+                            className={`w-full py-6 text-lg font-bold shadow-md transition-all rounded-xl
+                                ${agreed 
+                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transform hover:scale-[1.01]' 
+                                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'}
+                            `}
+                        >
+                            {submitting ? (
+                                <><Loader2 className="w-5 h-5 ml-2 animate-spin" /> מעבד...</>
+                            ) : (
+                                <>אני מסכים/ה, המשך <ArrowRight className="w-5 h-5 mr-2" /></>
+                            )}
+                        </Button>
+                        
+                        <p className="text-xs text-center text-slate-500">
+                            לחיצה על "אני מסכים/ה" מהווה חתימה אלקטרונית מחייבת.
+                        </p>
+                    </div>
+                ) : (
+                    <div className="text-center">
+                        <p className="text-green-600 font-medium mb-4 flex items-center justify-center gap-2">
+                            <CheckCircle className="w-5 h-5" />
+                            תנאי השימוש הינם לידיעה כללית.
+                        </p>
+                        <Button 
+                            variant="outline"
+                            onClick={() => navigate(createPageUrl("Browse"))}
+                            className="bg-white border-slate-300 hover:bg-slate-50 text-slate-700 rounded-xl px-8"
+                        >
+                            חזרה לדף הבית
+                        </Button>
+                    </div>
+                )}
+            </div>
           </CardContent>
         </Card>
-
-        {/* Navigation */}
-        <div className="text-center">
-          <Button 
-            onClick={() => navigate(createPageUrl("Browse"))}
-            className="bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white rounded-xl px-8 py-3 text-lg font-semibold button-hover"
-          >
-            <ArrowRight className="w-5 h-5 ml-2" />
-            חזרה לעמוד הראשי
-          </Button>
-        </div>
       </div>
     </div>
   );
