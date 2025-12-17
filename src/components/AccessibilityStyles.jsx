@@ -1,153 +1,139 @@
 import React from 'react';
 
-export default function AccessibilityStyles() {
+export default function AccessibilityStyles({ settings }) {
+  if (!settings) return null;
+
   return (
     <style>{`
-      /* High Contrast */
-      .high-contrast body {
-        background-color: #000000 !important;
-        color: #ffffff !important;
+      :root {
+        --a11y-font-scale: ${settings.fontSize / 100};
+      }
+
+      html {
+        font-size: ${settings.fontSize}% !important; /* Base REM adjustment */
+      }
+
+      /* Exclude the widget itself from effects */
+      #accessibility-widget,
+      #accessibility-widget * {
+        filter: none !important;
+        font-family: system-ui, -apple-system, sans-serif !important;
+        /* Ensure widget text size stays readable but not double-scaled if using rems inside */
+        font-size: 16px !important; 
+        line-height: 1.5 !important;
+        letter-spacing: normal !important;
+        background-color: transparent; /* Reset specifically for high contrast modes */
+        color: inherit;
       }
       
-      /* התפריט עצמו יישאר תמיד לבן */
-      #accessibility-panel,
-      #accessibility-panel *,
-      #accessibility-overlay {
-        background-color: white !important;
-        color: black !important;
-        border-color: #e5e7eb !important;
+      /* Force widget panel background and text */
+      #accessibility-panel {
+        background-color: #ffffff !important;
+        color: #1f2937 !important;
       }
-      
-      /* כפתורי התפריט יישארו גלויים תמיד */
+      #accessibility-panel * {
+        color: #1f2937 !important;
+      }
       #accessibility-panel button {
-        background-color: white !important;
-        color: black !important;
-        border: 1px solid #d1d5db !important;
+         background-color: #f3f4f6; /* Default gray for buttons */
       }
-      
-      /* כפתורים פעילים */
-      #accessibility-panel button[data-active="true"],
-      #accessibility-panel .bg-blue-600,
-      #accessibility-panel .bg-primary {
-        background-color: #2563eb !important;
-        color: white !important;
-        border-color: #2563eb !important;
+      #accessibility-panel button[aria-pressed="true"] {
+         background-color: #2563eb !important; /* Blue for active */
+         color: #ffffff !important;
       }
-      
-      /* כפתורים בהובר */
-      #accessibility-panel button:hover {
-        background-color: #f3f4f6 !important;
-        color: black !important;
-      }
-      
-      /* כפתורים פעילים בהובר */
-      #accessibility-panel button[data-active="true"]:hover,
-      #accessibility-panel .bg-blue-600:hover {
-        background-color: #1d4ed8 !important;
-        color: white !important;
-      }
-      
-      /* החרגת התפריט מהניגודיות */
-      .high-contrast *:not(#accessibility-panel):not(#accessibility-panel *):not(#accessibility-overlay) {
-        color: #ffffff !important;
-        border-color: #ffffff !important;
+      #accessibility-panel button[aria-pressed="true"] * {
+         color: #ffffff !important;
       }
 
-      /* רקעים יהיו שחורים - מלבד התפריט */
-      .high-contrast [class*="bg-"]:not(#accessibility-panel):not(#accessibility-panel *):not(#accessibility-overlay),
-      .high-contrast .card:not(#accessibility-panel):not(#accessibility-panel *):not(#accessibility-overlay),
-      .high-contrast button:not(#accessibility-panel button):not(#accessibility-panel button *):not(#accessibility-overlay),
-      .high-contrast input:not(#accessibility-panel input):not(#accessibility-panel input *):not(#accessibility-overlay),
-      .high-contrast select:not(#accessibility-panel select):not(#accessibility-panel select *):not(#accessibility-overlay),
-      .high-contrast textarea:not(#accessibility-panel textarea):not(#accessibility-panel textarea *):not(#accessibility-overlay) {
-          background-color: #000000 !important;
-          background-image: none !important;
-          border: 1px solid #ffffff !important;
-      }
 
-      /* תמונות - הופך צבעים - מלבד התפריט */
-      .high-contrast img:not(#accessibility-panel img):not(#accessibility-panel img *):not(#accessibility-overlay), 
-      .high-contrast svg:not(#accessibility-panel svg):not(#accessibility-panel svg *):not(#accessibility-overlay) {
-        filter: invert(1) !important;
-      }
-      
-      /* קישורים - מלבד התפריט */
-      .high-contrast a:not(#accessibility-panel a):not(#accessibility-panel a *):not(#accessibility-overlay) {
-        color: #ffff00 !important;
-        text-decoration: underline !important;
-      }
+      /* --- Features --- */
 
-      /* הדגשת קישורים */
-      .highlight-links a:not(#accessibility-panel a) {
-        background-color: yellow !important;
-        color: black !important;
-        padding: 2px 4px !important;
-        border-radius: 3px !important;
-      }
+      ${settings.grayscale ? `
+        html { filter: grayscale(100%); }
+        /* Fix fixed elements getting weird with filters */
+        body { position: relative; } 
+      ` : ''}
 
-      /* עצירת אנימציות */
-      .pause-animations *:not(#accessibility-panel *) {
-        animation-duration: 0s !important;
-        transition-duration: 0s !important;
-      }
-
-      /* ניווט מקלדת */
-      .keyboard-navigation *:focus {
-        outline: 3px solid #0066cc !important;
-        outline-offset: 2px !important;
-      }
-
-      /* אנימציות LED מתקדמות */
-      @keyframes ledPulse {
-        0% { transform: scale(1); opacity: 1; }
-        50% { transform: scale(1.05); opacity: 0.8; }
-        100% { transform: scale(1); opacity: 1; }
-      }
-      
-      @keyframes ledGlow {
-        0% { box-shadow: 0 0 5px currentColor; }
-        50% { box-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
-        100% { box-shadow: 0 0 5px currentColor; }
-      }
-      
-      @keyframes radioWave {
-        0% { transform: scale(1); opacity: 1; }
-        100% { transform: scale(1.5); opacity: 0; }
-      }
-      
-      /* דיליי אנימציות */
-      .animation-delay-75 { animation-delay: 75ms; }
-      .animation-delay-100 { animation-delay: 100ms; }
-      .animation-delay-150 { animation-delay: 150ms; }
-      .animation-delay-200 { animation-delay: 200ms; }
-      .animation-delay-225 { animation-delay: 225ms; }
-      .animation-delay-300 { animation-delay: 300ms; }
-      .animation-delay-400 { animation-delay: 400ms; }
-      .animation-delay-500 { animation-delay: 500ms; }
-      .animation-delay-600 { animation-delay: 600ms; }
-      
-      /* אפקטים מיוחדים */
-      .led-emergency {
-        animation: ledPulse 0.5s ease-in-out infinite;
-      }
-      
-      .led-warning {
-        animation: ledPulse 1s ease-in-out infinite;
-      }
-      
-      .led-info {
-        animation: ledPulse 2s ease-in-out infinite;
-      }
-      
-      /* רספונסיביות LED */
-      @media (max-width: 768px) {
-        .led-button {
-          padding: 0.5rem 0.75rem;
+      ${settings.highContrast ? `
+        body, main, div, span, p, a, h1, h2, h3, h4, h5, h6, input, button, select, label {
+           background-color: #000000 !important;
+           color: #ffff00 !important;
+           border-color: #ffff00 !important;
         }
-        .led-button span {
-          font-size: 0.75rem;
+        img, video, svg:not(#accessibility-widget svg) {
+           filter: invert(1) grayscale(100%) contrast(200%);
         }
-      }
+        /* Buttons in high contrast */
+        button, a.button {
+           border: 2px solid #ffff00 !important;
+           background: #000000 !important;
+        }
+        a {
+           text-decoration: underline !important;
+           color: #00ff00 !important; /* Slightly different for links */
+        }
+      ` : ''}
+
+      ${settings.highlightLinks ? `
+        a:not(#accessibility-widget a) {
+           text-decoration: underline !important;
+           text-decoration-thickness: 2px !important;
+           text-underline-offset: 4px !important;
+           background-color: rgba(255, 255, 0, 0.2) !important;
+           color: inherit !important;
+           padding: 0 4px;
+        }
+      ` : ''}
+
+      ${settings.readableFont ? `
+        body, h1, h2, h3, h4, h5, h6, p, a, span, div, button, input, textarea, select {
+           font-family: "Segoe UI", "Roboto", "Helvetica Neue", Arial, sans-serif !important;
+           letter-spacing: 0.5px !important;
+           word-spacing: 2px !important;
+        }
+      ` : ''}
+
+      ${settings.highlightHeaders ? `
+        h1, h2, h3, h4, h5, h6 {
+           background-color: rgba(0, 0, 255, 0.1) !important;
+           border-right: 4px solid #2563eb !important;
+           padding-right: 8px !important;
+        }
+      ` : ''}
+
+      ${settings.pauseAnimations ? `
+        *, *::before, *::after {
+           animation-duration: 0.001s !important;
+           animation-iteration-count: 1 !important;
+           transition-duration: 0.001s !important;
+           scroll-behavior: auto !important;
+        }
+      ` : ''}
+
+      ${settings.bigCursor ? `
+        html, body, a, button, [role="button"] {
+           cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 24 24' fill='black' stroke='white' stroke-width='2'%3E%3Cpath d='M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z'/%3E%3C/svg%3E"), auto !important;
+        }
+      ` : ''}
+
+      ${settings.focusHighlight ? `
+        *:focus-visible {
+           outline: 4px solid #ff0000 !important;
+           outline-offset: 4px !important;
+           box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.8) !important;
+           z-index: 99999;
+        }
+      ` : ''}
+      
+      ${settings.hideImages ? `
+        img, video, [role="img"] {
+           opacity: 0 !important;
+           visibility: hidden !important;
+        }
+        /* Show alt text if possible, though CSS can't easily force alt text display for hidden imgs. 
+           Instead we usually hide the image. Users use screen readers. */
+      ` : ''}
+
     `}</style>
   );
 }
