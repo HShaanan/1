@@ -11,6 +11,8 @@ import { buildProfessionalsGroups } from "@/components/explore/ProfessionalsGrou
 import SeoMeta from "@/components/SeoMeta";
 import { useFuse } from "@/components/hooks/useFuse";
 import { WebsiteSchema } from "@/components/seo/SchemaOrg";
+import { Input } from "@/components/ui/input";
+import { Search } from "lucide-react";
 
 // New imports
 import TopTabs from "@/components/explore/TopTabs";
@@ -493,9 +495,20 @@ export default function BrowsePage() {
           onSearchChange={setSearchQuery}
       />
       
-      <nav className="bg-white/80 border-b sticky top-[64px] z-30" aria-label="ניווט עליון - לשוניות וסינון">
+      <nav className="bg-white/80 border-b sticky top-[64px] lg:top-28 z-30 transition-all" aria-label="ניווט עליון - לשוניות וסינון">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
           <TopTabs active={activeTab} onChange={setActiveTab} />
+          
+          <div className="hidden lg:block relative flex-1 max-w-xl mx-6">
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+            <Input 
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="חפש עסקים, שירותים או תגיות..."
+              className="pr-10 bg-slate-50/50 border-slate-200 focus:bg-white focus:border-blue-400 transition-all rounded-xl h-10"
+            />
+          </div>
+
           <LocationSelector
             value={userLocation}
             onChange={(loc) => setUserLocation(loc)}
