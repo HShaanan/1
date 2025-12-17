@@ -7,6 +7,7 @@ import { createPageUrl } from "@/utils";
 import { FileText, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
+import PdfViewer from "@/components/ui/PdfViewer";
 
 export default function TermsOfUsePage() {
   const navigate = useNavigate();
@@ -21,6 +22,7 @@ export default function TermsOfUsePage() {
   const isAcceptMode = mode === 'accept';
 
   const TERMS_VERSION = '1.0';
+  const TERMS_PDF_URL = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/7ce6298d6_-.pdf";
 
   useEffect(() => {
     base44.auth.me().then(setUser).catch(() => setUser(null));
@@ -37,7 +39,7 @@ export default function TermsOfUsePage() {
         // Use backend function to record acceptance with IP
         await base44.functions.invoke('acceptTerms', {
             version: TERMS_VERSION,
-            text: document.getElementById('terms-content')?.innerText || 'Full text displayed on screen',
+            text: 'User agreed to PDF terms version ' + TERMS_VERSION,
             userAgent: navigator.userAgent
         });
 
@@ -56,7 +58,7 @@ export default function TermsOfUsePage() {
 
   return (
     <div className="min-h-screen p-4 md:p-8 bg-slate-50" dir="rtl">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
@@ -72,95 +74,56 @@ export default function TermsOfUsePage() {
         {/* Content Card */}
         <Card className="bg-white shadow-lg mb-6 overflow-hidden">
           <CardContent className="p-0">
-            {/* Scrollable Terms Text */}
-            <div 
-                id="terms-content"
-                className="h-[60vh] overflow-y-auto p-6 md:p-10 text-right space-y-6 text-slate-800 leading-relaxed border-b scroll-smooth"
-                style={{ scrollbarWidth: 'thin', scrollbarColor: '#cbd5e1 #f1f5f9' }}
-            >
-                <section>
-                    <h2 className="text-xl font-bold text-blue-800 mb-3">כללי</h2>
-                    <p>אתר האינטרנט אליו נכנסת ("האתר") מופעל על-ידי HS טכנולוגיות ("החברה"). המשתמש באתר ("המשתמש") מתבקש לקרוא בעיון רב את כל תנאי השימוש המפורטים להלן ("תנאי השימוש"), שכן השימוש והגלישה באתר מותנים בקבלה והסכמה מצדו של המשתמש לכל תנאי השימוש וכן למדיניות הפרטיות של החברה ("מדיניות הפרטיות"), לרבות כפי שישונו ו/או יתעדכנו מעת לעת.</p>
-                    <p>ככל שהמשתמש אינו מסכים לתנאי השימוש, כולם או חלקם, הוא אינו רשאי לגלוש באתר ו/או לעשות בו כל שימוש לכל מטרה שהיא. כל משתמש אשר יגלוש או יעשה שימוש באתר ייחשב כמי שהסכים לכל תנאי השימוש ולכל תנאי מדיניות הפרטיות. מובהר בזאת כי מדיניות הפרטיות מהווה חלק בלתי נפרד מתנאי השימוש.</p>
-                    <p>החברה מפעילה פלטפורמה טכנולוגית לתיווך בין משתמשים לבין בתי עסק. אלא אם צוין אחרת במפורש, החברה אינה מוכרת את המוצרים/המנות ואינה מספקת שירותי משלוח/מסירה; בית העסק הוא המוכר והאחראי הבלעדי להזמנה, להכנה, לאריזה ולמסירה.</p>
-                    <p>האתר מיועד למשתמשים מגיל 18 ואילך בלבד, ואינו מיועד למשתמשים צעירים יותר. השימוש על ידי משתמש שטרם מלאו לו 18 ייעשה אך ורק לאחר שניתן אישור הוריו/אפוטרופוסיו לכך. כמו כן, המשתמש אחראי לקבל אישור מתאים.</p>
-                </section>
-
-                <section>
-                    <h2 className="text-xl font-bold text-blue-800 mb-3">רכישת מוצרים/שירותים באמצעות האתר</h2>
-                    <p>האתר מאפשר למשתמשים לרכוש באמצעותו מוצרים או שירותים של החברה או של צדדים שלישיים. ככל שהמשתמש ירכוש מוצרים או שירותים באמצעות האתר, תבוצע הרכישה באמצעות כרטיס אשראי ("אמצעי התשלום") ובהתאם לנהלים של החברה ושל חברות האשראי/ספקי אמצעי התשלום.</p>
-                    <p>המשתמש בלבד יהיה אחראי לכל נזק שעלול להיגרם לחברה ו/או לכל צד שלישי כתוצאה מביטול החיובים שבוצעו באמצעי התשלום, הן כשהביטול בוצע בהוראת המשתמש והן על-פי החלטת חברת האשראי.</p>
-                    <p>המחירים באתר כוללים מע"מ. המחירים באתר אינם כוללים דמי משלוח, אלא אם כן מצוין במפורש אחרת על ידי בית העסק.</p>
-                    <p>החברה אינה מבטיחה זמני הכנה או זמני משלוח קבועים, זמני האספקה מהווים הערכות בלבד.</p>
-                </section>
-
-                <section>
-                    <h2 className="text-xl font-bold text-blue-800 mb-3">ביטול עסקה והחזרות</h2>
-                    <p>המשתמש רשאי לבטל עסקה בהתאם לחוק הגנת הצרכן, תשמ"א–1981. עם זאת, מוצרים פסידים – לרבות מוצרי מזון מוכנים, מזון טרי, מוצרים הדורשים קירור או מוצרים שאינם ניתנים למכירה מחדש – מוחרגים מזכות הביטול על פי דין. לפיכך, לאחר ביצוע הזמנה למוצרים אלה לא ניתן לבטלה, לשנותה או להחזירה, אלא במקרה שבו סופק מוצר פגום או שאינו תואם את ההזמנה.</p>
-                </section>
-
-                <section>
-                    <h2 className="text-xl font-bold text-blue-800 mb-3">זכויות יוצרים וקניין רוחני</h2>
-                    <p>כל זכויות היוצרים, זכויות הקניין הרוחני והזכויות אשר דומות במהותן לזכויות יוצרים או זכויות קניין רוחני באתר, במידע, בתכנים הכלולים בו ובשירותים המוצעים בו, לרבות טקסט, איורים, אלמנטים גרפיים, צליל, יישומי תוכנה, גרפים ותמונות, שייכות באופן בלעדי לחברה או לצדדים שלישיים שהקנו לחברה את הזכות לפרסמם באתר.</p>
-                    <p>אין להעתיק, לשכפל, לשנות, להפיץ, לשדר, להציג בפומבי, להעביר לציבור, לפרסם, לעבד, ליצור יצירות נגזרות, להעניק רישיון, למכור, להשכיר או לאחסן את תוכנו של האתר וכל תוכן אחר שהתקבל באמצעותו ללא קבלת רשות מפורשת לכך מאת החברה, מראש ובכתב.</p>
-                </section>
-
-                <section>
-                    <h2 className="text-xl font-bold text-blue-800 mb-3">פרסום ותכנים של צדדים שלישיים</h2>
-                    <p>האתר עשוי להכיל תכנים או מידע אשר שייכים לצדדים שלישיים ו/או למשתמשים. החברה לא תישא בכל אחריות לתכנים הללו, לרבות לעניין הנכונות שלהם, העדכניות שלהם, השלמות שלהם וההשלכות הנובעות מהשימוש בהם.</p>
-                    <p>אין לעשות שימוש באתר או בתכנים המוצגים בו למטרות לא חוקיות ו/או באופן העומד בניגוד לתנאי השימוש. בתוך כך, חל איסור לבצע כל שימוש אשר עלול לגרום לפגיעה באתר ו/או בתכנים המוצגים בו ו/או לפעול באופן שיפריע או ישבש את השימוש של משתמשים אחרים באתר.</p>
-                </section>
-
-                <section>
-                    <h2 className="text-xl font-bold text-blue-800 mb-3">הגבלת אחריות</h2>
-                    <p>החברה אינה אחראית לכל שיבוש, עיכוב או תקלה הנובעים מהסתמכות על מערכות, שירותים או תשתיות של צדדים שלישיים, לרבות שירותי מיפוי, ניתוב, דיווח מיקום, תקשורת סלולרית או כל שירות חיצוני אחר.</p>
-                    <p>החברה אינה נושאת בכל חבות או אחריות ביחס לטעויות, שינויים או שגיאות הנוגעים לתכנים המוצגים באתר, לרבות כאלו שהוזנו לאתר על-ידי המשתמשים.</p>
-                </section>
-
-                <section>
-                    <h2 className="text-xl font-bold text-blue-800 mb-3">דין וסמכות שיפוט</h2>
-                    <p>הדין החל על האתר, השימוש בו, תנאי השימוש וכל עניין בנוגע לאתר וליחסים בין המשתמש והחברה הנו דין מדינת ישראל. סמכות השיפוט הייחודית והבלעדית לעניין האתר, השימוש בו וכל עניין בנוגע אליו נתונה אך ורק לבתי המשפט המוסמכים לכך בתל-אביב-יפו.</p>
-                </section>
+            {/* PDF Viewer */}
+            <div className="border-b bg-gray-50">
+                <PdfViewer 
+                    url={TERMS_PDF_URL} 
+                    title="תקנון ותנאי שימוש - משלנו" 
+                    height="65vh"
+                    className="border-0 rounded-none"
+                />
             </div>
 
             {/* Action Area */}
-            <div className="p-6 md:p-8 bg-slate-50 border-t">
+            <div className="p-6 md:p-8 bg-white">
                 {isAcceptMode ? (
-                    <div className="space-y-6">
-                        <div className="flex items-start gap-3 p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                    <div className="space-y-6 max-w-2xl mx-auto">
+                        <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-100 shadow-sm transition-colors hover:bg-blue-100/50">
                             <Checkbox 
                                 id="agree-terms" 
                                 checked={agreed}
                                 onCheckedChange={(c) => setAgreed(!!c)}
-                                className="mt-1"
+                                className="mt-1 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
                             />
                             <label 
                                 htmlFor="agree-terms" 
-                                className="text-sm md:text-base text-slate-700 cursor-pointer font-medium leading-tight"
+                                className="text-sm md:text-base text-slate-800 cursor-pointer font-medium leading-tight select-none"
                             >
-                                קראתי את תנאי השימוש ואני מסכים/ה להם. ידוע לי כי השימוש באתר כפוף לתנאים אלו.
+                                קראתי ואני מסכים ל<a href={TERMS_PDF_URL} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-bold mx-1" onClick={(e) => e.stopPropagation()}>תקנון האתר</a> (מדיניות הפרטיות + תנאי שימוש).
                             </label>
                         </div>
 
-                        <Button 
-                            onClick={handleAgree}
-                            disabled={!agreed || submitting}
-                            className={`w-full py-6 text-lg font-bold shadow-md transition-all rounded-xl
-                                ${agreed 
-                                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transform hover:scale-[1.01]' 
-                                    : 'bg-slate-200 text-slate-400 cursor-not-allowed'}
-                            `}
-                        >
-                            {submitting ? (
-                                <><Loader2 className="w-5 h-5 ml-2 animate-spin" /> מעבד...</>
-                            ) : (
-                                <>אני מסכים/ה, המשך <ArrowRight className="w-5 h-5 mr-2" /></>
-                            )}
-                        </Button>
-                        
-                        <p className="text-xs text-center text-slate-500">
-                            לחיצה על "אני מסכים/ה" מהווה חתימה אלקטרונית מחייבת.
-                        </p>
+                        <div className="space-y-3">
+                            <Button 
+                                onClick={handleAgree}
+                                disabled={!agreed || submitting}
+                                className={`w-full py-6 text-lg font-bold shadow-md transition-all rounded-xl
+                                    ${agreed 
+                                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transform hover:scale-[1.01]' 
+                                        : 'bg-slate-200 text-slate-400 cursor-not-allowed'}
+                                `}
+                            >
+                                {submitting ? (
+                                    <><Loader2 className="w-5 h-5 ml-2 animate-spin" /> מעבד...</>
+                                ) : (
+                                    <>המשך <ArrowRight className="w-5 h-5 mr-2" /></>
+                                )}
+                            </Button>
+                            
+                            <p className="text-xs text-center text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                                * בלחיצה על כפתור "המשך" אני מצהיר/ה כי קראתי את התקנון, הבנתי את תוכנו ואני מסכים/ה לכל תנאיו, לרבות מדיניות הפרטיות.
+                            </p>
+                        </div>
                     </div>
                 ) : (
                     <div className="text-center">
