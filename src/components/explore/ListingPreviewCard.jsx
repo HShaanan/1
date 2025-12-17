@@ -79,35 +79,35 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
           </div>
         )}
 
-        {/* לוגו כשרות - שמאל למטה */}
+        {/* לוגו כשרות - ימין למטה, מוגדל */}
         {kashrutLogo && (
-          <div className="absolute bottom-2 right-2 bg-white/90 p-0.5 rounded shadow-md">
+          <div className="absolute bottom-2 right-2 bg-white/95 p-1 rounded-lg shadow-lg z-10">
             <LazyImage
               src={kashrutLogo}
               alt="לוגו כשרות"
-              className="w-12 h-12"
+              className="w-16 h-16 sm:w-20 sm:h-20" // Increased size significantly
               imgClassName="object-contain"
             />
           </div>
         )}
       </div>
 
-      <CardContent className="p-3">
-        {/* שם העסק */}
-        <h3 className="text-sm font-bold text-slate-900 mb-1 line-clamp-1 group-hover:text-blue-600 transition-colors">
+      <CardContent className="p-4">
+        {/* שם העסק - מוגדל */}
+        <h3 className="text-lg font-bold text-slate-900 mb-1.5 line-clamp-1 group-hover:text-blue-600 transition-colors">
           {businessPage.business_name}
         </h3>
 
-        {/* כתובת */}
+        {/* כתובת - מוגדל */}
         {businessPage.address && (
-          <p className="text-xs text-slate-500 mb-1 line-clamp-1">
+          <p className="text-sm text-slate-600 mb-2 line-clamp-1 font-medium">
             📍 {businessPage.address}
           </p>
         )}
 
-        {/* תיאור קצר */}
+        {/* תיאור קצר - מוגדל */}
         {businessPage.description && (
-          <p className="text-xs text-slate-600 line-clamp-2">
+          <p className="text-sm text-slate-500 line-clamp-2 leading-relaxed">
             {businessPage.description}
           </p>
         )}

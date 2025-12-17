@@ -6,7 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useWindowSize } from "@/components/hooks/useWindowSize";
 
 const GAP = 20;
-const ITEM_HEIGHT = 420; // Card height + gap approximation
+const ITEM_HEIGHT = 350; // Reduced height to fix whitespace gap
 const BANNER_HEIGHT = 320; // Banner height + gap
 
 export default function ListingGrid({ listings = [], loading, onOpen, categories = [] }) {
