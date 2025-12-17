@@ -31,9 +31,13 @@ export default function AccessibilityStyles({ settings }) {
       #accessibility-panel {
         background-color: #ffffff !important;
         color: #1f2937 !important;
+        opacity: 1 !important;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+        border: 1px solid #e5e7eb !important;
       }
       #accessibility-panel * {
         color: #1f2937 !important;
+        opacity: 1 !important;
       }
       #accessibility-panel button {
          background-color: #ffffff;

@@ -123,13 +123,13 @@ export default function AccessibilityWidget() {
     <>
       <AccessibilityStyles settings={settings} />
 
-      <div id="accessibility-widget" className="fixed left-4 bottom-24 lg:bottom-6 z-[9999] font-sans" dir="rtl">
+      <div id="accessibility-widget" className="fixed left-2 top-1/2 -translate-y-1/2 z-[9999] font-sans flex items-center" dir="rtl">
         {/* Toggle Button */}
         <button
           ref={triggerRef}
           onClick={() => setIsOpen(!isOpen)}
           className={`
-            w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-blue-300 relative
+            w-12 h-12 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-blue-300 relative z-50
             ${isOpen ? 'bg-gray-800 text-white rotate-90' : 'bg-blue-600 hover:bg-blue-700 text-white'}
           `}
           aria-label={isOpen ? "סגור תפריט נגישות (CTRL+U)" : "פתח תפריט נגישות (CTRL+U)"}
@@ -137,11 +137,11 @@ export default function AccessibilityWidget() {
           aria-haspopup="dialog"
           title="תפריט נגישות (CTRL+U)"
         >
-          {isOpen ? <X className="w-6 h-6" /> : <Accessibility className="w-8 h-8" />}
+          {isOpen ? <X className="w-6 h-6" /> : <Accessibility className="w-7 h-7" />}
           
           {/* Active Indicator Dot */}
           {JSON.stringify(settings) !== JSON.stringify(defaultSettings) && !isOpen && (
-             <span className="absolute top-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full"></span>
+             <span className="absolute top-0 right-0 w-3.5 h-3.5 bg-green-500 border-2 border-white rounded-full"></span>
           )}
         </button>
 
@@ -150,7 +150,9 @@ export default function AccessibilityWidget() {
           <div
             role="dialog"
             aria-label="כלי נגישות"
-            className="absolute bottom-16 left-0 w-[340px] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-200 flex flex-col max-h-[80vh]"
+            id="accessibility-panel"
+            className="absolute left-16 top-1/2 -translate-y-1/2 w-[340px] bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden animate-in fade-in slide-in-from-left-4 duration-200 flex flex-col max-h-[90vh] z-40"
+            style={{ isolation: 'isolate', opacity: 1 }}
           >
             {/* Header */}
             <div className="bg-gradient-to-r from-blue-700 to-blue-600 p-4 text-white flex justify-between items-start shrink-0">
