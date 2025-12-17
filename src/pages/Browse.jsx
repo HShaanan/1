@@ -10,7 +10,7 @@ import { dataCache } from "@/components/PerformanceOptimizations";
 import { buildProfessionalsGroups } from "@/components/explore/ProfessionalsGrouping";
 import SeoMeta from "@/components/SeoMeta";
 import { useFuse } from "@/components/hooks/useFuse";
-import { WebsiteSchema } from "@/components/seo/SchemaOrg";
+import { WebsiteSchema, LocalBusinessListSchema } from "@/components/seo/SchemaOrg";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 
@@ -344,6 +344,7 @@ export default function BrowsePage() {
         name={`משלנו - ${seoTitle}`}
         description={`מצא ${seoTitle} ב${seoCity} | משלנו - פלטפורמת העסקים והשירותים המקומיים`}
       />
+      <LocalBusinessListSchema businesses={filteredListings} />
 
       {/* רקע כחלחל-לבן בהיר מואר עם אנימציות */}
       <div className="fixed inset-0 -z-10 overflow-hidden">

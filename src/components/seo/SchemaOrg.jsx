@@ -110,3 +110,53 @@ export const OrganizationSchema = () => {
 
     return <JsonLd item={schema} />;
 };
+
+/**
+ * סכמה לרשימת עסקים (Carousel/ItemList) - עבור דף ה-Browse
+ * @see https://developers.google.com/search/docs/appearance/structured-data/local-business#carousel
+ */
+export const LocalBusinessListSchema = ({ businesses }) => {
+    if (!businesses || businesses.length === 0) return null;
+
+    // Google recommends limiting the list to the main items visible
+    // We'll take the top 10 to avoid massive DOM nodes, assuming they are sorted by relevance/promotion
+    const topBusinesses = businesses.slice(0, 10);
+    const siteUrl = typeof window !== 'undefined' ? window.location.origin : 'https://meshelanu.co.il';
+
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "ItemList",
+        "itemListElement": topBusinesses.map((business, index) => {
+            const url = business.url_slug 
+                ? `${siteUrl}/BusinessPage?slug=${business.url_slug}`
+                : `${siteUrl}/BusinessPage?id=${business.id}`;
+
+            return {
+                "@type": "ListItem",
+                "position": index + 1,
+                "item": {
+                    "@type": "LocalBusiness",
+                    "name": business.business_name || business.display_title,
+                    "url": url,
+                    "image": business.preview_image || business.images?.[0],
+                    "address": {
+                        "@type": "PostalAddress",
+                        "streetAddress": business.address || "ביתר עילית",
+                        "addressLocality": business.city || "ביתר עילית",
+                        "addressCountry": "IL"
+                    },
+                    // Optional: AggregateRating if available to show stars in list
+                    ...(business.smart_rating > 0 && {
+                        "aggregateRating": {
+                            "@type": "AggregateRating",
+                            "ratingValue": business.smart_rating,
+                            "reviewCount": business.reviews_count || 1
+                        }
+                    })
+                }
+            };
+        })
+    };
+
+    return <JsonLd item={schema} />;
+};
