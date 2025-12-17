@@ -9,6 +9,7 @@ import StickyChips from "@/components/explore/StickyChips";
 import { dataCache } from "@/components/PerformanceOptimizations";
 import { buildProfessionalsGroups } from "@/components/explore/ProfessionalsGrouping";
 import SeoMeta from "@/components/SeoMeta";
+import { useFuse } from "@/components/hooks/useFuse";
 import { WebsiteSchema } from "@/components/seo/SchemaOrg";
 
 // New imports
@@ -95,6 +96,17 @@ export default function BrowsePage() {
       localStorage.setItem("meshlanoo_browse_location", JSON.stringify(userLocation));
     }
   }, [userLocation]);
+
+  // Fuzzy Search Integration
+  const fuseKeys = useMemo(() => [
+    'business_name', 
+    'description', 
+    'special_fields.tags', 
+    'category_name', 
+    'subcategory_names'
+  ], []);
+  
+  const searchResults = useFuse(activeListings, searchQuery, fuseKeys);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -225,17 +237,8 @@ export default function BrowsePage() {
   }, [loading, activeListings, isFoodCatId, isShopCatId]); // Run once when data loads
 
   const filteredListings = useMemo(() => {
-    let base = activeListings;
-
-    // Text Search
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      base = base.filter(l => 
-        (l.business_name && l.business_name.toLowerCase().includes(q)) ||
-        (l.description && l.description.toLowerCase().includes(q)) ||
-        (l.special_fields?.tags && l.special_fields.tags.some(t => t.toLowerCase().includes(q)))
-      );
-    }
+    // Start with fuse results instead of raw list if searching
+    let base = searchQuery ? searchResults : activeListings;
 
     // Category Tabs (Only if NOT searching, or force tab even when searching? 
     // Usually better to search globally if query exists, but UI has tabs. 
@@ -314,7 +317,7 @@ export default function BrowsePage() {
     }
 
     return base;
-  }, [activeListings, activeTab, selectedCategory, selectedSubcategory, selectedProfGroup, categories, isFoodCatId, isShopCatId, filters, searchQuery]);
+  }, [activeListings, searchResults, activeTab, selectedCategory, selectedSubcategory, selectedProfGroup, categories, isFoodCatId, isShopCatId, filters, searchQuery]);
 
   // Dynamic SEO based on selected filters
   const seoTitle = selectedSubcategory 
