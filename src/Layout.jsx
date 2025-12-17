@@ -315,70 +315,36 @@ export default function Layout({ children, currentPageName }) {
           <div className="relative flex items-center justify-between w-full max-w-7xl mx-auto">
             <div className="flex items-center gap-2 lg:gap-4">
               {user ? (
-                <div
-                  className="relative z-[100]"
-                  onMouseEnter={() => handleDropdownOpen('user-profile')}
-                  onMouseLeave={handleDropdownClose}
-                >
-                  <button
-                    className="w-10 h-10 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 focus:outline-none"
-                    aria-expanded={openDropdown === 'user-profile'}
-                    aria-label={`תפריט משתמש - ${user.full_name || 'משתמש'}`}
-                    onClick={() => handleDropdownOpen('user-profile')}
-                  >
-                    <span className="text-white font-bold text-sm lg:text-sm" aria-hidden="true">
-                      {user.full_name ? user.full_name.charAt(0) : 'מ'}
-                    </span>
-                  </button>
-
-                  {openDropdown === 'user-profile' && (
-                    <div 
-                      className="absolute top-full right-0 lg:left-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 min-w-48 opacity-100 visible z-50 fade-slide-in"
-                      role="menu"
-                      aria-label="תפריט משתמש"
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      className="w-10 h-10 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 focus:outline-none"
+                      aria-label={`תפריט משתמש - ${user.full_name || 'משתמש'}`}
                     >
-                      <div className="p-2">
-                        <button
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={() => {
-                            window.location.href = createPageUrl('UserProfile');
-                            handleDropdownClose();
-                          }}
-                          role="menuitem"
-                        >
-                          <UserCircle className="w-4 h-4 ml-2 text-blue-600" aria-hidden="true" />
-                          <span>איזור אישי</span>
-                        </button>
+                      <span className="text-white font-bold text-sm lg:text-sm" aria-hidden="true">
+                        {user.full_name ? user.full_name.charAt(0) : 'מ'}
+                      </span>
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem onClick={() => window.location.href = createPageUrl('UserProfile')} className="cursor-pointer">
+                      <UserCircle className="w-4 h-4 ml-2 text-blue-600" aria-hidden="true" />
+                      <span>איזור אישי</span>
+                    </DropdownMenuItem>
 
-                        <button
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={() => {
-                            handleDropdownClose();
-                            clearAppCache();
-                          }}
-                          role="menuitem"
-                        >
-                          <Zap className="w-4 h-4 ml-2 text-indigo-600" aria-hidden="true" />
-                          <span>נקה מטמון</span>
-                        </button>
+                    <DropdownMenuItem onClick={clearAppCache} className="cursor-pointer">
+                      <Zap className="w-4 h-4 ml-2 text-indigo-600" aria-hidden="true" />
+                      <span>נקה מטמון</span>
+                    </DropdownMenuItem>
 
-                        <div className="border-t border-gray-100 my-1"></div>
+                    <div className="border-t border-gray-100 my-1"></div>
 
-                        <button
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={() => {
-                            handleLogout();
-                            handleDropdownClose();
-                          }}
-                          role="menuitem"
-                        >
-                          <LogOut className="w-4 h-4 ml-2 text-red-600" aria-hidden="true" />
-                          <span>התנתק</span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                    <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
+                      <LogOut className="w-4 h-4 ml-2" aria-hidden="true" />
+                      <span>התנתק</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               ) : (
                 <button
                   onClick={async () => {
@@ -610,236 +576,122 @@ export default function Layout({ children, currentPageName }) {
             </Link>
 
             <div className="lg:hidden">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setOpenDropdown(openDropdown === 'mobile-menu' ? null : 'mobile-menu')}
-                className="p-2 relative z-[100]"
-                aria-label={openDropdown === 'mobile-menu' ? "סגור תפריט ניווט" : "פתח תפריט ניווט"}
-                aria-expanded={openDropdown === 'mobile-menu'}
-              >
-                {openDropdown === 'mobile-menu' ? <X className="w-5 h-5" aria-hidden="true" /> : <Menu className="w-5 h-5" aria-hidden="true" />}
-              </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="p-2 relative z-[100]"
+                    aria-label="תפריט ניווט"
+                  >
+                    <Menu className="w-5 h-5" aria-hidden="true" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56 max-h-[80vh] overflow-y-auto">
+                  {!user && (
+                    <>
+                      <DropdownMenuItem onClick={async () => {
+                        try {
+                          await base44.auth.redirectToLogin(window.location.href);
+                        } catch (error) {
+                          console.error("Login failed:", error);
+                        }
+                      }}>
+                        <UserIcon className="w-4 h-4 ml-2 text-blue-600" aria-hidden="true" />
+                        <span>התחברות</span>
+                      </DropdownMenuItem>
+                      <div className="border-t border-gray-100 my-1"></div>
+                    </>
+                  )}
 
-              {openDropdown === 'mobile-menu' && (
-                <div 
-                  className="absolute top-full right-0 mt-2 bg-white rounded-lg shadow-xl border border-gray-200 min-w-48 z-50 fade-slide-in"
-                  role="menu"
-                  aria-label="תפריט ניווט ראשי"
-                >
-                  <div className="p-2">
-                    {!user && (
-                      <>
-                        <button
-                          onClick={async () => {
-                            try {
-                              await base44.auth.redirectToLogin(window.location.href);
-                              handleDropdownClose();
-                            } catch (error) {
-                              console.error("Login failed:", error);
-                            }
-                          }}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          role="menuitem"
-                        >
-                          <UserIcon className="w-4 h-4 ml-2 text-blue-600" aria-hidden="true" />
-                          <span>התחברות</span>
-                        </button>
-                        <div className="border-t border-gray-100 my-1"></div>
-                      </>
-                    )}
-
-                    <Link
-                      to={createPageUrl("Browse")}
-                      className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                      onClick={handleDropdownClose}
-                      role="menuitem"
-                      aria-current={currentPageName === "Browse" ? "page" : undefined}
-                    >
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("Browse")} className="w-full flex items-center cursor-pointer">
                       <Store className="w-4 h-4 ml-2 text-green-600" aria-hidden="true" />
                       <span>משלנו ביזנעס</span>
                     </Link>
+                  </DropdownMenuItem>
 
-                    <Link
-                      to={createPageUrl("Add")}
-                      className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                      onClick={handleDropdownClose}
-                      role="menuitem"
-                      aria-current={currentPageName === "Add" ? "page" : undefined}
-                    >
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("Add")} className="w-full flex items-center cursor-pointer">
                       <div className="flex items-center">
                         <Sparkles className="w-4 h-4 ml-2 text-blue-600 ai-sparkle" aria-hidden="true" />
                         <span>הצטרפו למשלנו</span>
                         <Zap className="w-3 h-3 mr-1 text-yellow-500 opacity-75" aria-hidden="true" />
                       </div>
                     </Link>
+                  </DropdownMenuItem>
 
-                    <Link
-                      to={createPageUrl("Search")}
-                      className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                      onClick={handleDropdownClose}
-                      role="menuitem"
-                      aria-current={currentPageName === "Search" ? "page" : undefined}
-                    >
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("Search")} className="w-full flex items-center cursor-pointer">
                       <Search className="w-4 h-4 ml-2 text-purple-600" aria-hidden="true" />
                       <span>חיפוש מתקדם</span>
                     </Link>
+                  </DropdownMenuItem>
 
-                    {user && (user.user_type === 'business' || user.role === 'admin') && (
-                      <Link
-                        to={createPageUrl("MyBusinessPages")}
-                        className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                        onClick={handleDropdownClose}
-                        role="menuitem"
-                        aria-current={currentPageName === "MyBusinessPages" ? "page" : undefined}
-                      >
+                  {user && (user.user_type === 'business' || user.role === 'admin') && (
+                    <DropdownMenuItem asChild>
+                      <Link to={createPageUrl("MyBusinessPages")} className="w-full flex items-center cursor-pointer">
                         <ListChecks className="w-4 h-4 ml-2 text-teal-600" aria-hidden="true" />
                         <span>העסקים שלי</span>
                       </Link>
-                    )}
+                    </DropdownMenuItem>
+                  )}
 
-                    {user && (
-                      <Link
-                        to={createPageUrl("Favorites")}
-                        className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                        onClick={handleDropdownClose}
-                        role="menuitem"
-                        aria-current={currentPageName === "Favorites" ? "page" : undefined}
-                      >
+                  {user && (
+                    <DropdownMenuItem asChild>
+                      <Link to={createPageUrl("Favorites")} className="w-full flex items-center cursor-pointer">
                         <Heart className="w-4 h-4 ml-2 text-red-600 heart-pulse" aria-hidden="true" />
                         <span>מועדפים</span>
                       </Link>
-                    )}
+                    </DropdownMenuItem>
+                  )}
 
-                    {user && isAdmin && (
-                      <>
-                        <div className="border-t border-gray-100 my-1"></div>
-                        <div className="px-2 py-1">
-                          <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">ניהול</span>
-                        </div>
-                        <Link
-                          to={createPageUrl("AdminBusinessPages")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
+                  {user && isAdmin && (
+                    <>
+                      <div className="border-t border-gray-100 my-1"></div>
+                      <div className="px-2 py-1">
+                        <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">ניהול</span>
+                      </div>
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminBusinessPages")} className="w-full flex items-center cursor-pointer">
                           <FileText className="w-4 h-4 ml-2 text-orange-600" aria-hidden="true" />
                           <span>ניהול עמודי עסק</span>
                         </Link>
-                        <Link
-                          to={createPageUrl("AdminUsers")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminUsers")} className="w-full flex items-center cursor-pointer">
                           <Users className="w-4 h-4 ml-2 text-blue-600" aria-hidden="true" />
                           <span>ניהול משתמשים</span>
                         </Link>
-                        <Link
-                          to={createPageUrl("AdminStats")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminStats")} className="w-full flex items-center cursor-pointer">
                           <Settings className="w-4 h-4 ml-2 text-green-600" aria-hidden="true" />
                           <span>סטטיסטיקות</span>
                         </Link>
-                        <Link
-                          to={createPageUrl("AdminReports")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminReports")} className="w-full flex items-center cursor-pointer">
                           <AlertTriangle className="w-4 h-4 ml-2 text-red-600" aria-hidden="true" />
                           <span>דיווחים</span>
                         </Link>
-                        <Link
-                          to={createPageUrl("AdminKashrut")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminKashrut")} className="w-full flex items-center cursor-pointer">
                           <Shield className="w-4 h-4 ml-2 text-emerald-600" aria-hidden="true" />
                           <span>ניהול כשרות</span>
                         </Link>
-
-                        <Link
-                          to={createPageUrl("AdminBanners")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
-                          <Megaphone className="w-4 h-4 ml-2 text-fuchsia-600" aria-hidden="true" />
-                          <span>ניהול באנרים</span>
-                        </Link>
-
-                        <Link
-                          to={createPageUrl("AdminTimezone")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
-                          <Clock className="w-4 h-4 ml-2 text-blue-600" aria-hidden="true" />
-                          <span>הגדרות זמן</span>
-                        </Link>
-
-                        <Link
-                          to={createPageUrl("AdminDynamicPagesAnalytics")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
-                          <Activity className="w-4 h-4 ml-2 text-purple-600" aria-hidden="true" />
-                          <span>דפים דינמיים</span>
-                        </Link>
-
-                        <Link
-                          to={createPageUrl("DeliveryManagement")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
-                          <Truck className="w-4 h-4 ml-2 text-indigo-600" aria-hidden="true" />
-                          <span>ניהול משלוחים</span>
-                        </Link>
-                        <Link
-                          to={createPageUrl("CourierFleetManagement")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                        >
-                          <Users className="w-4 h-4 ml-2 text-cyan-600" aria-hidden="true" />
-                          <span>ניהול צי שליחים</span>
-                        </Link>
-                        </>
-                        )}
-
-                        {user && user.user_type === 'courier' && (
-                          <Link
-                            to={createPageUrl("CourierDashboard")}
-                            className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors"
-                            onClick={handleDropdownClose}
-                            role="menuitem"
-                          >
-                            <Truck className="w-4 h-4 ml-2 text-indigo-600" aria-hidden="true" />
-                            <span>איזור שליח</span>
-                          </Link>
-                          )}
-
-                          <div className="border-t border-gray-100 my-1"></div>
-                          <Link
-                          to={createPageUrl("AdminSettings")}
-                          className="flex items-center gap-3 w-full p-2 hover:bg-gray-50 rounded-md text-slate-700 text-sm transition-colors font-bold bg-slate-50"
-                          onClick={handleDropdownClose}
-                          role="menuitem"
-                          >
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminSettings")} className="w-full flex items-center cursor-pointer bg-slate-50 font-bold">
                           <Settings className="w-4 h-4 ml-2 text-slate-700" aria-hidden="true" />
                           <span>הגדרות מערכת</span>
-                          </Link>
-
-                          </div>
-                        </div>
-              )}
+                        </Link>
+                      </DropdownMenuItem>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
         </header>

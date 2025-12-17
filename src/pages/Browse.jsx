@@ -531,7 +531,7 @@ export default function BrowsePage() {
           />
       </StickyChips>
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content" role="main" aria-label="תוכן ראשי - רשימת עסקים">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content">
         <div className="space-y-8">
           {activeTab === "food" ? (
             <section aria-labelledby="food-subcategories-heading">
@@ -592,7 +592,7 @@ export default function BrowsePage() {
             </section>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }
