@@ -17,16 +17,20 @@ import { Label } from "@/components/ui/label";
 export default function FilterBar({ 
   filters, 
   onFilterChange, 
-  activeCounts 
+  activeCounts,
+  kashrutList = []
 }) {
   const [openPopover, setOpenPopover] = useState(null);
 
-  const kashrutOptions = [
-    { id: 'בד"ץ', label: 'בד"ץ' },
-    { id: 'רבנות מהדרין', label: 'רבנות מהדרין' },
-    { id: 'רבנות', label: 'רבנות' },
-    { id: 'אחר', label: 'אחר' }
-  ];
+  // Use dynamic kashrut list if available, otherwise empty (or fallback)
+  const kashrutOptions = kashrutList.length > 0 
+    ? kashrutList.map(k => ({ id: k.name, label: k.name }))
+    : [
+        { id: 'בד"ץ', label: 'בד"ץ' },
+        { id: 'רבנות מהדרין', label: 'רבנות מהדרין' },
+        { id: 'רבנות', label: 'רבנות' },
+        { id: 'אחר', label: 'אחר' }
+      ];
 
   const priceOptions = [
     { id: '$', label: 'זול ($)' },

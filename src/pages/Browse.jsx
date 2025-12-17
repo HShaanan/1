@@ -36,6 +36,7 @@ export default function BrowsePage() {
   // New state variables
   const [activeTab, setActiveTab] = useState("food");
   const [searchQuery, setSearchQuery] = useState("");
+  const [kashrutList, setKashrutList] = useState([]);
   const [userLocation, setUserLocation] = useState(() => {
     try {
       const raw = localStorage.getItem("meshlanoo_browse_location");
@@ -120,17 +121,19 @@ export default function BrowsePage() {
         setCategories(cached.categories);
         setActiveListings(cached.listings);
         setProfessionalsGroups(cached.profGroups);
+        setKashrutList(cached.kashrut || []);
         
         console.log('📦 [Browse] Loaded from cache');
         console.log('📊 Total listings:', cached.listings.length);
       } else {
-        const [cats, pages] = await Promise.all([
+        const [cats, pages, kashrut] = await Promise.all([
           base44.entities.Category.list("sort_order"),
           base44.entities.BusinessPage.filter({ 
             is_active: true, 
             approval_status: 'approved',
             is_frozen: false
-          }, "-created_date", 200)
+          }, "-created_date", 200),
+          base44.entities.Kashrut.list("name")
         ]);
         
         console.log('🔍 [Browse] Loaded fresh data');
@@ -148,7 +151,8 @@ export default function BrowsePage() {
         setCategories(cats);
         setActiveListings(pages);
         setProfessionalsGroups(profGroups);
-        dataCache.set(cacheKey, { categories: cats, listings: pages, profGroups }, 600);
+        setKashrutList(kashrut || []);
+        dataCache.set(cacheKey, { categories: cats, listings: pages, profGroups, kashrut }, 600);
       }
     } catch (error) {
       console.error("Error loading data:", error);
@@ -299,7 +303,11 @@ export default function BrowsePage() {
 
     // Apply Advanced Filters
     if (filters.kashrut.length > 0) {
-      base = base.filter(l => filters.kashrut.includes(l.kashrut_authority_type));
+      // Filter primarily by name (dynamic), fallback to type if needed for backward compatibility
+      base = base.filter(l => 
+        filters.kashrut.includes(l.kashrut_authority_name) || 
+        filters.kashrut.includes(l.kashrut_authority_type)
+      );
     }
 
     if (filters.price.length > 0) {
@@ -519,7 +527,8 @@ export default function BrowsePage() {
 
       <FilterBar 
         filters={filters} 
-        onFilterChange={handleFilterChange} 
+        onFilterChange={handleFilterChange}
+        kashrutList={kashrutList} 
       />
 
       <StickyChips>
