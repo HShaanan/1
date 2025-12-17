@@ -15,7 +15,7 @@ import {
   Bug, Bot, ListChecks, Clock, Truck
   } from "lucide-react";
 
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from "@/components/ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 
 
@@ -337,7 +337,7 @@ export default function Layout({ children, currentPageName }) {
                       <span>נקה מטמון</span>
                     </DropdownMenuItem>
 
-                    <div className="border-t border-gray-100 my-1"></div>
+                    <DropdownMenuSeparator />
 
                     <DropdownMenuItem onClick={handleLogout} className="cursor-pointer text-red-600 focus:text-red-600 focus:bg-red-50">
                       <LogOut className="w-4 h-4 ml-2" aria-hidden="true" />
@@ -553,7 +553,7 @@ export default function Layout({ children, currentPageName }) {
                         </Link>
                       </DropdownMenuItem>
 
-                      <div className="border-t border-gray-100 my-1"></div>
+                      <DropdownMenuSeparator />
 
                       <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminSettings')} className="flex items-center gap-2 cursor-pointer bg-slate-50">
@@ -600,7 +600,7 @@ export default function Layout({ children, currentPageName }) {
                         <UserIcon className="w-4 h-4 ml-2 text-blue-600" aria-hidden="true" />
                         <span>התחברות</span>
                       </DropdownMenuItem>
-                      <div className="border-t border-gray-100 my-1"></div>
+                      <DropdownMenuSeparator />
                     </>
                   )}
 
@@ -648,8 +648,8 @@ export default function Layout({ children, currentPageName }) {
 
                   {user && isAdmin && (
                     <>
-                      <div className="border-t border-gray-100 my-1"></div>
-                      <div className="px-2 py-1">
+                      <DropdownMenuSeparator />
+                      <div className="px-2 py-1" role="presentation">
                         <span className="text-xs font-semibold text-purple-600 uppercase tracking-wide">ניהול</span>
                       </div>
                       <DropdownMenuItem asChild>

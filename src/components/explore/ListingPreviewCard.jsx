@@ -35,9 +35,10 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
       role="button"
       tabIndex={0}
       onKeyDown={(e) => { if (e.key === 'Enter') handleClick(); }}
+      aria-label={`הצג פרטים עבור ${businessPage.business_name}`}
     >
       {/* תמונה ראשית */}
-      <div className="relative w-full aspect-[21/9] overflow-hidden bg-slate-100">
+      <div className="relative w-full aspect-[21/9] overflow-hidden bg-slate-100" aria-hidden="true">
         <LazyImage
           src={displayImage}
           alt={businessPage.business_name}

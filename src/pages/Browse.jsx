@@ -505,7 +505,7 @@ export default function BrowsePage() {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="חפש עסקים, שירותים או תגיות..."
-              className="pr-10 bg-slate-50/50 border-slate-200 focus:bg-white focus:border-blue-400 transition-all rounded-xl h-10"
+              className="pr-10 bg-slate-50 border-slate-300 focus:bg-white focus:border-blue-500 transition-all rounded-xl h-10 placeholder:text-slate-600 text-slate-900 font-medium"
             />
           </div>
 
