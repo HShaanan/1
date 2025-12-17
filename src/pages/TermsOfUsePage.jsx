@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+// Checkbox removed
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { FileText, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
@@ -12,7 +12,7 @@ import PdfViewer from "@/components/ui/PdfViewer";
 export default function TermsOfUsePage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [agreed, setAgreed] = useState(false);
+  // agreed state removed
   const [submitting, setSubmitting] = useState(false);
   const [user, setUser] = useState(null);
   
@@ -29,11 +29,6 @@ export default function TermsOfUsePage() {
   }, []);
 
   const handleAgree = async () => {
-    if (!agreed) {
-        toast.error("יש לאשר את תנאי השימוש כדי להמשיך");
-        return;
-    }
-    
     setSubmitting(true);
     try {
         // Use backend function to record acceptance with IP
@@ -87,31 +82,16 @@ export default function TermsOfUsePage() {
             {/* Action Area */}
             <div className="p-6 md:p-8 bg-white">
                 {isAcceptMode ? (
-                    <div className="space-y-6 max-w-2xl mx-auto">
-                        <div className="flex items-start gap-3 p-4 bg-blue-50 rounded-xl border border-blue-100 shadow-sm transition-colors hover:bg-blue-100/50">
-                            <Checkbox 
-                                id="agree-terms" 
-                                checked={agreed}
-                                onCheckedChange={(c) => setAgreed(!!c)}
-                                className="mt-1 data-[state=checked]:bg-blue-600 data-[state=checked]:border-blue-600"
-                            />
-                            <label 
-                                htmlFor="agree-terms" 
-                                className="text-sm md:text-base text-slate-800 cursor-pointer font-medium leading-tight select-none"
-                            >
-                                קראתי ואני מסכים ל<a href={TERMS_PDF_URL} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline font-bold mx-1" onClick={(e) => e.stopPropagation()}>תקנון האתר</a> (מדיניות הפרטיות + תנאי שימוש).
-                            </label>
-                        </div>
+                    <div className="space-y-6 max-w-2xl mx-auto text-center">
+                        <div className="space-y-4">
+                            <p className="text-sm md:text-base font-bold text-slate-800 bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                אני קראתי ואני מסכים ל<a href={TERMS_PDF_URL} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline mx-1">תקנון האתר</a> (מדיניות הפרטיות + תנאי שימוש).
+                            </p>
 
-                        <div className="space-y-3">
                             <Button 
                                 onClick={handleAgree}
-                                disabled={!agreed || submitting}
-                                className={`w-full py-6 text-lg font-bold shadow-md transition-all rounded-xl
-                                    ${agreed 
-                                        ? 'bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transform hover:scale-[1.01]' 
-                                        : 'bg-slate-200 text-slate-400 cursor-not-allowed'}
-                                `}
+                                disabled={submitting}
+                                className="w-full py-6 text-lg font-bold shadow-md transition-all rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white transform hover:scale-[1.01]"
                             >
                                 {submitting ? (
                                     <><Loader2 className="w-5 h-5 ml-2 animate-spin" /> מעבד...</>
@@ -120,8 +100,8 @@ export default function TermsOfUsePage() {
                                 )}
                             </Button>
                             
-                            <p className="text-xs text-center text-slate-500 bg-slate-50 p-2 rounded-lg border border-slate-100">
-                                * בלחיצה על כפתור "המשך" אני מצהיר/ה כי קראתי את התקנון, הבנתי את תוכנו ואני מסכים/ה לכל תנאיו, לרבות מדיניות הפרטיות.
+                            <p className="text-xs text-center text-slate-500">
+                                * בלחיצה על כפתור "המשך" אני מצהיר/ה כי קראתי את התקנון ואני מסכים/ה לו.
                             </p>
                         </div>
                     </div>
