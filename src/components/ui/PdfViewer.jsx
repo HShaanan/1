@@ -36,7 +36,7 @@ export default function PdfViewer({ url, title = "מסמך PDF", height = "600px
       {/* אזור הצפייה */}
       <div className="relative w-full bg-gray-200" style={{ height }}>
         <iframe
-          src={`${url}#view=FitH`}
+          src={`https://docs.google.com/gview?url=${encodeURIComponent(url)}&embedded=true`}
           title={title}
           width="100%"
           height="100%"
@@ -47,7 +47,7 @@ export default function PdfViewer({ url, title = "מסמך PDF", height = "600px
           {/* תוכן חלופי למקרה שהדפדפן לא תומך */}
           <div className="flex flex-col items-center justify-center h-full p-8 text-center text-gray-500 bg-white">
               <FileText className="w-12 h-12 text-gray-300 mb-4" />
-              <p className="font-medium">הדפדפן שלך לא תומך בהצגת PDF מוטמעת.</p>
+              <p className="font-medium">לא ניתן להציג את התצוגה המקדימה.</p>
               <a href={url} target="_blank" rel="noopener noreferrer">
                   <Button className="mt-4">
                     פתח את הקובץ
