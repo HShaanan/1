@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import AccessibilityWidget from "@/components/AccessibilityWidget";
 import SupportWidget from "@/components/SupportWidget";
+import AxeReporter from "@/components/utils/AxeReporter";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -943,6 +944,9 @@ export default function Layout({ children, currentPageName }) {
         )}
       </div>
 
+      {/* כלי דיאגנוסטיקה לנגישות (מדפיס לקונסול) */}
+      <AxeReporter />
+      
       {/* וידג'ט נגישות */}
       <AccessibilityWidget />
       {/* וידג'ט תמיכה וצ'אט */}
