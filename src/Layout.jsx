@@ -179,6 +179,7 @@ export default function Layout({ children, currentPageName }) {
   const handleLogout = async () => {
     try {
       await base44.auth.logout();
+      sessionStorage.clear(); // Clear session storage to reset terms acceptance check for next user
       window.location.href = createPageUrl("LandingPage");
       setUser(null);
     } catch (error) {

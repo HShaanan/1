@@ -336,7 +336,7 @@ export default function TermsOfUsePage() {
                             </Button>
                             
                             <p className="text-xs text-center text-slate-500">
-                                * אישור זה נדרש באופן חד-פעמי בעת הכניסה הראשונה למערכת.
+                                * אישור זה נדרש באופן חד-פעמי (עבור כל משתמש) לצורך המשך השימוש במערכת.
                             </p>
                         </div>
                     </div>
