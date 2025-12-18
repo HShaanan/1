@@ -58,6 +58,7 @@ import UserProfile from './pages/UserProfile';
 import DynamicCategoryPage from './pages/DynamicCategoryPage';
 import AdminDynamicPagesAnalytics from './pages/AdminDynamicPagesAnalytics';
 import Browse from './pages/Browse';
+import TestWhatsApp from './pages/TestWhatsApp';
 import __Layout from './Layout.jsx';
 
 
@@ -122,6 +123,7 @@ export const PAGES = {
     "DynamicCategoryPage": DynamicCategoryPage,
     "AdminDynamicPagesAnalytics": AdminDynamicPagesAnalytics,
     "Browse": Browse,
+    "TestWhatsApp": TestWhatsApp,
 }
 
 export const pagesConfig = {
