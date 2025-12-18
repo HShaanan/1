@@ -271,7 +271,7 @@ export default function OrdersManagementPage() {
 
   const getNextStatusAction = (currentStatus) => {
     const statusFlow = {
-      new: { next: "payment", label: "עבר להמתנה לתשלום", color: "bg-orange-600 hover:bg-orange-700" },
+      new: { next: "preparing", label: "קבל הזמנה", color: "bg-purple-600 hover:bg-purple-700" },
       payment: { next: "preparing", label: "קבל הזמנה", color: "bg-purple-600 hover:bg-purple-700" },
       preparing: { next: "ready", label: "מוכן לאיסוף / משלוח", color: "bg-green-600 hover:bg-green-700" },
       ready: { next: "completed", label: "סיום הזמנה", color: "bg-gray-600 hover:bg-gray-700" },
@@ -622,7 +622,7 @@ export default function OrdersManagementPage() {
                                 <div className="text-left mr-4">
                                   <div>× {item.quantity}</div>
                                   <div className="text-xs text-slate-500">
-                                    ₪{((item.item_final_price ?? item.price) * item.quantity).toFixed(2)}
+                                    ₪{(item.item_final_price ?? (item.price * item.quantity)).toFixed(2)}
                                   </div>
                                 </div>
                               </div>
