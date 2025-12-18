@@ -354,7 +354,8 @@ export default function OrdersManagementPage() {
       topItems,
       averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0,
       cancelledOrders: filtered.filter(order => order.status === "cancelled").length,
-      vatAmount: businessProfit * 0.18
+      vatAmount: businessProfit * 0.18,
+      totalPayout: businessProfit * 1.18
       };
       };
 
