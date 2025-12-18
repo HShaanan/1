@@ -7,6 +7,7 @@ import { Loader2, CheckCircle, XCircle } from "lucide-react";
 export default function TestWhatsAppPage() {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
+    const [logData, setLogData] = useState(null);
 
     const testOrder = {
         orderId: '6943e2cbb36c482f79a04654',
@@ -16,6 +17,7 @@ export default function TestWhatsAppPage() {
     const handleTest = async () => {
         setLoading(true);
         setResult(null);
+        setLogData(null);
         try {
             console.log("Sending test request...", testOrder);
             const response = await base44.functions.invoke('notifyNewOrder', testOrder);
@@ -23,6 +25,20 @@ export default function TestWhatsAppPage() {
             
             if (response.data && response.data.success) {
                 setResult({ success: true, message: "ההודעה נשלחה בהצלחה! בדוק את הוואטסאפ." });
+                
+                // Try to fetch log
+                try {
+                   const logs = await base44.entities.NotificationLog.filter({
+                       related_entity_id: testOrder.orderId
+                   }, "-created_date", 1);
+                   
+                   if (logs && logs.length > 0) {
+                       setLogData(logs[0]);
+                   }
+                } catch (e) {
+                    console.log("Could not fetch logs (might not be admin)", e);
+                }
+
             } else {
                 setResult({ success: false, message: "השליחה נכשלה: " + (response.data?.error || "שגיאה לא ידועה") });
             }
