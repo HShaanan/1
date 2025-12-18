@@ -187,7 +187,7 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
     try {
         const greenApiInstanceId = (Deno.env.get("GREEN_API_INSTANCE_ID") || "").trim();
         const greenApiToken = (Deno.env.get("GREEN_API_TOKEN") || "").trim();
-        const greenApiHost = (Deno.env.get("GREEN_API_HOST") || "7103.api.greenapi.com").trim(); // Default host, customizable
+        const greenApiHost = (Deno.env.get("GREEN_API_HOST") || "7105.api.greenapi.com").trim(); // Default host changed to 7105 (common for new instances)
         
         // עדיפות למספר ווטסאפ ייעודי, אחרת טלפון רגיל
         let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
