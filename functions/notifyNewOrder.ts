@@ -305,6 +305,21 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
           console.log("Delivery System Response Success:", responseData);
           deliveryApiResponse = { success: true, data: responseData };
 
+          // Log to database
+          try {
+             await base44.asServiceRole.entities.NotificationLog.create({
+                 notification_type: 'new_order_delivery',
+                 channel: 'webhook',
+                 recipient: deliverySystemUrl,
+                 status: 'success',
+                 content: JSON.stringify(deliveryPayload),
+                 provider: 'ExternalDeliverySystem',
+                 provider_response: responseData,
+                 related_entity_id: order.id,
+                 related_entity_type: 'Order'
+             });
+          } catch (logError) { console.error("Failed to log delivery webhook success:", logError); }
+
           // עדכון ההזמנה בהצלחה
           await base44.asServiceRole.entities.Order.update(order.id, {
             delivery_integration_status: 'success',
