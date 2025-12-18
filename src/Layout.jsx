@@ -443,18 +443,32 @@ export default function Layout({ children, currentPageName }) {
                 </Link>
 
                 {user && (user.user_type === 'business' || user.role === 'admin') && (
-                  <Link to={createPageUrl("MyBusinessPages")} aria-label="צפה בעסקים שברשותי">
-                    <Button
-                      variant="ghost"
-                      className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
-                        currentPageName === "MyBusinessPages" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
-                      }`}
-                      aria-current={currentPageName === "MyBusinessPages" ? "page" : undefined}
-                    >
-                      <ListChecks className="w-4 h-4 ml-2" aria-hidden="true" />
-                      העסקים שלי
-                    </Button>
-                  </Link>
+                  <>
+                    <Link to={createPageUrl("MyBusinessPages")} aria-label="צפה בעסקים שברשותי">
+                      <Button
+                        variant="ghost"
+                        className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
+                          currentPageName === "MyBusinessPages" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
+                        }`}
+                        aria-current={currentPageName === "MyBusinessPages" ? "page" : undefined}
+                      >
+                        <ListChecks className="w-4 h-4 ml-2" aria-hidden="true" />
+                        העסקים שלי
+                      </Button>
+                    </Link>
+                    <Link to={createPageUrl("OrdersManagement")} aria-label="ניהול הזמנות">
+                      <Button
+                        variant="ghost"
+                        className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
+                          currentPageName === "OrdersManagement" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
+                        }`}
+                        aria-current={currentPageName === "OrdersManagement" ? "page" : undefined}
+                      >
+                        <ShoppingBag className="w-4 h-4 ml-2" aria-hidden="true" />
+                        ניהול הזמנות
+                      </Button>
+                    </Link>
+                  </>
                 )}
 
                 {user && (

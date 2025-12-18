@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ClipboardList, Clock, CheckCircle, User, Phone, MessageCircle, BarChart3, Edit, X, Save, RefreshCcw, Truck } from "lucide-react";
+import { ClipboardList, Clock, CheckCircle, User, Phone, MessageCircle, Calendar, BarChart3, Edit, X, Save, RefreshCcw, Truck, Store, DollarSign, Wallet } from "lucide-react";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 
@@ -83,13 +83,37 @@ export default function OrdersManagementPage() {
 
   const newOrderCountRef = useRef(0);
   const soundAlertIntervalRef = useRef(null);
-  const businessPageId = new URLSearchParams(window.location.search).get('business_page_id');
-
+  
+  // זיהוי עמוד העסק - מה-URL או מהמשתמש המחובר
   useEffect(() => {
     const init = async () => {
-      await loadBusinessPage();
-      await loadSettings();
-      await loadOrders();
+      setLoading(true);
+      try {
+        let page = null;
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlPageId = urlParams.get('business_page_id');
+
+        if (urlPageId) {
+          const pages = await base44.entities.BusinessPage.filter({ id: urlPageId });
+          if (pages && pages.length > 0) page = pages[0];
+        } else {
+          // ניסיון לזהות לפי משתמש מחובר
+          const user = await base44.auth.me();
+          if (user) {
+            const pages = await base44.entities.BusinessPage.filter({ business_owner_email: user.email });
+            if (pages && pages.length > 0) page = pages[0];
+          }
+        }
+
+        if (page) {
+          setBusinessPage(page);
+          // טעינת הגדרות והזמנות תתבצע ב-useEffect נפרד שתלוי ב-businessPage
+        }
+      } catch (error) {
+        console.error("Error initializing orders page:", error);
+      } finally {
+        setLoading(false);
+      }
     };
     init();
 
@@ -100,22 +124,39 @@ export default function OrdersManagementPage() {
     };
   }, []);
 
+  // טעינת נתונים כשיש businessPage
   useEffect(() => {
-    if (orders.length > 0) {
+    if (businessPage) {
+      loadSettings();
+      loadOrders();
+      
       const refreshIntervalId = setInterval(loadOrders, settings.refresh_interval_seconds * 1000);
       return () => clearInterval(refreshIntervalId);
     }
-  }, [settings.refresh_interval_seconds, orders.length]);
+  }, [businessPage?.id, settings.refresh_interval_seconds]);
 
-  const loadBusinessPage = async () => {
-    if (!businessPageId) return;
+  const loadSettings = async () => {
+    if (!businessPage?.id) return;
     try {
-      const pages = await base44.entities.BusinessPage.filter({ id: businessPageId });
-      if (pages && pages.length > 0) {
-        setBusinessPage(pages[0]);
+      const settingsList = await base44.entities.RestaurantSettings.filter({ business_page_id: businessPage.id });
+      if (settingsList.length > 0) {
+        setSettings(prev => ({ ...prev, ...settingsList[0] }));
       }
+    } catch (e) {
+      console.warn("Could not load settings, using default settings.");
+    }
+  };
+
+  const loadOrders = async () => {
+    if (!businessPage?.id) return;
+    
+    try {
+      const ordersData = await base44.entities.Order.filter({ business_page_id: businessPage.id }, "-created_date");
+      setOrders(ordersData);
+      const newOrdersCount = ordersData.filter(o => o.status === 'new').length;
+      manageSoundAlerts(newOrdersCount);
     } catch (error) {
-      console.error("Error loading business page:", error);
+      console.error("Error loading orders:", error);
     }
   };
   
@@ -139,41 +180,10 @@ export default function OrdersManagementPage() {
     newOrderCountRef.current = newOrdersCount;
   };
 
-  const loadSettings = async () => {
-    if (!businessPageId) return;
-    try {
-      const settingsList = await base44.entities.RestaurantSettings.filter({ business_page_id: businessPageId });
-      if (settingsList.length > 0) {
-        setSettings(prev => ({ ...prev, ...settingsList[0] }));
-      }
-    } catch (e) {
-      console.warn("Could not load settings, using default settings.");
-    }
-  };
-
-  const loadOrders = async () => {
-    if (!businessPageId) {
-      setLoading(false);
-      return;
-    }
-    
-    try {
-      const ordersData = await base44.entities.Order.filter({ business_page_id: businessPageId }, "-created_date");
-      setOrders(ordersData);
-      const newOrdersCount = ordersData.filter(o => o.status === 'new').length;
-      manageSoundAlerts(newOrdersCount);
-    } catch (error) {
-      console.error("Error loading orders:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const updateOrderStatus = async (orderId, newStatus) => {
     try {
       const updateData = { status: newStatus };
       
-      // Sync preparation_status with main status changes
       if (newStatus === 'preparing') {
         updateData.preparation_status = 'preparing';
       } else if (newStatus === 'ready') {
@@ -184,14 +194,11 @@ export default function OrdersManagementPage() {
       
       await base44.entities.Order.update(orderId, updateData);
       
-      // Send notification to customer when order is ready
       if (newStatus === 'ready') {
         try {
           await base44.functions.invoke('notifyOrderReady', { orderId });
-          console.log('Customer notification sent for order:', orderId);
         } catch (notifyError) {
           console.warn('Failed to send customer notification:', notifyError);
-          // Don't block the status update if notification fails
         }
       }
       
@@ -303,12 +310,29 @@ export default function OrdersManagementPage() {
   const getReportsData = () => {
     const filtered = getFilteredOrdersByDate();
     
-    const totalOrders = filtered.filter(order => order.status !== "cancelled").length;
-    const totalRevenue = filtered.filter(order => order.status !== "cancelled").reduce((sum, order) => sum + order.total_amount, 0);
+    const activeOrders = filtered.filter(order => order.status !== "cancelled");
+    const totalOrders = activeOrders.length;
+    
+    let totalRevenue = 0; // GTV
+    let businessProfit = 0;
+    let platformCommission = 0;
+
+    activeOrders.forEach(order => {
+        const total = order.total_amount || 0;
+        const delivery = order.delivery_fee || 0;
+        const net = Math.max(0, total - delivery);
+        
+        totalRevenue += total;
+        
+        // חישוב עמלה: 14.16% מהנטו
+        platformCommission += net * 0.1416;
+        
+        // חישוב רווח לעסק: 85.84% מהנטו + משלוח
+        businessProfit += (net * 0.8584) + delivery;
+    });
     
     const itemsCount = {};
-    
-    filtered.filter(order => order.status !== "cancelled").forEach(order => {
+    activeOrders.forEach(order => {
       order.items?.forEach(item => {
         itemsCount[item.menu_item_name] = (itemsCount[item.menu_item_name] || 0) + item.quantity;
       });
@@ -321,6 +345,8 @@ export default function OrdersManagementPage() {
     return {
       totalOrders,
       totalRevenue,
+      businessProfit,
+      platformCommission,
       topItems,
       averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0,
       cancelledOrders: filtered.filter(order => order.status === "cancelled").length
@@ -343,20 +369,27 @@ export default function OrdersManagementPage() {
           >
             <div className="animate-spin w-8 h-8 border-2 border-white border-t-transparent rounded-full"></div>
           </div>
-          <p className="font-medium" style={{ color: theme.primary }}>טוען הזמנות...</p>
+          <p className="font-medium" style={{ color: theme.primary }}>טוען נתונים...</p>
         </div>
       </div>
     );
   }
 
-  if (!businessPageId) {
+  if (!businessPage) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4">
+      <div className="min-h-screen flex items-center justify-center p-4" dir="rtl">
         <Card className="max-w-md">
           <CardContent className="p-8 text-center">
             <ClipboardList className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-            <h2 className="text-xl font-bold mb-2">לא נמצא עמוד עסק</h2>
-            <p className="text-slate-600">אנא גש לניהול הזמנות דרך עמוד העסק</p>
+            <h2 className="text-xl font-bold mb-2">לא נמצא עסק מקושר</h2>
+            <p className="text-slate-600 mb-4">
+              לא נמצא עמוד עסק המקושר לחשבון שלך.
+              <br/>
+              אם יש לך עסק, ודא שאתה מחובר עם החשבון הנכון.
+            </p>
+            <Button onClick={() => window.location.href = '/'} variant="outline">
+              חזרה לדף הבית
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -385,19 +418,21 @@ export default function OrdersManagementPage() {
             <div>
               <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                 <ClipboardList className="w-8 h-8" style={{ color: theme.primary }} />
-                ניהול הזמנות - {businessPage?.business_name}
+                דאשבורד הזמנות - {businessPage?.business_name}
               </h1>
               <p className="text-slate-600 mt-1">ניהול מעקב אחר הזמנות בזמן אמת</p>
             </div>
-            <Button
-              onClick={loadOrders}
-              variant="outline"
-              size="sm"
-              className="gap-2"
-            >
-              <RefreshCcw className="w-4 h-4" />
-              רענן
-            </Button>
+            <div className="flex gap-2">
+                <Button
+                  onClick={loadOrders}
+                  variant="outline"
+                  size="sm"
+                  className="gap-2"
+                >
+                  <RefreshCcw className="w-4 h-4" />
+                  רענן
+                </Button>
+            </div>
           </div>
 
           {/* סינון תאריכים */}
@@ -449,7 +484,7 @@ export default function OrdersManagementPage() {
             </TabsTrigger>
             <TabsTrigger value="reports">
               <BarChart3 className="w-4 h-4 ml-2" />
-              דוחות
+              דוחות כספיים
             </TabsTrigger>
           </TabsList>
 
@@ -647,7 +682,7 @@ export default function OrdersManagementPage() {
           </TabsContent>
 
           <TabsContent value="reports" className="space-y-4">
-            <div className="grid md:grid-cols-3 gap-4">
+            <div className="grid md:grid-cols-4 gap-4">
               <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid ${theme.primary}` }}>
                 <CardContent className="p-6">
                   <div className="text-slate-600 text-sm mb-2">סה"כ הזמנות</div>
@@ -657,21 +692,35 @@ export default function OrdersManagementPage() {
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid ${theme.primary}` }}>
+              <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid #64748b` }}>
                 <CardContent className="p-6">
-                  <div className="text-slate-600 text-sm mb-2">הכנסות</div>
-                  <div className="text-3xl font-bold text-green-600">
-                    ₪{reportsData.totalRevenue.toFixed(2)}
+                  <div className="text-slate-600 text-sm mb-2">מחזור עסקאות (GTV)</div>
+                  <div className="text-3xl font-bold text-slate-800">
+                    ₪{reportsData.totalRevenue.toLocaleString(undefined, {maximumFractionDigits: 0})}
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid ${theme.primary}` }}>
+              <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid #f59e0b` }}>
                 <CardContent className="p-6">
-                  <div className="text-slate-600 text-sm mb-2">ממוצע הזמנה</div>
-                  <div className="text-3xl font-bold" style={{ color: theme.primary }}>
-                    ₪{reportsData.averageOrderValue.toFixed(2)}
+                  <div className="text-slate-600 text-sm mb-2">עמלת פלטפורמה (הוצאה)</div>
+                  <div className="text-3xl font-bold text-amber-600">
+                    ₪{reportsData.platformCommission.toLocaleString(undefined, {maximumFractionDigits: 0})}
                   </div>
+                  <p className="text-xs text-slate-400 mt-1">14.16%</p>
+                </CardContent>
+              </Card>
+
+              <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid #10b981` }}>
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Wallet className="w-4 h-4 text-green-600" />
+                    <div className="text-slate-600 text-sm">רווח נקי (זיכוי)</div>
+                  </div>
+                  <div className="text-3xl font-bold text-green-600">
+                    ₪{reportsData.businessProfit.toLocaleString(undefined, {maximumFractionDigits: 0})}
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">85.84% + משלוח</p>
                 </CardContent>
               </Card>
             </div>
