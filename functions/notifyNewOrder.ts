@@ -182,6 +182,49 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
         });
     } catch (e) { console.error("Email legacy send failed", e); }
 
+    // 🟢 שליחת הודעת WhatsApp לבית העסק באמצעות GreenAPI
+    try {
+        const greenApiInstanceId = Deno.env.get("GREEN_API_INSTANCE_ID");
+        const greenApiToken = Deno.env.get("GREEN_API_TOKEN");
+        
+        // עדיפות למספר ווטסאפ ייעודי, אחרת טלפון רגיל
+        let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
+        
+        if (greenApiInstanceId && greenApiToken && targetPhone) {
+            // ניקוי המספר ופירמוט לפורמט בינלאומי (למשל 97250...)
+            targetPhone = targetPhone.replace(/\D/g, '');
+            if (targetPhone.startsWith('0')) targetPhone = '972' + targetPhone.substring(1);
+            
+            const chatId = `${targetPhone}@c.us`;
+            
+            const greenApiUrl = `https://7105.api.greenapi.com/waInstance${greenApiInstanceId}/sendMessage/${greenApiToken}`;
+            
+            const whatsappPayload = {
+                chatId: chatId,
+                message: whatsappMessage
+            };
+
+            console.log(`📤 Sending WhatsApp via GreenAPI to ${chatId}...`);
+            
+            const waResponse = await fetch(greenApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(whatsappPayload)
+            });
+            
+            const waResult = await waResponse.json();
+            console.log('✅ GreenAPI Response:', waResult);
+            
+            if (!waResponse.ok) {
+                console.error('❌ GreenAPI Failed:', waResult);
+            }
+        } else {
+            console.warn('⚠️ Skipping GreenAPI: Missing secrets or phone number');
+        }
+    } catch (waError) {
+        console.error("❌ Failed to send WhatsApp via GreenAPI:", waError);
+    }
+
     // שליחה למערכת המשלוחים החיצונית
     const deliverySystemUrl = "https://691d8016fad6996bb1341f7a.edge.sitebase.co/functions/createOrderFromWebhook";
     let deliveryApiResponse = null;
