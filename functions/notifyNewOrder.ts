@@ -401,7 +401,8 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
 
     return Response.json({ 
       success: true, 
-      message: 'Email notification sent',
+      message: 'Notifications processed',
+      whatsapp: whatsappStatus,
       delivery_system: deliveryApiResponse
     });
 
