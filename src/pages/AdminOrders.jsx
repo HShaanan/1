@@ -58,14 +58,37 @@ export default function AdminOrdersPage() {
         refetchInterval: 30000 // רענון כל 30 שניות
     });
 
-    // חישוב סטטיסטיקות
+    // חישוב סטטיסטיקות לפי המודל העסקי:
+    // לקוח משלם: הזמנה + משלוח (15) או הזמנה (איסוף).
+    // פלטפורמה: 14.6% מההזמנה (ללא משלוח).
+    // עסק: 85.4% מההזמנה + דמי המשלוח (אם היו).
     const stats = useMemo(() => {
         const total = orders.length;
-        const totalRevenue = orders.reduce((sum, o) => sum + (o.total_amount || 0), 0);
         const pendingOrders = orders.filter(o => ['new', 'payment', 'preparing'].includes(o.status)).length;
         const deliveryFailures = orders.filter(o => o.delivery_integration_status === 'failed').length;
 
-        return { total, totalRevenue, pendingOrders, deliveryFailures };
+        let totalGTV = 0; // סך מחזור עסקאות
+        let platformRevenue = 0; // רווח פלטפורמה (14.6%)
+        let businessPayout = 0; // חוב לעסקים
+
+        orders.forEach(o => {
+            const totalAmount = o.total_amount || 0;
+            const deliveryFee = o.delivery_fee || 0;
+            
+            // סכום ההזמנה נטו (ללא משלוח)
+            const netOrderAmount = Math.max(0, totalAmount - deliveryFee);
+
+            // צבירה
+            totalGTV += totalAmount;
+            
+            // חישוב עמלת פלטפורמה: 14.6% מהנטו
+            platformRevenue += netOrderAmount * 0.146;
+
+            // חישוב זיכוי לעסק: 85.4% מהנטו + דמי משלוח מלאים
+            businessPayout += (netOrderAmount * 0.854) + deliveryFee;
+        });
+
+        return { total, totalGTV, platformRevenue, businessPayout, pendingOrders, deliveryFailures };
     }, [orders]);
 
     // סינון הזמנות
@@ -166,8 +189,9 @@ export default function AdminOrdersPage() {
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-500">הכנסות משוערות</p>
-                                    <h3 className="text-2xl font-bold text-gray-900 mt-1">₪{stats.totalRevenue.toLocaleString()}</h3>
+                                    <p className="text-sm font-medium text-gray-500">רווח פלטפורמה (14.6%)</p>
+                                    <h3 className="text-2xl font-bold text-gray-900 mt-1">₪{stats.platformRevenue.toLocaleString(undefined, {maximumFractionDigits: 0})}</h3>
+                                    <p className="text-xs text-gray-400 mt-1">מתוך מחזור: ₪{stats.totalGTV.toLocaleString()}</p>
                                 </div>
                                 <div className="p-3 bg-green-50 rounded-full">
                                     <DollarSign className="w-6 h-6 text-green-600" />
@@ -176,15 +200,16 @@ export default function AdminOrdersPage() {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-white shadow-sm border-orange-100 border-r-4 border-r-orange-500">
+                    <Card className="bg-white shadow-sm border-purple-100 border-r-4 border-r-purple-500">
                         <CardContent className="p-6">
                             <div className="flex items-center justify-between">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-500">הזמנות פתוחות</p>
-                                    <h3 className="text-2xl font-bold text-gray-900 mt-1">{stats.pendingOrders}</h3>
+                                    <p className="text-sm font-medium text-gray-500">חוב לעסקים</p>
+                                    <h3 className="text-2xl font-bold text-gray-900 mt-1">₪{stats.businessPayout.toLocaleString(undefined, {maximumFractionDigits: 0})}</h3>
+                                    <p className="text-xs text-gray-400 mt-1">85.4% + משלוח</p>
                                 </div>
-                                <div className="p-3 bg-orange-50 rounded-full">
-                                    <Clock className="w-6 h-6 text-orange-600" />
+                                <div className="p-3 bg-purple-50 rounded-full">
+                                    <ShoppingBag className="w-6 h-6 text-purple-600" />
                                 </div>
                             </div>
                         </CardContent>
