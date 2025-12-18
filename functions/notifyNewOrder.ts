@@ -185,21 +185,29 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
     // 🟢 שליחת הודעת WhatsApp לבית העסק באמצעות GreenAPI
     let whatsappStatus = { attempted: false, success: false, error: null };
     try {
-        const greenApiInstanceId = (Deno.env.get("GREEN_API_INSTANCE_ID") || "").trim();
+        // Sanitize inputs aggressively to remove spaces or accidental text prefix
+        let greenApiInstanceId = (Deno.env.get("GREEN_API_INSTANCE_ID") || "").trim();
         const greenApiToken = (Deno.env.get("GREEN_API_TOKEN") || "").trim();
         
+        // Ensure Instance ID contains only digits (remove "Instance", spaces, etc.)
+        greenApiInstanceId = greenApiInstanceId.replace(/\D/g, '');
+
         // זיהוי דינמי של ה-Host לפי ה-Instance ID (4 ספרות ראשונות)
         let resolvedHost = (Deno.env.get("GREEN_API_HOST") || "").trim();
-        if (!resolvedHost && greenApiInstanceId.length >= 4) {
+        
+        // If host contains full URL junk, clean it
+        resolvedHost = resolvedHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        
+        if ((!resolvedHost || resolvedHost === "undefined") && greenApiInstanceId.length >= 4) {
             const prefix = greenApiInstanceId.substring(0, 4);
-            if (/^\d+$/.test(prefix)) {
-                resolvedHost = `${prefix}.api.greenapi.com`;
-                console.log(`🌍 Detected GreenAPI host from instance ID: ${resolvedHost}`);
-            }
+            resolvedHost = `${prefix}.api.greenapi.com`;
+            console.log(`🌍 Auto-detected GreenAPI host: ${resolvedHost}`);
         }
-        if (!resolvedHost) resolvedHost = "7103.api.greenapi.com"; // Fallback default
+        
+        // Final fallback if still empty
+        if (!resolvedHost) resolvedHost = "7105.api.greenapi.com";
 
-        console.log(`🔌 GreenAPI Config: Host=${resolvedHost}, Instance=${greenApiInstanceId ? '***' : 'Missing'}, Token=${greenApiToken ? '***' : 'Missing'}`);
+        console.log(`🔌 GreenAPI Config: Host=${resolvedHost}, Instance=${greenApiInstanceId} (Sanitized), Token=${greenApiToken ? '***' : 'Missing'}`);
 
         // עדיפות למספר ווטסאפ ייעודי, אחרת טלפון רגיל
         let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
@@ -214,8 +222,7 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
             const chatId = `${targetPhone}@c.us`;
             
             // Construct URL dynamically
-            const cleanHost = resolvedHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
-            const greenApiUrl = `https://${cleanHost}/waInstance${greenApiInstanceId}/sendMessage/${greenApiToken}`;
+            const greenApiUrl = `https://${resolvedHost}/waInstance${greenApiInstanceId}/sendMessage/${greenApiToken}`;
             
             const whatsappPayload = {
                 chatId: chatId,
