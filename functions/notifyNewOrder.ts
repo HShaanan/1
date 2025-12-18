@@ -229,7 +229,7 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
                 message: whatsappMessage
             };
 
-            console.log(`📤 Sending WhatsApp via GreenAPI to ${chatId} using host ${cleanHost}...`);
+            console.log(`📤 Sending WhatsApp via GreenAPI to ${chatId} using host ${resolvedHost}...`);
             
             const waResponse = await fetch(greenApiUrl, {
                 method: 'POST',
@@ -268,7 +268,7 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
                     provider_response: {
                         ...waResult,
                         debug_url: greenApiUrl.replace(greenApiToken, '***TOKEN***'), // Log the URL being hit (masked)
-                        resolved_host: cleanHost
+                        resolved_host: resolvedHost
                     },
                     related_entity_id: order.id,
                     related_entity_type: 'Order',
