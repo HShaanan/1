@@ -320,6 +320,7 @@ export default function OrdersManagementPage() {
     let totalRevenue = 0; // GTV
     let businessProfit = 0;
     let platformCommission = 0;
+    let totalDeliveryFees = 0;
 
     activeOrders.forEach(order => {
         const total = Number(order.total_amount || 0);
@@ -327,6 +328,7 @@ export default function OrdersManagementPage() {
         const net = Math.max(0, total - delivery);
         
         totalRevenue += total;
+        totalDeliveryFees += delivery;
         
         // חישוב עמלה: 14.16% מהנטו
         platformCommission += net * 0.1416;
@@ -355,7 +357,7 @@ export default function OrdersManagementPage() {
       averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0,
       cancelledOrders: filtered.filter(order => order.status === "cancelled").length,
       vatAmount: businessProfit * 0.18,
-      totalPayout: businessProfit * 1.18
+      totalDeliveryFees
       };
       };
 
@@ -745,7 +747,7 @@ export default function OrdersManagementPage() {
                   <div>
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-xs text-slate-500">סכום למשלוחים</span>
-                      <span className="font-semibold text-slate-700">₪{reportsData.totalPayout.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                      <span className="font-semibold text-slate-700">₪{reportsData.totalDeliveryFees.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
                     </div>
                     <div className="flex justify-between items-center mb-3">
                       <span className="text-xs text-slate-500">מע"מ (18%)</span>
