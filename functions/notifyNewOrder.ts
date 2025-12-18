@@ -183,28 +183,35 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
     } catch (e) { console.error("Email legacy send failed", e); }
 
     // 🟢 שליחת הודעת WhatsApp לבית העסק באמצעות GreenAPI
+    let whatsappStatus = { attempted: false, success: false, error: null };
     try {
-        const greenApiInstanceId = Deno.env.get("GREEN_API_INSTANCE_ID");
-        const greenApiToken = Deno.env.get("GREEN_API_TOKEN");
+        const greenApiInstanceId = (Deno.env.get("GREEN_API_INSTANCE_ID") || "").trim();
+        const greenApiToken = (Deno.env.get("GREEN_API_TOKEN") || "").trim();
+        const greenApiHost = (Deno.env.get("GREEN_API_HOST") || "7103.api.greenapi.com").trim(); // Default host, customizable
         
         // עדיפות למספר ווטסאפ ייעודי, אחרת טלפון רגיל
         let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
         
         if (greenApiInstanceId && greenApiToken && targetPhone) {
+            whatsappStatus.attempted = true;
+            
             // ניקוי המספר ופירמוט לפורמט בינלאומי (למשל 97250...)
             targetPhone = targetPhone.replace(/\D/g, '');
             if (targetPhone.startsWith('0')) targetPhone = '972' + targetPhone.substring(1);
             
             const chatId = `${targetPhone}@c.us`;
             
-            const greenApiUrl = `https://7105.api.greenapi.com/waInstance${greenApiInstanceId}/sendMessage/${greenApiToken}`;
+            // Construct URL dynamically
+            // Ensure host doesn't have protocol
+            const cleanHost = greenApiHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            const greenApiUrl = `https://${cleanHost}/waInstance${greenApiInstanceId}/sendMessage/${greenApiToken}`;
             
             const whatsappPayload = {
                 chatId: chatId,
                 message: whatsappMessage
             };
 
-            console.log(`📤 Sending WhatsApp via GreenAPI to ${chatId}...`);
+            console.log(`📤 Sending WhatsApp via GreenAPI to ${chatId} using host ${cleanHost}...`);
             
             const waResponse = await fetch(greenApiUrl, {
                 method: 'POST',
@@ -212,8 +219,16 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
                 body: JSON.stringify(whatsappPayload)
             });
             
-            const waResult = await waResponse.json();
+            let waResult = null;
+            try {
+                waResult = await waResponse.json();
+            } catch (e) {
+                waResult = { error: "Failed to parse JSON response" };
+            }
+            
             console.log('✅ GreenAPI Response:', waResult);
+            whatsappStatus.success = waResponse.ok;
+            if (!waResponse.ok) whatsappStatus.error = waResult;
             
             // Log to database
             try {
@@ -238,9 +253,12 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
             }
         } else {
             console.warn('⚠️ Skipping GreenAPI: Missing secrets or phone number');
+            whatsappStatus.error = "Missing configuration";
         }
     } catch (waError) {
         console.error("❌ Failed to send WhatsApp via GreenAPI:", waError);
+        whatsappStatus.success = false;
+        whatsappStatus.error = waError.message;
         try {
             await base44.asServiceRole.entities.NotificationLog.create({
                 notification_type: 'new_order',
