@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { ClipboardList, Clock, CheckCircle, User, Phone, MessageCircle, Calendar, BarChart3, Edit, X, Save, RefreshCcw, Truck, Store, DollarSign, Wallet, Info } from "lucide-react";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
@@ -700,7 +701,16 @@ export default function OrdersManagementPage() {
                 <CardContent className="p-6">
                   <div className="flex items-center gap-1 text-slate-600 text-sm mb-2">
                     מחזור עסקאות (GTV)
-                    <Info className="w-4 h-4 text-slate-400 cursor-help" title="סך כל ההכנסות מהזמנות (ברוטו)" />
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Info className="w-4 h-4 text-slate-400 cursor-help" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p>סך כל ההכנסות מהזמנות (ברוטו)</p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
                   </div>
                   <div className="text-3xl font-bold text-slate-800">
                     ₪{reportsData.totalRevenue.toLocaleString(undefined, {maximumFractionDigits: 0})}
