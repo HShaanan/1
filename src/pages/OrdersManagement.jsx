@@ -72,7 +72,7 @@ export default function OrdersManagementPage() {
   const [businessPage, setBusinessPage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-  const [dateFilter, setDateFilter] = useState("today");
+  const [dateFilter, setDateFilter] = useState("all");
   const [activeTab, setActiveTab] = useState("orders");
   const [editingOrder, setEditingOrder] = useState(null);
   
@@ -151,7 +151,7 @@ export default function OrdersManagementPage() {
     if (!businessPage?.id) return;
     
     try {
-      const ordersData = await base44.entities.Order.filter({ business_page_id: businessPage.id }, "-created_date");
+      const ordersData = await base44.entities.Order.filter({ business_page_id: businessPage.id }, "-created_date", 1000);
       setOrders(ordersData);
       const newOrdersCount = ordersData.filter(o => o.status === 'new').length;
       manageSoundAlerts(newOrdersCount);
@@ -318,8 +318,8 @@ export default function OrdersManagementPage() {
     let platformCommission = 0;
 
     activeOrders.forEach(order => {
-        const total = order.total_amount || 0;
-        const delivery = order.delivery_fee || 0;
+        const total = Number(order.total_amount || 0);
+        const delivery = Number(order.delivery_fee || 0);
         const net = Math.max(0, total - delivery);
         
         totalRevenue += total;

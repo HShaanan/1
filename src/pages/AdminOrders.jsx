@@ -61,17 +61,20 @@ export default function AdminOrdersPage() {
 
     // חישוב סטטיסטיקות לפי המודל העסקי המעודכן (14.16% / 85.84% + 15)
     const stats = useMemo(() => {
-        const total = orders.length;
-        const pendingOrders = orders.filter(o => ['new', 'payment', 'preparing'].includes(o.status)).length;
-        const deliveryFailures = orders.filter(o => o.delivery_integration_status === 'failed').length;
+        // שימוש ב-filteredOrders כדי שהסטטיסטיקה תשקף את הסינון (למשל חיפוש לפי עסק)
+        const sourceOrders = filteredOrders;
+        
+        const total = sourceOrders.length;
+        const pendingOrders = sourceOrders.filter(o => ['new', 'payment', 'preparing'].includes(o.status)).length;
+        const deliveryFailures = sourceOrders.filter(o => o.delivery_integration_status === 'failed').length;
 
         let totalGTV = 0; // סך מחזור עסקאות
         let platformRevenue = 0; // רווח פלטפורמה (14.16%)
         let businessPayout = 0; // חוב לעסקים
 
-        orders.forEach(o => {
-            const totalAmount = o.total_amount || 0;
-            const deliveryFee = o.delivery_fee || 0;
+        sourceOrders.forEach(o => {
+            const totalAmount = Number(o.total_amount || 0);
+            const deliveryFee = Number(o.delivery_fee || 0);
             
             // סכום ההזמנה נטו (ללא משלוח)
             const netOrderAmount = Math.max(0, totalAmount - deliveryFee);
@@ -87,7 +90,7 @@ export default function AdminOrdersPage() {
         });
 
         return { total, totalGTV, platformRevenue, businessPayout, pendingOrders, deliveryFailures };
-    }, [orders]);
+    }, [filteredOrders]);
 
     // סינון הזמנות
     const filteredOrders = useMemo(() => {
