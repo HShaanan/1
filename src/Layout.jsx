@@ -503,6 +503,13 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminOrders')} className="flex items-center gap-2 cursor-pointer">
+                          <ShoppingBag className="w-4 h-4 text-teal-600" aria-hidden="true" />
+                          <span>ניהול הזמנות</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminReports')} className="flex items-center gap-2 cursor-pointer">
                           <AlertTriangle className="w-4 h-4 text-red-600" aria-hidden="true" />
                           <span>דיווחים</span>
