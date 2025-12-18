@@ -215,6 +215,24 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
             const waResult = await waResponse.json();
             console.log('✅ GreenAPI Response:', waResult);
             
+            // Log to database
+            try {
+                await base44.asServiceRole.entities.NotificationLog.create({
+                    notification_type: 'new_order',
+                    channel: 'whatsapp',
+                    recipient: chatId,
+                    status: waResponse.ok ? 'success' : 'failed',
+                    content: whatsappMessage,
+                    provider: 'GreenAPI',
+                    provider_response: waResult,
+                    related_entity_id: order.id,
+                    related_entity_type: 'Order',
+                    error_message: waResponse.ok ? null : JSON.stringify(waResult)
+                });
+            } catch (logError) {
+                console.error("Failed to log WhatsApp notification:", logError);
+            }
+
             if (!waResponse.ok) {
                 console.error('❌ GreenAPI Failed:', waResult);
             }
