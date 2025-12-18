@@ -187,8 +187,18 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
     try {
         const greenApiInstanceId = (Deno.env.get("GREEN_API_INSTANCE_ID") || "").trim();
         const greenApiToken = (Deno.env.get("GREEN_API_TOKEN") || "").trim();
-        const greenApiHost = (Deno.env.get("GREEN_API_HOST") || "7105.api.greenapi.com").trim(); // Default host changed to 7105 (common for new instances)
         
+        // זיהוי דינמי של ה-Host לפי ה-Instance ID (4 ספרות ראשונות)
+        let resolvedHost = (Deno.env.get("GREEN_API_HOST") || "").trim();
+        if (!resolvedHost && greenApiInstanceId.length >= 4) {
+            const prefix = greenApiInstanceId.substring(0, 4);
+            if (/^\d+$/.test(prefix)) {
+                resolvedHost = `${prefix}.api.greenapi.com`;
+                console.log(`🌍 Detected GreenAPI host from instance ID: ${resolvedHost}`);
+            }
+        }
+        if (!resolvedHost) resolvedHost = "7103.api.greenapi.com"; // Fallback default
+
         // עדיפות למספר ווטסאפ ייעודי, אחרת טלפון רגיל
         let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
         
@@ -202,8 +212,7 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
             const chatId = `${targetPhone}@c.us`;
             
             // Construct URL dynamically
-            // Ensure host doesn't have protocol
-            const cleanHost = greenApiHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
+            const cleanHost = resolvedHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
             const greenApiUrl = `https://${cleanHost}/waInstance${greenApiInstanceId}/sendMessage/${greenApiToken}`;
             
             const whatsappPayload = {
