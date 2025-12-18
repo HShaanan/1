@@ -741,15 +741,26 @@ export default function OrdersManagementPage() {
                   </Card>
 
                   <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid #10b981` }}>
-                <CardContent className="p-6">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Wallet className="w-4 h-4 text-green-600" />
-                    <div className="text-slate-600 text-sm">רווח נקי (זיכוי)</div>
+                <CardContent className="p-6 flex flex-col justify-between h-full">
+                  <div>
+                    <div className="flex justify-between items-center mb-1">
+                      <span className="text-xs text-slate-500">סכום למשלוחים</span>
+                      <span className="font-semibold text-slate-700">₪{reportsData.totalPayout.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                    </div>
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-xs text-slate-500">מע"מ (18%)</span>
+                      <span className="text-xs text-slate-600">₪{reportsData.vatAmount.toLocaleString(undefined, {maximumFractionDigits: 0})}</span>
+                    </div>
                   </div>
-                  <div className="text-3xl font-bold text-green-600">
-                    ₪{reportsData.businessProfit.toLocaleString(undefined, {maximumFractionDigits: 0})}
+                  <div>
+                    <div className="text-slate-600 text-sm mb-1 font-medium flex items-center gap-2">
+                       <Wallet className="w-4 h-4 text-green-600" />
+                       רווח נקי
+                    </div>
+                    <div className="text-3xl font-bold text-green-600">
+                      ₪{reportsData.businessProfit.toLocaleString(undefined, {maximumFractionDigits: 0})}
+                    </div>
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">85.84% + משלוח</p>
                 </CardContent>
               </Card>
             </div>
