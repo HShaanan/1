@@ -93,6 +93,11 @@ export default function TestWhatsAppPage() {
                             <pre className="mt-2 p-2 bg-gray-100 overflow-x-auto rounded">
                                 {JSON.stringify(logData.provider_response, null, 2)}
                             </pre>
+                            {logData.error_message && (
+                                <div className="mt-2 p-2 bg-red-50 text-red-700 border border-red-200 rounded">
+                                    <strong>שגיאה:</strong> {logData.error_message}
+                                </div>
+                            )}
                         </div>
                     )}
                 </CardContent>
