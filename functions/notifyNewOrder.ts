@@ -241,6 +241,21 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
         }
     } catch (waError) {
         console.error("❌ Failed to send WhatsApp via GreenAPI:", waError);
+        try {
+            await base44.asServiceRole.entities.NotificationLog.create({
+                notification_type: 'new_order',
+                channel: 'whatsapp',
+                recipient: businessPage.whatsapp_phone || businessPage.contact_phone || 'unknown',
+                status: 'failed',
+                content: whatsappMessage,
+                provider: 'GreenAPI',
+                related_entity_id: order.id,
+                related_entity_type: 'Order',
+                error_message: waError.message
+            });
+        } catch (logError) {
+            console.error("Failed to log WhatsApp error:", logError);
+        }
     }
 
     // שליחה למערכת המשלוחים החיצונית
