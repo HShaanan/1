@@ -622,7 +622,7 @@ export default function OrdersManagementPage() {
                                 <div className="text-left mr-4">
                                   <div>× {item.quantity}</div>
                                   <div className="text-xs text-slate-500">
-                                    ₪{(item.item_final_price * item.quantity).toFixed(2)}
+                                    ₪{((item.item_final_price ?? item.price) * item.quantity).toFixed(2)}
                                   </div>
                                 </div>
                               </div>
