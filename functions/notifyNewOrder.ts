@@ -199,6 +199,8 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
         }
         if (!resolvedHost) resolvedHost = "7103.api.greenapi.com"; // Fallback default
 
+        console.log(`🔌 GreenAPI Config: Host=${resolvedHost}, Instance=${greenApiInstanceId ? '***' : 'Missing'}, Token=${greenApiToken ? '***' : 'Missing'}`);
+
         // עדיפות למספר ווטסאפ ייעודי, אחרת טלפון רגיל
         let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
         
