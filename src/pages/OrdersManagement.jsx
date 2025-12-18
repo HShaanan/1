@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ClipboardList, Clock, CheckCircle, User, Phone, MessageCircle, Calendar, BarChart3, Edit, X, Save, RefreshCcw, Truck, Store, DollarSign, Wallet } from "lucide-react";
+import { ClipboardList, Clock, CheckCircle, User, Phone, MessageCircle, Calendar, BarChart3, Edit, X, Save, RefreshCcw, Truck, Store, DollarSign, Wallet, Info } from "lucide-react";
 import { format } from "date-fns";
 import { he } from "date-fns/locale";
 
@@ -698,7 +698,10 @@ export default function OrdersManagementPage() {
 
               <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid #64748b` }}>
                 <CardContent className="p-6">
-                  <div className="text-slate-600 text-sm mb-2">מחזור עסקאות (GTV)</div>
+                  <div className="flex items-center gap-1 text-slate-600 text-sm mb-2">
+                    מחזור עסקאות (GTV)
+                    <Info className="w-4 h-4 text-slate-400 cursor-help" title="סך כל ההכנסות מהזמנות (ברוטו)" />
+                  </div>
                   <div className="text-3xl font-bold text-slate-800">
                     ₪{reportsData.totalRevenue.toLocaleString(undefined, {maximumFractionDigits: 0})}
                   </div>
@@ -711,9 +714,9 @@ export default function OrdersManagementPage() {
                   <div className="text-3xl font-bold text-amber-600">
                     ₪{reportsData.platformCommission.toLocaleString(undefined, {maximumFractionDigits: 0})}
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">14.16%</p>
-                </CardContent>
-              </Card>
+                  <p className="text-xs text-slate-400 mt-1">14.16% (כולל מע"מ)</p>
+                  </CardContent>
+                  </Card>
 
               <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid #10b981` }}>
                 <CardContent className="p-6">
