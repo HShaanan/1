@@ -118,11 +118,11 @@ export default function AdminOrdersPage() {
             cancelled: "bg-red-100 text-red-800"
         };
         const labels = {
-            new: "חדש",
+            new: "בוצע הזמנה (שולם)",
             payment: "ממתין לתשלום",
-            preparing: "בהכנה",
-            ready: "מוכן",
-            picked_up: "נאסף",
+            preparing: "התקבל בבית העסק",
+            ready: "מוכן לאיסוף",
+            picked_up: "נשלח",
             completed: "הושלם",
             cancelled: "בוטל"
         };
@@ -261,9 +261,10 @@ export default function AdminOrdersPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">כל הסטטוסים</SelectItem>
-                                    <SelectItem value="new">חדש</SelectItem>
-                                    <SelectItem value="preparing">בהכנה</SelectItem>
-                                    <SelectItem value="ready">מוכן</SelectItem>
+                                    <SelectItem value="new">בוצע הזמנה (שולם)</SelectItem>
+                                    <SelectItem value="preparing">התקבל בבית העסק</SelectItem>
+                                    <SelectItem value="picked_up">נשלח</SelectItem>
+                                    <SelectItem value="ready">מוכן לאיסוף</SelectItem>
                                     <SelectItem value="completed">הושלם</SelectItem>
                                     <SelectItem value="cancelled">בוטל</SelectItem>
                                 </SelectContent>
