@@ -354,7 +354,7 @@ export default function OrdersManagementPage() {
       topItems,
       averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0,
       cancelledOrders: filtered.filter(order => order.status === "cancelled").length,
-      vatAmount: platformCommission * 0.18
+      vatAmount: businessProfit * 0.18
       };
       };
 
@@ -735,7 +735,7 @@ export default function OrdersManagementPage() {
                   <div className="text-3xl font-bold text-violet-600">
                     ₪{reportsData.vatAmount.toLocaleString(undefined, {maximumFractionDigits: 0})}
                   </div>
-                  <p className="text-xs text-slate-400 mt-1">מרווח הפלטפורמה</p>
+                  <p className="text-xs text-slate-400 mt-1">מרווח העסק</p>
                   </CardContent>
                   </Card>
 
