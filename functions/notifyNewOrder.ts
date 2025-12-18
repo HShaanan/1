@@ -332,6 +332,22 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
           console.error("Delivery System Error:", response.status, errorText);
           deliveryApiResponse = { success: false, error: errorText, status: response.status };
 
+          // Log to database
+          try {
+             await base44.asServiceRole.entities.NotificationLog.create({
+                 notification_type: 'new_order_delivery',
+                 channel: 'webhook',
+                 recipient: deliverySystemUrl,
+                 status: 'failed',
+                 content: JSON.stringify(deliveryPayload),
+                 provider: 'ExternalDeliverySystem',
+                 provider_response: { status: response.status, text: errorText },
+                 related_entity_id: order.id,
+                 related_entity_type: 'Order',
+                 error_message: `HTTP ${response.status}: ${errorText}`
+             });
+          } catch (logError) { console.error("Failed to log delivery webhook failure:", logError); }
+
           // עדכון ההזמנה בכישלון
           await base44.asServiceRole.entities.Order.update(order.id, {
             delivery_integration_status: 'failed',
