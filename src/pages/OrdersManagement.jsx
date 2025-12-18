@@ -251,12 +251,13 @@ export default function OrdersManagementPage() {
 
   const getStatusBadge = (status) => {
     const statusConfig = {
-      new: { label: "חדשה", color: "bg-blue-100 text-blue-800 border-blue-300" },
-      payment: { label: "לתשלום", color: "bg-orange-100 text-orange-800 border-orange-300" },
-      preparing: { label: "בהכנה", color: "bg-purple-100 text-purple-800 border-purple-300" },
-      ready: { label: "נמסרה", color: "bg-green-100 text-green-800 border-green-300" },
-      completed: { label: "הסתיימה", color: "bg-gray-100 text-gray-800 border-gray-300" },
-      cancelled: { label: "בוטלה", color: "bg-red-100 text-red-800 border-red-300" }
+      new: { label: "בוצע הזמנה (שולם)", color: "bg-blue-100 text-blue-800 border-blue-300" },
+      payment: { label: "ממתין לתשלום", color: "bg-orange-100 text-orange-800 border-orange-300" },
+      preparing: { label: "התקבל בבית העסק", color: "bg-purple-100 text-purple-800 border-purple-300" },
+      picked_up: { label: "נשלח", color: "bg-indigo-100 text-indigo-800 border-indigo-300" },
+      ready: { label: "מוכן לאיסוף", color: "bg-green-100 text-green-800 border-green-300" },
+      completed: { label: "הושלם", color: "bg-gray-100 text-gray-800 border-gray-300" },
+      cancelled: { label: "בוטל", color: "bg-red-100 text-red-800 border-red-300" }
     };
 
     const config = statusConfig[status] || statusConfig.new;
@@ -269,10 +270,11 @@ export default function OrdersManagementPage() {
 
   const getNextStatusAction = (currentStatus) => {
     const statusFlow = {
-      new: { next: "payment", label: "עבר לתשלום", color: "bg-orange-600 hover:bg-orange-700" },
-      payment: { next: "preparing", label: "התחל הכנה", color: "bg-purple-600 hover:bg-purple-700" },
-      preparing: { next: "ready", label: "הזמנה מוכנה", color: "bg-green-600 hover:bg-green-700" },
-      ready: { next: "completed", label: "סיום הזמנה", color: "bg-gray-600 hover:bg-gray-700" }
+      new: { next: "payment", label: "עבר להמתנה לתשלום", color: "bg-orange-600 hover:bg-orange-700" },
+      payment: { next: "preparing", label: "קבל הזמנה", color: "bg-purple-600 hover:bg-purple-700" },
+      preparing: { next: "ready", label: "מוכן לאיסוף / משלוח", color: "bg-green-600 hover:bg-green-700" },
+      ready: { next: "completed", label: "סיום הזמנה", color: "bg-gray-600 hover:bg-gray-700" },
+      picked_up: { next: "completed", label: "סיום הזמנה", color: "bg-gray-600 hover:bg-gray-700" }
     };
 
     return statusFlow[currentStatus];
@@ -301,6 +303,7 @@ export default function OrdersManagementPage() {
       new: filtered.filter(order => order.status === "new").length,
       payment: filtered.filter(order => order.status === "payment").length,
       preparing: filtered.filter(order => order.status === "preparing").length,
+      picked_up: filtered.filter(order => order.status === "picked_up").length,
       ready: filtered.filter(order => order.status === "ready").length,
       completed: filtered.filter(order => order.status === "completed").length,
       cancelled: filtered.filter(order => order.status === "cancelled").length
@@ -490,14 +493,15 @@ export default function OrdersManagementPage() {
 
           <TabsContent value="orders" className="space-y-4">
             {/* סטטיסטיקות מהירות */}
-            <div className="grid grid-cols-3 md:grid-cols-6 gap-2">
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-2">
               {[
-                { status: 'new', label: 'חדשות', icon: Clock, color: 'bg-blue-500' },
-                { status: 'payment', label: 'לתשלום', icon: Phone, color: 'bg-orange-500' },
-                { status: 'preparing', label: 'בהכנה', icon: User, color: 'bg-purple-500' },
-                { status: 'ready', label: 'נמסרו', icon: CheckCircle, color: 'bg-green-500' },
-                { status: 'completed', label: 'הסתיימו', icon: CheckCircle, color: 'bg-gray-500' },
-                { status: 'cancelled', label: 'בוטלו', icon: X, color: 'bg-red-500' }
+                { status: 'new', label: 'בוצע הזמנה', icon: Clock, color: 'bg-blue-500' },
+                { status: 'payment', label: 'ממתין לתשלום', icon: Phone, color: 'bg-orange-500' },
+                { status: 'preparing', label: 'התקבל בעסק', icon: User, color: 'bg-purple-500' },
+                { status: 'picked_up', label: 'נשלח', icon: Truck, color: 'bg-indigo-500' },
+                { status: 'ready', label: 'מוכן לאיסוף', icon: CheckCircle, color: 'bg-green-500' },
+                { status: 'completed', label: 'הושלם', icon: CheckCircle, color: 'bg-gray-500' },
+                { status: 'cancelled', label: 'בוטל', icon: X, color: 'bg-red-500' }
               ].map(({ status, label, icon: Icon, color }) => (
                 <Card key={status} className="border-0 shadow">
                   <CardContent className="p-3 text-center">
