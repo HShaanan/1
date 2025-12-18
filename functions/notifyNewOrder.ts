@@ -219,14 +219,22 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
                 body: JSON.stringify(whatsappPayload)
             });
             
+            const responseText = await waResponse.text();
+            console.log('📥 Raw GreenAPI Response:', responseText);
+
             let waResult = null;
             try {
-                waResult = await waResponse.json();
+                waResult = responseText ? JSON.parse(responseText) : {};
             } catch (e) {
-                waResult = { error: "Failed to parse JSON response" };
+                waResult = { 
+                    error: "Failed to parse JSON response", 
+                    raw_response: responseText.slice(0, 500), // Limit length
+                    http_status: waResponse.status,
+                    http_text: waResponse.statusText
+                };
             }
             
-            console.log('✅ GreenAPI Response:', waResult);
+            console.log('✅ Parsed Response:', waResult);
             whatsappStatus.success = waResponse.ok;
             if (!waResponse.ok) whatsappStatus.error = waResult;
             
