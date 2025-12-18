@@ -59,9 +59,28 @@ export default function AdminOrdersPage() {
         refetchInterval: 30000 // רענון כל 30 שניות
     });
 
+    // סינון הזמנות (מוגדר לפני השימוש ב-stats)
+    const filteredOrders = useMemo(() => {
+        return orders.filter(order => {
+            const matchesSearch = 
+                (order.customer_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
+                (order.order_number?.toString() || "").includes(searchTerm) ||
+                (order.customer_phone || "").includes(searchTerm) ||
+                (order.business_name?.toLowerCase() || "").includes(searchTerm.toLowerCase());
+            
+            const matchesStatus = statusFilter === "all" || order.status === statusFilter;
+            
+            const matchesDelivery = deliveryFilter === "all" || 
+                (deliveryFilter === "delivery" && order.delivery_type === "delivery") ||
+                (deliveryFilter === "pickup" && order.delivery_type === "pickup");
+
+            return matchesSearch && matchesStatus && matchesDelivery;
+        });
+    }, [orders, searchTerm, statusFilter, deliveryFilter]);
+
     // חישוב סטטיסטיקות לפי המודל העסקי המעודכן (14.16% / 85.84% + 15)
+    // כעת משתמש ב-filteredOrders שכבר הוגדר
     const stats = useMemo(() => {
-        // שימוש ב-filteredOrders כדי שהסטטיסטיקה תשקף את הסינון (למשל חיפוש לפי עסק)
         const sourceOrders = filteredOrders;
         
         const total = sourceOrders.length;
@@ -91,25 +110,6 @@ export default function AdminOrdersPage() {
 
         return { total, totalGTV, platformRevenue, businessPayout, pendingOrders, deliveryFailures };
     }, [filteredOrders]);
-
-    // סינון הזמנות
-    const filteredOrders = useMemo(() => {
-        return orders.filter(order => {
-            const matchesSearch = 
-                (order.customer_name?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
-                (order.order_number?.toString() || "").includes(searchTerm) ||
-                (order.customer_phone || "").includes(searchTerm) ||
-                (order.business_name?.toLowerCase() || "").includes(searchTerm.toLowerCase());
-            
-            const matchesStatus = statusFilter === "all" || order.status === statusFilter;
-            
-            const matchesDelivery = deliveryFilter === "all" || 
-                (deliveryFilter === "delivery" && order.delivery_type === "delivery") ||
-                (deliveryFilter === "pickup" && order.delivery_type === "pickup");
-
-            return matchesSearch && matchesStatus && matchesDelivery;
-        });
-    }, [orders, searchTerm, statusFilter, deliveryFilter]);
 
     const getStatusBadge = (status) => {
         const colors = {
