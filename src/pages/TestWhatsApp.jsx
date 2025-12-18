@@ -82,6 +82,19 @@ export default function TestWhatsAppPage() {
                             <span>{result.message}</span>
                         </div>
                     )}
+
+                    {logData && (
+                        <div className="mt-4 p-4 border rounded-lg bg-gray-50 text-xs">
+                            <h4 className="font-bold mb-2">תיעוד במערכת (Log):</h4>
+                            <p><strong>ID:</strong> {logData.id}</p>
+                            <p><strong>סטטוס:</strong> {logData.status}</p>
+                            <p><strong>ערוץ:</strong> {logData.channel}</p>
+                            <p><strong>ספק:</strong> {logData.provider}</p>
+                            <pre className="mt-2 p-2 bg-gray-100 overflow-x-auto rounded">
+                                {JSON.stringify(logData.provider_response, null, 2)}
+                            </pre>
+                        </div>
+                    )}
                 </CardContent>
             </Card>
         </div>
