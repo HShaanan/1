@@ -15,9 +15,10 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { 
     Loader2, Search, Filter, ShoppingBag, DollarSign, 
-    Calendar, CheckCircle2, XCircle, Clock, Truck, FileText
+    Calendar, CheckCircle2, XCircle, Clock, Truck, FileText, ExternalLink
 } from "lucide-react";
 import { format } from "date-fns";
+import { createPageUrl } from "@/utils";
 
 export default function AdminOrdersPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -318,7 +319,18 @@ export default function AdminOrdersPage() {
                                                 {order.created_date ? format(new Date(order.created_date), 'dd/MM/yy HH:mm') : '-'}
                                             </TableCell>
                                             <TableCell className="font-medium text-blue-900">
-                                                {order.business_name}
+                                                <div className="flex items-center gap-2">
+                                                    {order.business_name}
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="icon"
+                                                        className="h-6 w-6 text-slate-400 hover:text-blue-600"
+                                                        onClick={() => window.open(createPageUrl(`OrdersManagement?business_page_id=${order.business_page_id}`), '_blank')}
+                                                        title="צפה בדאשבורד העסק"
+                                                    >
+                                                        <ExternalLink className="w-3 h-3" />
+                                                    </Button>
+                                                </div>
                                             </TableCell>
                                             <TableCell>
                                                 <div className="flex flex-col">
