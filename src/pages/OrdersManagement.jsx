@@ -353,9 +353,10 @@ export default function OrdersManagementPage() {
       platformCommission,
       topItems,
       averageOrderValue: totalOrders > 0 ? totalRevenue / totalOrders : 0,
-      cancelledOrders: filtered.filter(order => order.status === "cancelled").length
-    };
-  };
+      cancelledOrders: filtered.filter(order => order.status === "cancelled").length,
+      vatAmount: platformCommission * 0.18
+      };
+      };
 
   const theme = businessPage?.theme_settings?.custom_colors || {
     primary: '#6366f1',
@@ -687,7 +688,7 @@ export default function OrdersManagementPage() {
           </TabsContent>
 
           <TabsContent value="reports" className="space-y-4">
-            <div className="grid md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
               <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid ${theme.primary}` }}>
                 <CardContent className="p-6">
                   <div className="text-slate-600 text-sm mb-2">סה"כ הזמנות</div>
@@ -728,7 +729,17 @@ export default function OrdersManagementPage() {
                   </CardContent>
                   </Card>
 
-              <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid #10b981` }}>
+                  <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid #8b5cf6` }}>
+                  <CardContent className="p-6">
+                  <div className="text-slate-600 text-sm mb-2">מע"מ (18%)</div>
+                  <div className="text-3xl font-bold text-violet-600">
+                    ₪{reportsData.vatAmount.toLocaleString(undefined, {maximumFractionDigits: 0})}
+                  </div>
+                  <p className="text-xs text-slate-400 mt-1">מרווח הפלטפורמה</p>
+                  </CardContent>
+                  </Card>
+
+                  <Card className="border-0 shadow-lg" style={{ borderTop: `4px solid #10b981` }}>
                 <CardContent className="p-6">
                   <div className="flex items-center gap-2 mb-2">
                     <Wallet className="w-4 h-4 text-green-600" />
