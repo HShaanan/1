@@ -256,7 +256,11 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
                     status: waResponse.ok ? 'success' : 'failed',
                     content: whatsappMessage,
                     provider: 'GreenAPI',
-                    provider_response: waResult,
+                    provider_response: {
+                        ...waResult,
+                        debug_url: greenApiUrl.replace(greenApiToken, '***TOKEN***'), // Log the URL being hit (masked)
+                        resolved_host: cleanHost
+                    },
                     related_entity_id: order.id,
                     related_entity_type: 'Order',
                     error_message: waResponse.ok ? null : JSON.stringify(waResult)
