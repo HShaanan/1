@@ -1,12 +1,16 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import ListingGrid from "@/components/explore/ListingGrid";
 import SeoMeta from "@/components/SeoMeta";
-import { Loader2, Store, Search, Filter } from "lucide-react";
+import { Loader2, Store, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { createPageUrl } from "@/utils";
 import { isOpenNow } from "@/components/utils/businessTime";
+
+// Exact Regex from Browse.js
+const foodRegex = /(אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|מאפ|קונדיט|חלבי|בשרי|שף|טבח|שווארמה|קפה|קונדיטור|מאפים)/i;
+const shopRegex = /(חנות|קניות|ציוד|חשמל|אלקטרוניקה|מחשבים|ביגוד|אופנה|לבוש|הנעלה|ספרים|צעצוע|ריהוט|בית|קוסמטיקה|פארם|מתנות|כלי|מוצר)/i;
 
 export default function StoresPage() {
   const [storePage, setStorePage] = useState(null);
@@ -14,7 +18,7 @@ export default function StoresPage() {
   const [error, setError] = useState("");
   const [activeListings, setActiveListings] = useState([]);
   const [categories, setCategories] = useState([]);
-  const [allStorePages, setAllStorePages] = useState([]); // For directory view
+  const [allStorePages, setAllStorePages] = useState([]);
 
   const urlParams = new URLSearchParams(window.location.search);
   const slug = urlParams.get("slug");
@@ -25,39 +29,40 @@ export default function StoresPage() {
       setLoading(true);
       setError("");
       try {
-        // Load categories for Grid
+        // Load categories
         const cats = await base44.entities.Category.list("sort_order");
         setCategories(cats);
 
         if (slug) {
           // Load Specific Store Page
-          // Relaxed active check to allow preview, could restrict to admin later
-          const pages = await base44.entities.StorePage.filter({ slug }); 
+          const pages = await base44.entities.StorePage.filter({ slug });
           if (pages.length === 0) {
             setError("הדף לא נמצא");
           } else {
             const page = pages[0];
             setStorePage(page);
             
-            // Logic: If specific_business_ids exist, load them. Else, load all and filter.
             let listings = [];
             
+            // If Manual List
             if (page.specific_business_ids && page.specific_business_ids.length > 0) {
-                // Load specific businesses
-                // Note: filter with $in is supported
-                listings = await base44.entities.BusinessPage.filter({
-                    id: { $in: page.specific_business_ids },
-                    is_active: true,
-                    approval_status: 'approved',
-                    is_frozen: false
+                // Fetch specific businesses
+                // Relaxing filters slightly to ensure we get the objects, 
+                // but ListingGrid might filter visualy if we want strict browse behavior.
+                // For now, fetching approved/active matches Browse.
+                const allMatches = await base44.entities.BusinessPage.filter({
+                    id: { $in: page.specific_business_ids }
                 });
+
+                // Client-side filter for active/approved to be safe
+                listings = allMatches.filter(b => b.is_active && b.approval_status === 'approved' && !b.is_frozen);
                 
-                // Preserve order of IDs if possible (client side sort)
+                // Preserve Sort Order
                 const idMap = new Map(page.specific_business_ids.map((id, index) => [id, index]));
                 listings.sort((a, b) => (idMap.get(a.id) || 0) - (idMap.get(b.id) || 0));
                 
             } else {
-                // Fallback to filters logic - load recent 500
+                // If Auto Filter - Fetch recent pool (Browse usually fetches 200-500)
                 listings = await base44.entities.BusinessPage.filter({
                   is_active: true,
                   approval_status: 'approved',
@@ -67,13 +72,11 @@ export default function StoresPage() {
 
             setActiveListings(listings);
             
-            // Increment view count
-            try {
-                await base44.entities.StorePage.update(page.id, { view_count: (page.view_count || 0) + 1 });
-            } catch (e) { /* ignore */ }
+            // Increment view count (fire and forget)
+            base44.entities.StorePage.update(page.id, { view_count: (page.view_count || 0) + 1 }).catch(() => {});
           }
         } else {
-          // Directory View - Load all store pages
+          // Directory View
           const pages = await base44.entities.StorePage.filter({ is_active: true }, "title");
           setAllStorePages(pages);
         }
@@ -87,28 +90,61 @@ export default function StoresPage() {
     load();
   }, [slug]);
 
-  // Filter Logic (Only applies if NOT using specific IDs, or maybe additional client side filtering?)
-  // If specific_business_ids are used, we assume the admin wants EXACTLY those. 
-  // But we can still apply the storePage.filters on top if we wanted dynamic subset of specific list.
-  // For simplicity: If specific_business_ids, show them all. Else filter the big list.
+  // Helpers for Categories (Matched with Browse.js)
+  const idToName = useMemo(() => {
+    const map = new Map();
+    categories.forEach(c => map.set(c.id, c.name || ""));
+    return map;
+  }, [categories]);
+
+  const isFoodCatId = useCallback((id) => {
+    if (!id) return false;
+    const name = idToName.get(id) || "";
+    return foodRegex.test(name);
+  }, [idToName]);
+
+  const isShopCatId = useCallback((id) => {
+    if (!id) return false;
+    const name = idToName.get(id) || "";
+    return shopRegex.test(name);
+  }, [idToName]);
+
+  // Filter Logic
   const filteredListings = useMemo(() => {
     if (!storePage || !activeListings.length) return [];
     
-    // If specific IDs were used, activeListings already contains exactly what we want
+    // Manual List - Return as is (already filtered for active/approved in fetch)
     if (storePage.specific_business_ids && storePage.specific_business_ids.length > 0) {
         return activeListings;
     }
     
-    // Fallback filtering logic
+    // Auto Filters
     const filters = storePage.filters || {};
     let result = activeListings;
 
-    // Category ID
+    // 1. Category ID (Specific)
     if (filters.category_id && filters.category_id !== "all") {
         result = result.filter(l => l.category_id === filters.category_id);
     }
 
-    // Subcategory IDs
+    // 2. Active Tab (Food vs Shopping) - Critical for "Browse Sync"
+    if (filters.active_tab && filters.active_tab !== "all") {
+        if (filters.active_tab === "food") {
+            result = result.filter(l => 
+              isFoodCatId(l.category_id) || 
+              (Array.isArray(l.subcategory_ids) && l.subcategory_ids.some(id => isFoodCatId(id))) ||
+              isFoodCatId(l.subcategory_id)
+            );
+        } else if (filters.active_tab === "shopping") {
+            result = result.filter(l => 
+              isShopCatId(l.category_id) || 
+              (Array.isArray(l.subcategory_ids) && l.subcategory_ids.some(id => isShopCatId(id))) ||
+              isShopCatId(l.subcategory_id)
+            );
+        }
+    }
+
+    // 3. Subcategories
     if (filters.subcategory_ids && filters.subcategory_ids.length > 0) {
         result = result.filter(l => {
             if (Array.isArray(l.subcategory_ids)) {
@@ -118,7 +154,7 @@ export default function StoresPage() {
         });
     }
 
-    // Tags
+    // 4. Tags
     if (filters.tags && filters.tags.length > 0) {
         result = result.filter(l => {
             const lTags = l.special_fields?.tags || [];
@@ -126,7 +162,7 @@ export default function StoresPage() {
         });
     }
 
-    // Kashrut
+    // 5. Kashrut
     if (filters.kashrut && filters.kashrut.length > 0) {
         result = result.filter(l => 
             filters.kashrut.includes(l.kashrut_authority_name) || 
@@ -134,40 +170,27 @@ export default function StoresPage() {
         );
     }
 
-    // Price
+    // 6. Price
     if (filters.price_range && filters.price_range.length > 0) {
         result = result.filter(l => filters.price_range.includes(l.price_range));
     }
 
-    // Features
+    // 7. Booleans
     if (filters.delivery) result = result.filter(l => l.has_delivery);
     if (filters.pickup) result = result.filter(l => l.has_pickup);
     if (filters.open_now) result = result.filter(l => isOpenNow(l.hours));
-    
-    // Tab Filter
-    if (filters.active_tab && filters.active_tab !== "all") {
-        if (filters.active_tab === "food") {
-            // Simple heuristic for food
-            result = result.filter(l => /food|restaur|אוכל|מסעד/i.test(l.category_slug || "") || /food|restaur|אוכל|מסעד/i.test(l.category_name || ""));
-        } else if (filters.active_tab === "shopping") {
-             // Simple heuristic for shopping (everything else mostly)
-            result = result.filter(l => !(/food|restaur|אוכל|מסעד/i.test(l.category_slug || "") || /food|restaur|אוכל|מסעד/i.test(l.category_name || "")));
-        }
-    }
 
     return result;
-  }, [storePage, activeListings]);
+  }, [storePage, activeListings, isFoodCatId, isShopCatId]);
 
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
-         {/* Background Animation from Browse */}
          <div className="fixed inset-0 -z-10 overflow-hidden">
             <div className="absolute inset-0 animate-gradient-smooth"></div>
             <div className="bubble bubble-1"></div>
             <div className="bubble bubble-2"></div>
-            <div className="bubble bubble-3"></div>
          </div>
          <style>{`
             .animate-gradient-smooth { background: linear-gradient(-45deg, #FFFFFF, #F0F9FF, #E0F2FE, #BAE6FD); background-size: 400% 400%; animation: gradient-flow 20s ease infinite; }
@@ -175,7 +198,6 @@ export default function StoresPage() {
             .bubble { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(186, 230, 253, 0.25), rgba(240, 249, 255, 0.1)); backdrop-filter: blur(3px); }
             .bubble-1 { width: 80px; height: 80px; left: 10%; animation: float-up 12s linear infinite; }
             .bubble-2 { width: 60px; height: 60px; left: 25%; animation: float-up 15s linear infinite 2s; }
-            .bubble-3 { width: 100px; height: 100px; left: 45%; animation: float-up 18s linear infinite 4s; }
             @keyframes float-up { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 100% { transform: translateY(-100vh) scale(1); opacity: 0; } }
          `}</style>
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
@@ -183,17 +205,13 @@ export default function StoresPage() {
     );
   }
 
-  // Directory View (No Slug)
+  // Directory View
   if (!slug) {
     return (
       <div className="min-h-screen bg-slate-50 p-6" dir="rtl">
-        <SeoMeta 
-            title="אינדקס עמודים - משלנו" 
-            description="דפדף בין קטגוריות ודפים נבחרים באתר משלנו"
-        />
+        <SeoMeta title="אינדקס דפים - משלנו" description="דפים נבחרים" />
         <div className="max-w-7xl mx-auto">
             <h1 className="text-3xl font-bold text-slate-900 mb-8">דפים נבחרים</h1>
-            
             {allStorePages.length === 0 ? (
                 <div className="text-center text-slate-500 py-12">
                     <Store className="w-16 h-16 mx-auto mb-4 opacity-20" />
@@ -202,21 +220,13 @@ export default function StoresPage() {
             ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {allStorePages.map(page => (
-                        <a 
-                            key={page.id} 
-                            href={createPageUrl(`Stores?slug=${page.slug}`)}
-                            className="block group"
-                        >
+                        <a key={page.id} href={createPageUrl(`Stores?slug=${page.slug}`)} className="block group">
                             <Card className="hover:shadow-lg transition-shadow border-slate-200">
                                 <CardContent className="p-6">
                                     <h3 className="text-xl font-bold text-slate-800 group-hover:text-blue-600 transition-colors mb-2">
                                         {page.title}
                                     </h3>
-                                    {page.meta_description && (
-                                        <p className="text-slate-600 text-sm line-clamp-2">
-                                            {page.meta_description}
-                                        </p>
-                                    )}
+                                    <p className="text-slate-600 text-sm line-clamp-2">{page.meta_description}</p>
                                 </CardContent>
                             </Card>
                         </a>
@@ -228,85 +238,27 @@ export default function StoresPage() {
     );
   }
 
-  // Error View
+  // 404 View
   if (error || !storePage) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 relative overflow-hidden" dir="rtl">
-            {/* Same Background */}
-            <div className="fixed inset-0 -z-10 overflow-hidden">
-                <div className="absolute inset-0 animate-gradient-smooth"></div>
-            </div>
-            
+        <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 relative" dir="rtl">
             <Search className="w-16 h-16 text-slate-300 mb-4" />
             <h1 className="text-2xl font-bold text-slate-800 mb-2">הדף לא נמצא</h1>
-            <p className="text-slate-600 mb-6">מצטערים, לא הצלחנו למצוא את הדף שחיפשת.</p>
-            <Button onClick={() => window.location.href = createPageUrl('Browse')}>
-                חזרה לחיפוש עסקים
-            </Button>
+            <Button onClick={() => window.location.href = createPageUrl('Browse')}>חזרה לחיפוש עסקים</Button>
         </div>
     );
   }
 
-  // Detail View (With Slug) - Browse Style
+  // Main Page View
   return (
     <div className="min-h-screen relative" dir="rtl">
-        <SeoMeta 
-            title={storePage.meta_title || storePage.title}
-            description={storePage.meta_description || ""}
-        />
+        <SeoMeta title={storePage.meta_title || storePage.title} description={storePage.meta_description || ""} />
         
-        {/* Background Animation - Same as Browse */}
         <div className="fixed inset-0 -z-10 overflow-hidden">
             <div className="absolute inset-0 animate-gradient-smooth"></div>
-            <div className="bubble bubble-1"></div>
-            <div className="bubble bubble-2"></div>
-            <div className="bubble bubble-3"></div>
-            <div className="bubble bubble-4"></div>
-            <div className="bubble bubble-5"></div>
-            <div className="bubble bubble-6"></div>
-            <div className="bubble bubble-7"></div>
-            <div className="bubble bubble-8"></div>
+            {[...Array(8)].map((_, i) => <div key={i} className={`bubble bubble-${i+1}`}></div>)}
         </div>
 
-        <style>{`
-            .animate-gradient-smooth {
-              background: linear-gradient(
-                -45deg, 
-                #FFFFFF, #F0F9FF, #E0F2FE, #BAE6FD, 
-                #FFFFFF, #F8FAFC, #E0F2FE, #F0F9FF
-              );
-              background-size: 400% 400%;
-              animation: gradient-flow 20s ease infinite;
-            }
-            @keyframes gradient-flow {
-              0% { background-position: 0% 50%; }
-              50% { background-position: 100% 50%; }
-              100% { background-position: 0% 50%; }
-            }
-            @keyframes float-up {
-              0% { transform: translateY(100vh) scale(0); opacity: 0; }
-              10% { opacity: 0.4; }
-              90% { opacity: 0.4; }
-              100% { transform: translateY(-100vh) scale(1); opacity: 0; }
-            }
-            .bubble {
-              position: absolute; border-radius: 50%;
-              background: radial-gradient(circle at 30% 30%, rgba(186, 230, 253, 0.25), rgba(240, 249, 255, 0.1));
-              box-shadow: 0 8px 32px rgba(186, 230, 253, 0.1);
-              backdrop-filter: blur(3px);
-              animation: float-up linear infinite;
-            }
-            .bubble-1 { width: 80px; height: 80px; left: 10%; animation-duration: 12s; }
-            .bubble-2 { width: 60px; height: 60px; left: 25%; animation-duration: 15s; animation-delay: 2s; }
-            .bubble-3 { width: 100px; height: 100px; left: 45%; animation-duration: 18s; animation-delay: 4s; }
-            .bubble-4 { width: 70px; height: 70px; left: 65%; animation-duration: 13s; animation-delay: 1s; }
-            .bubble-5 { width: 90px; height: 90px; left: 80%; animation-duration: 16s; animation-delay: 3s; }
-            .bubble-6 { width: 50px; height: 50px; left: 15%; animation-duration: 14s; animation-delay: 5s; }
-            .bubble-7 { width: 110px; height: 110px; left: 55%; animation-duration: 20s; animation-delay: 6s; }
-            .bubble-8 { width: 65px; height: 65px; left: 90%; animation-duration: 17s; animation-delay: 2.5s; }
-        `}</style>
-        
-        {/* Content */}
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
             <div className="text-center mb-12">
                 <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 leading-tight drop-shadow-sm">
@@ -328,11 +280,7 @@ export default function StoresPage() {
                 </div>
             </div>
             
-            <ListingGrid 
-                listings={filteredListings}
-                loading={false}
-                categories={categories}
-            />
+            <ListingGrid listings={filteredListings} loading={false} categories={categories} />
         </div>
     </div>
   );
