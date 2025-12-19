@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Plus, Edit, Trash2, ExternalLink, Save, Filter, Check, X, Store } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, ExternalLink, Save, Filter, Check, X, Store, Sparkles, Wand2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
@@ -24,6 +24,7 @@ export default function AdminStoresPage() {
   const [allBusinesses, setAllBusinesses] = useState([]);
   const [selectedBusinesses, setSelectedBusinesses] = useState([]);
   const [businessSearch, setBusinessSearch] = useState("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // Form State
   const [formState, setFormState] = useState({
@@ -197,6 +198,62 @@ export default function AdminStoresPage() {
     });
   };
 
+  const generateAiDescription = async () => {
+    if (!formState.title) {
+        alert("נא להזין כותרת לפני יצירת תוכן");
+        return;
+    }
+    setIsGenerating(true);
+    try {
+        const res = await base44.functions.invoke('generateAiContent', {
+            type: 'store_seo',
+            data: {
+                title: formState.title,
+                filters: formState.filters
+            }
+        });
+        if (res.data?.success) {
+            setFormState(prev => ({ ...prev, description: res.data.data.content }));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("שגיאה ביצירת תוכן");
+    } finally {
+        setIsGenerating(false);
+    }
+  };
+
+  const optimizeSeo = async () => {
+    if (!formState.title) {
+        alert("נא להזין כותרת לפני אופטימיזציה");
+        return;
+    }
+    setIsGenerating(true);
+    try {
+        const res = await base44.functions.invoke('generateAiContent', {
+            type: 'optimize_store_meta',
+            data: {
+                title: formState.title,
+                current_description: formState.description
+            }
+        });
+        if (res.data?.success) {
+            const { h1, meta_title, meta_description } = res.data.data;
+            setFormState(prev => ({
+                ...prev,
+                title: h1 || prev.title,
+                meta_title: meta_title || prev.meta_title,
+                meta_description: meta_description || prev.meta_description
+            }));
+        }
+    } catch (e) {
+        console.error(e);
+        alert("שגיאה באופטימיזציה");
+    } finally {
+        setIsGenerating(false);
+    }
+  };
+
   return (
     <div className="p-8 bg-slate-50 min-h-screen" dir="rtl">
       <div className="max-w-6xl mx-auto">
@@ -274,7 +331,20 @@ export default function AdminStoresPage() {
             <form onSubmit={handleSave} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label>כותרת הדף (H1)</Label>
+                  <div className="flex justify-between items-center">
+                      <Label>כותרת הדף (H1)</Label>
+                      <Button 
+                          type="button" 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={optimizeSeo}
+                          disabled={isGenerating}
+                          className="h-6 text-xs text-indigo-600"
+                      >
+                          {isGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3 mr-1" />}
+                          אופטימיזציה ל-SEO
+                      </Button>
+                  </div>
                   <Input 
                     value={formState.title} 
                     onChange={(e) => setFormState({...formState, title: e.target.value})} 
@@ -295,12 +365,26 @@ export default function AdminStoresPage() {
               </div>
 
               <div className="space-y-2">
-                <Label>תוכן (SEO Text)</Label>
+                <div className="flex justify-between items-center">
+                    <Label>תוכן (SEO Text)</Label>
+                    <Button 
+                        type="button" 
+                        variant="outline" 
+                        size="sm" 
+                        onClick={generateAiDescription}
+                        disabled={isGenerating}
+                        className="h-7 bg-indigo-50 text-indigo-700 border-indigo-200"
+                    >
+                        {isGenerating ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3 mr-1" />}
+                        כתוב לי תיאור עשיר ב-AI
+                    </Button>
+                </div>
                 <Textarea 
                     value={formState.description} 
                     onChange={(e) => setFormState({...formState, description: e.target.value})}
-                    rows={5} 
+                    rows={8} 
                     placeholder="טקסט עשיר שיופיע בראש הדף..." 
+                    className="font-sans"
                 />
               </div>
 
