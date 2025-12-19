@@ -1,11 +1,24 @@
-
 import React from "react";
 import { LazyImage } from "@/components/PerformanceOptimizations";
 import HorizontalScroller from "./HorizontalScroller";
 
-export default function SubcategoryChips({ categories = [], parentId, selectedSubId, onSelect, showAllTile = true, filterSubIds = null }) {
-  // If no parentId is provided, there are no subcategories to display.
-  if (!parentId) return null;
+export default function SubcategoryChips({ categories = [], parentId, items, selectedSubId, onSelect, showAllTile = true, filterSubIds = null }) {
+  // Logic to determine which items to show: prop 'items' takes precedence, otherwise filter by parentId
+  let subs = [];
+  
+  if (items && Array.isArray(items)) {
+      subs = items;
+  } else if (parentId) {
+      const subsBase = Array.isArray(categories)
+        ? categories.filter(c => c.parent_id === parentId && c.is_active)
+        : [];
+      subs = Array.isArray(filterSubIds) && filterSubIds.length > 0
+        ? subsBase.filter(c => filterSubIds.includes(c.id))
+        : subsBase;
+  }
+
+  // If no items found, return null
+  if (subs.length === 0) return null;
 
   // Tile component for displaying individual subcategory chips.
   const Tile = ({ active, title, image, icon, onClick }) => (
@@ -46,16 +59,6 @@ export default function SubcategoryChips({ categories = [], parentId, selectedSu
       </div>
     </button>
   );
-
-  // Filter categories to get only active subcategories belonging to the parent.
-  const subsBase = Array.isArray(categories)
-    ? categories.filter(c => c.parent_id === parentId && c.is_active)
-    : [];
-
-  // Further filter subs if filterSubIds are provided.
-  const subs = Array.isArray(filterSubIds) && filterSubIds.length > 0
-    ? subsBase.filter(c => filterSubIds.includes(c.id))
-    : subsBase;
 
   return (
     // Wrap with a div to enforce RTL for the entire scrolling section

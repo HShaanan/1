@@ -138,6 +138,24 @@ export default function BrowsePage({ preSelectedState }) {
     }
   }, [userLocation]);
 
+  const stickyChipsItems = useMemo(() => {
+    if (selectedCategory) {
+       // Deep hierarchy mode
+       return categories.filter(c => c.parent_id === selectedCategory.id && (c.is_active ?? true));
+    }
+    
+    // Flat / Tab mode - Show top-level categories matching the tab
+    if (activeTab === 'food') {
+       const foodRegex = /(אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|מאפ|קונדיט|חלבי|בשרי|שף|טבח|שווארמה|קפה|קונדיטור|מאפים)/i;
+       return categories.filter(c => !c.parent_id && foodRegex.test(c.name || "") && (c.is_active ?? true));
+    }
+    if (activeTab === 'shopping') {
+       const shopRegex = /(חנות|קניות|ציוד|חשמל|אלקטרוניקה|מחשבים|ביגוד|אופנה|לבוש|הנעלה|ספרים|צעצוע|ריהוט|בית|קוסמטיקה|פארם|מתנות|כלי|מוצר)/i;
+       return categories.filter(c => !c.parent_id && shopRegex.test(c.name || "") && (c.is_active ?? true));
+    }
+    return [];
+  }, [selectedCategory, activeTab, categories]);
+
   // Fuzzy Search Integration
   const fuseKeys = useMemo(() => [
     'business_name', 
@@ -569,15 +587,17 @@ export default function BrowsePage({ preSelectedState }) {
         kashrutList={kashrutList} 
       />
 
-      <StickyChips>
-         <SubcategoryChips 
-              categories={categories}
-              parentId={selectedCategory?.id}
-              selectedSubId={selectedSubcategory?.id}
-              onSelect={handleSubcategorySelect}
-              showAllTile={true}
-          />
-      </StickyChips>
+      {/* Show StickyChips if something is selected OR if scrolled down (to avoid duplication with Gallery at top) */}
+      {(selectedCategory || selectedSubcategory || selectedProfGroup || isScrolled) && (
+        <StickyChips>
+           <SubcategoryChips 
+                items={stickyChipsItems}
+                selectedSubId={selectedCategory ? selectedSubcategory?.id : (selectedSubcategory?.id || selectedCategory?.id)}
+                onSelect={selectedCategory ? handleSubcategorySelect : handleSubcategorySelect} 
+                showAllTile={true}
+            />
+        </StickyChips>
+      )}
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content">
         <div className="space-y-8">
