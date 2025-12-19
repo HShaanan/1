@@ -34,10 +34,7 @@ export default function ListingGrid({ listings = [], loading, onOpen, categories
     const flatItems = [];
     sortedListings.forEach((item, index) => {
         flatItems.push({ type: 'item', data: item });
-        // Insert banner after 3rd item (index 2)
-        if (index === 2) {
-            flatItems.push({ type: 'banner' });
-        }
+        // Banner injection removed to prevent gaps
     });
 
     // Group into rows
