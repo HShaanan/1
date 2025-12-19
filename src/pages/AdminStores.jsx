@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Plus, Edit, Trash2, ExternalLink, Save, Filter, Check, X } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, ExternalLink, Save, Filter, Check, X, Store } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 
