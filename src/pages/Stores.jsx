@@ -31,7 +31,8 @@ export default function StoresPage() {
 
         if (slug) {
           // Load Specific Store Page
-          const pages = await base44.entities.StorePage.filter({ slug, is_active: true });
+          // Relaxed active check to allow preview, could restrict to admin later
+          const pages = await base44.entities.StorePage.filter({ slug }); 
           if (pages.length === 0) {
             setError("הדף לא נמצא");
           } else {

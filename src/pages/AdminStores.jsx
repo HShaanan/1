@@ -3,9 +3,9 @@ import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -18,12 +18,29 @@ export default function AdminStoresPage() {
   const navigate = useNavigate();
   const [pages, setPages] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editingPage, setEditingPage] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState([]);
   const [allBusinesses, setAllBusinesses] = useState([]);
   const [selectedBusinesses, setSelectedBusinesses] = useState([]);
   const [businessSearch, setBusinessSearch] = useState("");
+
+  // Form State
+  const [formState, setFormState] = useState({
+    id: null,
+    title: "",
+    slug: "",
+    description: "",
+    meta_title: "",
+    meta_description: "",
+    is_active: true,
+    filters: {
+        category_id: "all",
+        active_tab: "all",
+        delivery: false,
+        pickup: false,
+        open_now: false
+    }
+  });
 
   // Load Data
   useEffect(() => {
@@ -36,7 +53,7 @@ export default function AdminStoresPage() {
       const [pagesData, cats, businesses] = await Promise.all([
         base44.entities.StorePage.list("-view_count"),
         base44.entities.Category.list("sort_order"),
-        base44.entities.BusinessPage.filter({ is_active: true }, "business_name") // Load lightweight list
+        base44.entities.BusinessPage.filter({ is_active: true }, "business_name")
       ]);
       setPages(pagesData);
       setCategories(cats);
@@ -48,48 +65,76 @@ export default function AdminStoresPage() {
     }
   };
 
-  // When opening edit dialog, sync selected businesses
-  useEffect(() => {
-    if (editingPage) {
-        setSelectedBusinesses(editingPage.specific_business_ids || []);
+  const openEditDialog = (page) => {
+    if (page) {
+        setFormState({
+            id: page.id,
+            title: page.title,
+            slug: page.slug,
+            description: page.description || "",
+            meta_title: page.meta_title || "",
+            meta_description: page.meta_description || "",
+            is_active: page.is_active,
+            filters: {
+                category_id: page.filters?.category_id || "all",
+                active_tab: page.filters?.active_tab || "all",
+                delivery: page.filters?.delivery || false,
+                pickup: page.filters?.pickup || false,
+                open_now: page.filters?.open_now || false
+            }
+        });
+        setSelectedBusinesses(page.specific_business_ids || []);
     } else {
+        setFormState({
+            id: null,
+            title: "",
+            slug: "",
+            description: "",
+            meta_title: "",
+            meta_description: "",
+            is_active: true,
+            filters: {
+                category_id: "all",
+                active_tab: "all",
+                delivery: false,
+                pickup: false,
+                open_now: false
+            }
+        });
         setSelectedBusinesses([]);
     }
-  }, [editingPage]);
+    setIsDialogOpen(true);
+  };
 
   const handleSave = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
-    const catId = formData.get("category_id");
-    const tab = formData.get("active_tab");
 
-    const filters = {
-        category_id: (!catId || catId === "all") ? null : catId,
-        active_tab: (!tab || tab === "all") ? null : tab,
-        delivery: formData.get("delivery") === "on",
-        pickup: formData.get("pickup") === "on",
-        open_now: formData.get("open_now") === "on",
+    const filtersToSave = {
+        category_id: formState.filters.category_id === "all" ? null : formState.filters.category_id,
+        active_tab: formState.filters.active_tab === "all" ? null : formState.filters.active_tab,
+        delivery: formState.filters.delivery,
+        pickup: formState.filters.pickup,
+        open_now: formState.filters.open_now,
     };
 
     const data = {
-      title: formData.get("title"),
-      slug: formData.get("slug"),
-      description: formData.get("description"),
-      meta_title: formData.get("meta_title"),
-      meta_description: formData.get("meta_description"),
-      is_active: formData.get("is_active") === "on",
+      title: formState.title,
+      slug: formState.slug.trim().toLowerCase().replace(/\s+/g, '-'),
+      description: formState.description,
+      meta_title: formState.meta_title,
+      meta_description: formState.meta_description,
+      is_active: formState.is_active,
       specific_business_ids: selectedBusinesses.length > 0 ? selectedBusinesses : null,
-      filters: filters
+      filters: filtersToSave
     };
 
     try {
-      if (editingPage) {
-        await base44.entities.StorePage.update(editingPage.id, data);
+      if (formState.id) {
+        await base44.entities.StorePage.update(formState.id, data);
       } else {
         await base44.entities.StorePage.create(data);
       }
       setIsDialogOpen(false);
-      setEditingPage(null);
       fetchData();
     } catch (error) {
       alert("שגיאה בשמירה: " + error.message);
@@ -125,7 +170,7 @@ export default function AdminStoresPage() {
             <h1 className="text-3xl font-bold text-slate-900">ניהול דפי SEO (Stores)</h1>
             <p className="text-slate-600">צור ונהל דפי נחיתה מקודמים עם סינונים מותאמים</p>
           </div>
-          <Button onClick={() => { setEditingPage(null); setIsDialogOpen(true); }}>
+          <Button onClick={() => openEditDialog(null)}>
             <Plus className="w-4 h-4 ml-2" /> דף חדש
           </Button>
         </div>
@@ -164,7 +209,7 @@ export default function AdminStoresPage() {
                         <Button variant="ghost" size="sm" onClick={() => navigate(createPageUrl(`Stores?slug=${page.slug}`))}>
                           <ExternalLink className="w-4 h-4" />
                         </Button>
-                        <Button variant="ghost" size="sm" onClick={() => { setEditingPage(page); setIsDialogOpen(true); }}>
+                        <Button variant="ghost" size="sm" onClick={() => openEditDialog(page)}>
                           <Edit className="w-4 h-4" />
                         </Button>
                         <Button variant="ghost" size="sm" className="text-red-600" onClick={() => handleDelete(page.id)}>
@@ -189,37 +234,61 @@ export default function AdminStoresPage() {
         <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>{editingPage ? "עריכת דף" : "יצירת דף חדש"}</DialogTitle>
+              <DialogTitle>{formState.id ? "עריכת דף" : "יצירת דף חדש"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSave} className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>כותרת הדף (H1)</Label>
-                  <Input name="title" defaultValue={editingPage?.title} required placeholder="למשל: הפיצריות הכי טובות בביתר" />
+                  <Input 
+                    value={formState.title} 
+                    onChange={(e) => setFormState({...formState, title: e.target.value})} 
+                    required 
+                    placeholder="למשל: הפיצריות הכי טובות בביתר" 
+                  />
                 </div>
                 <div className="space-y-2">
                   <Label>URL Slug</Label>
-                  <Input name="slug" defaultValue={editingPage?.slug} required placeholder="best-pizza-beitar" className="font-mono text-sm" />
+                  <Input 
+                    value={formState.slug} 
+                    onChange={(e) => setFormState({...formState, slug: e.target.value})}
+                    required 
+                    placeholder="best-pizza-beitar" 
+                    className="font-mono text-sm" 
+                  />
                 </div>
               </div>
 
               <div className="space-y-2">
                 <Label>תוכן (SEO Text)</Label>
-                <Textarea name="description" defaultValue={editingPage?.description} rows={5} placeholder="טקסט עשיר שיופיע בראש הדף..." />
+                <Textarea 
+                    value={formState.description} 
+                    onChange={(e) => setFormState({...formState, description: e.target.value})}
+                    rows={5} 
+                    placeholder="טקסט עשיר שיופיע בראש הדף..." 
+                />
               </div>
 
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label>Meta Title</Label>
-                  <Input name="meta_title" defaultValue={editingPage?.meta_title} placeholder="כותרת לגוגל" />
+                  <Input 
+                    value={formState.meta_title} 
+                    onChange={(e) => setFormState({...formState, meta_title: e.target.value})}
+                    placeholder="כותרת לגוגל" 
+                   />
                 </div>
                 <div className="space-y-2">
                   <Label>Meta Description</Label>
-                  <Input name="meta_description" defaultValue={editingPage?.meta_description} placeholder="תיאור לגוגל" />
+                  <Input 
+                    value={formState.meta_description} 
+                    onChange={(e) => setFormState({...formState, meta_description: e.target.value})}
+                    placeholder="תיאור לגוגל" 
+                   />
                 </div>
               </div>
 
-              {/* Business Selection Section */}
+              {/* Business Selection */}
               <div className="bg-slate-50 p-4 rounded-xl space-y-4 border border-slate-200">
                 <h3 className="font-bold text-slate-900 flex items-center gap-2">
                     <Store className="w-4 h-4 text-purple-600" /> בחירת עסקים ספציפיים (אופציונלי)
@@ -266,7 +335,7 @@ export default function AdminStoresPage() {
                 </div>
               </div>
 
-              {/* Automatic Filters (Fallback) */}
+              {/* Automatic Filters */}
               <div className={`bg-slate-50 p-4 rounded-xl space-y-4 border border-slate-200 ${selectedBusinesses.length > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
                 <h3 className="font-bold text-slate-900 flex items-center gap-2">
                     <Filter className="w-4 h-4 text-blue-600" /> הגדרות סינון אוטומטי
@@ -275,7 +344,10 @@ export default function AdminStoresPage() {
                 <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                         <Label>קטגוריה</Label>
-                        <Select name="category_id" defaultValue={editingPage?.filters?.category_id || "all"}>
+                        <Select 
+                            value={formState.filters.category_id} 
+                            onValueChange={(val) => setFormState({...formState, filters: {...formState.filters, category_id: val}})}
+                        >
                             <SelectTrigger className="bg-white">
                                 <SelectValue placeholder="כל הקטגוריות" />
                             </SelectTrigger>
@@ -290,7 +362,10 @@ export default function AdminStoresPage() {
                     
                     <div className="space-y-2">
                         <Label>סוג (טאב)</Label>
-                        <Select name="active_tab" defaultValue={editingPage?.filters?.active_tab || "all"}>
+                        <Select 
+                            value={formState.filters.active_tab}
+                            onValueChange={(val) => setFormState({...formState, filters: {...formState.filters, active_tab: val}})}
+                        >
                             <SelectTrigger className="bg-white">
                                 <SelectValue placeholder="הכל" />
                             </SelectTrigger>
@@ -305,22 +380,38 @@ export default function AdminStoresPage() {
 
                 <div className="flex gap-6 pt-2">
                     <div className="flex items-center gap-2">
-                        <Switch name="delivery" defaultChecked={editingPage?.filters?.delivery} id="delivery" />
+                        <Switch 
+                            checked={formState.filters.delivery} 
+                            onCheckedChange={(val) => setFormState({...formState, filters: {...formState.filters, delivery: val}})}
+                            id="delivery" 
+                        />
                         <Label htmlFor="delivery">משלוחים בלבד</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Switch name="pickup" defaultChecked={editingPage?.filters?.pickup} id="pickup" />
+                        <Switch 
+                            checked={formState.filters.pickup}
+                            onCheckedChange={(val) => setFormState({...formState, filters: {...formState.filters, pickup: val}})}
+                            id="pickup" 
+                        />
                         <Label htmlFor="pickup">איסוף עצמי בלבד</Label>
                     </div>
                     <div className="flex items-center gap-2">
-                        <Switch name="open_now" defaultChecked={editingPage?.filters?.open_now} id="open_now" />
+                        <Switch 
+                            checked={formState.filters.open_now}
+                            onCheckedChange={(val) => setFormState({...formState, filters: {...formState.filters, open_now: val}})}
+                            id="open_now" 
+                        />
                         <Label htmlFor="open_now">פתוח עכשיו בלבד</Label>
                     </div>
                 </div>
               </div>
 
               <div className="flex items-center gap-2">
-                <Switch name="is_active" defaultChecked={editingPage?.is_active ?? true} id="is_active" />
+                <Switch 
+                    checked={formState.is_active}
+                    onCheckedChange={(val) => setFormState({...formState, is_active: val})}
+                    id="is_active" 
+                />
                 <Label htmlFor="is_active">דף פעיל</Label>
               </div>
 
