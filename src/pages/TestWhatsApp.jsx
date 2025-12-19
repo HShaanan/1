@@ -59,7 +59,7 @@ export default function TestWhatsAppPage() {
                 <CardContent className="space-y-4">
                     <div className="bg-blue-50 p-4 rounded-lg text-sm text-blue-800">
                         <p><strong>עסק לבדיקה:</strong> Test Business For WhatsApp</p>
-                        <p><strong>טלפון יעד:</strong> 972534553453</p>
+                        <p><strong>טלפון יעד:</strong> 0505196963</p>
                         <p><strong>מספר הזמנה:</strong> 12345</p>
                         <p><strong>סכום:</strong> ₪50</p>
                     </div>
