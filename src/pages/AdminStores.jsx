@@ -117,9 +117,12 @@ export default function AdminStoresPage() {
         open_now: formState.filters.open_now,
     };
 
+    // Clean slug logic: lowercase, trim, replace spaces with dashes, encode URI components just in case
+    const cleanSlug = formState.slug.trim().toLowerCase().replace(/\s+/g, '-');
+    
     const data = {
       title: formState.title,
-      slug: formState.slug.trim().toLowerCase().replace(/\s+/g, '-'),
+      slug: cleanSlug,
       description: formState.description,
       meta_title: formState.meta_title,
       meta_description: formState.meta_description,

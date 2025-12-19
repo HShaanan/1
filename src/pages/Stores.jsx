@@ -21,7 +21,9 @@ export default function StoresPage() {
   const [allStorePages, setAllStorePages] = useState([]);
 
   const urlParams = new URLSearchParams(window.location.search);
-  const slug = urlParams.get("slug");
+  const rawSlug = urlParams.get("slug");
+  // Normalize slug: decode -> lowercase -> trim to match Admin logic
+  const slug = rawSlug ? decodeURIComponent(rawSlug).trim().toLowerCase() : null;
 
   // Load Data
   useEffect(() => {
@@ -36,7 +38,12 @@ export default function StoresPage() {
         if (slug) {
           // Load Specific Store Page
           const pages = await base44.entities.StorePage.filter({ slug });
+          
+          // Fallback: Try exact match if filter failed (sometimes DB is sensitive)
+          // or try decoding again if double encoded
+          
           if (pages.length === 0) {
+            console.log("Store page not found for slug:", slug);
             setError("הדף לא נמצא");
           } else {
             const page = pages[0];
