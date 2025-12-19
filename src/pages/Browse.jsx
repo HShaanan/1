@@ -23,7 +23,7 @@ import ShoppingSubcategoryGallery from "@/components/explore/ShoppingSubcategory
 import FilterBar from "@/components/explore/FilterBar";
 import { isOpenNow } from "@/components/utils/businessTime";
 
-export default function BrowsePage() {
+export default function BrowsePage({ preSelectedState }) {
   const [activeListings, setActiveListings] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -32,6 +32,7 @@ export default function BrowsePage() {
   const [professionalsGroups, setProfessionalsGroups] = useState([]);
   const [selectedProfGroup, setSelectedProfGroup] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [hasAppliedPreselection, setHasAppliedPreselection] = useState(false);
 
   // New state variables
   const [activeTab, setActiveTab] = useState("food");
@@ -76,13 +77,50 @@ export default function BrowsePage() {
     }
   };
 
-  // איפוס בחירות כשעוברים בין טאבים
+  // Handle Pre-Selection from Props (e.g., when embedded in StorePage)
   useEffect(() => {
+    if (!loading && categories.length > 0 && preSelectedState && !hasAppliedPreselection) {
+        // 1. Set Tab
+        if (preSelectedState.activeTab && preSelectedState.activeTab !== 'all') {
+            setActiveTab(preSelectedState.activeTab);
+        }
+
+        // 2. Set Category
+        if (preSelectedState.categoryId && preSelectedState.categoryId !== 'all') {
+            const cat = categories.find(c => c.id === preSelectedState.categoryId);
+            if (cat) setSelectedCategory(cat);
+        }
+
+        // 3. Set Subcategory
+        if (preSelectedState.subcategoryId) {
+             // Wait for category to be set? No, we have the full list.
+             // Note: In Browse logic, subcategory implies a parent category is usually selected or relevant.
+             // We'll find the subcategory object from the full list if needed.
+             // Assuming flat list of categories contains subcategories too (as per existing logic).
+             const sub = categories.find(c => c.id === preSelectedState.subcategoryId);
+             if (sub) setSelectedSubcategory(sub);
+        }
+
+        // 4. Set Filters
+        setFilters(prev => ({
+            ...prev,
+            kashrut: preSelectedState.kashrut || [],
+            delivery: preSelectedState.delivery || false,
+            pickup: preSelectedState.pickup || false,
+            openNow: preSelectedState.openNow || false,
+            // Add other filters as needed
+        }));
+
+        setHasAppliedPreselection(true);
+    }
+  }, [loading, categories, preSelectedState, hasAppliedPreselection]);
+
+  // איפוס בחירות כשעוברים בין טאבים - Only if NOT triggered by preselection initially
+  useEffect(() => {
+    if (hasAppliedPreselection) return; // Don't wipe state if we just applied it
     setSelectedCategory(null);
     setSelectedSubcategory(null);
     setSelectedProfGroup(null);
-    // Optional: Reset advanced filters on tab change? 
-    // setFilters({ kashrut: [], price: [], delivery: false, pickup: false, openNow: false });
   }, [activeTab]);
 
   useEffect(() => {
