@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +9,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Loader2, Plus, Edit, Trash2, ExternalLink, Save, Filter } from "lucide-react";
+import { Loader2, Plus, Edit, Trash2, ExternalLink, Save, Filter, Check, X } from "lucide-react";
 import { createPageUrl } from "@/utils";
+import { Badge } from "@/components/ui/badge";
 
 export default function AdminStoresPage() {
   const [pages, setPages] = useState([]);
@@ -18,7 +19,9 @@ export default function AdminStoresPage() {
   const [editingPage, setEditingPage] = useState(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState([]);
-  const [kashrutOptions, setKashrutOptions] = useState([]);
+  const [allBusinesses, setAllBusinesses] = useState([]);
+  const [selectedBusinesses, setSelectedBusinesses] = useState([]);
+  const [businessSearch, setBusinessSearch] = useState("");
 
   // Load Data
   useEffect(() => {
@@ -28,20 +31,29 @@ export default function AdminStoresPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [pagesData, cats, kashrut] = await Promise.all([
+      const [pagesData, cats, businesses] = await Promise.all([
         base44.entities.StorePage.list("-view_count"),
         base44.entities.Category.list("sort_order"),
-        base44.entities.Kashrut.list("name")
+        base44.entities.BusinessPage.filter({ is_active: true }, "business_name") // Load lightweight list
       ]);
       setPages(pagesData);
       setCategories(cats);
-      setKashrutOptions(kashrut);
+      setAllBusinesses(businesses.map(b => ({ id: b.id, name: b.business_name })));
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
   };
+
+  // When opening edit dialog, sync selected businesses
+  useEffect(() => {
+    if (editingPage) {
+        setSelectedBusinesses(editingPage.specific_business_ids || []);
+    } else {
+        setSelectedBusinesses([]);
+    }
+  }, [editingPage]);
 
   const handleSave = async (e) => {
     e.preventDefault();
@@ -52,7 +64,6 @@ export default function AdminStoresPage() {
         delivery: formData.get("delivery") === "on",
         pickup: formData.get("pickup") === "on",
         open_now: formData.get("open_now") === "on",
-        // Multi-selects logic would go here if UI supports it, simple for now
     };
 
     const data = {
@@ -62,6 +73,7 @@ export default function AdminStoresPage() {
       meta_title: formData.get("meta_title"),
       meta_description: formData.get("meta_description"),
       is_active: formData.get("is_active") === "on",
+      specific_business_ids: selectedBusinesses.length > 0 ? selectedBusinesses : null,
       filters: filters
     };
 
@@ -89,6 +101,17 @@ export default function AdminStoresPage() {
     }
   };
 
+  const toggleBusinessSelection = (id) => {
+    setSelectedBusinesses(prev => {
+        if (prev.includes(id)) return prev.filter(x => x !== id);
+        return [...prev, id];
+    });
+  };
+
+  const filteredBusinesses = useMemo(() => {
+    return allBusinesses.filter(b => b.name.toLowerCase().includes(businessSearch.toLowerCase()));
+  }, [allBusinesses, businessSearch]);
+
   return (
     <div className="p-8 bg-slate-50 min-h-screen" dir="rtl">
       <div className="max-w-6xl mx-auto">
@@ -109,6 +132,7 @@ export default function AdminStoresPage() {
                 <TableRow>
                   <TableHead className="text-right">כותרת</TableHead>
                   <TableHead className="text-right">Slug</TableHead>
+                  <TableHead className="text-right">סוג</TableHead>
                   <TableHead className="text-right">צפיות</TableHead>
                   <TableHead className="text-center">פעיל</TableHead>
                   <TableHead className="text-center">פעולות</TableHead>
@@ -119,6 +143,13 @@ export default function AdminStoresPage() {
                   <TableRow key={page.id}>
                     <TableCell className="font-medium">{page.title}</TableCell>
                     <TableCell className="font-mono text-xs text-slate-500">{page.slug}</TableCell>
+                    <TableCell>
+                        {page.specific_business_ids?.length > 0 ? (
+                            <Badge variant="secondary" className="bg-purple-100 text-purple-700">רשימה ידנית ({page.specific_business_ids.length})</Badge>
+                        ) : (
+                            <Badge variant="secondary" className="bg-blue-100 text-blue-700">סינון אוטומטי</Badge>
+                        )}
+                    </TableCell>
                     <TableCell>{page.view_count || 0}</TableCell>
                     <TableCell className="text-center">
                         <span className={`inline-block w-3 h-3 rounded-full ${page.is_active ? 'bg-green-500' : 'bg-slate-300'}`} />
@@ -140,7 +171,7 @@ export default function AdminStoresPage() {
                 ))}
                 {pages.length === 0 && !loading && (
                     <TableRow>
-                        <TableCell colSpan={5} className="text-center py-8 text-slate-500">
+                        <TableCell colSpan={6} className="text-center py-8 text-slate-500">
                             אין דפים להצגה
                         </TableCell>
                     </TableRow>
@@ -183,9 +214,57 @@ export default function AdminStoresPage() {
                 </div>
               </div>
 
-              <div className="bg-slate-50 p-4 rounded-xl space-y-4">
+              {/* Business Selection Section */}
+              <div className="bg-slate-50 p-4 rounded-xl space-y-4 border border-slate-200">
                 <h3 className="font-bold text-slate-900 flex items-center gap-2">
-                    <Filter className="w-4 h-4" /> הגדרות סינון עסקים
+                    <Store className="w-4 h-4 text-purple-600" /> בחירת עסקים ספציפיים (אופציונלי)
+                </h3>
+                <p className="text-xs text-slate-500">אם נבחרו עסקים כאן, הגדרות הסינון למטה יתעלמו ויוצגו רק העסקים שנבחרו.</p>
+                
+                <div className="space-y-2">
+                    <Input 
+                        placeholder="חפש עסק..." 
+                        value={businessSearch} 
+                        onChange={(e) => setBusinessSearch(e.target.value)} 
+                        className="bg-white"
+                    />
+                    <div className="border rounded-md bg-white h-48 overflow-y-auto p-2 space-y-1">
+                        {filteredBusinesses.map(b => (
+                            <div 
+                                key={b.id} 
+                                className={`flex items-center gap-2 p-2 rounded cursor-pointer hover:bg-slate-50 ${selectedBusinesses.includes(b.id) ? 'bg-purple-50 border border-purple-200' : ''}`}
+                                onClick={() => toggleBusinessSelection(b.id)}
+                            >
+                                <div className={`w-4 h-4 border rounded flex items-center justify-center ${selectedBusinesses.includes(b.id) ? 'bg-purple-600 border-purple-600' : 'border-slate-300'}`}>
+                                    {selectedBusinesses.includes(b.id) && <Check className="w-3 h-3 text-white" />}
+                                </div>
+                                <span className="text-sm">{b.name}</span>
+                            </div>
+                        ))}
+                    </div>
+                    {selectedBusinesses.length > 0 && (
+                        <div className="flex flex-wrap gap-2 mt-2">
+                            {selectedBusinesses.map(id => {
+                                const business = allBusinesses.find(b => b.id === id);
+                                return (
+                                    <Badge key={id} variant="secondary" className="flex items-center gap-1">
+                                        {business?.name || id}
+                                        <X className="w-3 h-3 cursor-pointer hover:text-red-500" onClick={() => toggleBusinessSelection(id)} />
+                                    </Badge>
+                                );
+                            })}
+                            <Button type="button" variant="link" size="sm" onClick={() => setSelectedBusinesses([])} className="text-xs text-red-500 h-auto p-0">
+                                נקה הכל
+                            </Button>
+                        </div>
+                    )}
+                </div>
+              </div>
+
+              {/* Automatic Filters (Fallback) */}
+              <div className={`bg-slate-50 p-4 rounded-xl space-y-4 border border-slate-200 ${selectedBusinesses.length > 0 ? 'opacity-50 pointer-events-none' : ''}`}>
+                <h3 className="font-bold text-slate-900 flex items-center gap-2">
+                    <Filter className="w-4 h-4 text-blue-600" /> הגדרות סינון אוטומטי
                 </h3>
                 
                 <div className="grid grid-cols-2 gap-4">

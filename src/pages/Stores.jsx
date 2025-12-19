@@ -4,7 +4,6 @@ import ListingGrid from "@/components/explore/ListingGrid";
 import SeoMeta from "@/components/SeoMeta";
 import { Loader2, Store, Search, Filter } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { createPageUrl } from "@/utils";
 import { isOpenNow } from "@/components/utils/businessTime";
@@ -39,15 +38,31 @@ export default function StoresPage() {
             const page = pages[0];
             setStorePage(page);
             
-            // Load Listings based on filters
-            // We load all approved listings first, then filter in memory for flexibility 
-            // (or complex query if SDK supports it, but filter object is complex)
-            // Ideally we should use backend filtering, but for now client side filtering on top of a reasonable fetch
-            const listings = await base44.entities.BusinessPage.filter({
-              is_active: true,
-              approval_status: 'approved',
-              is_frozen: false
-            }, "-created_date", 500); // Limit 500 for performance
+            // Logic: If specific_business_ids exist, load them. Else, load all and filter.
+            let listings = [];
+            
+            if (page.specific_business_ids && page.specific_business_ids.length > 0) {
+                // Load specific businesses
+                // Note: filter with $in is supported
+                listings = await base44.entities.BusinessPage.filter({
+                    id: { $in: page.specific_business_ids },
+                    is_active: true,
+                    approval_status: 'approved',
+                    is_frozen: false
+                });
+                
+                // Preserve order of IDs if possible (client side sort)
+                const idMap = new Map(page.specific_business_ids.map((id, index) => [id, index]));
+                listings.sort((a, b) => (idMap.get(a.id) || 0) - (idMap.get(b.id) || 0));
+                
+            } else {
+                // Fallback to filters logic - load recent 500
+                listings = await base44.entities.BusinessPage.filter({
+                  is_active: true,
+                  approval_status: 'approved',
+                  is_frozen: false
+                }, "-created_date", 500);
+            }
 
             setActiveListings(listings);
             
@@ -71,20 +86,21 @@ export default function StoresPage() {
     load();
   }, [slug]);
 
-  // Filter Logic
+  // Filter Logic (Only applies if NOT using specific IDs, or maybe additional client side filtering?)
+  // If specific_business_ids are used, we assume the admin wants EXACTLY those. 
+  // But we can still apply the storePage.filters on top if we wanted dynamic subset of specific list.
+  // For simplicity: If specific_business_ids, show them all. Else filter the big list.
   const filteredListings = useMemo(() => {
     if (!storePage || !activeListings.length) return [];
     
+    // If specific IDs were used, activeListings already contains exactly what we want
+    if (storePage.specific_business_ids && storePage.specific_business_ids.length > 0) {
+        return activeListings;
+    }
+    
+    // Fallback filtering logic
     const filters = storePage.filters || {};
     let result = activeListings;
-
-    // Filter by Active Tab (Food/Shopping)
-    if (filters.active_tab) {
-        // Reuse regex logic from Browse or simple check if we had tags on categories
-        // For simplicity, we assume generic filtering or skip if not critical
-        // But user asked for Browse filters.
-        // Let's implement basic filtering
-    }
 
     // Category ID
     if (filters.category_id) {
@@ -133,7 +149,23 @@ export default function StoresPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+         {/* Background Animation from Browse */}
+         <div className="fixed inset-0 -z-10 overflow-hidden">
+            <div className="absolute inset-0 animate-gradient-smooth"></div>
+            <div className="bubble bubble-1"></div>
+            <div className="bubble bubble-2"></div>
+            <div className="bubble bubble-3"></div>
+         </div>
+         <style>{`
+            .animate-gradient-smooth { background: linear-gradient(-45deg, #FFFFFF, #F0F9FF, #E0F2FE, #BAE6FD); background-size: 400% 400%; animation: gradient-flow 20s ease infinite; }
+            @keyframes gradient-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+            .bubble { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(186, 230, 253, 0.25), rgba(240, 249, 255, 0.1)); backdrop-filter: blur(3px); }
+            .bubble-1 { width: 80px; height: 80px; left: 10%; animation: float-up 12s linear infinite; }
+            .bubble-2 { width: 60px; height: 60px; left: 25%; animation: float-up 15s linear infinite 2s; }
+            .bubble-3 { width: 100px; height: 100px; left: 45%; animation: float-up 18s linear infinite 4s; }
+            @keyframes float-up { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 100% { transform: translateY(-100vh) scale(1); opacity: 0; } }
+         `}</style>
         <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
       </div>
     );
@@ -187,7 +219,12 @@ export default function StoresPage() {
   // Error View
   if (error || !storePage) {
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center text-center p-6">
+        <div className="min-h-screen flex flex-col items-center justify-center text-center p-6 relative overflow-hidden" dir="rtl">
+            {/* Same Background */}
+            <div className="fixed inset-0 -z-10 overflow-hidden">
+                <div className="absolute inset-0 animate-gradient-smooth"></div>
+            </div>
+            
             <Search className="w-16 h-16 text-slate-300 mb-4" />
             <h1 className="text-2xl font-bold text-slate-800 mb-2">הדף לא נמצא</h1>
             <p className="text-slate-600 mb-6">מצטערים, לא הצלחנו למצוא את הדף שחיפשת.</p>
@@ -198,35 +235,85 @@ export default function StoresPage() {
     );
   }
 
-  // Detail View (With Slug)
+  // Detail View (With Slug) - Browse Style
   return (
-    <div className="min-h-screen bg-slate-50" dir="rtl">
+    <div className="min-h-screen relative" dir="rtl">
         <SeoMeta 
             title={storePage.meta_title || storePage.title}
             description={storePage.meta_description || ""}
         />
         
-        {/* Hero Section */}
-        <div className="bg-white border-b">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
-                <h1 className="text-4xl md:text-5xl font-black text-slate-900 mb-6 leading-tight">
+        {/* Background Animation - Same as Browse */}
+        <div className="fixed inset-0 -z-10 overflow-hidden">
+            <div className="absolute inset-0 animate-gradient-smooth"></div>
+            <div className="bubble bubble-1"></div>
+            <div className="bubble bubble-2"></div>
+            <div className="bubble bubble-3"></div>
+            <div className="bubble bubble-4"></div>
+            <div className="bubble bubble-5"></div>
+            <div className="bubble bubble-6"></div>
+            <div className="bubble bubble-7"></div>
+            <div className="bubble bubble-8"></div>
+        </div>
+
+        <style>{`
+            .animate-gradient-smooth {
+              background: linear-gradient(
+                -45deg, 
+                #FFFFFF, #F0F9FF, #E0F2FE, #BAE6FD, 
+                #FFFFFF, #F8FAFC, #E0F2FE, #F0F9FF
+              );
+              background-size: 400% 400%;
+              animation: gradient-flow 20s ease infinite;
+            }
+            @keyframes gradient-flow {
+              0% { background-position: 0% 50%; }
+              50% { background-position: 100% 50%; }
+              100% { background-position: 0% 50%; }
+            }
+            @keyframes float-up {
+              0% { transform: translateY(100vh) scale(0); opacity: 0; }
+              10% { opacity: 0.4; }
+              90% { opacity: 0.4; }
+              100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+            }
+            .bubble {
+              position: absolute; border-radius: 50%;
+              background: radial-gradient(circle at 30% 30%, rgba(186, 230, 253, 0.25), rgba(240, 249, 255, 0.1));
+              box-shadow: 0 8px 32px rgba(186, 230, 253, 0.1);
+              backdrop-filter: blur(3px);
+              animation: float-up linear infinite;
+            }
+            .bubble-1 { width: 80px; height: 80px; left: 10%; animation-duration: 12s; }
+            .bubble-2 { width: 60px; height: 60px; left: 25%; animation-duration: 15s; animation-delay: 2s; }
+            .bubble-3 { width: 100px; height: 100px; left: 45%; animation-duration: 18s; animation-delay: 4s; }
+            .bubble-4 { width: 70px; height: 70px; left: 65%; animation-duration: 13s; animation-delay: 1s; }
+            .bubble-5 { width: 90px; height: 90px; left: 80%; animation-duration: 16s; animation-delay: 3s; }
+            .bubble-6 { width: 50px; height: 50px; left: 15%; animation-duration: 14s; animation-delay: 5s; }
+            .bubble-7 { width: 110px; height: 110px; left: 55%; animation-duration: 20s; animation-delay: 6s; }
+            .bubble-8 { width: 65px; height: 65px; left: 90%; animation-duration: 17s; animation-delay: 2.5s; }
+        `}</style>
+        
+        {/* Content */}
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+            <div className="text-center mb-12">
+                <h1 className="text-4xl md:text-6xl font-black text-slate-900 mb-6 leading-tight drop-shadow-sm">
                     {storePage.title}
                 </h1>
                 
                 {storePage.description && (
                     <div 
-                        className="prose prose-lg max-w-none text-slate-700"
+                        className="prose prose-lg max-w-3xl mx-auto text-slate-700 bg-white/60 backdrop-blur-md p-6 rounded-2xl shadow-sm border border-white/50"
                         dangerouslySetInnerHTML={{ __html: storePage.description }}
                     />
                 )}
             </div>
-        </div>
 
-        {/* Listings Grid */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="mb-6 flex items-center gap-2 text-slate-500 text-sm">
-                <Filter className="w-4 h-4" />
-                נמצאו {filteredListings.length} עסקים
+            <div className="mb-6 flex items-center justify-between gap-2 text-slate-500 text-sm bg-white/80 backdrop-blur-sm p-3 rounded-xl border border-slate-200/60 shadow-sm">
+                <div className="flex items-center gap-2">
+                    <Store className="w-4 h-4 text-blue-500" />
+                    <span className="font-medium text-slate-700">נמצאו {filteredListings.length} עסקים מומלצים</span>
+                </div>
             </div>
             
             <ListingGrid 
