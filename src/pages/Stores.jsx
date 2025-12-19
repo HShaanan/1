@@ -139,23 +139,17 @@ export default function StoresPage() {
     <div className="min-h-screen relative" dir="rtl">
         <SeoMeta title={storePage.meta_title || storePage.title} description={storePage.meta_description || ""} />
         
-        {/* SEO Header - Hidden visually if preferred, but user wants seamless browse. 
-            We keep it for SEO value, but maybe style it to blend in or put it above browse.
-        */}
-        <div className="bg-gradient-to-b from-blue-50 to-white pt-8 pb-4">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h1 className="text-3xl md:text-4xl font-black text-slate-900 mb-4 leading-tight">
-                    {storePage.title}
-                </h1>
-                
-                {storePage.description && (
-                    <div 
-                        className="prose prose-sm max-w-3xl mx-auto text-slate-600 mb-6"
-                        dangerouslySetInnerHTML={{ __html: storePage.description }}
-                    />
-                )}
-            </div>
-        </div>
+        {/* SEO Header - Hidden visually for cleaner UX, but kept for Google & Accessibility */}
+        <h1 className="sr-only">
+            {storePage.title}
+        </h1>
+        
+        {storePage.description && (
+            <div 
+                className="sr-only"
+                dangerouslySetInnerHTML={{ __html: storePage.description }}
+            />
+        )}
 
         {/* The Actual Browse App with Pre-sets */}
         <BrowsePage preSelectedState={preSelectedState} />
