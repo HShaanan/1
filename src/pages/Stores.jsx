@@ -103,7 +103,7 @@ export default function StoresPage() {
     let result = activeListings;
 
     // Category ID
-    if (filters.category_id) {
+    if (filters.category_id && filters.category_id !== "all") {
         result = result.filter(l => l.category_id === filters.category_id);
     }
 
@@ -142,6 +142,17 @@ export default function StoresPage() {
     if (filters.delivery) result = result.filter(l => l.has_delivery);
     if (filters.pickup) result = result.filter(l => l.has_pickup);
     if (filters.open_now) result = result.filter(l => isOpenNow(l.hours));
+    
+    // Tab Filter
+    if (filters.active_tab && filters.active_tab !== "all") {
+        if (filters.active_tab === "food") {
+            // Simple heuristic for food
+            result = result.filter(l => /food|restaur|אוכל|מסעד/i.test(l.category_slug || "") || /food|restaur|אוכל|מסעד/i.test(l.category_name || ""));
+        } else if (filters.active_tab === "shopping") {
+             // Simple heuristic for shopping (everything else mostly)
+            result = result.filter(l => !(/food|restaur|אוכל|מסעד/i.test(l.category_slug || "") || /food|restaur|אוכל|מסעד/i.test(l.category_name || "")));
+        }
+    }
 
     return result;
   }, [storePage, activeListings]);

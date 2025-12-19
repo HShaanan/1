@@ -10,10 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Loader2, Plus, Edit, Trash2, ExternalLink, Save, Filter, Check, X, Store } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminStoresPage() {
+  const navigate = useNavigate();
   const [pages, setPages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingPage, setEditingPage] = useState(null);
@@ -58,9 +60,12 @@ export default function AdminStoresPage() {
   const handleSave = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
+    const catId = formData.get("category_id");
+    const tab = formData.get("active_tab");
+
     const filters = {
-        category_id: formData.get("category_id") || undefined,
-        active_tab: formData.get("active_tab") || undefined,
+        category_id: (!catId || catId === "all") ? null : catId,
+        active_tab: (!tab || tab === "all") ? null : tab,
         delivery: formData.get("delivery") === "on",
         pickup: formData.get("pickup") === "on",
         open_now: formData.get("open_now") === "on",
@@ -156,7 +161,7 @@ export default function AdminStoresPage() {
                     </TableCell>
                     <TableCell className="text-center">
                       <div className="flex items-center justify-center gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => window.open(createPageUrl(`Stores?slug=${page.slug}`), '_blank')}>
+                        <Button variant="ghost" size="sm" onClick={() => navigate(createPageUrl(`Stores?slug=${page.slug}`))}>
                           <ExternalLink className="w-4 h-4" />
                         </Button>
                         <Button variant="ghost" size="sm" onClick={() => { setEditingPage(page); setIsDialogOpen(true); }}>
