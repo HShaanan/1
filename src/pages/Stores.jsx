@@ -22,8 +22,8 @@ export default function StoresPage() {
 
   const urlParams = new URLSearchParams(window.location.search);
   const rawSlug = urlParams.get("slug");
-  // Normalize slug: decode -> lowercase -> trim to match Admin logic
-  const slug = rawSlug ? decodeURIComponent(rawSlug).trim().toLowerCase() : null;
+  // Normalize slug: decode -> lowercase -> trim -> replace spaces/plus with dashes to match Admin logic
+  const slug = rawSlug ? decodeURIComponent(rawSlug).trim().toLowerCase().replace(/[\s+]+/g, '-') : null;
 
   // Load Data
   useEffect(() => {
