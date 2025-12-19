@@ -12,7 +12,7 @@ import {
   Clock, Globe, AlertTriangle, ChevronLeft, Flag,
   MessageSquare, MessageCircle, ThumbsUp, Loader2, Calendar, ImageIcon,
   Edit, Menu as MenuIcon, Info, DollarSign, Camera, Utensils, Building, ShoppingCart, Plus, Minus,
-  Copy, Mail, Link as LinkIcon, Navigation, Settings, ClipboardList, Store
+  Copy, Mail, Link as LinkIcon, Navigation, Settings, ClipboardList, Store, Sparkles, Wand2
 } from
   "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -50,7 +50,7 @@ const hexToRgba = (hex, alpha) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onShare, onEditClick, onManageClick, onLogoClick, onKashrutLogoClick, theme, onOrdersManageClick }) => {
+const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onShare, onEditClick, onManageClick, onLogoClick, onKashrutLogoClick, theme, onOrdersManageClick, onGenerateAiSummary }) => {
   const defaultHeroImage = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/e8b173c76_image2.jpg";
   const defaultLogo = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/3f9cfac9b_Gemini_Generated_Image_xr0kiexr0kiexr0k.png";
   
@@ -149,6 +149,17 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
               ניהול הזמנות
             </Button>
           }
+          {canEdit && onGenerateAiSummary && (
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={onGenerateAiSummary}
+              className="bg-indigo-50 text-indigo-700 hover:bg-indigo-100 border-indigo-200 border shadow-sm hover:scale-105 transition-all duration-300 font-medium"
+              aria-label="צור תקציר מנהלים ב-AI">
+              <Wand2 className="w-4 h-4 ml-2" aria-hidden="true" />
+              AI Summary
+            </Button>
+          )}
         </div>
 
         <div className="relative -mt-16 sm:-mt-24 flex items-end space-x-5 space-x-reverse">
@@ -1095,6 +1106,46 @@ export default function BusinessPageView() {
     }
   };
 
+  const handleGenerateAiSummary = async () => {
+    if (!canEdit) return;
+    const confirmMsg = businessPage.ai_executive_summary 
+        ? "קיים כבר תקציר מנהלים. האם לייצר מחדש?" 
+        : "האם לייצר תקציר מנהלים חכם (AI) עבור העסק?";
+    
+    if (!confirm(confirmMsg)) return;
+
+    try {
+        // Fetch top positive reviews for context
+        const topReviews = await base44.entities.Review.filter(
+            { business_page_id: businessPage.id, rating: { $gte: 4 } }, 
+            '-created_date', 
+            5
+        );
+
+        const res = await base44.functions.invoke('generateAiContent', {
+            type: 'business_summary',
+            data: {
+                business_name: businessPage.business_name,
+                description: businessPage.description,
+                category: businessPage.category_name,
+                reviews: topReviews
+            }
+        });
+
+        if (res.data?.success) {
+            const summary = res.data.data.content;
+            await base44.entities.BusinessPage.update(businessPage.id, { ai_executive_summary: summary });
+            loadBusinessPage(); // Refresh to show changes
+            alert("תקציר נוצר בהצלחה!");
+        } else {
+            alert("שגיאה ביצירת התוכן");
+        }
+    } catch (e) {
+        console.error(e);
+        alert("אירעה שגיאה");
+    }
+  };
+
   return (
     <div className="min-h-screen relative overflow-hidden" dir="rtl" style={{
       '--theme-primary': theme.colors.primary,
@@ -1187,6 +1238,7 @@ export default function BusinessPageView() {
         onEditClick={handleEditClick}
         onManageClick={handleManageClick}
         onOrdersManageClick={handleOrdersManageClick}
+        onGenerateAiSummary={handleGenerateAiSummary}
         onLogoClick={handleLogoClick}
         onKashrutLogoClick={handleKashrutLogoClick}
         theme={theme} />
@@ -1206,6 +1258,23 @@ export default function BusinessPageView() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
         <div className="grid grid-cols-1 gap-8 items-start">
           <div className="space-y-8">
+
+            {/* AI Executive Summary (Why Us) */}
+            {businessPage.ai_executive_summary && (
+              <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 rounded-2xl shadow-lg border border-indigo-100 relative overflow-hidden">
+                 <div className="absolute top-0 left-0 p-4 opacity-5 pointer-events-none">
+                    <Sparkles className="w-32 h-32 text-indigo-600" />
+                 </div>
+                 <h3 className="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2 relative z-10">
+                    <Sparkles className="w-5 h-5 text-indigo-600" />
+                    למה לבחור בנו?
+                 </h3>
+                 <div 
+                    className="prose prose-sm max-w-none text-slate-700 relative z-10 leading-relaxed [&>ul]:list-disc [&>ul]:pr-4 [&>ul>li]:mb-1"
+                    dangerouslySetInnerHTML={{ __html: businessPage.ai_executive_summary }}
+                 />
+              </div>
+            )}
 
             {galleryImages.length > 0 &&
               <InfiniteImageMarquee
