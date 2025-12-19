@@ -60,6 +60,8 @@ import AdminDynamicPagesAnalytics from './pages/AdminDynamicPagesAnalytics';
 import Browse from './pages/Browse';
 import TestWhatsApp from './pages/TestWhatsApp';
 import AdminOrders from './pages/AdminOrders';
+import Stores from './pages/Stores';
+import AdminStores from './pages/AdminStores';
 import __Layout from './Layout.jsx';
 
 
@@ -126,6 +128,8 @@ export const PAGES = {
     "Browse": Browse,
     "TestWhatsApp": TestWhatsApp,
     "AdminOrders": AdminOrders,
+    "Stores": Stores,
+    "AdminStores": AdminStores,
 }
 
 export const pagesConfig = {
