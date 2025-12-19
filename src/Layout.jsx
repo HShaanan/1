@@ -611,6 +611,13 @@ export default function Layout({ children, currentPageName }) {
                       <DropdownMenuSeparator />
 
                       <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminStores')} className="flex items-center gap-2 cursor-pointer">
+                          <Search className="w-4 h-4 text-pink-600" aria-hidden="true" />
+                          <span>ניהול דפי SEO</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminSettings')} className="flex items-center gap-2 cursor-pointer bg-slate-50">
                           <Settings className="w-4 h-4 text-slate-700" aria-hidden="true" />
                           <span className="font-bold text-slate-700">הגדרות מערכת</span>
