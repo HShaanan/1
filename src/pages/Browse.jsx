@@ -581,26 +581,30 @@ export default function BrowsePage({ preSelectedState }) {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content">
         <div className="space-y-8">
-          {activeTab === "food" ? (
-            <section aria-labelledby="food-subcategories-heading">
-              <h2 id="food-subcategories-heading" className="sr-only">קטגוריות אוכל</h2>
-              <FoodSubcategoryGallery
-                categories={categories}
-                onSelect={(id) => handleSubcategorySelect(id)}
-                selectedId={selectedSubcategory?.id}
-                loading={loading}
-              />
-            </section>
-          ) : (
-            <section aria-labelledby="shopping-subcategories-heading">
-              <h2 id="shopping-subcategories-heading" className="sr-only">קטגוריות קניות</h2>
-              <ShoppingSubcategoryGallery
-                categories={categories}
-                onSelect={(id) => handleSubcategorySelect(id)}
-                selectedId={selectedSubcategory?.id}
-                loading={loading}
-              />
-            </section>
+          {!selectedCategory && !selectedSubcategory && !selectedProfGroup && (
+            <>
+              {activeTab === "food" ? (
+                <section aria-labelledby="food-subcategories-heading">
+                  <h2 id="food-subcategories-heading" className="sr-only">קטגוריות אוכל</h2>
+                  <FoodSubcategoryGallery
+                    categories={categories}
+                    onSelect={(id) => handleSubcategorySelect(id)}
+                    selectedId={selectedSubcategory?.id}
+                    loading={loading}
+                  />
+                </section>
+              ) : (
+                <section aria-labelledby="shopping-subcategories-heading">
+                  <h2 id="shopping-subcategories-heading" className="sr-only">קטגוריות קניות</h2>
+                  <ShoppingSubcategoryGallery
+                    categories={categories}
+                    onSelect={(id) => handleSubcategorySelect(id)}
+                    selectedId={selectedSubcategory?.id}
+                    loading={loading}
+                  />
+                </section>
+              )}
+            </>
           )}
 
           <section aria-label="באנרים פרסומיים">
