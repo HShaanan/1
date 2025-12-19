@@ -209,7 +209,7 @@ export default function AdminStoresPage() {
                     </TableCell>
                     <TableCell className="text-center">
                       <div className="flex items-center justify-center gap-2">
-                        <Button variant="ghost" size="sm" onClick={() => navigate(createPageUrl(`Stores?slug=${page.slug}`))}>
+                        <Button variant="ghost" size="sm" onClick={() => navigate(createPageUrl('Stores') + `?slug=${page.slug}`)}>
                           <ExternalLink className="w-4 h-4" />
                         </Button>
                         <Button variant="ghost" size="sm" onClick={() => openEditDialog(page)}>
