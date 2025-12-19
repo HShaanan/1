@@ -20,6 +20,7 @@ export default function AdminStoresPage() {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [kashrutList, setKashrutList] = useState([]);
   const [allBusinesses, setAllBusinesses] = useState([]);
   const [selectedBusinesses, setSelectedBusinesses] = useState([]);
   const [businessSearch, setBusinessSearch] = useState("");
@@ -35,6 +36,8 @@ export default function AdminStoresPage() {
     is_active: true,
     filters: {
         category_id: "all",
+        subcategory_ids: [],
+        kashrut: [],
         active_tab: "all",
         delivery: false,
         pickup: false,
@@ -50,13 +53,15 @@ export default function AdminStoresPage() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const [pagesData, cats, businesses] = await Promise.all([
+      const [pagesData, cats, kashrut, businesses] = await Promise.all([
         base44.entities.StorePage.list("-view_count"),
         base44.entities.Category.list("sort_order"),
+        base44.entities.Kashrut.list("name"),
         base44.entities.BusinessPage.filter({ is_active: true }, "business_name")
       ]);
       setPages(pagesData);
       setCategories(cats);
+      setKashrutList(kashrut);
       setAllBusinesses(businesses.map(b => ({ id: b.id, name: b.business_name })));
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -77,6 +82,8 @@ export default function AdminStoresPage() {
             is_active: page.is_active,
             filters: {
                 category_id: page.filters?.category_id || "all",
+                subcategory_ids: page.filters?.subcategory_ids || [],
+                kashrut: page.filters?.kashrut || [],
                 active_tab: page.filters?.active_tab || "all",
                 delivery: page.filters?.delivery || false,
                 pickup: page.filters?.pickup || false,
@@ -95,6 +102,8 @@ export default function AdminStoresPage() {
             is_active: true,
             filters: {
                 category_id: "all",
+                subcategory_ids: [],
+                kashrut: [],
                 active_tab: "all",
                 delivery: false,
                 pickup: false,
@@ -111,6 +120,8 @@ export default function AdminStoresPage() {
 
     const filtersToSave = {
         category_id: formState.filters.category_id === "all" ? null : formState.filters.category_id,
+        subcategory_ids: formState.filters.subcategory_ids.length > 0 ? formState.filters.subcategory_ids : null,
+        kashrut: formState.filters.kashrut.length > 0 ? formState.filters.kashrut : null,
         active_tab: formState.filters.active_tab === "all" ? null : formState.filters.active_tab,
         delivery: formState.filters.delivery,
         pickup: formState.filters.pickup,
@@ -164,6 +175,27 @@ export default function AdminStoresPage() {
   const filteredBusinesses = useMemo(() => {
     return allBusinesses.filter(b => b.name.toLowerCase().includes(businessSearch.toLowerCase()));
   }, [allBusinesses, businessSearch]);
+
+  const availableSubcategories = useMemo(() => {
+    if (formState.filters.category_id === "all") return [];
+    return categories.filter(c => c.parent_id === formState.filters.category_id);
+  }, [categories, formState.filters.category_id]);
+
+  const toggleSubcategory = (id) => {
+    setFormState(prev => {
+        const current = prev.filters.subcategory_ids || [];
+        const updated = current.includes(id) ? current.filter(x => x !== id) : [...current, id];
+        return { ...prev, filters: { ...prev.filters, subcategory_ids: updated } };
+    });
+  };
+
+  const toggleKashrut = (name) => {
+    setFormState(prev => {
+        const current = prev.filters.kashrut || [];
+        const updated = current.includes(name) ? current.filter(x => x !== name) : [...current, name];
+        return { ...prev, filters: { ...prev.filters, kashrut: updated } };
+    });
+  };
 
   return (
     <div className="p-8 bg-slate-50 min-h-screen" dir="rtl">
@@ -356,7 +388,7 @@ export default function AdminStoresPage() {
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="all">הכל</SelectItem>
-                                {categories.map(c => (
+                                {categories.filter(c => !c.parent_id).map(c => (
                                     <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                                 ))}
                             </SelectContent>
@@ -378,6 +410,40 @@ export default function AdminStoresPage() {
                                 <SelectItem value="shopping">קניות ושירותים</SelectItem>
                             </SelectContent>
                         </Select>
+                    </div>
+                </div>
+
+                {availableSubcategories.length > 0 && (
+                    <div className="space-y-2">
+                        <Label>תתי קטגוריה</Label>
+                        <div className="flex flex-wrap gap-2 p-2 bg-white border rounded-md">
+                            {availableSubcategories.map(sub => (
+                                <Badge 
+                                    key={sub.id} 
+                                    variant={formState.filters.subcategory_ids?.includes(sub.id) ? "default" : "outline"}
+                                    className="cursor-pointer select-none"
+                                    onClick={() => toggleSubcategory(sub.id)}
+                                >
+                                    {sub.name}
+                                </Badge>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                <div className="space-y-2">
+                    <Label>סינון כשרות</Label>
+                    <div className="flex flex-wrap gap-2 p-2 bg-white border rounded-md max-h-32 overflow-y-auto">
+                        {kashrutList.map(k => (
+                            <Badge 
+                                key={k.id} 
+                                variant={formState.filters.kashrut?.includes(k.name) ? "default" : "outline"}
+                                className="cursor-pointer select-none"
+                                onClick={() => toggleKashrut(k.name)}
+                            >
+                                {k.name}
+                            </Badge>
+                        ))}
                     </div>
                 </div>
 
