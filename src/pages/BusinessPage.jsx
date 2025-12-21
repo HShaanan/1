@@ -1253,7 +1253,7 @@ export default function BusinessPageView() {
       )}
 
       {/* פס קריאה לבעלות על עסק - מעל הכל */}
-      {(!businessPage?.owner_email || businessPage?.owner_email === '4170531@gmail.com') && !isOwner && (
+      {(!businessPage?.business_owner_email || businessPage?.business_owner_email === '4170531@gmail.com') && (
         <div className="sticky top-0 z-50 bg-gradient-to-r from-amber-400 via-yellow-400 to-amber-500 shadow-lg border-b-2 border-amber-600 animate-pulse">
           <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
             <div className="flex items-center gap-3">
