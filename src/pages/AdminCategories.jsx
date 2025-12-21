@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { User } from "@/entities/User";
 import { Category } from "@/entities/Category";
-import { UploadFile } from "@/integrations/Core";
+import { UploadFile, GenerateImage } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,10 +11,11 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Settings, Plus, Trash2, AlertTriangle, Edit,
-  Tag, Check, X, ChevronDown, ChevronRight,
-  Upload, Maximize, Square, Camera, Wand2
+  Settings, Plus, Trash2, Save, AlertTriangle, Edit,
+  Tag, ArrowUp, ArrowDown, Check, X, ChevronDown, ChevronRight,
+  Upload, Image as ImageIcon, Maximize, Square, Camera, Wand2
 } from "lucide-react";
 import IconPicker from "@/components/IconPicker";
 import ImageCropper from "@/components/ImageCropper";
@@ -107,10 +107,11 @@ export default function AdminCategoriesPage() {
       await Category.delete(id);
     } catch (e) {
       const msg = (e && (e.message || e.error || JSON.stringify(e))) || "";
-      if (!/ObjectNotFound/i.test(msg)) { // Check for "ObjectNotFound" in the error message
+      // Check for "not found" errors in various formats
+      if (!/not found|ObjectNotFound/i.test(msg)) {
         throw e;
       }
-      // ignore not-found
+      // ignore not-found errors
       console.debug("safeDelete: object not found (ignored)", id);
     }
   };
