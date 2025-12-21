@@ -592,17 +592,7 @@ export default function BrowsePage({ preSelectedState }) {
         kashrutList={kashrutList} 
       />
 
-      {/* Show StickyChips if something is selected OR if scrolled down (to avoid duplication with Gallery at top) */}
-      {(selectedCategory || selectedSubcategory || selectedProfGroup || isScrolled) && (
-        <StickyChips>
-           <SubcategoryChips 
-                items={stickyChipsItems}
-                selectedSubId={selectedCategory ? selectedSubcategory?.id : (selectedSubcategory?.id || selectedCategory?.id)}
-                onSelect={selectedCategory ? handleSubcategorySelect : handleSubcategorySelect} 
-                showAllTile={true}
-            />
-        </StickyChips>
-      )}
+
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content">
         <div className="space-y-8">
