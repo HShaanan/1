@@ -118,12 +118,13 @@ export default function ModifierGroupsBuilder({ groups = [], onChange, allMenuCa
     onChange(newGroups);
   };
 
-  // Import existing modifier groups from other categories
-  const importGroupsFrom = (sourceCategory) => {
-    if (!sourceCategory.modifierGroups || sourceCategory.modifierGroups.length === 0) return;
+  // Import existing modifier groups from categories or items
+  const importGroupsFrom = (source) => {
+    const sourceGroups = source.modifierGroups;
+    if (!sourceGroups || sourceGroups.length === 0) return;
     
     // Clone groups with new IDs to avoid conflicts
-    const importedGroups = sourceCategory.modifierGroups.map(grp => ({
+    const importedGroups = sourceGroups.map(grp => ({
       ...grp,
       id: `mod-group-${Date.now()}-${Math.random()}`,
       options: grp.options.map(opt => ({
@@ -136,10 +137,34 @@ export default function ModifierGroupsBuilder({ groups = [], onChange, allMenuCa
     setShowImportDialog(false);
   };
 
-  // Get all available modifier groups from other categories/items
-  const availableGroupSources = allMenuCategories.filter(cat => 
-    cat.modifierGroups && cat.modifierGroups.length > 0
-  );
+  // Get all available modifier groups from categories and items
+  const availableGroupSources = [];
+  allMenuCategories.forEach(cat => {
+    // Add category itself if it has modifierGroups
+    if (cat.modifierGroups && cat.modifierGroups.length > 0) {
+      availableGroupSources.push({
+        type: 'category',
+        id: cat.id,
+        name: cat.name,
+        modifierGroups: cat.modifierGroups
+      });
+    }
+    
+    // Add each item that has modifierGroups
+    if (cat.items && cat.items.length > 0) {
+      cat.items.forEach(item => {
+        if (item.modifierGroups && item.modifierGroups.length > 0) {
+          availableGroupSources.push({
+            type: 'item',
+            id: item.id,
+            name: item.name,
+            categoryName: cat.name,
+            modifierGroups: item.modifierGroups
+          });
+        }
+      });
+    }
+  });
 
   return (
     <div className="space-y-6" dir="rtl">
@@ -339,17 +364,32 @@ export default function ModifierGroupsBuilder({ groups = [], onChange, allMenuCa
       <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>שלב קבוצות הרכבה מקטגוריה אחרת</DialogTitle>
+            <DialogTitle>שלב קבוצות הרכבה קיימות</DialogTitle>
           </DialogHeader>
           <div className="space-y-3 max-h-[60vh] overflow-y-auto">
-            {availableGroupSources.map(cat => (
-              <Card key={cat.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => importGroupsFrom(cat)}>
+            {availableGroupSources.map(source => (
+              <Card key={source.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => importGroupsFrom(source)}>
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start">
                     <div className="flex-1">
-                      <h4 className="font-semibold text-slate-800">{cat.name || 'קטגוריה ללא שם'}</h4>
+                      <div className="flex items-center gap-2">
+                        <h4 className="font-semibold text-slate-800">{source.name || 'ללא שם'}</h4>
+                        {source.type === 'item' && (
+                          <span className="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full border border-blue-100">
+                            מוצר
+                          </span>
+                        )}
+                        {source.type === 'category' && (
+                          <span className="text-xs px-2 py-0.5 bg-green-50 text-green-700 rounded-full border border-green-100">
+                            קטגוריה
+                          </span>
+                        )}
+                      </div>
+                      {source.categoryName && (
+                        <p className="text-xs text-slate-400 mt-0.5">מתוך: {source.categoryName}</p>
+                      )}
                       <p className="text-xs text-slate-500 mt-1">
-                        {cat.modifierGroups.length} קבוצות הרכבה
+                        {source.modifierGroups.length} קבוצות הרכבה
                       </p>
                     </div>
                     <Button size="sm" variant="ghost" className="text-purple-600">
@@ -357,7 +397,7 @@ export default function ModifierGroupsBuilder({ groups = [], onChange, allMenuCa
                     </Button>
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1">
-                    {cat.modifierGroups.map((grp, idx) => (
+                    {source.modifierGroups.map((grp, idx) => (
                       <span key={idx} className="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full border border-purple-100">
                         {grp.name || `קבוצה ${idx + 1}`}
                       </span>
