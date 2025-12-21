@@ -628,7 +628,105 @@ export default function AdminStoresPage() {
             </form>
           </DialogContent>
         </Dialog>
-      </div>
-    </div>
-  );
-}
+
+        {/* Bulk Generation Dialog */}
+        <Dialog open={bulkDialogOpen} onOpenChange={setBulkDialogOpen}>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>יצירה מאסיבית של דפי נחיתה SEO</DialogTitle>
+            </DialogHeader>
+
+            {bulkGenerating && !bulkPreview ? (
+              <div className="flex flex-col items-center justify-center py-12 gap-4">
+                <Loader2 className="w-12 h-12 animate-spin text-indigo-600" />
+                <p className="text-slate-600">טוען תצוגה מקדימה...</p>
+              </div>
+            ) : bulkPreview ? (
+              <div className="space-y-6">
+                <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-6 rounded-xl border border-indigo-200">
+                  <h3 className="font-bold text-lg mb-4 text-indigo-900">📊 סטטיסטיקות</h3>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-indigo-600">{bulkPreview.total_combinations}</div>
+                      <div className="text-xs text-slate-600">סה"כ דפים אפשריים</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-emerald-600">{bulkPreview.stats?.main_categories}</div>
+                      <div className="text-xs text-slate-600">קטגוריות ראשיות</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-purple-600">{bulkPreview.stats?.sub_categories}</div>
+                      <div className="text-xs text-slate-600">תת-קטגוריות</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-amber-600">{bulkPreview.stats?.cities}</div>
+                      <div className="text-xs text-slate-600">ערים</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl border border-slate-200">
+                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-indigo-600" />
+                    דוגמאות לדפים שייווצרו
+                  </h3>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {bulkPreview.sample_combinations?.map((combo, idx) => (
+                      <div key={idx} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg text-sm">
+                        <Badge variant="outline" className="text-xs">{combo.type}</Badge>
+                        <div className="flex-1">
+                          <span className="font-medium">{combo.category_name}</span>
+                          {combo.kashrut && <span className="text-slate-500"> • {combo.kashrut[0]}</span>}
+                          <span className="text-slate-500"> • {combo.city}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-amber-50 border border-amber-200 p-4 rounded-lg">
+                  <h4 className="font-bold text-amber-900 mb-2 flex items-center gap-2">
+                    ⚠️ שים לב
+                  </h4>
+                  <ul className="text-sm text-amber-800 space-y-1">
+                    <li>• התהליך ייצור תוכן AI איכותי ויעילי עבור כל דף</li>
+                    <li>• יש למרוץ בעדינות כדי למנוע עומס על ה-API</li>
+                    <li>• דפים קיימים לא יוחלפו</li>
+                    <li>• התהליך עשוי לארוך מספר דקות</li>
+                  </ul>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setBulkDialogOpen(false)}
+                    disabled={bulkGenerating}
+                  >
+                    ביטול
+                  </Button>
+                  <Button 
+                    onClick={() => executeBulkGeneration({})}
+                    disabled={bulkGenerating}
+                    className="bg-gradient-to-r from-green-500 to-emerald-600 text-white"
+                  >
+                    {bulkGenerating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                        יוצר דפים...
+                      </>
+                    ) : (
+                      <>
+                        <Wand2 className="w-4 h-4 ml-2" />
+                        התחל יצירה ({bulkPreview.total_combinations} דפים)
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+          </DialogContent>
+        </Dialog>
+        </div>
+        </div>
+        );
+        }
