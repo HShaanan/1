@@ -262,9 +262,14 @@ export default function AdminStoresPage() {
             <h1 className="text-3xl font-bold text-slate-900">ניהול דפי SEO (Stores)</h1>
             <p className="text-slate-600">צור ונהל דפי נחיתה מקודמים עם סינונים מותאמים</p>
           </div>
-          <Button onClick={() => openEditDialog(null)}>
-            <Plus className="w-4 h-4 ml-2" /> דף חדש
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={() => navigate(createPageUrl('AdminSeoAgent'))} className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-0 hover:from-purple-600 hover:to-indigo-700">
+              <Sparkles className="w-4 h-4 ml-2" /> AI Generator
+            </Button>
+            <Button onClick={() => openEditDialog(null)}>
+              <Plus className="w-4 h-4 ml-2" /> דף חדש
+            </Button>
+          </div>
         </div>
 
         <Card>

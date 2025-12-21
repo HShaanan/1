@@ -63,6 +63,7 @@ import AdminOrders from './pages/AdminOrders';
 import Stores from './pages/Stores';
 import AdminStores from './pages/AdminStores';
 import AdminLiveUsers from './pages/AdminLiveUsers';
+import AdminSeoAgent from './pages/AdminSeoAgent';
 import __Layout from './Layout.jsx';
 
 
@@ -132,6 +133,7 @@ export const PAGES = {
     "Stores": Stores,
     "AdminStores": AdminStores,
     "AdminLiveUsers": AdminLiveUsers,
+    "AdminSeoAgent": AdminSeoAgent,
 }
 
 export const pagesConfig = {
