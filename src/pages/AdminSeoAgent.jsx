@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, Send, Bot, CheckCircle2, AlertCircle, ArrowRight, Zap } from "lucide-react";
+import { Loader2, Sparkles, Send, Bot, CheckCircle2, AlertCircle, ArrowRight, Zap, Store } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
