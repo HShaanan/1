@@ -632,6 +632,13 @@ export default function Layout({ children, currentPageName }) {
                       <DropdownMenuSeparator />
 
                       <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminSeoAgent')} className="flex items-center gap-2 cursor-pointer">
+                          <Sparkles className="w-4 h-4 text-purple-600" aria-hidden="true" />
+                          <span>AI SEO Generator</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminStores')} className="flex items-center gap-2 cursor-pointer">
                           <Search className="w-4 h-4 text-pink-600" aria-hidden="true" />
                           <span>ניהול דפי SEO</span>
