@@ -30,6 +30,7 @@ import { useBusinessAnalytics } from "@/components/analytics/useBusinessAnalytic
 import OrderSidebar from "@/components/order/OrderSidebar";
 import ModificationModal from "@/components/order/ModificationModal";
 import { LocalBusinessSchema } from "@/components/seo/SchemaOrg";
+import { checkBusinessOpen } from "@/components/utils/checkBusinessOpen";
 
 // Helper function to convert hex to rgba
 const hexToRgba = (hex, alpha) => {
@@ -393,7 +394,7 @@ function MenuItem({ item, theme, isBlackTheme, onOpenModifications }) {
           <Button
             onClick={() => onOpenModifications(item)}
             size="sm"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white gap-1"
+            className="bg-indigo-600 hover:bg-indigo-700 text-white gap-1 disabled:bg-gray-400 disabled:cursor-not-allowed"
             aria-label={`הוסף ${item.name} לסל`}>
             <Plus className="w-3 h-3" aria-hidden="true" />
             הוסף
@@ -488,6 +489,7 @@ export default function BusinessPageView() {
   const [modificationModalOpen, setModificationModalOpen] = React.useState(false);
   const [selectedItemForMods, setSelectedItemForMods] = React.useState(null);
   const [relatedBusinesses, setRelatedBusinesses] = useState([]);
+  const [businessOpenStatus, setBusinessOpenStatus] = useState({ isOpen: true, message: '', nextChange: '' });
 
   const reviewsRef = useRef(null);
   const menuSectionRefs = useRef({});
@@ -771,6 +773,21 @@ export default function BusinessPageView() {
     loadBusinessPage();
   }, [loadBusinessPage]);
 
+  // בדיקת סטטוס פתוח/סגור - כל דקה
+  useEffect(() => {
+    if (!businessPage?.hours) return;
+
+    const updateOpenStatus = () => {
+      const status = checkBusinessOpen(businessPage.hours);
+      setBusinessOpenStatus(status);
+    };
+
+    updateOpenStatus(); // עדכון ראשוני
+    const interval = setInterval(updateOpenStatus, 60000); // כל דקה
+
+    return () => clearInterval(interval);
+  }, [businessPage?.hours]);
+
   // Load related businesses from same category
   useEffect(() => {
     if (!businessPage?.category_id || !businessPage?.id) return;
@@ -931,9 +948,14 @@ export default function BusinessPageView() {
 
   // פתיחת מודל תוספות
   const handleOpenModifications = useCallback((item) => {
+    // בדיקה אם העסק פתוח
+    if (!businessOpenStatus.isOpen) {
+      alert(`לא ניתן להזמין כרגע - ${businessOpenStatus.message}`);
+      return;
+    }
     setSelectedItemForMods(item);
     setModificationModalOpen(true);
-  }, []);
+  }, [businessOpenStatus]);
 
   // הוספה לעגלה מהמודל
   const handleAddToCartFromModal = useCallback((itemWithMods) => {
@@ -1197,6 +1219,7 @@ export default function BusinessPageView() {
           isOpen={isOrderCartOpen}
           onClose={() => setIsOrderCartOpen(false)}
           theme={theme}
+          businessOpenStatus={businessOpenStatus}
         />
       )}
 
@@ -1319,7 +1342,7 @@ export default function BusinessPageView() {
             {/* לוח שעות פעילות */}
             {businessPage.hours &&
               <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-slate-200/80">
-                <BusinessHoursDisplay hours={businessPage.hours} />
+                <BusinessHoursDisplay hours={businessPage.hours} isBlackTheme={isBlackTheme} />
               </div>
             }
 

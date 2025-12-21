@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, ChevronRight, Truck, Store } from 'lucide-react';
+import { ShoppingCart, ChevronRight, ChevronLeft, Truck, Store } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -12,7 +12,8 @@ export default function OrderSidebar({
   onRemoveFromCart,
   onToggleAddon,
   onClearCart,
-  theme
+  theme,
+  businessOpenStatus
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [deliveryType, setDeliveryType] = useState('pickup'); // 'delivery' or 'pickup'
@@ -194,12 +195,22 @@ export default function OrderSidebar({
               </div>
             </div>
 
+            {/* התראה אם סגור */}
+            {businessOpenStatus && !businessOpenStatus.isOpen && (
+              <div className="mb-3 p-3 bg-red-50 border border-red-200 rounded-lg text-center">
+                <div className="text-red-700 font-semibold text-sm">🔴 העסק סגור כעת</div>
+                <div className="text-red-600 text-xs mt-1">{businessOpenStatus.message}</div>
+              </div>
+            )}
+
             {/* כפתור המשך */}
             <Button
               onClick={handleContinueToCheckout}
-              className="w-full bg-green-600 hover:bg-green-700 text-white"
+              disabled={businessOpenStatus && !businessOpenStatus.isOpen}
+              className="w-full bg-green-600 hover:bg-green-700 text-white disabled:bg-gray-400 disabled:cursor-not-allowed"
+              title={businessOpenStatus && !businessOpenStatus.isOpen ? 'לא ניתן להזמין כשהעסק סגור' : ''}
             >
-              המשך להזמנה
+              {businessOpenStatus && !businessOpenStatus.isOpen ? 'העסק סגור' : 'המשך להזמנה'}
             </Button>
           </>
         )}

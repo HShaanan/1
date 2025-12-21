@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { checkBusinessOpen } from '@/components/utils/checkBusinessOpen';
 
 const dayNames = {
   sunday: 'ראשון',
@@ -16,6 +17,20 @@ const dayOrder = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'frida
 
 export default function BusinessHoursDisplay({ hours, isBlackTheme }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const [currentStatus, setCurrentStatus] = useState({ isOpen: false, message: '', nextChange: '' });
+
+  // עדכון סטטוס כל דקה
+  useEffect(() => {
+    const updateStatus = () => {
+      const status = checkBusinessOpen(hours);
+      setCurrentStatus(status);
+    };
+
+    updateStatus(); // עדכון ראשוני
+    const interval = setInterval(updateStatus, 60000); // כל דקה
+
+    return () => clearInterval(interval);
+  }, [hours]);
   
   // Handle different formats of hours data
   let schedule = {};
@@ -122,12 +137,32 @@ export default function BusinessHoursDisplay({ hours, isBlackTheme }) {
 
   if (!isExpanded) {
     return (
-      <div className="space-y-2">
+      <div className="space-y-3">
+        {/* סטטוס פתוח/סגור כרגע - בולט */}
+        <div className={`flex items-center justify-between p-4 rounded-xl border-2 ${
+          currentStatus.isOpen 
+            ? (isBlackTheme ? 'bg-green-900/20 border-green-400' : 'bg-green-50 border-green-500') 
+            : (isBlackTheme ? 'bg-red-900/20 border-red-400' : 'bg-red-50 border-red-500')
+        }`}>
+          <div className="flex items-center gap-3">
+            <div className={`w-3 h-3 rounded-full ${currentStatus.isOpen ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+            <div>
+              <div className={`font-bold text-lg ${currentStatus.isOpen ? (isBlackTheme ? 'text-green-400' : 'text-green-700') : (isBlackTheme ? 'text-red-400' : 'text-red-700')}`}>
+                {currentStatus.isOpen ? '🟢 פתוח כעת' : '🔴 סגור כעת'}
+              </div>
+              <div className={`text-sm ${isBlackTheme ? 'text-gray-400' : 'text-gray-600'}`}>
+                {currentStatus.nextChange}
+              </div>
+            </div>
+          </div>
+          <Clock className={`w-6 h-6 ${currentStatus.isOpen ? (isBlackTheme ? 'text-green-400' : 'text-green-600') : (isBlackTheme ? 'text-red-400' : 'text-red-600')}`} />
+        </div>
+
+        {/* שעות היום */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Clock className={`w-4 h-4 ${isBlackTheme ? 'text-red-400' : 'text-blue-600'}`} />
             <span className={`font-medium ${isBlackTheme ? 'text-gray-300' : 'text-gray-700'}`}>
-              היום:
+              שעות היום:
             </span>
             <span className={`font-medium ${todayStatus.isOpen ? (isBlackTheme ? 'text-green-400' : 'text-green-600') : (isBlackTheme ? 'text-red-400' : 'text-red-600')}`}>
               {todayStatus.text}

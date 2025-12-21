@@ -33,7 +33,7 @@ export default function ImageGallery({
       setUncontrolledIndex(initialIndex || 0);
       resetZoom();
     }
-     
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [initialIndex]);
 
   // רק עכשיו נוכל להחזיר null אם אין תמונות, אחרי שכל ה-Hooks הוגדרו
@@ -50,6 +50,42 @@ export default function ImageGallery({
 
   const goToPrevious = () => setIndex(index === 0 ? images.length - 1 : index - 1);
   const goToNext = () => setIndex(index === images.length - 1 ? 0 : index + 1);
+
+  // תמיכה במקלדת
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!isOpen) return;
+      
+      switch(e.key) {
+        case 'ArrowLeft':
+          e.preventDefault();
+          goToNext();
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          goToPrevious();
+          break;
+        case 'Escape':
+          e.preventDefault();
+          onClose?.();
+          break;
+        case '+':
+        case '=':
+          e.preventDefault();
+          zoomIn();
+          break;
+        case '-':
+          e.preventDefault();
+          zoomOut();
+          break;
+        default:
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, index, images.length, onClose]);
 
   const zoomIn = () => setZoomLevel((prev) => Math.min(prev + 0.5, MAX_ZOOM));
   const zoomOut = () => {
