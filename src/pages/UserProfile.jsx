@@ -329,6 +329,54 @@ export default function UserProfile() {
               </CardContent>
             </Card>
 
+            {/* Debug / Testing Card */}
+            <Card className="border-orange-200 bg-orange-50">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-orange-800">
+                  <AlertCircle className="w-5 h-5" />
+                  בדיקות מערכת
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-orange-700 mb-4">
+                  כפתור זה יאפס את הסכמתך לתנאי השימוש ויגרום למערכת לדרוש אישור מחדש (לצורך בדיקה).
+                </p>
+                <Button 
+                  variant="outline" 
+                  className="w-full border-orange-300 text-orange-800 hover:bg-orange-100"
+                  onClick={async () => {
+                    if (!confirm("האם לאפס את סטטוס אישור התקנון? המערכת תבצע רענון ותדרוש אישור מחדש.")) return;
+                    try {
+                        setIsLoading(true);
+                        // 1. Delete agreements
+                        const agreements = await base44.entities.UserAgreement.filter({
+                            user_email: user.email,
+                            agreement_type: 'terms_of_use'
+                        });
+                        
+                        // Delete one by one
+                        await Promise.all(agreements.map(a => base44.entities.UserAgreement.delete(a.id)));
+                        
+                        // 2. Clear session cache
+                        Object.keys(sessionStorage).forEach(key => {
+                            if (key.startsWith('terms_accepted_')) sessionStorage.removeItem(key);
+                        });
+                        
+                        // 3. Reload to trigger check
+                        window.location.href = createPageUrl('Browse');
+                    } catch (e) {
+                        console.error(e);
+                        setMessage({ type: "error", text: "שגיאה באיפוס התנאים" });
+                        setIsLoading(false);
+                    }
+                  }}
+                >
+                  <FileText className="w-4 h-4 ml-2" />
+                  אפס הסכמה לתקנון ובדוק מחדש
+                </Button>
+              </CardContent>
+            </Card>
+
             {/* Account Info Card */}
             <Card>
               <CardHeader>
