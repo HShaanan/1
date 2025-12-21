@@ -42,13 +42,15 @@ Deno.serve(async (req) => {
                 }
             ],
             VATIncluded: true, // Assuming prices include VAT
+            CreateDocument: true, // Ensure a document (Receipt/Invoice) is created upon charge
             SendDocumentByEmail: true // Send receipt to customer
         };
 
         // Customer is REQUIRED by Sumit
         payload.Customer = {
             Name: customer?.name || "לקוח",
-            Phone: customer?.phone || "0500000000"
+            Phone: customer?.phone || "0500000000",
+            EmailAddress: customer?.email // Required for SendDocumentByEmail to work
         };
 
         console.log("Sending charge request to Sumit...");
