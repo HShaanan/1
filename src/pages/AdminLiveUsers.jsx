@@ -20,19 +20,13 @@ export default function AdminLiveUsersPage() {
     try {
       setError("");
       
-      // Get all sessions updated in the last 2 minutes
-      const now = new Date();
-      const twoMinutesAgo = new Date(now.getTime() - 2 * 60 * 1000);
+      const result = await base44.functions.invoke('getActiveSessions', {});
       
-      const allSessions = await base44.asServiceRole.entities.ActiveSession.list('-last_heartbeat');
-      
-      // Filter sessions that are active (heartbeat within last 2 minutes)
-      const activeSessions = allSessions.filter(session => {
-        const lastHeartbeat = new Date(session.last_heartbeat);
-        return lastHeartbeat >= twoMinutesAgo;
-      });
-
-      setSessions(activeSessions);
+      if (result.data?.success) {
+        setSessions(result.data.sessions || []);
+      } else {
+        setError('שגיאה בטעינת הנתונים');
+      }
     } catch (err) {
       console.error('Error loading sessions:', err);
       setError('שגיאה בטעינת הנתונים');
