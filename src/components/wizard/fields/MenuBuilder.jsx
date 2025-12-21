@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { 
-  Plus, Trash2, GripVertical, X, ChevronDown, ChevronUp, 
+  Plus, Trash2, GripVertical, Upload, X, ChevronDown, ChevronUp, 
   Image as ImageIcon, MoreVertical, Sparkles, Loader2, Wand2, Settings2
 } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -11,7 +13,8 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import ModifierGroupsBuilder from "./ModifierGroupsBuilder";
 
 export default function MenuBuilder({ value = [], onChange }) {
@@ -676,7 +679,8 @@ export default function MenuBuilder({ value = [], onChange }) {
           <div className="flex-1 overflow-y-auto p-6 pt-2">
             <ModifierGroupsBuilder 
               groups={getCurrentModifierGroups()} 
-              onChange={updateModifierGroups} 
+              onChange={updateModifierGroups}
+              allMenuCategories={value}
             />
           </div>
           

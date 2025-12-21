@@ -4,12 +4,15 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Trash2, GripVertical, X, ChevronDown, ChevronUp, Settings2 } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Plus, Trash2, GripVertical, X, ChevronDown, ChevronUp, Settings2, Download } from 'lucide-react';
 import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
-export default function ModifierGroupsBuilder({ groups = [], onChange }) {
+export default function ModifierGroupsBuilder({ groups = [], onChange, allMenuCategories = [] }) {
   const [expandedGroups, setExpandedGroups] = useState({});
+  const [showImportDialog, setShowImportDialog] = useState(false);
 
   const toggleGroupExpand = (groupId) => {
     setExpandedGroups(prev => ({ ...prev, [groupId]: !prev[groupId] }));
@@ -115,6 +118,29 @@ export default function ModifierGroupsBuilder({ groups = [], onChange }) {
     onChange(newGroups);
   };
 
+  // Import existing modifier groups from other categories
+  const importGroupsFrom = (sourceCategory) => {
+    if (!sourceCategory.modifierGroups || sourceCategory.modifierGroups.length === 0) return;
+    
+    // Clone groups with new IDs to avoid conflicts
+    const importedGroups = sourceCategory.modifierGroups.map(grp => ({
+      ...grp,
+      id: `mod-group-${Date.now()}-${Math.random()}`,
+      options: grp.options.map(opt => ({
+        ...opt,
+        id: `opt-${Date.now()}-${Math.random()}`
+      }))
+    }));
+    
+    onChange([...groups, ...importedGroups]);
+    setShowImportDialog(false);
+  };
+
+  // Get all available modifier groups from other categories/items
+  const availableGroupSources = allMenuCategories.filter(cat => 
+    cat.modifierGroups && cat.modifierGroups.length > 0
+  );
+
   return (
     <div className="space-y-6" dir="rtl">
       <div className="flex justify-between items-center">
@@ -122,10 +148,18 @@ export default function ModifierGroupsBuilder({ groups = [], onChange }) {
           <h3 className="font-semibold text-lg">קבוצות הרכבה (Modifiers)</h3>
           <p className="text-sm text-slate-500">הגדר אפשרויות בחירה ללקוח (למשל: סוג לחם, תוספות, הסרה)</p>
         </div>
-        <Button onClick={addGroup} size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
-          <Plus className="w-4 h-4 ml-2" />
-          הוסף קבוצה
-        </Button>
+        <div className="flex gap-2">
+          {availableGroupSources.length > 0 && (
+            <Button onClick={() => setShowImportDialog(true)} size="sm" variant="outline" className="border-purple-200 text-purple-600 hover:bg-purple-50">
+              <Download className="w-4 h-4 ml-2" />
+              שלב קבוצה קיימת
+            </Button>
+          )}
+          <Button onClick={addGroup} size="sm" className="bg-indigo-600 hover:bg-indigo-700 text-white">
+            <Plus className="w-4 h-4 ml-2" />
+            הוסף קבוצה
+          </Button>
+        </div>
       </div>
 
       {groups.length === 0 && (
@@ -300,6 +334,44 @@ export default function ModifierGroupsBuilder({ groups = [], onChange }) {
           )}
         </Droppable>
       </DragDropContext>
+
+      {/* Import Dialog */}
+      <Dialog open={showImportDialog} onOpenChange={setShowImportDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>שלב קבוצות הרכבה מקטגוריה אחרת</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-3 max-h-[60vh] overflow-y-auto">
+            {availableGroupSources.map(cat => (
+              <Card key={cat.id} className="hover:shadow-md transition-shadow cursor-pointer" onClick={() => importGroupsFrom(cat)}>
+                <CardContent className="p-4">
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <h4 className="font-semibold text-slate-800">{cat.name || 'קטגוריה ללא שם'}</h4>
+                      <p className="text-xs text-slate-500 mt-1">
+                        {cat.modifierGroups.length} קבוצות הרכבה
+                      </p>
+                    </div>
+                    <Button size="sm" variant="ghost" className="text-purple-600">
+                      <Download className="w-4 h-4" />
+                    </Button>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    {cat.modifierGroups.map((grp, idx) => (
+                      <span key={idx} className="text-xs px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full border border-purple-100">
+                        {grp.name || `קבוצה ${idx + 1}`}
+                      </span>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+            {availableGroupSources.length === 0 && (
+              <p className="text-center text-slate-400 py-8">אין קבוצות הרכבה זמינות לייבוא</p>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
