@@ -257,6 +257,45 @@ export default function AdminStoresPage() {
     }
   };
 
+  const handleBulkGenerate = async () => {
+    setBulkDialogOpen(true);
+    setBulkGenerating(true);
+    try {
+        const res = await base44.functions.invoke('generateStorePagesAtScale', {
+            mode: 'preview'
+        });
+        if (res.data?.success) {
+            setBulkPreview(res.data);
+        }
+    } catch (e) {
+        console.error(e);
+        alert("שגיאה בטעינת תצוגה מקדימה");
+    } finally {
+        setBulkGenerating(false);
+    }
+  };
+
+  const executeBulkGeneration = async (selectedFilters) => {
+    setBulkGenerating(true);
+    try {
+        const res = await base44.functions.invoke('generateStorePagesAtScale', {
+            mode: 'create',
+            batchSize: 10,
+            filters: selectedFilters
+        });
+        if (res.data?.success) {
+            alert(`נוצרו בהצלחה ${res.data.stats.created} דפי נחיתה!`);
+            setBulkDialogOpen(false);
+            fetchData();
+        }
+    } catch (e) {
+        console.error(e);
+        alert("שגיאה ביצירת דפים: " + e.message);
+    } finally {
+        setBulkGenerating(false);
+    }
+  };
+
   return (
     <div className="p-8 bg-slate-50 min-h-screen" dir="rtl">
       <div className="max-w-6xl mx-auto">
