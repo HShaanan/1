@@ -104,27 +104,45 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // 1. Load Categories (Independent)
-        base44.entities.Category.list().then(setCategories).catch(e => console.error("Cats error", e));
+        // 1. Start fetching data in parallel
+        const categoriesPromise = base44.entities.Category.list();
+        const userPromise = base44.auth.me();
 
-        // 2. Load User & Enforce Terms
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
+        // 2. Handle User & Categories
+        const [categoriesResult, userResult] = await Promise.allSettled([
+          categoriesPromise,
+          userPromise
+        ]);
 
+        // Handle Categories
+        if (categoriesResult.status === 'fulfilled') {
+          setCategories(categoriesResult.value);
+        }
+
+        // Handle User
+        let currentUser = null;
+        if (userResult.status === 'fulfilled') {
+          currentUser = userResult.value;
+          setUser(currentUser);
+        } else {
+          setUser(null);
+        }
+
+        // 3. Logic for Logged In User
         if (currentUser) {
-          // Admin Stats
           if (currentUser.role === 'admin') {
-             loadAdminStats(); // Fire and forget to not block UI too long
+             loadAdminStats(); 
           }
 
-          // TERMS ENFORCEMENT - BLOCKING
+          // TERMS ENFORCEMENT - STRICT BLOCKING
           const CURRENT_TERMS_VERSION = '1.0';
           const isExemptPage = currentPageName === 'TermsOfUsePage' || currentPageName === 'LandingPage';
 
           if (!isExemptPage) {
               const cached = sessionStorage.getItem(`terms_accepted_${CURRENT_TERMS_VERSION}`);
+
               if (cached !== 'true') {
-                  // Check DB
+                  // Must verify with DB before allowing render
                   const agreements = await base44.entities.UserAgreement.filter({
                       user_email: currentUser.email,
                       agreement_type: 'terms_of_use',
@@ -132,21 +150,24 @@ export default function Layout({ children, currentPageName }) {
                   });
 
                   if (agreements.length === 0) {
-                      console.log("Terms not accepted, redirecting...");
+                      console.log("Terms not accepted, strictly redirecting...");
+                      // Redirect and RETURN immediately so isLoading stays TRUE
+                      // This effectively blocks any content rendering until redirect completes
                       navigate(createPageUrl('TermsOfUsePage') + '?mode=accept');
-                      // Don't set isLoading(false) immediately if redirecting, 
-                      // but react router is client side so we must let it render.
-                      // However, navigate changes the route which triggers re-render.
+                      return; 
                   } else {
                       sessionStorage.setItem(`terms_accepted_${CURRENT_TERMS_VERSION}`, 'true');
                   }
               }
           }
         }
+
+        // Only stop loading if we are NOT redirecting
+        setIsLoading(false);
+
       } catch (error) {
-        console.log("User not logged in");
-        setUser(null);
-      } finally {
+        console.error("Layout load error:", error);
+        // In case of critical error, still show content to avoid infinite white screen
         setIsLoading(false);
       }
     };
