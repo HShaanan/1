@@ -192,8 +192,8 @@ export default function MenuBuilder({ value = [], onChange }) {
       if (!file) return;
 
       try {
-        const { data } = await base44.integrations.Core.UploadFile({ file });
-        const imageUrl = data?.file_url;
+        const result = await base44.integrations.Core.UploadFile({ file });
+        const imageUrl = result?.file_url;
         if (imageUrl) {
           updateItem(categoryId, itemId, 'image', imageUrl);
         }
