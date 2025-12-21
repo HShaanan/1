@@ -54,13 +54,6 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
           </div>
         )}
 
-        {/* בעלות זמינה */}
-        {(!businessPage.owner_email || businessPage.owner_email === '4170531@gmail.com') && (
-          <div className="absolute top-12 right-2 bg-gradient-to-r from-orange-500 to-red-500 text-white px-3 py-1.5 rounded-lg shadow-lg font-bold text-xs animate-pulse border-2 border-white">
-            👑 בעל העסק? קח בעלות!
-          </div>
-        )}
-
         {/* Badge כשר */}
         {businessPage.kashrut_authority_type && (
           <div className="absolute top-2 left-2 bg-white px-2 py-1 rounded-md shadow-sm">
