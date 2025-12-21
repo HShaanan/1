@@ -1,6 +1,6 @@
-
 import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { User } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -11,7 +11,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Search, Shield, Crown, UserCheck, UserX,
   Mail, Calendar, AlertTriangle, RefreshCw,
-  MoreHorizontal, Trash2, X, Check, Users as UsersIcon
+  MoreHorizontal, Trash2, Edit, UserPlus, Download, X, Check, Users as UsersIcon, Send
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -72,6 +72,7 @@ export default function AdminUsersPage() {
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
   const [roleFilter, setRoleFilter] = useState("all");
   const [error, setError] = useState("");
+  const [isSendingEmails, setIsSendingEmails] = useState(false);
 
   // Helper to determine if a user is "online" (last activity within a recent timeframe)
   const isOnline = (lastActivityDateString) => {
@@ -192,6 +193,28 @@ export default function AdminUsersPage() {
     }
   };
 
+  const handleSendBulkEmail = async () => {
+    if (!confirm(`האם אתה בטוח שברצונך לשלוח מייל לכל ${users.length} המשתמשים?`)) {
+      return;
+    }
+
+    setIsSendingEmails(true);
+    try {
+      const result = await base44.functions.invoke('sendBulkEmail', {});
+      
+      if (result.data?.success) {
+        toast.success(`המיילים נשלחו בהצלחה! נשלחו: ${result.data.successCount}, נכשלו: ${result.data.failCount}`);
+      } else {
+        toast.error('שגיאה בשליחת המיילים');
+      }
+    } catch (err) {
+      console.error('Error sending bulk email:', err);
+      toast.error('שגיאה בשליחת המיילים');
+    } finally {
+      setIsSendingEmails(false);
+    }
+  };
+
   // Filter and memoize users based on search term and role filter
   const filteredUsers = useMemo(() => {
     return users.filter(user => {
@@ -230,15 +253,25 @@ export default function AdminUsersPage() {
             </Badge>
           </div>
 
-          <Button
-            onClick={handleRefresh}
-            disabled={isLoading}
-            variant="outline"
-            className="flex items-center gap-2"
-          >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            רענן נתונים
-          </Button>
+          <div className="flex gap-2">
+            <Button
+              onClick={handleSendBulkEmail}
+              disabled={isSendingEmails || users.length === 0}
+              className="flex items-center gap-2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600"
+            >
+              <Send className={`w-4 h-4 ${isSendingEmails ? 'animate-pulse' : ''}`} />
+              {isSendingEmails ? 'שולח מיילים...' : 'שלח מייל לכולם'}
+            </Button>
+            <Button
+              onClick={handleRefresh}
+              disabled={isLoading}
+              variant="outline"
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+              רענן נתונים
+            </Button>
+          </div>
         </div>
 
         {error && (
