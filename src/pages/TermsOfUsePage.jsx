@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 // Checkbox removed
 import { useNavigate, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { FileText, ArrowRight, CheckCircle, Loader2 } from "lucide-react";
+import { FileText, ArrowLeft, CheckCircle, Loader2 } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { toast } from "sonner";
 // PdfViewer import removed
@@ -331,7 +331,7 @@ export default function TermsOfUsePage() {
                                 {submitting ? (
                                     <><Loader2 className="w-5 h-5 ml-2 animate-spin" /> מעבד...</>
                                 ) : (
-                                    <>אשר והמשך <ArrowRight className="w-5 h-5 mr-2" /></>
+                                    <>אשר והמשך <ArrowLeft className="w-5 h-5 mr-2" /></>
                                 )}
                             </Button>
                             
