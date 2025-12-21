@@ -70,6 +70,33 @@ Deno.serve(async (req) => {
     const wazeToStore = `https://waze.com/ul?q=${businessAddressEncoded}&navigate=yes`;
     const wazeToCustomer = `https://waze.com/ul?q=${customerAddressEncoded}&navigate=yes`;
 
+    // פירוט מלא של פריטי ההזמנה עם הרכבות ותוספות
+    const itemsDetail = order.items && Array.isArray(order.items) 
+      ? order.items.map(item => {
+          let itemText = `• ${item.quantity}x ${item.menu_item_name} - ${item.price}₪`;
+          
+          // הוספת הרכבות ותוספות אם קיימות
+          if (item.selected_modifications && Array.isArray(item.selected_modifications) && item.selected_modifications.length > 0) {
+            const modsText = item.selected_modifications
+              .map(mod => {
+                const optionsText = mod.selected_options
+                  .map(opt => `    - ${opt.name}${opt.extra_price ? ` (+${opt.extra_price}₪)` : ''}`)
+                  .join('\n');
+                return `  ${mod.group_name}:\n${optionsText}`;
+              })
+              .join('\n');
+            itemText += `\n${modsText}`;
+          }
+          
+          // הערות לפריט אם קיימות
+          if (item.notes) {
+            itemText += `\n  📝 ${item.notes}`;
+          }
+          
+          return itemText;
+        }).join('\n\n')
+      : 'פירוט לא זמין';
+
     // הודעת WhatsApp מוכנה
     const whatsappMessage = `
 🚚 הזמנה #${order.order_number}
@@ -82,7 +109,12 @@ Deno.serve(async (req) => {
 📞 ${order.customer_phone}
 📍 ${customerAddress}
 
-💬 הערות: ${customerNotes}
+🛒 פירוט ההזמנה:
+${itemsDetail}
+
+💰 סה"כ: ${order.total_amount}₪
+
+💬 הערות כלליות: ${customerNotes}
 
 🚗 ניווט:
 לעסק: ${wazeToStore}
@@ -90,6 +122,31 @@ Deno.serve(async (req) => {
     `.trim();
 
     const whatsappUrl = `https://wa.me/972505196963?text=${encodeURIComponent(whatsappMessage)}`;
+
+    // פירוט מפורט לטלגרם (עם HTML)
+    const itemsDetailTelegram = order.items && Array.isArray(order.items)
+      ? order.items.map(item => {
+          let itemHtml = `• <b>${item.quantity}x ${item.menu_item_name}</b> - ${item.price}₪`;
+          
+          if (item.selected_modifications && Array.isArray(item.selected_modifications) && item.selected_modifications.length > 0) {
+            const modsHtml = item.selected_modifications
+              .map(mod => {
+                const optsHtml = mod.selected_options
+                  .map(opt => `    ◦ ${opt.name}${opt.extra_price ? ` (+${opt.extra_price}₪)` : ''}`)
+                  .join('\n');
+                return `  <i>${mod.group_name}:</i>\n${optsHtml}`;
+              })
+              .join('\n');
+            itemHtml += `\n${modsHtml}`;
+          }
+          
+          if (item.notes) {
+            itemHtml += `\n  📝 <i>${item.notes}</i>`;
+          }
+          
+          return itemHtml;
+        }).join('\n\n')
+      : 'פירוט לא זמין';
 
     // הכנת הודעת התראה מפורטת לטלגרם
     const telegramMessage = `
@@ -101,12 +158,12 @@ Deno.serve(async (req) => {
 טלפון: ${order.customer_phone}
 כתובת: ${customerAddress}
 
-🛒 <b>סיכום הזמנה:</b>
-${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${item.quantity}x ${item.menu_item_name}`).join('\n') : 'פירוט לא זמין'}
+🛒 <b>פירוט מלא של ההזמנה:</b>
+${itemsDetailTelegram}
 
 💰 <b>סה"כ לתשלום: ${order.total_amount} ₪</b>
 
-📝 <b>הערות:</b> ${customerNotes}
+📝 <b>הערות כלליות:</b> ${customerNotes}
 
 <a href="${wazeToCustomer}">🚗 נווט ללקוח</a>
     `.trim();
