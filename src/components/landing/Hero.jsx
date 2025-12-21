@@ -23,7 +23,7 @@ export default function Hero() {
       {/* תמונת רקע סטטית */}
       <div className="absolute inset-0 z-0" aria-hidden="true">
         <img
-          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/d70f3bd45_image3.jpg"
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/fb8c8a10a_image3.jpg"
           alt=""
           className="w-full h-full object-cover"
           role="presentation"
