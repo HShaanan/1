@@ -7,9 +7,16 @@ export default function ShoppingSubcategoryGallery({ categories = [], loading, o
   // סינון כל תתי־הקטגוריות ששייכות לקטגוריות על "קניות" לפי שם
   const shopRegex = /(חנות|קניות|ציוד|חשמל|אלקטרוניקה|מחשבים|ביגוד|אופנה|לבוש|הנעלה|ספרים|צעצוע|ריהוט|בית|קוסמטיקה|פארם|מתנות|כלי|מוצר)/i;
 
-  // מציג קטגוריות ראשיות (ללא הורה) שמתאימות לחיפוש "קניות"
-  const subs = (Array.isArray(categories) ? categories : [])
-    .filter(c => !c.parent_id && shopRegex.test(c.name || "") && (c.is_active ?? true));
+  // FIX: Find children of the "Shopping" root categories instead of showing the roots themselves
+  const allCats = Array.isArray(categories) ? categories : [];
+
+  // 1. Find root categories matching regex (e.g. "Shopping")
+  const rootIds = allCats
+    .filter(c => !c.parent_id && shopRegex.test(c.name || ""))
+    .map(c => c.id);
+
+  // 2. Return subcategories (children) of those roots
+  const subs = allCats.filter(c => rootIds.includes(c.parent_id) && (c.is_active ?? true));
 
   if (loading) {
     return (

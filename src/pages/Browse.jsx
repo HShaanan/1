@@ -144,14 +144,19 @@ export default function BrowsePage({ preSelectedState }) {
        return categories.filter(c => c.parent_id === selectedCategory.id && (c.is_active ?? true));
     }
     
-    // Flat / Tab mode - Show top-level categories matching the tab
+    // Flat / Tab mode - Show subcategories (children) of the matching top-level categories
+    let rootRegex = null;
     if (activeTab === 'food') {
-       const foodRegex = /(אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|מאפ|קונדיט|חלבי|בשרי|שף|טבח|שווארמה|קפה|קונדיטור|מאפים)/i;
-       return categories.filter(c => !c.parent_id && foodRegex.test(c.name || "") && (c.is_active ?? true));
+       rootRegex = /(אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|מאפ|קונדיט|חלבי|בשרי|שף|טבח|שווארמה|קפה|קונדיטור|מאפים)/i;
+    } else if (activeTab === 'shopping') {
+       rootRegex = /(חנות|קניות|ציוד|חשמל|אלקטרוניקה|מחשבים|ביגוד|אופנה|לבוש|הנעלה|ספרים|צעצוע|ריהוט|בית|קוסמטיקה|פארם|מתנות|כלי|מוצר)/i;
     }
-    if (activeTab === 'shopping') {
-       const shopRegex = /(חנות|קניות|ציוד|חשמל|אלקטרוניקה|מחשבים|ביגוד|אופנה|לבוש|הנעלה|ספרים|צעצוע|ריהוט|בית|קוסמטיקה|פארם|מתנות|כלי|מוצר)/i;
-       return categories.filter(c => !c.parent_id && shopRegex.test(c.name || "") && (c.is_active ?? true));
+
+    if (rootRegex) {
+        const rootIds = categories
+            .filter(c => !c.parent_id && rootRegex.test(c.name || ""))
+            .map(c => c.id);
+        return categories.filter(c => rootIds.includes(c.parent_id) && (c.is_active ?? true));
     }
     return [];
   }, [selectedCategory, activeTab, categories]);

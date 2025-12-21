@@ -7,10 +7,16 @@ export default function FoodSubcategoryGallery({ categories = [], loading, onSel
   // סינון כל תתי־הקטגוריות ששייכות לקטגוריות על "אוכל" לפי שם
   const foodRegex = /(אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|מאפ|קונדיט|חלבי|בשרי|שף|טבח|קפה|קונדיטור|מאפים)/i;
 
-  // מציג קטגוריות ראשיות (ללא הורה) שמתאימות לחיפוש "אוכל"
-  // זה מאפשר לקטגוריות כמו "פיצה", "בשרים" וכו' להופיע אם הן מוגדרות כראשיות
-  const subs = (Array.isArray(categories) ? categories : [])
-    .filter(c => !c.parent_id && foodRegex.test(c.name || "") && (c.is_active ?? true));
+  // FIX: Find children of the "Food" root categories instead of showing the roots themselves
+  const allCats = Array.isArray(categories) ? categories : [];
+  
+  // 1. Find root categories matching regex (e.g. "Food")
+  const rootIds = allCats
+    .filter(c => !c.parent_id && foodRegex.test(c.name || ""))
+    .map(c => c.id);
+
+  // 2. Return subcategories (children) of those roots
+  const subs = allCats.filter(c => rootIds.includes(c.parent_id) && (c.is_active ?? true));
 
   if (loading) {
     return (
