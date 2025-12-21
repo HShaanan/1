@@ -11,12 +11,12 @@ Deno.serve(async (req) => {
             return Response.json({ success: false, error: "Missing payment token" }, { status: 400 });
         }
 
-        // Use the "Payments" secret as the API Key
+        // Use the "SUMIT_SECRET_KEY" secret as the API Key
         const apiKey = Deno.env.get("SUMIT_SECRET_KEY");
         const companyId = 1171824853;
 
         if (!apiKey) {
-             console.error("CRITICAL: 'Payments' secret not found in environment.");
+             console.error("CRITICAL: 'SUMIT_SECRET_KEY' secret not found in environment.");
              return Response.json({ success: false, error: "Payment configuration error: API key is missing." }, { status: 500 });
         }
 
