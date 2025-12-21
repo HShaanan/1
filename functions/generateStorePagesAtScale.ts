@@ -36,11 +36,46 @@ Deno.serve(async (req) => {
         console.log('🔄 שלב 2: בניית מטריצת שילובים...');
         const combinations = [];
 
-        // סוג 1: קטגוריה ראשית + עיר
+        // === וריאציות עם 1 פרמטר ===
+        
+        // קטגוריה בלבד (ללא עיר/כשרות)
+        for (const cat of mainCategories) {
+            combinations.push({
+                type: 'category_only',
+                category_id: cat.id,
+                category_name: cat.name,
+                city: null,
+                kashrut: null
+            });
+        }
+
+        // עיר בלבד (ללא קטגוריה/כשרות)
+        for (const city of cities) {
+            combinations.push({
+                type: 'city_only',
+                category_name: `עסקים ב${city}`,
+                city: city,
+                kashrut: null
+            });
+        }
+
+        // כשרות בלבד (ללא קטגוריה/עיר)
+        for (const kashrut of kashrutList.slice(0, 5)) { // רק 5 כשרויות מרכזיות
+            combinations.push({
+                type: 'kashrut_only',
+                category_name: `עסקים כשרים ${kashrut.name}`,
+                kashrut: [kashrut.name],
+                city: null
+            });
+        }
+
+        // === וריאציות עם 2 פרמטרים ===
+
+        // קטגוריה + עיר
         for (const cat of mainCategories) {
             for (const city of cities) {
                 combinations.push({
-                    type: 'main_category_city',
+                    type: 'category_city',
                     category_id: cat.id,
                     category_name: cat.name,
                     city: city,
@@ -49,27 +84,37 @@ Deno.serve(async (req) => {
             }
         }
 
-        // סוג 2: קטגוריה ראשית + כשרות + עיר
+        // קטגוריה + כשרות (ללא עיר)
         for (const cat of mainCategories) {
-            for (const kashrut of kashrutList) {
-                for (const city of cities) {
-                    combinations.push({
-                        type: 'main_category_kashrut_city',
-                        category_id: cat.id,
-                        category_name: cat.name,
-                        city: city,
-                        kashrut: [kashrut.name]
-                    });
-                }
+            for (const kashrut of kashrutList.slice(0, 5)) {
+                combinations.push({
+                    type: 'category_kashrut',
+                    category_id: cat.id,
+                    category_name: cat.name,
+                    kashrut: [kashrut.name],
+                    city: null
+                });
             }
         }
 
-        // סוג 3: תת-קטגוריה + עיר
+        // עיר + כשרות (ללא קטגוריה)
+        for (const city of cities) {
+            for (const kashrut of kashrutList.slice(0, 5)) {
+                combinations.push({
+                    type: 'city_kashrut',
+                    category_name: `עסקים כשרים ${kashrut.name}`,
+                    city: city,
+                    kashrut: [kashrut.name]
+                });
+            }
+        }
+
+        // תת-קטגוריה + עיר
         for (const subCat of subCategories) {
             for (const city of cities) {
                 const parentCat = mainCategories.find(c => c.id === subCat.parent_id);
                 combinations.push({
-                    type: 'sub_category_city',
+                    type: 'subcategory_city',
                     category_id: parentCat?.id,
                     subcategory_id: subCat.id,
                     category_name: subCat.name,
@@ -79,14 +124,31 @@ Deno.serve(async (req) => {
             }
         }
 
-        // סוג 4: תת-קטגוריה + כשרות + עיר (רק לכשרויות מרכזיות)
-        const mainKashrut = kashrutList.slice(0, 3); // רק 3 כשרויות מרכזיות לתת-קטגוריות
+        // === וריאציות עם 3 פרמטרים ===
+
+        // קטגוריה + כשרות + עיר
+        for (const cat of mainCategories) {
+            for (const kashrut of kashrutList) {
+                for (const city of cities) {
+                    combinations.push({
+                        type: 'category_kashrut_city',
+                        category_id: cat.id,
+                        category_name: cat.name,
+                        city: city,
+                        kashrut: [kashrut.name]
+                    });
+                }
+            }
+        }
+
+        // תת-קטגוריה + כשרות + עיר (רק לכשרויות מרכזיות)
+        const mainKashrut = kashrutList.slice(0, 3);
         for (const subCat of subCategories) {
             for (const kashrut of mainKashrut) {
                 for (const city of cities) {
                     const parentCat = mainCategories.find(c => c.id === subCat.parent_id);
                     combinations.push({
-                        type: 'sub_category_kashrut_city',
+                        type: 'subcategory_kashrut_city',
                         category_id: parentCat?.id,
                         subcategory_id: subCat.id,
                         category_name: subCat.name,
@@ -97,16 +159,22 @@ Deno.serve(async (req) => {
             }
         }
 
-        // סוג 5: שירותים כלליים (משלוחים, איסוף עצמי)
+        // === וריאציות שירותים ===
+
+        // משלוחים לפי עיר
         for (const city of cities) {
             combinations.push({
-                type: 'delivery_service',
+                type: 'delivery_city',
                 category_name: 'משלוחי אוכל',
                 city: city,
                 delivery: true
             });
+        }
+
+        // איסוף עצמי לפי עיר
+        for (const city of cities) {
             combinations.push({
-                type: 'pickup_service',
+                type: 'pickup_city',
                 category_name: 'איסוף עצמי',
                 city: city,
                 pickup: true
