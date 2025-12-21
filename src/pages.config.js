@@ -62,6 +62,7 @@ import TestWhatsApp from './pages/TestWhatsApp';
 import AdminOrders from './pages/AdminOrders';
 import Stores from './pages/Stores';
 import AdminStores from './pages/AdminStores';
+import AdminLiveUsers from './pages/AdminLiveUsers';
 import __Layout from './Layout.jsx';
 
 
@@ -130,6 +131,7 @@ export const PAGES = {
     "AdminOrders": AdminOrders,
     "Stores": Stores,
     "AdminStores": AdminStores,
+    "AdminLiveUsers": AdminLiveUsers,
 }
 
 export const pagesConfig = {
