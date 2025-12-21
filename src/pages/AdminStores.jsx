@@ -263,13 +263,17 @@ export default function AdminStoresPage() {
             <p className="text-slate-600">צור ונהל דפי נחיתה מקודמים עם סינונים מותאמים</p>
           </div>
           <div className="flex gap-2">
-            <Button variant="outline" onClick={() => navigate(createPageUrl('AdminSeoAgent'))} className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-0 hover:from-purple-600 hover:to-indigo-700">
-              <Sparkles className="w-4 h-4 ml-2" /> AI Generator
-            </Button>
-            <Button onClick={() => openEditDialog(null)}>
-              <Plus className="w-4 h-4 ml-2" /> דף חדש
-            </Button>
-          </div>
+              <Button variant="outline" onClick={() => navigate(createPageUrl('AdminSeoAgent'))} className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-0 hover:from-purple-600 hover:to-indigo-700">
+                <Sparkles className="w-4 h-4 ml-2" /> AI Agent
+              </Button>
+              <Button variant="default" onClick={handleBulkGenerate} disabled={bulkGenerating} className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700">
+                {bulkGenerating ? <Loader2 className="w-4 h-4 ml-2 animate-spin" /> : <Wand2 className="w-4 h-4 ml-2" />}
+                {bulkGenerating ? 'יוצר...' : 'יצירה מאסיבית'}
+              </Button>
+              <Button onClick={() => openEditDialog(null)}>
+                <Plus className="w-4 h-4 ml-2" /> דף חדש
+              </Button>
+            </div>
         </div>
 
         <Card>
