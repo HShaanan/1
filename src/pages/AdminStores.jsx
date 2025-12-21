@@ -15,16 +15,19 @@ import { createPageUrl } from "@/utils";
 import { Badge } from "@/components/ui/badge";
 
 export default function AdminStoresPage() {
-  const navigate = useNavigate();
-  const [pages, setPages] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [categories, setCategories] = useState([]);
-  const [kashrutList, setKashrutList] = useState([]);
-  const [allBusinesses, setAllBusinesses] = useState([]);
-  const [selectedBusinesses, setSelectedBusinesses] = useState([]);
-  const [businessSearch, setBusinessSearch] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
+        const navigate = useNavigate();
+        const [pages, setPages] = useState([]);
+        const [loading, setLoading] = useState(true);
+        const [isDialogOpen, setIsDialogOpen] = useState(false);
+        const [categories, setCategories] = useState([]);
+        const [kashrutList, setKashrutList] = useState([]);
+        const [allBusinesses, setAllBusinesses] = useState([]);
+        const [selectedBusinesses, setSelectedBusinesses] = useState([]);
+        const [businessSearch, setBusinessSearch] = useState("");
+        const [isGenerating, setIsGenerating] = useState(false);
+        const [bulkGenerating, setBulkGenerating] = useState(false);
+        const [bulkDialogOpen, setBulkDialogOpen] = useState(false);
+        const [bulkPreview, setBulkPreview] = useState(null);
 
   // Form State
   const [formState, setFormState] = useState({
