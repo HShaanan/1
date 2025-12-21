@@ -102,13 +102,46 @@ export default function Layout({ children, currentPageName }) {
   }, []);
 
   useEffect(() => {
-    const loadUser = async () => {
+    const loadData = async () => {
       try {
+        // 1. Load Categories (Independent)
+        base44.entities.Category.list().then(setCategories).catch(e => console.error("Cats error", e));
+
+        // 2. Load User & Enforce Terms
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
-        if (currentUser?.role === 'admin') {
-          await loadAdminStats();
+        if (currentUser) {
+          // Admin Stats
+          if (currentUser.role === 'admin') {
+             loadAdminStats(); // Fire and forget to not block UI too long
+          }
+
+          // TERMS ENFORCEMENT - BLOCKING
+          const CURRENT_TERMS_VERSION = '1.0';
+          const isExemptPage = currentPageName === 'TermsOfUsePage' || currentPageName === 'LandingPage';
+
+          if (!isExemptPage) {
+              const cached = sessionStorage.getItem(`terms_accepted_${CURRENT_TERMS_VERSION}`);
+              if (cached !== 'true') {
+                  // Check DB
+                  const agreements = await base44.entities.UserAgreement.filter({
+                      user_email: currentUser.email,
+                      agreement_type: 'terms_of_use',
+                      agreement_version: CURRENT_TERMS_VERSION
+                  });
+
+                  if (agreements.length === 0) {
+                      console.log("Terms not accepted, redirecting...");
+                      navigate(createPageUrl('TermsOfUsePage') + '?mode=accept');
+                      // Don't set isLoading(false) immediately if redirecting, 
+                      // but react router is client side so we must let it render.
+                      // However, navigate changes the route which triggers re-render.
+                  } else {
+                      sessionStorage.setItem(`terms_accepted_${CURRENT_TERMS_VERSION}`, 'true');
+                  }
+              }
+          }
         }
       } catch (error) {
         console.log("User not logged in");
@@ -118,49 +151,8 @@ export default function Layout({ children, currentPageName }) {
       }
     };
 
-    const loadCategories = async () => {
-      try {
-        const categoryList = await base44.entities.Category.list();
-        setCategories(categoryList);
-      } catch (error) {
-        console.error("Error loading categories:", error);
-      }
-    };
-
-    loadUser();
-    loadCategories();
-  }, [currentPageName, loadAdminStats]);
-
-  // Terms of Use Enforcement
-  useEffect(() => {
-    const CURRENT_TERMS_VERSION = '1.0'; // Must match the version in TermsOfUsePage
-    
-    if (user && !isLoading && currentPageName !== 'TermsOfUsePage' && currentPageName !== 'LandingPage') {
-        const checkTerms = async () => {
-             // Check session cache first to avoid API spam
-             const cached = sessionStorage.getItem(`terms_accepted_${CURRENT_TERMS_VERSION}`);
-             if (cached === 'true') return;
-
-             try {
-                 const agreements = await base44.entities.UserAgreement.filter({
-                     user_email: user.email,
-                     agreement_type: 'terms_of_use',
-                     agreement_version: CURRENT_TERMS_VERSION
-                 });
-                 
-                 if (agreements.length === 0) {
-                     // Redirect to terms page with accept mode
-                     navigate(createPageUrl('TermsOfUsePage') + '?mode=accept');
-                 } else {
-                     sessionStorage.setItem(`terms_accepted_${CURRENT_TERMS_VERSION}`, 'true');
-                 }
-             } catch (e) {
-                 console.error("Failed to check terms:", e);
-             }
-        };
-        checkTerms();
-    }
-  }, [user, isLoading, currentPageName, navigate]);
+    loadData();
+  }, [currentPageName, loadAdminStats, navigate]);
 
   useEffect(() => {
     if (isWizardPage) {
