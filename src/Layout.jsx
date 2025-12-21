@@ -548,6 +548,13 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminCategories')} className="flex items-center gap-2 cursor-pointer">
+                          <Tag className="w-4 h-4 text-purple-600" aria-hidden="true" />
+                          <span>ניהול קטגוריות</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminStats')} className="flex items-center gap-2 cursor-pointer">
                           <Settings className="w-4 h-4 text-green-600" aria-hidden="true" />
                           <span>סטטיסטיקות</span>
@@ -745,6 +752,12 @@ export default function Layout({ children, currentPageName }) {
                         <Link to={createPageUrl("AdminUsers")} className="w-full flex items-center cursor-pointer">
                           <Users className="w-4 h-4 ml-2 text-blue-600" aria-hidden="true" />
                           <span>ניהול משתמשים</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminCategories")} className="w-full flex items-center cursor-pointer">
+                          <Tag className="w-4 h-4 ml-2 text-purple-600" aria-hidden="true" />
+                          <span>ניהול קטגוריות</span>
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
