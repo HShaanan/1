@@ -176,7 +176,7 @@ ${order.items && Array.isArray(order.items) ? order.items.map(item => `• ${ite
     try {
         await base44.asServiceRole.integrations.Core.SendEmail({
         from_name: 'מערכת ההזמנות - משלנו',
-        to: '4170531@gmail.com', // המייל המקורי שהיה בקוד
+        to: 'orders@meshelanu.co.il',
         subject: `🚚 הזמנה #${order.order_number} - ${businessPage.business_name}`,
         body: emailBody
         });
