@@ -242,7 +242,18 @@ ${itemsDetailTelegram}
     // 🟢 שליחת הודעת WhatsApp לבית העסק דרך Zapier → WhatsApp Business API
     let whatsappStatus = { attempted: false, success: false, error: null };
     try {
-        const zapierWebhookUrl = "https://hooks.zapier.com/hooks/catch/24997727/uawcfm4/";
+        // טעינת webhook URL מההגדרות
+        let zapierWebhookUrl = null;
+        try {
+            const zapierSettings = await base44.asServiceRole.entities.AppSettings.filter({ 
+                setting_key: 'ZAPIER_WHATSAPP_URL' 
+            });
+            if (zapierSettings && zapierSettings.length > 0) {
+                zapierWebhookUrl = zapierSettings[0].setting_value;
+            }
+        } catch (e) {
+            console.log('No Zapier webhook URL configured');
+        }
         
         // עדיפות למספר ווטסאפ ייעודי, אחרת טלפון רגיל
         let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
