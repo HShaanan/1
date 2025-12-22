@@ -242,29 +242,11 @@ ${itemsDetailTelegram}
     // 🟢 שליחת הודעת WhatsApp לבית העסק
     let whatsappStatus = { attempted: false, success: false, error: null, provider: null };
     
-    // טעינת הגדרות
-    let zapierWebhookUrl = null;
-    let twilioAccountSid = null;
-    let twilioAuthToken = null;
-    let twilioWhatsappNumber = null;
-    
-    try {
-        const [zapierSettings, twilioSidSecret, twilioTokenSecret, twilioNumberSecret] = await Promise.all([
-            base44.asServiceRole.entities.AppSettings.filter({ setting_key: 'ZAPIER_WHATSAPP_URL' }).catch(() => []),
-            Deno.env.get('TWILIO_ACCOUNT_SID'),
-            Deno.env.get('TWILIO_AUTH_TOKEN'),
-            Deno.env.get('TWILIO_WHATSAPP_NUMBER')
-        ]);
-        
-        if (zapierSettings && zapierSettings.length > 0 && zapierSettings[0].setting_value) {
-            zapierWebhookUrl = zapierSettings[0].setting_value;
-        }
-        twilioAccountSid = twilioSidSecret;
-        twilioAuthToken = twilioTokenSecret;
-        twilioWhatsappNumber = twilioNumberSecret;
-    } catch (e) {
-        console.log('Error loading WhatsApp settings:', e);
-    }
+    // טעינת הגדרות מסודות
+    const zapierWebhookUrl = Deno.env.get('WEBHOOK_URL');
+    const twilioAccountSid = Deno.env.get('TWILIO_ACCOUNT_SID');
+    const twilioAuthToken = Deno.env.get('TWILIO_AUTH_TOKEN');
+    const twilioWhatsappNumber = Deno.env.get('TWILIO_WHATSAPP_NUMBER');
     
     let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
     if (!targetPhone) {

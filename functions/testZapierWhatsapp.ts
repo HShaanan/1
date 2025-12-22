@@ -12,12 +12,12 @@ Deno.serve(async (req) => {
             }, { status: 401 });
         }
 
-        const { webhookUrl } = await req.json();
+        const webhookUrl = Deno.env.get('WEBHOOK_URL');
         
         if (!webhookUrl) {
             return Response.json({ 
                 success: false, 
-                error: 'Missing webhook URL' 
+                error: 'Webhook URL לא מוגדר בסודות המערכת' 
             }, { status: 400 });
         }
 
