@@ -13,8 +13,10 @@ import { toast } from "sonner";
 export default function AdminLiveUsersPage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [sessions, setSessions] = useState([]);
+  const [guestHistory, setGuestHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [showHistory, setShowHistory] = useState(false);
 
   const loadSessions = useCallback(async () => {
     try {
@@ -23,7 +25,19 @@ export default function AdminLiveUsersPage() {
       const result = await base44.functions.invoke('getActiveSessions', {});
       
       if (result.data?.success) {
-        setSessions(result.data.sessions || []);
+        const currentSessions = result.data.sessions || [];
+        setSessions(currentSessions);
+        
+        // שמירת אורחים להיסטוריה
+        const guests = currentSessions.filter(s => !s.is_authenticated);
+        if (guests.length > 0) {
+          setGuestHistory(prev => {
+            const newGuests = guests.filter(g => 
+              !prev.some(h => h.session_id === g.session_id)
+            );
+            return [...newGuests, ...prev].slice(0, 100);
+          });
+        }
       } else {
         setError('שגיאה בטעינת הנתונים');
       }
@@ -95,6 +109,9 @@ export default function AdminLiveUsersPage() {
 
   const authenticatedUsers = sessions.filter(s => s.is_authenticated);
   const guestUsers = sessions.filter(s => !s.is_authenticated);
+  const inactiveGuests = guestHistory.filter(h => 
+    !sessions.some(s => s.session_id === h.session_id)
+  );
 
   if (isLoading) {
     return (
@@ -188,7 +205,7 @@ export default function AdminLiveUsersPage() {
             <CardContent>
               <div className="text-3xl font-bold text-orange-600">{guestUsers.length}</div>
               <p className="text-xs text-muted-foreground mt-1">
-                לא מחוברים
+                פעילים | {guestHistory.length} בהיסטוריה
               </p>
             </CardContent>
           </Card>
@@ -197,9 +214,22 @@ export default function AdminLiveUsersPage() {
         {/* Sessions Table */}
         <Card>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Monitor className="w-5 h-5" />
-              פעילות גולשים בזמן אמת
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Monitor className="w-5 h-5" />
+                פעילות גולשים בזמן אמת
+              </div>
+              {guestHistory.length > 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setShowHistory(!showHistory)}
+                  className="text-xs"
+                >
+                  <Clock className="w-3 h-3 ml-1" />
+                  {showHistory ? 'הסתר היסטוריה' : `היסטוריית אורחים (${guestHistory.length})`}
+                </Button>
+              )}
             </CardTitle>
           </CardHeader>
           <CardContent className="p-0">
@@ -279,6 +309,78 @@ export default function AdminLiveUsersPage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Guest History Table */}
+        {showHistory && guestHistory.length > 0 && (
+          <Card className="mt-6">
+            <CardHeader>
+              <CardTitle className="text-lg font-bold flex items-center gap-2">
+                <Clock className="w-5 h-5 text-slate-600" />
+                היסטוריית אורחים ({guestHistory.length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow className="bg-slate-50">
+                      <TableHead>סטטוס</TableHead>
+                      <TableHead>עמוד</TableHead>
+                      <TableHead>פעילות אחרונה</TableHead>
+                      <TableHead className="hidden md:table-cell">מזהה סשן</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {guestHistory.map((session, index) => {
+                      const isActive = sessions.some(s => s.session_id === session.session_id);
+                      const lastActivity = new Date(session.last_heartbeat);
+                      const now = new Date();
+                      const diffMinutes = Math.floor((now - lastActivity) / 60000);
+                      
+                      return (
+                        <TableRow key={`${session.session_id}-${index}`} className={isActive ? 'bg-green-50' : ''}>
+                          <TableCell>
+                            <Badge className={isActive ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-800'}>
+                              {isActive ? (
+                                <>
+                                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse ml-1"></div>
+                                  מחובר
+                                </>
+                              ) : (
+                                '⚪ לא פעיל'
+                              )}
+                            </Badge>
+                          </TableCell>
+                          <TableCell className="text-sm">
+                            <div className="flex items-center gap-1">
+                              <Eye className="w-3 h-3 text-blue-500" />
+                              <span className="font-mono text-xs">{session.current_page || '/'}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-sm text-slate-600">
+                            <div className="flex items-center gap-1">
+                              <Clock className="w-3 h-3" />
+                              {isActive ? 'עכשיו' : (
+                                diffMinutes < 60 
+                                  ? `לפני ${diffMinutes} דקות` 
+                                  : `לפני ${Math.floor(diffMinutes / 60)} שעות`
+                              )}
+                            </div>
+                          </TableCell>
+                          <TableCell className="hidden md:table-cell">
+                            <span className="text-xs font-mono text-slate-400">
+                              {session.session_id.substring(0, 12)}...
+                            </span>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Auto-refresh indicator */}
         <div className="mt-4 text-center text-sm text-gray-500">
