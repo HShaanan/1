@@ -43,6 +43,97 @@ const useDebounce = (value, delay) => {
   return debouncedValue;
 };
 
+const SubcategoryDropdown = ({ page, categories, onSave }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(page.subcategory_ids || []);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const availableSubcats = useMemo(
+    () => categories.filter(c => c.parent_id === page.category_id),
+    [categories, page.category_id]
+  );
+
+  const toggleSubcat = (subcatId) => {
+    const newSelected = selected.includes(subcatId)
+      ? selected.filter(id => id !== subcatId)
+      : [...selected, subcatId];
+    setSelected(newSelected);
+    setHasChanges(true);
+  };
+
+  const handleSave = async () => {
+    await onSave(page.id, selected);
+    setHasChanges(false);
+    setIsOpen(false);
+  };
+
+  const displayText = useMemo(() => {
+    if (selected.length === 0) return "לא נבחר";
+    if (selected.length === 1) {
+      return categories.find(c => c.id === selected[0])?.name || "לא ידוע";
+    }
+    return `${selected.length} תתי-קטגוריות`;
+  }, [selected, categories]);
+
+  if (availableSubcats.length === 0) {
+    return <span className="text-gray-400 text-xs">אין תתי-קטגוריות</span>;
+  }
+
+  return (
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="w-full justify-between text-xs">
+          <span className="truncate">{displayText}</span>
+          <ChevronDown className="w-3 h-3 mr-1" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-64 p-3" dir="rtl">
+        <div className="space-y-2 max-h-80 overflow-y-auto">
+          {availableSubcats.map(subcat => {
+            const isSelected = selected.includes(subcat.id);
+            return (
+              <div
+                key={subcat.id}
+                onClick={() => toggleSubcat(subcat.id)}
+                className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+                  isSelected ? 'bg-indigo-100 border border-indigo-300' : 'hover:bg-gray-100'
+                }`}
+              >
+                <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+                  isSelected ? 'bg-indigo-600 border-indigo-600' : 'border-gray-300'
+                }`}>
+                  {isSelected && <Check className="w-3 h-3 text-white" />}
+                </div>
+                <span className="text-sm">{subcat.icon} {subcat.name}</span>
+              </div>
+            );
+          })}
+        </div>
+        {hasChanges && (
+          <div className="mt-3 pt-3 border-t flex gap-2">
+            <Button size="sm" onClick={handleSave} className="flex-1 bg-indigo-600 hover:bg-indigo-700">
+              <Check className="w-3 h-3 ml-1" />
+              שמור
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setSelected(page.subcategory_ids || []);
+                setHasChanges(false);
+                setIsOpen(false);
+              }}
+              className="flex-1"
+            >
+              ביטול
+            </Button>
+          </div>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 
 export default function AdminBusinessPages() {
   const [businessPages, setBusinessPages] = useState([]);
