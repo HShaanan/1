@@ -307,29 +307,18 @@ export default function AdminSettings() {
                                                  return;
                                              }
                                              
-                                             const testMessage = `🧪 בדיקת מערכת WhatsApp\n\n✅ זוהי הודעת בדיקה מהמערכת.\nאם קיבלת הודעה זו - החיבור תקין!\n\n🕐 ${new Date().toLocaleString('he-IL')}`;
-
-                                             const response = await fetch(zapierWebhook, {
-                                                 method: 'POST',
-                                                 headers: { 'Content-Type': 'application/json' },
-                                                 body: JSON.stringify({
-                                                     recipient: '972505196963',
-                                                     message_text: testMessage,
-                                                     business_phone: '972505196963',
-                                                     whatsapp_message: testMessage,
-                                                     order_number: 'TEST',
-                                                     business_name: 'בדיקת מערכת'
-                                                 })
+                                             const response = await base44.functions.invoke('testZapierWhatsapp', {
+                                                 webhookUrl: zapierWebhook
                                              });
 
-                                             if (response.ok) {
-                                                 setMessage({ type: 'success', text: 'הודעת בדיקה נשלחה בהצלחה ל-WhatsApp!' });
+                                             if (response.data?.success) {
+                                                 setMessage({ type: 'success', text: response.data.message });
                                              } else {
-                                                 setMessage({ type: 'error', text: 'שגיאה בשליחה - בדוק את הגדרות Zapier' });
+                                                 setMessage({ type: 'error', text: response.data?.error || 'שגיאה בשליחה' });
                                              }
                                           } catch (error) {
                                              console.error(error);
-                                             setMessage({ type: 'error', text: 'שגיאה בתקשורת עם Zapier' });
+                                             setMessage({ type: 'error', text: 'שגיאה בתקשורת: ' + error.message });
                                           } finally {
                                              setTesting(false);
                                           }
