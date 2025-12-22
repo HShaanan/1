@@ -945,6 +945,7 @@ export default function AdminBusinessPages() {
                   <div className="flex items-center gap-1 cursor-pointer">בעל העסק {getSortIcon('business_owner_email')}</div>
                 </th>
                 <th className="p-3">קטגוריה</th>
+                <th className="p-3">תת-קטגוריה</th>
                 <th className="p-3" onClick={() => requestSort('created_date')}>
                   <div className="flex items-center gap-1 cursor-pointer">תאריך יצירה {getSortIcon('created_date')}</div>
                 </th>
