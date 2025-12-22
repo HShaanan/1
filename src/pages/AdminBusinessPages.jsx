@@ -567,6 +567,28 @@ export default function AdminBusinessPages() {
   const getCategoryName = (id) => categories.find(c => c.id === id)?.name || "לא ידוע";
   const getUserFullName = (email) => users.find(u => u.email === email)?.full_name || email;
 
+  const handleSubcategoryChange = async (pageId, subcategoryIds) => {
+    try {
+      await base44.entities.BusinessPage.update(pageId, {
+        subcategory_ids: subcategoryIds,
+        subcategory_id: subcategoryIds.length > 0 ? subcategoryIds[0] : null
+      });
+      
+      setBusinessPages(prev =>
+        prev.map(p =>
+          p.id === pageId ? { ...p, subcategory_ids: subcategoryIds, subcategory_id: subcategoryIds[0] || null } : p
+        )
+      );
+    } catch (err) {
+      setError("שגיאה בעדכון תת-קטגוריה: " + err.message);
+    }
+  };
+
+  const getSubcategoriesForPage = (page) => {
+    if (!page.category_id) return [];
+    return categories.filter(c => c.parent_id === page.category_id);
+  };
+
   const StatusBadge = ({ status }) => {
     switch (status) {
       case 'approved': return <Badge className="bg-green-100 text-green-800"><Check className="h-3 w-3 mr-1" />מאושר</Badge>;
