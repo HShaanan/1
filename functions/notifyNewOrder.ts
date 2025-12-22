@@ -239,103 +239,139 @@ ${itemsDetailTelegram}
         });
     } catch (e) { console.error("Email legacy send failed", e); }
 
-    // 🟢 שליחת הודעת WhatsApp לבית העסק דרך Zapier → WhatsApp Business API
-    let whatsappStatus = { attempted: false, success: false, error: null };
+    // 🟢 שליחת הודעת WhatsApp לבית העסק
+    let whatsappStatus = { attempted: false, success: false, error: null, provider: null };
+    
+    // טעינת הגדרות
+    let zapierWebhookUrl = null;
+    let twilioAccountSid = null;
+    let twilioAuthToken = null;
+    let twilioWhatsappNumber = null;
+    
     try {
-        // טעינת webhook URL מההגדרות
-        let zapierWebhookUrl = null;
-        try {
-            const zapierSettings = await base44.asServiceRole.entities.AppSettings.filter({ 
-                setting_key: 'ZAPIER_WHATSAPP_URL' 
-            });
-            if (zapierSettings && zapierSettings.length > 0) {
-                zapierWebhookUrl = zapierSettings[0].setting_value;
+        const [zapierSettings, twilioSidSecret, twilioTokenSecret, twilioNumberSecret] = await Promise.all([
+            base44.asServiceRole.entities.AppSettings.filter({ setting_key: 'ZAPIER_WHATSAPP_URL' }).catch(() => []),
+            Deno.env.get('TWILIO_ACCOUNT_SID'),
+            Deno.env.get('TWILIO_AUTH_TOKEN'),
+            Deno.env.get('TWILIO_WHATSAPP_NUMBER')
+        ]);
+        
+        if (zapierSettings && zapierSettings.length > 0 && zapierSettings[0].setting_value) {
+            zapierWebhookUrl = zapierSettings[0].setting_value;
+        }
+        twilioAccountSid = twilioSidSecret;
+        twilioAuthToken = twilioTokenSecret;
+        twilioWhatsappNumber = twilioNumberSecret;
+    } catch (e) {
+        console.log('Error loading WhatsApp settings:', e);
+    }
+    
+    let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
+    if (!targetPhone) {
+        console.warn('⚠️ No phone number found for business');
+    } else {
+        targetPhone = targetPhone.replace(/\D/g, '');
+        if (targetPhone.startsWith('0')) targetPhone = '972' + targetPhone.substring(1);
+        if (!targetPhone.startsWith('+')) targetPhone = '+' + targetPhone;
+        
+        // אסטרטגיה: נסה Zapier קודם, אם נכשל או לא מוגדר - השתמש ב-Twilio
+        if (zapierWebhookUrl) {
+            try {
+                whatsappStatus.attempted = true;
+                whatsappStatus.provider = 'Zapier';
+                
+                const zapierPayload = {
+                    recipient: targetPhone.replace('+', ''),
+                    message_text: whatsappMessage,
+                    order_number: order.order_number,
+                    business_name: businessPage.business_name
+                };
+
+                console.log(`📤 Attempting Zapier WhatsApp to ${targetPhone}...`);
+                
+                const waResponse = await fetch(zapierWebhookUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(zapierPayload)
+                });
+                
+                const responseText = await waResponse.text();
+                console.log('📥 Zapier Response:', waResponse.status, responseText);
+
+                if (waResponse.ok) {
+                    whatsappStatus.success = true;
+                    await base44.asServiceRole.entities.NotificationLog.create({
+                        notification_type: 'new_order',
+                        channel: 'whatsapp',
+                        recipient: targetPhone,
+                        status: 'success',
+                        content: whatsappMessage,
+                        provider: 'Zapier-WhatsApp',
+                        provider_response: { status: waResponse.status, response: responseText },
+                        related_entity_id: order.id,
+                        related_entity_type: 'Order'
+                    }).catch(() => {});
+                } else {
+                    throw new Error(`Zapier failed: ${responseText}`);
+                }
+            } catch (zapierError) {
+                console.error('❌ Zapier failed, falling back to Twilio:', zapierError.message);
+                whatsappStatus.error = zapierError.message;
+                whatsappStatus.success = false;
             }
-        } catch (e) {
-            console.log('No Zapier webhook URL configured');
         }
         
-        // עדיפות למספר ווטסאפ ייעודי, אחרת טלפון רגיל
-        let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
-        
-        if (zapierWebhookUrl && targetPhone) {
-            whatsappStatus.attempted = true;
-            
-            // ניקוי המספר ופירמוט לפורמט בינלאומי (למשל 97250...)
-            targetPhone = targetPhone.replace(/\D/g, '');
-            if (targetPhone.startsWith('0')) targetPhone = '972' + targetPhone.substring(1);
-
-            const zapierPayload = {
-                recipient: targetPhone,
-                message_text: whatsappMessage,
-                business_phone: targetPhone,
-                whatsapp_message: whatsappMessage,
-                order_number: order.order_number,
-                business_name: businessPage.business_name,
-                customer_name: order.customer_name,
-                customer_phone: order.customer_phone,
-                customer_address: order.customer_address || 'לא צוינה',
-                total_amount: order.total_amount,
-                order_id: order.id
-            };
-
-            console.log(`📤 Sending WhatsApp via Zapier to ${targetPhone}...`);
-            
-            const waResponse = await fetch(zapierWebhookUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(zapierPayload)
-            });
-            
-            const responseText = await waResponse.text();
-            console.log('📥 Zapier Response:', responseText);
-
-            whatsappStatus.success = waResponse.ok;
-            if (!waResponse.ok) whatsappStatus.error = responseText;
-            
-            // Log to database
+        // Fallback ל-Twilio אם Zapier לא הוגדר או נכשל
+        if (!whatsappStatus.success && twilioAccountSid && twilioAuthToken && twilioWhatsappNumber) {
             try {
+                whatsappStatus.attempted = true;
+                whatsappStatus.provider = 'Twilio';
+                
+                console.log(`📤 Sending via Twilio WhatsApp to ${targetPhone}...`);
+                
+                const twilioUrl = `https://api.twilio.com/2010-04-01/Accounts/${twilioAccountSid}/Messages.json`;
+                const twilioAuth = btoa(`${twilioAccountSid}:${twilioAuthToken}`);
+                
+                const twilioResponse = await fetch(twilioUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Basic ${twilioAuth}`,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        From: `whatsapp:${twilioWhatsappNumber}`,
+                        To: `whatsapp:${targetPhone}`,
+                        Body: whatsappMessage
+                    })
+                });
+                
+                const twilioData = await twilioResponse.json();
+                console.log('📥 Twilio Response:', twilioData);
+                
+                whatsappStatus.success = twilioResponse.ok;
+                whatsappStatus.error = twilioResponse.ok ? null : (twilioData.message || 'Twilio error');
+                
                 await base44.asServiceRole.entities.NotificationLog.create({
                     notification_type: 'new_order',
                     channel: 'whatsapp',
                     recipient: targetPhone,
-                    status: waResponse.ok ? 'success' : 'failed',
+                    status: twilioResponse.ok ? 'success' : 'failed',
                     content: whatsappMessage,
-                    provider: 'Zapier-WhatsApp',
-                    provider_response: { status: waResponse.status, response: responseText },
+                    provider: 'Twilio-WhatsApp',
+                    provider_response: twilioData,
                     related_entity_id: order.id,
                     related_entity_type: 'Order',
-                    error_message: waResponse.ok ? null : responseText
-                });
-            } catch (logError) {
-                console.error("Failed to log WhatsApp notification:", logError);
+                    error_message: twilioResponse.ok ? null : (twilioData.message || 'Unknown error')
+                }).catch(() => {});
+            } catch (twilioError) {
+                console.error('❌ Twilio also failed:', twilioError);
+                whatsappStatus.error = twilioError.message;
             }
-
-            if (!waResponse.ok) {
-                console.error('❌ Zapier Failed:', responseText);
-            }
-        } else {
-            console.warn('⚠️ Skipping WhatsApp: Missing webhook URL or phone number');
-            whatsappStatus.error = "Missing configuration";
         }
-    } catch (waError) {
-        console.error("❌ Failed to send WhatsApp via Zapier:", waError);
-        whatsappStatus.success = false;
-        whatsappStatus.error = waError.message;
-        try {
-            await base44.asServiceRole.entities.NotificationLog.create({
-                notification_type: 'new_order',
-                channel: 'whatsapp',
-                recipient: businessPage.whatsapp_phone || businessPage.contact_phone || 'unknown',
-                status: 'failed',
-                content: whatsappMessage,
-                provider: 'Zapier-WhatsApp',
-                related_entity_id: order.id,
-                related_entity_type: 'Order',
-                error_message: waError.message
-            });
-        } catch (logError) {
-            console.error("Failed to log WhatsApp error:", logError);
+        
+        if (!whatsappStatus.success && !whatsappStatus.attempted) {
+            console.warn('⚠️ No WhatsApp provider configured');
+            whatsappStatus.error = 'No provider configured';
         }
     }
 
