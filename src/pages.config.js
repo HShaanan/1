@@ -54,6 +54,7 @@ import EditBusinessTheme from './pages/EditBusinessTheme';
 import EditListing from './pages/EditListing';
 import Favorites from './pages/Favorites';
 import Home from './pages/Home';
+import Landing from './pages/Landing';
 import LandingPage from './pages/LandingPage';
 import MediaCreator from './pages/MediaCreator';
 import MyBusinessPages from './pages/MyBusinessPages';
@@ -65,7 +66,6 @@ import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
-import Landing from './pages/Landing';
 import __Layout from './Layout.jsx';
 
 
@@ -126,6 +126,7 @@ export const PAGES = {
     "EditListing": EditListing,
     "Favorites": Favorites,
     "Home": Home,
+    "Landing": Landing,
     "LandingPage": LandingPage,
     "MediaCreator": MediaCreator,
     "MyBusinessPages": MyBusinessPages,
@@ -137,7 +138,6 @@ export const PAGES = {
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
-    "Landing": Landing,
 }
 
 export const pagesConfig = {

@@ -251,19 +251,71 @@ export default function AdminSettings() {
                                           </Button>
 
                                           <Button 
-                                              variant="outline" 
-                                              size="sm"
-                                              onClick={sendTestOrder}
-                                              disabled={testing || !telegramToken || !telegramChatId}
-                                              className="bg-white hover:bg-blue-100 border-blue-200 text-blue-900 w-fit"
+                                               variant="outline" 
+                                               size="sm"
+                                               onClick={sendTestOrder}
+                                               disabled={testing || !telegramToken || !telegramChatId}
+                                               className="bg-white hover:bg-blue-100 border-blue-200 text-blue-900 w-fit"
+                                           >
+                                               {testing ? <Loader2 className="w-3 h-3 animate-spin ml-2" /> : '🍕'}
+                                               שלח הזמנת דמה (סימולציה)
+                                           </Button>
+                                          </div>
+                                          </div>
+                                          </div>
+
+                                          {/* WhatsApp Business Section */}
+                                          <div className="space-y-4 border-b pb-6">
+                                          <div className="flex items-center gap-2 mb-2">
+                                          <div className="bg-green-500 text-white p-1 rounded-full w-6 h-6 flex items-center justify-center text-xs">WA</div>
+                                          <h3 className="font-semibold text-slate-800">WhatsApp Business (דרך Zapier)</h3>
+                                          </div>
+                                          <div className="bg-green-50 p-3 rounded-lg border border-green-100">
+                                          <p className="text-sm text-green-800 mb-3">
+                                          <strong>בדיקת WhatsApp:</strong> שלח הודעת בדיקה דרך Zapier למספר 0505196963
+                                          </p>
+                                          <Button 
+                                          variant="outline" 
+                                          size="sm"
+                                          onClick={async () => {
+                                          setTesting(true);
+                                          setMessage(null);
+                                          try {
+                                             const zapierUrl = "https://hooks.zapier.com/hooks/catch/24997727/uawcfm4/";
+                                             const testMessage = `🧪 בדיקת מערכת WhatsApp\n\n✅ זוהי הודעת בדיקה מהמערכת.\nאם קיבלת הודעה זו - החיבור תקין!\n\n🕐 ${new Date().toLocaleString('he-IL')}`;
+
+                                             const response = await fetch(zapierUrl, {
+                                                 method: 'POST',
+                                                 headers: { 'Content-Type': 'application/json' },
+                                                 body: JSON.stringify({
+                                                     business_phone: '972505196963',
+                                                     whatsapp_message: testMessage,
+                                                     order_number: 'TEST',
+                                                     business_name: 'בדיקת מערכת'
+                                                 })
+                                             });
+
+                                             if (response.ok) {
+                                                 setMessage({ type: 'success', text: 'הודעת בדיקה נשלחה בהצלחה ל-WhatsApp!' });
+                                             } else {
+                                                 setMessage({ type: 'error', text: 'שגיאה בשליחה - בדוק את הגדרות Zapier' });
+                                             }
+                                          } catch (error) {
+                                             console.error(error);
+                                             setMessage({ type: 'error', text: 'שגיאה בתקשורת עם Zapier' });
+                                          } finally {
+                                             setTesting(false);
+                                          }
+                                          }}
+                                          disabled={testing}
+                                          className="bg-white hover:bg-green-100 border-green-200 text-green-900 w-fit"
                                           >
-                                              {testing ? <Loader2 className="w-3 h-3 animate-spin ml-2" /> : '🍕'}
-                                              שלח הזמנת דמה (סימולציה)
+                                          {testing ? <Loader2 className="w-3 h-3 animate-spin ml-2" /> : '📱'}
+                                          שלח הודעת בדיקה ל-WhatsApp
                                           </Button>
-                                      </div>
-                                      </div>
-                                      </div>
-                                      </div>
+                                          </div>
+                                          </div>
+                                          </div>
 
                             {/* Email Section */}
                             <div className="space-y-4">
