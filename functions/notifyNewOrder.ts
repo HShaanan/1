@@ -239,111 +239,74 @@ ${itemsDetailTelegram}
         });
     } catch (e) { console.error("Email legacy send failed", e); }
 
-    // 🟢 שליחת הודעת WhatsApp לבית העסק באמצעות GreenAPI
+    // 🟢 שליחת הודעת WhatsApp לבית העסק דרך Zapier → WhatsApp Business API
     let whatsappStatus = { attempted: false, success: false, error: null };
     try {
-        // Sanitize inputs aggressively to remove spaces or accidental text prefix
-        let greenApiInstanceId = (Deno.env.get("GREEN_API_INSTANCE_ID") || "").trim();
-        const greenApiToken = (Deno.env.get("GREEN_API_TOKEN") || "").trim();
+        const zapierWebhookUrl = "https://hooks.zapier.com/hooks/catch/24997727/uawcfm4/";
         
-        // Ensure Instance ID contains only digits (remove "Instance", spaces, etc.)
-        greenApiInstanceId = greenApiInstanceId.replace(/\D/g, '');
-
-        // זיהוי דינמי של ה-Host לפי ה-Instance ID (4 ספרות ראשונות)
-        let resolvedHost = (Deno.env.get("GREEN_API_HOST") || "").trim();
-        
-        // If host contains full URL junk, clean it
-        resolvedHost = resolvedHost.replace(/^https?:\/\//, '').replace(/\/$/, '');
-        
-        if ((!resolvedHost || resolvedHost === "undefined") && greenApiInstanceId.length >= 4) {
-            const prefix = greenApiInstanceId.substring(0, 4);
-            resolvedHost = `${prefix}.api.greenapi.com`;
-            console.log(`🌍 Auto-detected GreenAPI host: ${resolvedHost}`);
-        }
-        
-        // Final fallback if still empty
-        if (!resolvedHost) resolvedHost = "7105.api.greenapi.com";
-
-        console.log(`🔌 GreenAPI Config: Host=${resolvedHost}, Instance=${greenApiInstanceId} (Sanitized), Token=${greenApiToken ? '***' : 'Missing'}`);
-
         // עדיפות למספר ווטסאפ ייעודי, אחרת טלפון רגיל
         let targetPhone = businessPage.whatsapp_phone || businessPage.contact_phone;
         
-        if (greenApiInstanceId && greenApiToken && targetPhone) {
+        if (zapierWebhookUrl && targetPhone) {
             whatsappStatus.attempted = true;
             
             // ניקוי המספר ופירמוט לפורמט בינלאומי (למשל 97250...)
             targetPhone = targetPhone.replace(/\D/g, '');
             if (targetPhone.startsWith('0')) targetPhone = '972' + targetPhone.substring(1);
-            
-            const chatId = `${targetPhone}@c.us`;
-            
-            // Construct URL dynamically
-            const greenApiUrl = `https://${resolvedHost}/waInstance${greenApiInstanceId}/sendMessage/${greenApiToken}`;
-            
-            const whatsappPayload = {
-                chatId: chatId,
-                message: whatsappMessage
+
+            const zapierPayload = {
+                business_phone: targetPhone,
+                whatsapp_message: whatsappMessage,
+                order_number: order.order_number,
+                business_name: businessPage.business_name,
+                customer_name: order.customer_name,
+                customer_phone: order.customer_phone,
+                customer_address: order.customer_address || 'לא צוינה',
+                total_amount: order.total_amount,
+                order_id: order.id
             };
 
-            console.log(`📤 Sending WhatsApp via GreenAPI to ${chatId} using host ${resolvedHost}...`);
+            console.log(`📤 Sending WhatsApp via Zapier to ${targetPhone}...`);
             
-            const waResponse = await fetch(greenApiUrl, {
+            const waResponse = await fetch(zapierWebhookUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(whatsappPayload)
+                body: JSON.stringify(zapierPayload)
             });
             
             const responseText = await waResponse.text();
-            console.log('📥 Raw GreenAPI Response:', responseText);
+            console.log('📥 Zapier Response:', responseText);
 
-            let waResult = null;
-            try {
-                waResult = responseText ? JSON.parse(responseText) : {};
-            } catch (e) {
-                waResult = { 
-                    error: "Failed to parse JSON response", 
-                    raw_response: responseText.slice(0, 500), // Limit length
-                    http_status: waResponse.status,
-                    http_text: waResponse.statusText
-                };
-            }
-            
-            console.log('✅ Parsed Response:', waResult);
             whatsappStatus.success = waResponse.ok;
-            if (!waResponse.ok) whatsappStatus.error = waResult;
+            if (!waResponse.ok) whatsappStatus.error = responseText;
             
             // Log to database
             try {
                 await base44.asServiceRole.entities.NotificationLog.create({
                     notification_type: 'new_order',
                     channel: 'whatsapp',
-                    recipient: chatId,
+                    recipient: targetPhone,
                     status: waResponse.ok ? 'success' : 'failed',
                     content: whatsappMessage,
-                    provider: 'GreenAPI',
-                    provider_response: {
-                        ...waResult,
-                        debug_url: greenApiUrl.replace(greenApiToken, '***TOKEN***'), // Log the URL being hit (masked)
-                        resolved_host: resolvedHost
-                    },
+                    provider: 'Zapier-WhatsApp',
+                    provider_response: { status: waResponse.status, response: responseText },
                     related_entity_id: order.id,
                     related_entity_type: 'Order',
-                    error_message: waResponse.ok ? null : JSON.stringify(waResult)
+                    error_message: waResponse.ok ? null : responseText
                 });
             } catch (logError) {
                 console.error("Failed to log WhatsApp notification:", logError);
             }
 
             if (!waResponse.ok) {
-                console.error('❌ GreenAPI Failed:', waResult);
+                console.error('❌ Zapier Failed:', responseText);
             }
         } else {
-            console.warn('⚠️ Skipping GreenAPI: Missing secrets or phone number');
+            console.warn('⚠️ Skipping WhatsApp: Missing webhook URL or phone number');
             whatsappStatus.error = "Missing configuration";
         }
     } catch (waError) {
-        console.error("❌ Failed to send WhatsApp via GreenAPI:", waError);
+        console.error("❌ Failed to send WhatsApp via Zapier:", waError);
         whatsappStatus.success = false;
         whatsappStatus.error = waError.message;
         try {
@@ -353,7 +316,7 @@ ${itemsDetailTelegram}
                 recipient: businessPage.whatsapp_phone || businessPage.contact_phone || 'unknown',
                 status: 'failed',
                 content: whatsappMessage,
-                provider: 'GreenAPI',
+                provider: 'Zapier-WhatsApp',
                 related_entity_id: order.id,
                 related_entity_type: 'Order',
                 error_message: waError.message
