@@ -344,10 +344,11 @@ export default function AdminSettings() {
                                     </div>
                                 )}
                             </div>
-                        </div>
-                        </CardContent>
-                </Card>
-            </div>
-        </div>
-    );
-}
+                            </div>
+                            </div>
+                            </CardContent>
+                            </Card>
+                            </div>
+                            </div>
+                            );
+                            }
