@@ -58,13 +58,13 @@ export default function StoresPage() {
       const filters = storePage.filters || {};
       
       return {
-          activeTab: filters.active_tab,
+          activeTab: filters.active_tab || 'food',
           categoryId: filters.category_id,
-          subcategoryId: filters.subcategory_ids?.[0], // Take first subcategory if exists
-          kashrut: filters.kashrut,
-          delivery: filters.delivery,
-          pickup: filters.pickup,
-          openNow: filters.open_now
+          subcategoryIds: filters.subcategory_ids || [],
+          kashrut: filters.kashrut || [],
+          delivery: filters.delivery || false,
+          pickup: filters.pickup || false,
+          openNow: filters.open_now || false
       };
   }, [storePage]);
 
