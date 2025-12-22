@@ -255,6 +255,8 @@ ${itemsDetailTelegram}
             if (targetPhone.startsWith('0')) targetPhone = '972' + targetPhone.substring(1);
 
             const zapierPayload = {
+                recipient: targetPhone,
+                message_text: whatsappMessage,
                 business_phone: targetPhone,
                 whatsapp_message: whatsappMessage,
                 order_number: order.order_number,
