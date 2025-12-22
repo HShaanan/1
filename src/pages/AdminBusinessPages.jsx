@@ -1033,7 +1033,7 @@ export default function AdminBusinessPages() {
                   </tr>
                   {expandedPageId === page.id && (
                     <tr className="bg-red-50">
-                      <td colSpan="7" className="p-4">
+                      <td colSpan="8" className="p-4">
                         <h4 className="font-semibold mb-2">סיבת דחייה:</h4>
                         <Input
                           placeholder="לדוגמה: תיאור העסק חסר, תמונות לא רלוונטיות וכו'."
