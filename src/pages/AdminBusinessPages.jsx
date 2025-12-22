@@ -979,6 +979,13 @@ export default function AdminBusinessPages() {
                     </td>
                     <td className="p-3">{getUserFullName(page.business_owner_email)}</td>
                     <td className="p-3">{getCategoryName(page.category_id)}</td>
+                    <td className="p-3">
+                      <SubcategoryDropdown
+                        page={page}
+                        categories={categories}
+                        onSave={handleSubcategoryChange}
+                      />
+                    </td>
                     <td className="p-3">{new Date(page.created_date).toLocaleDateString('he-IL')}</td>
                     <td className="p-3"><StatusBadge status={page.approval_status} /></td>
                     <td className="p-3 text-center">
