@@ -28,6 +28,9 @@ export default function AdminStoresPage() {
         const [bulkGenerating, setBulkGenerating] = useState(false);
         const [bulkDialogOpen, setBulkDialogOpen] = useState(false);
         const [bulkPreview, setBulkPreview] = useState(null);
+        const [businessLandingGenerating, setBusinessLandingGenerating] = useState(false);
+        const [businessLandingDialogOpen, setBusinessLandingDialogOpen] = useState(false);
+        const [businessLandingPreview, setBusinessLandingPreview] = useState(null);
 
   // Form State
   const [formState, setFormState] = useState({
@@ -296,6 +299,44 @@ export default function AdminStoresPage() {
     }
   };
 
+  const handleBusinessLandingGenerate = async () => {
+    setBusinessLandingDialogOpen(true);
+    setBusinessLandingGenerating(true);
+    try {
+        const res = await base44.functions.invoke('generateBusinessLandingPages', {
+            mode: 'preview',
+            city: 'ביתר עילית'
+        });
+        if (res.data?.success) {
+            setBusinessLandingPreview(res.data);
+        }
+    } catch (e) {
+        console.error(e);
+        alert("שגיאה בטעינת תצוגה מקדימה");
+    } finally {
+        setBusinessLandingGenerating(false);
+    }
+  };
+
+  const executeBusinessLandingGeneration = async () => {
+    setBusinessLandingGenerating(true);
+    try {
+        const res = await base44.functions.invoke('generateBusinessLandingPages', {
+            mode: 'create',
+            city: 'ביתר עילית'
+        });
+        if (res.data?.success) {
+            alert(`נוצרו בהצלחה ${res.data.stats.created} דפי נחיתה לעסקים!`);
+            setBusinessLandingDialogOpen(false);
+        }
+    } catch (e) {
+        console.error(e);
+        alert("שגיאה ביצירת דפים: " + e.message);
+    } finally {
+        setBusinessLandingGenerating(false);
+    }
+  };
+
   return (
     <div className="p-8 bg-slate-50 min-h-screen" dir="rtl">
       <div className="max-w-6xl mx-auto">
@@ -311,6 +352,10 @@ export default function AdminStoresPage() {
               <Button variant="default" onClick={handleBulkGenerate} disabled={bulkGenerating} className="bg-gradient-to-r from-green-500 to-emerald-600 text-white hover:from-green-600 hover:to-emerald-700">
                 {bulkGenerating ? <Loader2 className="w-4 h-4 ml-2 animate-spin" /> : <Wand2 className="w-4 h-4 ml-2" />}
                 {bulkGenerating ? 'יוצר...' : 'יצירה מאסיבית'}
+              </Button>
+              <Button variant="default" onClick={handleBusinessLandingGenerate} disabled={businessLandingGenerating} className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white hover:from-blue-600 hover:to-cyan-700">
+                {businessLandingGenerating ? <Loader2 className="w-4 h-4 ml-2 animate-spin" /> : <Store className="w-4 h-4 ml-2" />}
+                {businessLandingGenerating ? 'יוצר...' : 'דפי עסקים'}
               </Button>
               <Button onClick={() => openEditDialog(null)}>
                 <Plus className="w-4 h-4 ml-2" /> דף חדש
@@ -718,6 +763,99 @@ export default function AdminStoresPage() {
                       <>
                         <Wand2 className="w-4 h-4 ml-2" />
                         התחל יצירה ({bulkPreview.total_combinations} דפים)
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </div>
+            ) : null}
+          </DialogContent>
+        </Dialog>
+
+        {/* Business Landing Pages Dialog */}
+        <Dialog open={businessLandingDialogOpen} onOpenChange={setBusinessLandingDialogOpen}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>יצירת דפי נחיתה לעסקים - ביתר עילית</DialogTitle>
+            </DialogHeader>
+
+            {businessLandingGenerating && !businessLandingPreview ? (
+              <div className="flex flex-col items-center justify-center py-12 gap-4">
+                <Loader2 className="w-12 h-12 animate-spin text-blue-600" />
+                <p className="text-slate-600">טוען תצוגה מקדימה...</p>
+              </div>
+            ) : businessLandingPreview ? (
+              <div className="space-y-6">
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-xl border border-blue-200">
+                  <h3 className="font-bold text-lg mb-4 text-blue-900">📊 סטטיסטיקות</h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-blue-600">{businessLandingPreview.total_businesses}</div>
+                      <div className="text-xs text-slate-600">סה"כ עסקים</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-slate-600">{businessLandingPreview.existing_pages}</div>
+                      <div className="text-xs text-slate-600">דפים קיימים</div>
+                    </div>
+                    <div className="bg-white p-4 rounded-lg shadow-sm">
+                      <div className="text-2xl font-bold text-green-600">{businessLandingPreview.new_pages_count}</div>
+                      <div className="text-xs text-slate-600">דפים חדשים</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-white p-6 rounded-xl border border-slate-200">
+                  <h3 className="font-bold text-lg mb-4 flex items-center gap-2">
+                    <Store className="w-5 h-5 text-blue-600" />
+                    דוגמאות לדפים שייווצרו
+                  </h3>
+                  <div className="space-y-2 max-h-60 overflow-y-auto">
+                    {businessLandingPreview.sample_pages?.map((page, idx) => (
+                      <div key={idx} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg text-sm">
+                        <Store className="w-4 h-4 text-blue-500" />
+                        <div className="flex-1">
+                          <span className="font-medium">{page.business_name}</span>
+                          <span className="text-slate-500 text-xs block font-mono">/{page.slug}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="bg-blue-50 border border-blue-200 p-4 rounded-lg">
+                  <h4 className="font-bold text-blue-900 mb-2 flex items-center gap-2">
+                    💡 איך זה עובד
+                  </h4>
+                  <ul className="text-sm text-blue-800 space-y-1">
+                    <li>• כל דף ינווט אוטומטית לעמוד העסק הרלוונטי</li>
+                    <li>• תוכן SEO איכותי ייווצר באמצעות AI</li>
+                    <li>• אין כפילויות - דפים קיימים לא יוחלפו</li>
+                    <li>• URL: /landing?slug=שם-עסק-ביתר-עילית</li>
+                  </ul>
+                </div>
+
+                <div className="flex justify-end gap-3 pt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setBusinessLandingDialogOpen(false)}
+                    disabled={businessLandingGenerating}
+                  >
+                    ביטול
+                  </Button>
+                  <Button 
+                    onClick={executeBusinessLandingGeneration}
+                    disabled={businessLandingGenerating}
+                    className="bg-gradient-to-r from-blue-500 to-cyan-600 text-white"
+                  >
+                    {businessLandingGenerating ? (
+                      <>
+                        <Loader2 className="w-4 h-4 ml-2 animate-spin" />
+                        יוצר דפים...
+                      </>
+                    ) : (
+                      <>
+                        <Store className="w-4 h-4 ml-2" />
+                        צור {businessLandingPreview.new_pages_count} דפים
                       </>
                     )}
                   </Button>
