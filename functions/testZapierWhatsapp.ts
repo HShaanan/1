@@ -21,13 +21,47 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        const testMessage = `🧪 בדיקת מערכת WhatsApp\n\n✅ זוהי הודעת בדיקה מהמערכת.\nאם קיבלת הודעה זו - החיבור תקין!\n\n🕐 ${new Date().toLocaleString('he-IL')}`;
+        const fullOrderMessage = `
+🚚 הזמנה #99001
+
+🏪 איסוף: שפע ברכת השם
+📍 בית"ר עילית, 38 כף החיים
+
+🏠 משלוח ללקוח:
+👤 ישראל ישראלי
+📞 0505196963
+📍 רחוב הרצל 12, דירה 5, ביתר עילית
+
+🛒 פירוט ההזמנה:
+• 2x פיצה משפחתית XL - 45₪
+  תוספות:
+    - פטריות (+5₪)
+    - זיתים (+5₪)
+  בצק:
+    - בצק דק
+  📝 בלי זיתים שחורים, רק ירוקים
+
+• 1x קולה גדול 1.5L - 12₪
+
+• 1x סלט ירקות - 18₪
+  רוטב:
+    - טחינה (+3₪)
+  📝 טרי בבקשה
+
+💰 סה"כ: 132₪
+
+💬 הערות כלליות: להגיע בין 19:00-19:30, להשאיר ליד הדלת אם אין מענה
+
+🚗 ניווט:
+לעסק: https://waze.com/ul?q=בית"ר עילית, 38 כף החיים&navigate=yes
+ללקוח: https://waze.com/ul?q=רחוב הרצל 12, ביתר עילית&navigate=yes
+        `.trim();
 
         const zapierPayload = {
             recipient: '972505196963',
-            message_text: testMessage,
-            order_number: 'TEST',
-            business_name: 'בדיקת מערכת'
+            message_text: fullOrderMessage,
+            order_number: '99001',
+            business_name: 'שפע ברכת השם'
         };
 
         console.log(`📤 Sending test to Zapier: ${webhookUrl}`);
@@ -44,7 +78,7 @@ Deno.serve(async (req) => {
         if (response.ok) {
             return Response.json({ 
                 success: true, 
-                message: 'הודעת בדיקה נשלחה בהצלחה!',
+                message: '✅ הזמנת דמה מלאה נשלחה! בדוק WhatsApp 0505196963',
                 details: { status: response.status, response: responseText }
             });
         } else {
