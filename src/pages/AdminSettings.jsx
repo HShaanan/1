@@ -288,6 +288,8 @@ export default function AdminSettings() {
                                                  method: 'POST',
                                                  headers: { 'Content-Type': 'application/json' },
                                                  body: JSON.stringify({
+                                                     recipient: '972505196963',
+                                                     message_text: testMessage,
                                                      business_phone: '972505196963',
                                                      whatsapp_message: testMessage,
                                                      order_number: 'TEST',
