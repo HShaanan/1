@@ -29,6 +29,7 @@ export default function BrowsePage({ preSelectedState }) {
   const [loading, setLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [selectedSubcategories, setSelectedSubcategories] = useState([]);
   const [professionalsGroups, setProfessionalsGroups] = useState([]);
   const [selectedProfGroup, setSelectedProfGroup] = useState(null);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -91,17 +92,18 @@ export default function BrowsePage({ preSelectedState }) {
             if (cat) setSelectedCategory(cat);
         }
 
-        // 3. Set Subcategory
+        // 3. Set Subcategory (single)
         if (preSelectedState.subcategoryId) {
-             // Wait for category to be set? No, we have the full list.
-             // Note: In Browse logic, subcategory implies a parent category is usually selected or relevant.
-             // We'll find the subcategory object from the full list if needed.
-             // Assuming flat list of categories contains subcategories too (as per existing logic).
              const sub = categories.find(c => c.id === preSelectedState.subcategoryId);
              if (sub) setSelectedSubcategory(sub);
         }
+        
+        // 4. Set Subcategories (multiple from store pages)
+        if (preSelectedState.subcategoryIds && preSelectedState.subcategoryIds.length > 0) {
+             setSelectedSubcategories(preSelectedState.subcategoryIds);
+        }
 
-        // 4. Set Filters
+        // 5. Set Filters
         setFilters(prev => ({
             ...prev,
             kashrut: preSelectedState.kashrut || [],
@@ -348,6 +350,14 @@ export default function BrowsePage({ preSelectedState }) {
         }
         return l.subcategory_id === selectedSubcategory.id;
       });
+    } else if (selectedSubcategories.length > 0) {
+      // Filter by multiple subcategories (from store pages)
+      base = base.filter(l => {
+        const listingSubcats = Array.isArray(l.subcategory_ids) 
+          ? l.subcategory_ids 
+          : (l.subcategory_id ? [l.subcategory_id] : []);
+        return selectedSubcategories.some(subId => listingSubcats.includes(subId));
+      });
     } else if (selectedCategory) {
       const allSubcategoryIds = categories
         .filter(c => c.parent_id === selectedCategory.id)
@@ -388,7 +398,7 @@ export default function BrowsePage({ preSelectedState }) {
     }
 
     return base;
-  }, [activeListings, searchResults, activeTab, selectedCategory, selectedSubcategory, selectedProfGroup, categories, isFoodCatId, isShopCatId, filters, searchQuery]);
+  }, [activeListings, searchResults, activeTab, selectedCategory, selectedSubcategory, selectedSubcategories, selectedProfGroup, categories, isFoodCatId, isShopCatId, filters, searchQuery]);
 
   // Dynamic SEO based on selected filters
   const seoTitle = selectedSubcategory 
@@ -596,7 +606,27 @@ export default function BrowsePage({ preSelectedState }) {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content">
         <div className="space-y-8">
-          {!selectedCategory && !selectedSubcategory && !selectedProfGroup && (
+          {/* Pre-selected Subcategories Chips (from store pages) */}
+          {selectedSubcategories.length > 0 && (
+            <div className="mb-6 flex flex-wrap gap-2">
+              {selectedSubcategories.map(subId => {
+                const subcat = categories.find(c => c.id === subId);
+                if (!subcat) return null;
+                return (
+                  <button 
+                    key={subId} 
+                    onClick={() => setSelectedSubcategories(prev => prev.filter(id => id !== subId))}
+                    className="px-4 py-2 bg-indigo-100 text-indigo-700 hover:bg-indigo-200 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+                  >
+                    {subcat.icon} {subcat.name} 
+                    <span className="text-indigo-500">✕</span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          
+          {!selectedCategory && !selectedSubcategory && !selectedProfGroup && selectedSubcategories.length === 0 && (
             <>
               {activeTab === "food" ? (
                 <section aria-labelledby="food-subcategories-heading">
