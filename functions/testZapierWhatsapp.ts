@@ -22,8 +22,8 @@ Deno.serve(async (req) => {
         }
 
         const zapierPayload = {
-            recipient: '+972505196963',
-            message_text: 'הזמנה חדשה! #12345 - יוחנן כהן - מוקה וקרוסאנט'
+            recipient: '+972501234567',
+            message_text: '🎉 הזמנה חדשה! #12345 - יוחנן כהן\n📦 פרטים: 2x מוקה, 1x עוגה\n💰 סכום: 89 ש״ח'
         };
 
         console.log(`📤 Sending test to Zapier: ${webhookUrl}`);
