@@ -12,6 +12,7 @@ export default function AdminSettings() {
     const [email, setEmail] = useState("");
     const [telegramToken, setTelegramToken] = useState("");
     const [telegramChatId, setTelegramChatId] = useState("");
+    const [zapierWebhook, setZapierWebhook] = useState("");
     const [saving, setSaving] = useState(false);
     const [testing, setTesting] = useState(false);
     const [message, setMessage] = useState(null);
@@ -33,6 +34,9 @@ export default function AdminSettings() {
 
             const tgChatId = data.find(s => s.setting_key === 'telegram_chat_id');
             if (tgChatId) setTelegramChatId(tgChatId.setting_value);
+
+            const zapierSetting = data.find(s => s.setting_key === 'ZAPIER_WHATSAPP_URL');
+            if (zapierSetting) setZapierWebhook(zapierSetting.setting_value);
 
         } catch (error) {
             console.error("Error loading settings:", error);
@@ -155,7 +159,8 @@ export default function AdminSettings() {
             await Promise.all([
                 saveOne('admin_notification_email', email, 'אימייל להתראות', 'general'),
                 saveOne('telegram_bot_token', telegramToken, 'Telegram Bot Token', 'integrations'),
-                saveOne('telegram_chat_id', telegramChatId, 'Telegram Chat ID', 'integrations')
+                saveOne('telegram_chat_id', telegramChatId, 'Telegram Chat ID', 'integrations'),
+                saveOne('ZAPIER_WHATSAPP_URL', zapierWebhook, 'Zapier WhatsApp Webhook', 'integrations')
             ]);
 
             await loadSettings();
@@ -270,6 +275,21 @@ export default function AdminSettings() {
                                           <div className="bg-green-500 text-white p-1 rounded-full w-6 h-6 flex items-center justify-center text-xs">WA</div>
                                           <h3 className="font-semibold text-slate-800">WhatsApp Business (דרך Zapier)</h3>
                                           </div>
+                                          
+                                          <div>
+                                              <Label htmlFor="zapier_webhook">Zapier Webhook URL</Label>
+                                              <Input 
+                                                  id="zapier_webhook"
+                                                  value={zapierWebhook}
+                                                  onChange={e => setZapierWebhook(e.target.value)}
+                                                  placeholder="https://hooks.zapier.com/hooks/catch/..."
+                                                  className="ltr font-mono text-sm"
+                                              />
+                                              <p className="text-xs text-slate-500 mt-1">
+                                                  השאר ריק כדי להשתמש ב-Twilio WhatsApp (fallback אוטומטי)
+                                              </p>
+                                          </div>
+                                          
                                           <div className="bg-green-50 p-3 rounded-lg border border-green-100">
                                           <p className="text-sm text-green-800 mb-3">
                                           <strong>בדיקת WhatsApp:</strong> שלח הודעת בדיקה דרך Zapier למספר 0505196963
@@ -281,10 +301,15 @@ export default function AdminSettings() {
                                           setTesting(true);
                                           setMessage(null);
                                           try {
-                                             const zapierUrl = "https://hooks.zapier.com/hooks/catch/24997727/uawcfm4/";
+                                             if (!zapierWebhook) {
+                                                 setMessage({ type: 'error', text: 'נא להזין Webhook URL קודם' });
+                                                 setTesting(false);
+                                                 return;
+                                             }
+                                             
                                              const testMessage = `🧪 בדיקת מערכת WhatsApp\n\n✅ זוהי הודעת בדיקה מהמערכת.\nאם קיבלת הודעה זו - החיבור תקין!\n\n🕐 ${new Date().toLocaleString('he-IL')}`;
 
-                                             const response = await fetch(zapierUrl, {
+                                             const response = await fetch(zapierWebhook, {
                                                  method: 'POST',
                                                  headers: { 'Content-Type': 'application/json' },
                                                  body: JSON.stringify({
