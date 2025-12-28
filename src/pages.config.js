@@ -34,7 +34,6 @@ import AdminTimezone from './pages/AdminTimezone';
 import AdminUsers from './pages/AdminUsers';
 import Browse from './pages/Browse';
 import BusinessAnalytics from './pages/BusinessAnalytics';
-import BusinessLanding from './pages/BusinessLanding';
 import BusinessManage from './pages/BusinessManage';
 import BusinessPage from './pages/BusinessPage';
 import ContactPage from './pages/ContactPage';
@@ -69,6 +68,7 @@ import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
 import LandingPage from './pages/LandingPage';
+import BusinessLanding from './pages/BusinessLanding';
 import __Layout from './Layout.jsx';
 
 
@@ -109,7 +109,6 @@ export const PAGES = {
     "AdminUsers": AdminUsers,
     "Browse": Browse,
     "BusinessAnalytics": BusinessAnalytics,
-    "BusinessLanding": BusinessLanding,
     "BusinessManage": BusinessManage,
     "BusinessPage": BusinessPage,
     "ContactPage": ContactPage,
@@ -144,6 +143,7 @@ export const PAGES = {
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
     "LandingPage": LandingPage,
+    "BusinessLanding": BusinessLanding,
 }
 
 export const pagesConfig = {
