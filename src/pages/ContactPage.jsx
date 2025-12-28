@@ -174,34 +174,6 @@ export default function ContactPage() {
                 
                 <div className="space-y-6">
                   <a 
-                    href="tel:0505196963"
-                    className="flex items-center gap-4 p-4 bg-slate-50 hover:bg-slate-100 rounded-xl transition-colors group"
-                  >
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Phone className="w-6 h-6 text-blue-600" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-slate-900">טלפון</div>
-                      <div className="text-slate-600">050-519-6963</div>
-                    </div>
-                  </a>
-
-                  <a 
-                    href="https://wa.me/972505196963"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-4 p-4 bg-green-50 hover:bg-green-100 rounded-xl transition-colors group"
-                  >
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <MessageCircle className="w-6 h-6 text-green-600" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-slate-900">וואטסאפ</div>
-                      <div className="text-slate-600">050-519-6963</div>
-                    </div>
-                  </a>
-
-                  <a 
                     href="mailto:support@meshelanu.co.il"
                     className="flex items-center gap-4 p-4 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors group"
                   >
@@ -219,21 +191,10 @@ export default function ContactPage() {
 
             <Card className="shadow-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white">
               <CardContent className="p-8">
-                <h3 className="text-xl font-bold mb-4">שעות פעילות</h3>
-                <div className="space-y-2 text-white/90">
-                  <div className="flex justify-between">
-                    <span>ראשון - חמישי:</span>
-                    <span className="font-semibold">9:00 - 20:00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>ערב שבת:</span>
-                    <span className="font-semibold">9:00 - 14:00</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>מוצ״ש:</span>
-                    <span className="font-semibold">21:00 - 23:00</span>
-                  </div>
-                </div>
+                <h3 className="text-xl font-bold mb-4">זמני מענה</h3>
+                <p className="text-white/90">
+                  אנו עונים לפניות בתוך 24 שעות בימי עסקים
+                </p>
               </CardContent>
             </Card>
           </div>
