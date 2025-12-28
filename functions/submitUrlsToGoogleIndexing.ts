@@ -15,7 +15,8 @@ Deno.serve(async (req) => {
         
         if (!credentialsJson) {
             return Response.json({ 
-                error: 'Missing GOOGLE_INDEXING_CREDENTIALS secret. Please set Google Service Account JSON credentials.' 
+                error: 'Missing GOOGLE_INDEXING_CREDENTIALS secret. Please set Google Service Account JSON credentials.',
+                hint: 'Make sure the secret is set in Base44 dashboard settings.'
             }, { status: 400 });
         }
 
