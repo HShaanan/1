@@ -13,14 +13,31 @@ Deno.serve(async (req) => {
         // Get credentials from secrets
         const credentialsJson = Deno.env.get('GOOGLE_INDEXING_CREDENTIALS');
         
+        console.log('Checking GOOGLE_INDEXING_CREDENTIALS...');
+        console.log('Secret exists:', !!credentialsJson);
+        console.log('Secret length:', credentialsJson?.length || 0);
+        
         if (!credentialsJson) {
             return Response.json({ 
-                error: 'Missing GOOGLE_INDEXING_CREDENTIALS secret. Please set Google Service Account JSON credentials.',
-                hint: 'Make sure the secret is set in Base44 dashboard settings.'
+                error: 'Missing GOOGLE_INDEXING_CREDENTIALS secret',
+                debug: 'Secret not found in environment variables',
+                hint: 'Check Base44 dashboard > Settings > Secrets'
             }, { status: 400 });
         }
 
-        const credentials = JSON.parse(credentialsJson);
+        let credentials;
+        try {
+            credentials = JSON.parse(credentialsJson);
+            if (!credentials.client_email || !credentials.private_key) {
+                throw new Error('Missing required fields (client_email or private_key)');
+            }
+        } catch (parseError) {
+            return Response.json({
+                error: 'Invalid credentials JSON format',
+                details: parseError.message,
+                hint: 'Make sure the secret contains valid Google Service Account JSON'
+            }, { status: 400 });
+        }
 
         // Initialize Google Auth
         const auth = new GoogleAuth({
