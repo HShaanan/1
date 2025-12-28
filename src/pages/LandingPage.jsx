@@ -297,27 +297,60 @@ export default function LandingPage() {
       {/* ============== FOOTER ============== */}
       <footer className="bg-slate-950 text-white py-8 sm:py-12 pb-24 sm:pb-12">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center gap-6 sm:gap-8 md:flex-row md:justify-between">
-            <div className="flex items-center gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {/* Brand */}
+            <div className="flex flex-col items-center md:items-start gap-3">
               <img
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png"
                 alt="לוגו משלנו"
                 className="h-12 sm:h-16 w-auto"
               />
-              <div>
+              <div className="text-center md:text-right">
                 <h3 className="text-lg sm:text-xl font-bold">משלנו</h3>
                 <p className="text-white/50 text-xs sm:text-sm">הפלטפורמה הכשרה למשלוחים</p>
               </div>
             </div>
 
-            <nav className="flex items-center gap-4 sm:gap-6" aria-label="ניווט פוטר">
-              <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm sm:text-base touch-manipulation py-2">עסקים</Link>
-              <Link to={createPageUrl("Add")} className="text-white/60 hover:text-white transition-colors text-sm sm:text-base touch-manipulation py-2">הצטרפות</Link>
-              <Link to={createPageUrl("AccessibilityStatement")} className="text-white/60 hover:text-white transition-colors text-sm sm:text-base touch-manipulation py-2">נגישות</Link>
-            </nav>
+            {/* Quick Links */}
+            <div className="text-center md:text-right">
+              <h4 className="font-bold text-white mb-4">קישורים</h4>
+              <nav className="flex flex-col gap-2" aria-label="קישורים מהירים">
+                <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">עסקים</Link>
+                <Link to={createPageUrl("Add")} className="text-white/60 hover:text-white transition-colors text-sm">הצטרפות</Link>
+                <Link to={createPageUrl("AccessibilityStatement")} className="text-white/60 hover:text-white transition-colors text-sm">תקנון</Link>
+                <a href="mailto:support@meshelanu.co.il" className="text-white/60 hover:text-white transition-colors text-sm">צור קשר</a>
+              </nav>
+            </div>
+
+            {/* Popular Subcategories */}
+            <div className="text-center md:text-right">
+              <h4 className="font-bold text-white mb-4">קטגוריות פופולריות</h4>
+              <nav className="flex flex-col gap-2" aria-label="קטגוריות פופולריות">
+                {topSubcategories.slice(0, 5).map(cat => (
+                  <Link 
+                    key={cat.id}
+                    to={createPageUrl(`Browse?q=${encodeURIComponent(cat.name)}`)} 
+                    className="text-white/60 hover:text-white transition-colors text-sm"
+                  >
+                    {cat.name}
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            {/* Kashrut Authorities */}
+            <div className="text-center md:text-right">
+              <h4 className="font-bold text-white mb-4">כשרויות</h4>
+              <nav className="flex flex-col gap-2" aria-label="רשויות כשרות">
+                <Link to={createPageUrl("Browse?kashrut=בד%22צ%20העדה-החרדית")} className="text-white/60 hover:text-white transition-colors text-sm">בד"צ העדה החרדית</Link>
+                <Link to={createPageUrl("Browse?kashrut=בד%22צ%20בית%20יוסף")} className="text-white/60 hover:text-white transition-colors text-sm">בד"צ בית יוסף</Link>
+                <Link to={createPageUrl("Browse?kashrut=רבנות%20מהדרין")} className="text-white/60 hover:text-white transition-colors text-sm">רבנות מהדרין</Link>
+                <Link to={createPageUrl("Browse?kashrut=רבנות")} className="text-white/60 hover:text-white transition-colors text-sm">רבנות</Link>
+              </nav>
+            </div>
           </div>
 
-          <div className="border-t border-white/10 mt-6 sm:mt-8 pt-6 sm:pt-8 text-center text-white/40 text-xs sm:text-sm">
+          <div className="border-t border-white/10 pt-6 sm:pt-8 text-center text-white/40 text-xs sm:text-sm">
             © {new Date().getFullYear()} משלנו. כל הזכויות שמורות.
           </div>
         </div>
