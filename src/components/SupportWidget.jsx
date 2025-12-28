@@ -219,7 +219,7 @@ export default function SupportWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[150] font-sans" dir="rtl">
+    <div className="fixed bottom-24 sm:bottom-6 right-6 z-[60] font-sans" dir="rtl">
       {/* Speech Bubble - Positioned Absolutely */}
       {showBubble && !isOpen && (
         <div className="absolute bottom-0 left-24 sm:bottom-20 sm:right-0 sm:left-auto animate-bounce-in">
