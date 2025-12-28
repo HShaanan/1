@@ -946,6 +946,7 @@ export default function Layout({ children, currentPageName }) {
                 <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">עסקים</Link>
                 <Link to={createPageUrl("BusinessLanding")} className="text-white/60 hover:text-white transition-colors text-sm">הצטרפות</Link>
                 <Link to={createPageUrl("TermsOfUsePage")} className="text-white/60 hover:text-white transition-colors text-sm">תקנון</Link>
+                <Link to={createPageUrl("AccessibilityStatement")} className="text-white/60 hover:text-white transition-colors text-sm">הצהרת נגישות</Link>
                 <Link to={createPageUrl("ContactPage")} className="text-white/60 hover:text-white transition-colors text-sm">צור קשר</Link>
               </nav>
             </div>
@@ -969,10 +970,8 @@ export default function Layout({ children, currentPageName }) {
               <nav className="flex flex-col gap-2" aria-label="רשויות כשרות">
                 <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">בד"צ העדה החרדית</Link>
                 <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">בד"צ בית יוסף</Link>
-                <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">בד"צ שארית ישראל</Link>
                 <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">רבנות מהדרין</Link>
-                <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">רבנות ירושלים</Link>
-                <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">רבנות בית שמש</Link>
+                <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">רבנות</Link>
               </nav>
             </div>
           </div>
