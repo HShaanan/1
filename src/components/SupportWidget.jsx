@@ -13,8 +13,17 @@ export default function SupportWidget() {
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [conversationId, setConversationId] = useState(null);
+  const [showBubble, setShowBubble] = useState(false);
+  const [currentBubbleIndex, setCurrentBubbleIndex] = useState(0);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  const bubbleMessages = [
+    "שלום! יש לכם שאלה? 🤔",
+    "אני כאן לעזור לכם 24/6! 💬",
+    "מחפשים משהו מסוים? 🔍",
+    "צריכים עזרה? לחצו עלי! 👋"
+  ];
 
   // גלילה אוטומטית למטה
   const scrollToBottom = () => {
@@ -31,6 +40,25 @@ export default function SupportWidget() {
       setTimeout(() => inputRef.current.focus(), 100);
     }
   }, [isOpen]);
+
+  // Show speech bubbles periodically when widget is closed
+  useEffect(() => {
+    if (!isOpen) {
+      const showTimer = setTimeout(() => {
+        setShowBubble(true);
+        setCurrentBubbleIndex(Math.floor(Math.random() * bubbleMessages.length));
+      }, 5000);
+
+      const hideTimer = setTimeout(() => {
+        setShowBubble(false);
+      }, 11000);
+
+      return () => {
+        clearTimeout(showTimer);
+        clearTimeout(hideTimer);
+      };
+    }
+  }, [isOpen, showBubble]);
 
   // יצירת שיחה חדשה או טעינת קיימת
   const initConversation = async () => {
@@ -191,7 +219,16 @@ export default function SupportWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-start font-sans" dir="rtl">
+    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end font-sans" dir="rtl">
+      {/* Speech Bubble */}
+      {showBubble && !isOpen && (
+        <div className="mb-3 animate-bounce-in">
+          <div className="relative bg-white rounded-2xl shadow-2xl px-4 py-3 max-w-[200px]">
+            <p className="text-sm text-slate-800 font-medium">{bubbleMessages[currentBubbleIndex]}</p>
+            <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white transform rotate-45"></div>
+          </div>
+        </div>
+      )}
       {/* חלון הצ'אט */}
       <div 
         className={cn(
@@ -206,8 +243,8 @@ export default function SupportWidget() {
           <div className="bg-slate-900 text-white p-4 flex justify-between items-center shrink-0">
             <div className="flex items-center gap-3">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/b19ce1f53_Gemini_Generated_Image_usq9rnusq9rnusq9.png"
-                alt="העוייזר שמחה"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/db3170781_Gemini_Generated_Image_r9i6bkr9i6bkr9i6.png"
+                alt="העוייזר שמחה - עוזר אישי חכם"
                 className="w-12 h-12 rounded-full object-cover border-2 border-green-400"
               />
               <div>
@@ -228,7 +265,7 @@ export default function SupportWidget() {
                 title="דבר עם העוייזר שמחה בוואטסאפ"
               >
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/b19ce1f53_Gemini_Generated_Image_usq9rnusq9rnusq9.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/db3170781_Gemini_Generated_Image_r9i6bkr9i6bkr9i6.png"
                   alt="העוייזר שמחה"
                   className="w-4 h-4 rounded-full object-cover"
                 />
@@ -335,14 +372,32 @@ export default function SupportWidget() {
         )}
         aria-expanded={isOpen}
         aria-label="פתח צ'אט תמיכה"
-      >
+        >
         <div className="absolute inset-0 bg-gradient-to-tr from-black/10 to-transparent pointer-events-none" />
         {isOpen ? (
           <X className="w-6 h-6 text-white relative z-10" />
         ) : (
-          <MessageCircle className="w-7 h-7 text-white relative z-10 animate-pulse-slow" />
+          <>
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/db3170781_Gemini_Generated_Image_r9i6bkr9i6bkr9i6.png"
+              alt="העוייזר שמחה"
+              className="w-10 h-10 rounded-full object-cover relative z-10"
+            />
+          </>
         )}
-      </Button>
-    </div>
-  );
-}
+        </Button>
+
+        <style>{`
+        @keyframes bounce-in {
+          0% { opacity: 0; transform: scale(0.3) translateY(20px); }
+          50% { opacity: 1; transform: scale(1.05); }
+          70% { transform: scale(0.9); }
+          100% { opacity: 1; transform: scale(1); }
+        }
+        .animate-bounce-in {
+          animation: bounce-in 0.5s ease-out;
+        }
+        `}</style>
+        </div>
+        );
+        }
