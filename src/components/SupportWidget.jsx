@@ -57,6 +57,7 @@ export default function SupportWidget() {
         // יצירת שיחה חדשה (תומכת במשתמשים אנונימיים)
         const conv = await base44.agents.createConversation({
           agent_name: "site_support",
+          anonymous: true,
           metadata: {
             source: "web_widget",
             page_url: window.location.href
@@ -124,6 +125,7 @@ export default function SupportWidget() {
       if (!currentConvId) {
         const conv = await base44.agents.createConversation({
           agent_name: "site_support",
+          anonymous: true,
           metadata: {
             source: "web_widget",
             page_url: window.location.href
