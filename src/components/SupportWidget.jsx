@@ -19,17 +19,25 @@ export default function SupportWidget() {
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // טען את מצב ההסתרה מ-localStorage
+  // טען את מצב ההסתרה מ-localStorage ובדוק אם עברו 30 דקות
   useEffect(() => {
-    const hidden = localStorage.getItem('support_widget_hidden');
-    if (hidden === 'true') {
-      setIsWidgetHidden(true);
+    const hiddenTime = localStorage.getItem('support_widget_hidden_time');
+    if (hiddenTime) {
+      const timePassed = Date.now() - parseInt(hiddenTime);
+      const thirtyMinutes = 30 * 60 * 1000; // 30 דקות במילישניות
+      
+      if (timePassed < thirtyMinutes) {
+        setIsWidgetHidden(true);
+      } else {
+        // עברו 30 דקות - נקה את ההסתרה
+        localStorage.removeItem('support_widget_hidden_time');
+      }
     }
   }, []);
 
   const hideWidget = () => {
     setIsWidgetHidden(true);
-    localStorage.setItem('support_widget_hidden', 'true');
+    localStorage.setItem('support_widget_hidden_time', Date.now().toString());
   };
 
   const bubbleMessages = [
