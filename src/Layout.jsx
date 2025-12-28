@@ -427,13 +427,13 @@ export default function Layout({ children, currentPageName }) {
                   </Button>
                 </Link>
 
-                <Link to={createPageUrl("Add")} aria-label="הצטרף למשלנו והוסף עסק">
+                <Link to={createPageUrl("BusinessLanding")} aria-label="הצטרף למשלנו והוסף עסק">
                   <Button
                     variant="ghost"
                     className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring relative overflow-hidden ${
-                      currentPageName === "Add" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
+                      currentPageName === "BusinessLanding" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
                     }`}
-                    aria-current={currentPageName === "Add" ? "page" : undefined}
+                    aria-current={currentPageName === "BusinessLanding" ? "page" : undefined}
                   >
                     <div className="relative flex items-center">
                       <Sparkles className="w-4 h-4 ml-2 ai-sparkle" aria-hidden="true" />
@@ -709,7 +709,7 @@ export default function Layout({ children, currentPageName }) {
                   </DropdownMenuItem>
 
                   <DropdownMenuItem asChild>
-                    <Link to={createPageUrl("Add")} className="w-full flex items-center cursor-pointer">
+                    <Link to={createPageUrl("BusinessLanding")} className="w-full flex items-center cursor-pointer">
                       <div className="flex items-center">
                         <Sparkles className="w-4 h-4 ml-2 text-blue-600 ai-sparkle" aria-hidden="true" />
                         <span>הצטרפו למשלנו</span>
