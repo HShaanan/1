@@ -219,13 +219,13 @@ export default function SupportWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999] font-sans" dir="rtl">
+    <div className="fixed bottom-6 right-6 z-[150] font-sans" dir="rtl">
       {/* Speech Bubble - Positioned Absolutely */}
       {showBubble && !isOpen && (
-        <div className="absolute bottom-20 right-0 animate-bounce-in">
+        <div className="absolute bottom-0 left-24 sm:bottom-20 sm:right-0 sm:left-auto animate-bounce-in">
           <div className="relative bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-2xl px-4 py-2.5 max-w-[220px]">
             <p className="text-sm text-white font-medium leading-relaxed break-words">{bubbleMessages[currentBubbleIndex]}</p>
-            <div className="absolute -bottom-2 right-8 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-indigo-600"></div>
+            <div className="absolute -bottom-2 right-8 sm:right-8 sm:-bottom-2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-indigo-600"></div>
           </div>
         </div>
       )}
@@ -363,7 +363,7 @@ export default function SupportWidget() {
       </div>
 
       {/* כפתור צף מעוצב */}
-      <div className="relative z-[90]">
+      <div className="relative">
         {/* זוהר מאחורי הכפתור */}
         <div className={cn(
           "absolute inset-0 rounded-full blur-xl transition-all duration-300",
