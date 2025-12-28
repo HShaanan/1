@@ -40,31 +40,50 @@ export default function SupportWidget() {
       const savedConvId = sessionStorage.getItem("support_conversation_id");
       
       if (savedConvId) {
-        setConversationId(savedConvId);
-        const conv = await base44.agents.getConversation(savedConvId);
-        if (conv && conv.messages) {
-          setMessages(conv.messages);
+        try {
+          setConversationId(savedConvId);
+          const conv = await base44.agents.getConversation(savedConvId);
+          if (conv && conv.messages) {
+            setMessages(conv.messages);
+          }
+        } catch (err) {
+          console.warn("Failed to load saved conversation, creating new one", err);
+          sessionStorage.removeItem("support_conversation_id");
+          // Continue to create new conversation
         }
-      } else {
-        // יצירת שיחה חדשה
+      }
+      
+      if (!savedConvId || !conversationId) {
+        // יצירת שיחה חדשה - תומך במשתמשים אורחים
         const conv = await base44.agents.createConversation({
           agent_name: "site_support",
           metadata: {
             source: "web_widget",
-            page_url: window.location.href
+            page_url: window.location.href,
+            anonymous: true
           }
         });
-        setConversationId(conv.id);
-        sessionStorage.setItem("support_conversation_id", conv.id);
         
-        // הודעת פתיחה אוטומטית מהסוכן (וירטואלית)
-        setMessages([{
-          role: "assistant",
-          content: "שלום! 👋 אני הסוכן החכם של האתר. אפשר לדווח לי על תקלות 🐛, להציע שיפורים 💡 או לשאול שאלות. איך אוכל לעזור?"
-        }]);
+        if (conv && conv.id) {
+          setConversationId(conv.id);
+          sessionStorage.setItem("support_conversation_id", conv.id);
+          
+          // הודעת פתיחה אוטומטית מהסוכן (וירטואלית)
+          setMessages([{
+            role: "assistant",
+            content: "שלום! 👋 אני הסוכן החכם של האתר. אפשר לדווח לי על תקלות 🐛, להציע שיפורים 💡 או לשאול שאלות. איך אוכל לעזור?"
+          }]);
+        } else {
+          throw new Error("Failed to create conversation");
+        }
       }
     } catch (error) {
-      console.error("Failed to init conversation", error);
+      console.error("Failed to init conversation:", error);
+      // הצג שגיאה למשתמש
+      setMessages([{
+        role: "assistant",
+        content: "מצטער, נתקלתי בבעיה בפתיחת הצ'אט. אנא נסה לרענן את הדף או צור קשר בדרך אחרת."
+      }]);
     } finally {
       setIsLoading(false);
     }
