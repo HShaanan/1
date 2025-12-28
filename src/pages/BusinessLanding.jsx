@@ -371,7 +371,7 @@ export default function BusinessLanding() {
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
-              <Link to={createPageUrl("Add")} className="w-full sm:w-auto">
+              <Link to={createPageUrl("ContactPage")} className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
                   className="w-full sm:w-auto rounded-full bg-white text-[#667eea] hover:bg-white/95 font-bold px-8 sm:px-10 py-5 sm:py-7 text-lg sm:text-xl shadow-2xl active:scale-95 sm:hover:scale-105 transition-all duration-300 touch-manipulation min-h-[52px]"
@@ -641,7 +641,7 @@ export default function BusinessLanding() {
             </div>
 
             <div className="text-center mt-8 sm:mt-12">
-              <Link to={createPageUrl("Add")}>
+              <Link to={createPageUrl("ContactPage")}>
                 <Button 
                   size="lg" 
                   className="rounded-full bg-gradient-to-r from-[#667eea] to-[#764ba2] hover:opacity-90 text-white font-bold px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg shadow-xl active:scale-95 sm:hover:scale-105 transition-transform touch-manipulation min-h-[52px]"
@@ -761,7 +761,7 @@ export default function BusinessLanding() {
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
-              <Link to={createPageUrl("Add")} className="w-full sm:w-auto">
+              <Link to={createPageUrl("ContactPage")} className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
                   className="w-full sm:w-auto rounded-full bg-gradient-to-r from-[#667eea] to-[#764ba2] hover:opacity-90 text-white font-bold px-8 sm:px-10 py-5 sm:py-7 text-lg sm:text-xl shadow-2xl active:scale-95 sm:hover:scale-105 transition-transform touch-manipulation min-h-[52px]"
