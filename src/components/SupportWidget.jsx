@@ -120,26 +120,28 @@ export default function SupportWidget() {
     setMessages(prev => [...(Array.isArray(prev) ? prev : []), { role: "user", content }]);
 
     try {
-      // SDK expects a conversation object, not just an ID string
-      const conversationObj = { id: conversationId, messages: messages || [] };
+      // טען את ה-conversation המלא מה-API
+      const conv = await base44.agents.getConversation(conversationId);
       
-      await base44.agents.addMessage(conversationObj, {
+      if (!conv || !conv.id) {
+        throw new Error("Conversation not found");
+      }
+      
+      // שלח הודעה עם האובייקט המלא
+      await base44.agents.addMessage(conv, {
         role: "user",
-        content: content,
-        file_urls: [] // Explicitly pass empty array to prevent SDK issues
+        content: content
       });
     } catch (error) {
       console.error("Error sending message:", error);
       
       // If catastrophic error, clear session to recover
-      if (error.message && error.message.includes("reading 'map'")) {
-        sessionStorage.removeItem("support_conversation_id");
-        setConversationId(null);
-      }
+      sessionStorage.removeItem("support_conversation_id");
+      setConversationId(null);
 
       setMessages(prev => [...(Array.isArray(prev) ? prev : []), { 
         role: "assistant", 
-        content: "סליחה, נתקלתי בשגיאה. אנא נסה לרענן את הדף." 
+        content: "סליחה, נתקלתי בשגיאה. אנא רענן את הדף ונסה שוב." 
       }]);
     }
   };
