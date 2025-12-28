@@ -243,7 +243,7 @@ export default function SupportWidget() {
           <div className="bg-slate-900 text-white p-4 flex justify-between items-center shrink-0">
             <div className="flex items-center gap-3">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/db3170781_Gemini_Generated_Image_r9i6bkr9i6bkr9i6.png"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1451ff216_Gemini_Generated_Image_b321zxb321zxb321.png"
                 alt="העוייזר שמחה - עוזר אישי חכם"
                 className="w-12 h-12 rounded-full object-cover border-2 border-green-400"
               />
@@ -265,7 +265,7 @@ export default function SupportWidget() {
                 title="דבר עם העוייזר שמחה בוואטסאפ"
               >
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/db3170781_Gemini_Generated_Image_r9i6bkr9i6bkr9i6.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1451ff216_Gemini_Generated_Image_b321zxb321zxb321.png"
                   alt="העוייזר שמחה"
                   className="w-4 h-4 rounded-full object-cover"
                 />
@@ -387,7 +387,7 @@ export default function SupportWidget() {
           ) : (
             <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative z-10">
               <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/db3170781_Gemini_Generated_Image_r9i6bkr9i6bkr9i6.png"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1451ff216_Gemini_Generated_Image_b321zxb321zxb321.png"
                 alt="שמחה - עוזר אישי חכם"
                 className="w-full h-full object-cover"
               />
