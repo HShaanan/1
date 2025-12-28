@@ -37,8 +37,9 @@ Deno.serve(async (req) => {
                 const icon = type === 'urgent' ? '🚨' : type === 'success' ? '✅' : 'ℹ️';
                 const formattedTitle = title ? `<b>${title}</b>` : '';
                 
-                // Construct message (HTML format)
-                const text = `${icon} ${formattedTitle}\n\n${message}`;
+                // Construct message (HTML format) - ensure no undefined
+                const messageText = message || 'הודעה חדשה מהמערכת';
+                const text = formattedTitle ? `${icon} ${formattedTitle}\n\n${messageText}` : `${icon} ${messageText}`;
 
                 const tgResponse = await fetch(`https://api.telegram.org/bot${telegramToken}/sendMessage`, {
                     method: 'POST',
@@ -64,17 +65,21 @@ Deno.serve(async (req) => {
         // This is the primary robust channel for "System Alerts" without external paid providers.
         if (adminEmail) {
             try {
+                const emailSubject = title || 'התראת מערכת חדשה';
+                const emailMessage = message || 'הודעה חדשה מהמערכת';
+                
                 await base44.integrations.Core.SendEmail({
                     to: adminEmail,
-                    subject: `[System Alert] ${title || 'New Notification'}`,
+                    subject: `[התראת מערכת] ${emailSubject}`,
                     body: `
-                        <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
-                            <h2 style="color: #d32f2f;">System Notification</h2>
-                            <p><strong>Type:</strong> ${type}</p>
+                        <div dir="rtl" style="font-family: Arial, sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 8px;">
+                            <h2 style="color: #d32f2f;">התראת מערכת</h2>
+                            <p><strong>סוג:</strong> ${type === 'urgent' ? '🚨 דחוף' : type === 'success' ? '✅ הצלחה' : 'ℹ️ מידע'}</p>
+                            ${title ? `<p><strong>כותרת:</strong> ${title}</p>` : ''}
                             <hr/>
-                            <p style="font-size: 16px;">${message}</p>
+                            <p style="font-size: 16px;">${emailMessage}</p>
                             <br/>
-                            <small>Sent via Base44 Native Alert System</small>
+                            <small>נשלח ממערכת משלנו</small>
                         </div>
                     `
                 });
