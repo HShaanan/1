@@ -245,7 +245,7 @@ export default function SupportWidget() {
               <img 
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1451ff216_Gemini_Generated_Image_b321zxb321zxb321.png"
                 alt="העוייזר שמחה - עוזר אישי חכם"
-                className="w-12 h-12 rounded-full object-cover border-2 border-green-400"
+                className="w-14 h-14 rounded-full object-cover border-2 border-green-400"
               />
               <div>
                 <h3 className="font-bold text-lg">שמחה</h3>
@@ -374,7 +374,7 @@ export default function SupportWidget() {
           onClick={handleOpen}
           size="lg"
           className={cn(
-            "rounded-full w-16 h-16 shadow-2xl transition-all duration-300 hover:scale-110 relative overflow-visible p-0 border-4",
+            "rounded-full w-18 h-18 shadow-2xl transition-all duration-300 hover:scale-110 relative overflow-visible p-0 border-4",
             isOpen 
               ? "bg-slate-800 hover:bg-slate-700 border-slate-600" 
               : "bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-white"
