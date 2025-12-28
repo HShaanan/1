@@ -13,7 +13,7 @@ import {
   Tag, UserCircle, LogOut, Shield,
   AlertTriangle, Users, FileText, Settings, Sparkles, Zap, Mail, Wand2, Layers,
   MessageSquare, Activity, Key, ImageIcon, Megaphone, FileText as ReviewsIcon,
-  Bug, Bot, ListChecks, Clock, Truck, ShoppingBag
+  Bug, Bot, ListChecks, Clock, Truck, ShoppingBag, Globe
   } from "lucide-react";
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
