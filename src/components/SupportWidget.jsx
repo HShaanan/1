@@ -223,8 +223,8 @@ export default function SupportWidget() {
       {/* Speech Bubble - Positioned Absolutely */}
       {showBubble && !isOpen && (
         <div className="absolute bottom-20 right-0 animate-bounce-in">
-          <div className="relative bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-2xl px-4 py-2.5 max-w-[160px]">
-            <p className="text-sm text-white font-medium leading-snug whitespace-nowrap">{bubbleMessages[currentBubbleIndex]}</p>
+          <div className="relative bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-2xl px-4 py-2.5 max-w-[180px]">
+            <p className="text-sm text-white font-medium leading-snug">{bubbleMessages[currentBubbleIndex]}</p>
             <div className="absolute -bottom-2 right-8 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-indigo-600"></div>
           </div>
         </div>
