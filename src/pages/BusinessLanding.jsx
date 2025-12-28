@@ -23,39 +23,39 @@ const BUSINESS_IMAGES = {
 
 const benefits = [
   {
+    icon: TrendingUp,
+    title: "שיווק ו-SEO מתקדם",
+    description: "אופטימיזציה בגוגל וקידום ממומן - נדאג שהעסק שלך יופיע ראשון בחיפושים.",
+    color: "from-purple-500 to-indigo-600"
+  },
+  {
     icon: DollarSign,
-    title: "ללא עלויות מראש",
-    description: "שילמת רק כשמכרת. מודל עמלה הוגן ללא דמי מנוי או הקמה.",
+    title: "סליקה ותשלומים",
+    description: "מערכת תשלומים מאובטחת ופשוטה לשימוש - הלקוחות משלמים ואתה מקבל.",
     color: "from-green-500 to-emerald-600"
   },
   {
-    icon: Users,
-    title: "חשיפה לאלפי לקוחות",
-    description: "הקהילה שלנו גדלה כל יום. תגיע ללקוחות חדשים שמחפשים בדיוק אותך.",
-    color: "from-blue-500 to-indigo-600"
+    icon: Store,
+    title: "עמוד עסק מקצועי",
+    description: "עמוד עסק מושלם עם כל החלק הטכנולוגי - תפריט, תמונות, כשרות ועוד.",
+    color: "from-blue-500 to-cyan-600"
   },
   {
-    icon: Truck,
-    title: "משלוחים? עלינו",
-    description: "צי שליחים מקצועי שידאג להזמנות שלך. אתה מבשל, אנחנו מביאים.",
-    color: "from-orange-500 to-red-600"
+    icon: MessageCircle,
+    title: "הזמנות ישירות לוואטסאפ",
+    description: "כל הזמנה מגיעה ישירות אליך לוואטסאפ או למייל - ללא אפליקציות מסובכות.",
+    color: "from-green-400 to-teal-600"
   },
   {
     icon: Smartphone,
-    title: "ניהול קל מהנייד",
-    description: "קבל הזמנות, עדכן תפריט, וצפה בסטטיסטיקות - הכל מהטלפון.",
-    color: "from-purple-500 to-pink-600"
+    title: "דאשבורד מתקדם",
+    description: "התחבר מהאפליקציה או האתר וקבל גישה לדאשבורד מתקדם לניהול העסק.",
+    color: "from-orange-500 to-red-600"
   },
   {
-    icon: BarChart3,
-    title: "דוחות וסטטיסטיקות",
-    description: "דע בדיוק כמה מכרת, מה הכי פופולרי, ואיפה אפשר לשפר.",
-    color: "from-cyan-500 to-blue-600"
-  },
-  {
-    icon: HeadphonesIcon,
-    title: "תמיכה 24/6",
-    description: "צוות תמיכה ישראלי ומקצועי שזמין לכל שאלה ובעיה.",
+    icon: Sparkles,
+    title: "עיצוב ויעוץ עסקי",
+    description: "שירותי עיצוב ויעוץ מקצועי בתשלום - נעזור לך להפוך את העסק למכונת כסף.",
     color: "from-pink-500 to-rose-600"
   }
 ];
@@ -70,13 +70,13 @@ const steps = [
   {
     number: "2",
     title: "בנה את העמוד שלך",
-    description: "העלה תמונות, תפריט ומחירים. אנחנו נעזור לך להיראות הכי טוב.",
+    description: "העלה תמונות, תפריט ומחירים. נטפל ב-SEO ובקידום בגוגל בשבילך.",
     icon: Store
   },
   {
     number: "3",
-    title: "התחל למכור",
-    description: "ברגע שהעמוד מאושר - אתה באוויר! התחל לקבל הזמנות.",
+    title: "התחל לקבל הזמנות",
+    description: "הזמנות יגיעו ישירות לוואטסאפ/מייל + דאשבורד מתקדם לניהול מלא.",
     icon: TrendingUp
   }
 ];
@@ -85,21 +85,21 @@ const testimonials = [
   {
     name: "ר' יוסי כהן",
     business: "מאפיית הטעמים",
-    text: "מאז שהצטרפתי למשלנו ההכנסות עלו ב-45%. הפלטפורמה פשוטה והתמיכה מעולה!",
+    text: "מאז שהצטרפתי למשלנו ההכנסות עלו ב-45%. הקידום בגוגל והדאשבורד פשוט מעולים!",
     rating: 5,
     image: BUSINESS_IMAGES.bakery
   },
   {
     name: "משה לוי",
     business: "גריל הבשרים",
-    text: "סוף סוף פלטפורמה שמבינה את הצרכים שלנו. המשלוחים מגיעים חמים והלקוחות מרוצים.",
+    text: "ההזמנות מגיעות ישר לוואטסאפ והסליקה עובדת חלק. סוף סוף פלטפורמה שעובדת!",
     rating: 5,
     image: BUSINESS_IMAGES.meat
   },
   {
     name: "אברהם גולד",
     business: "סושי כשר",
-    text: "השירות והתמיכה פשוט ברמה אחרת. ממליץ בחום לכל בעל עסק.",
+    text: "השיווק והתמיכה פשוט ברמה אחרת. הלקוחות מוצאים אותי בגוגל והעסק פורח. ממליץ בחום!",
     rating: 5,
     image: BUSINESS_IMAGES.restaurant
   }
@@ -108,19 +108,23 @@ const testimonials = [
 const faqs = [
   {
     question: "כמה עולה להצטרף?",
-    answer: "ההצטרפות חינמית לגמרי! אנחנו גובים עמלה קטנה רק ממכירות שבוצעו דרך הפלטפורמה. בנוסף, מציעים שירותי עיצוב והקמת עמוד עסק מותאם אישית."
+    answer: "ההצטרפות חינמית לגמרי! אנחנו גובים עמלה קטנה רק מהזמנות שבוצעו דרך האתר. בנוסף, אנחנו מציעים שירותי עיצוב ויעוץ עסקי מתקדמים בתשלום."
   },
   {
-    question: "איך מקבלים את הכסף?",
-    answer: "העברות בנקאיות ישירות לחשבון שלך. התשלומים מתבצעים באופן קבוע ושקוף."
+    question: "איך אני מקבל הזמנות?",
+    answer: "כל הזמנה מגיעה ישירות אליך לוואטסאפ או למייל. בנוסף, יש לך דאשבורד מתקדם שאליו אפשר להתחבר מהאפליקציה או מהאתר לניהול מלא."
+  },
+  {
+    question: "מה עם קידום בגוגל?",
+    answer: "אנחנו מטפלים באופטימיזציית SEO של עמוד העסק שלך בגוגל, כך שלקוחות פוטנציאליים ימצאו אותך בחיפושים. זה חלק מהשירות!"
+  },
+  {
+    question: "איך עובדת הסליקה?",
+    answer: "יש לנו מערכת סליקה מאובטחת ופשוטה. הלקוחות משלמים דרך האתר, והכסף מועבר אליך ישירות לחשבון הבנק באופן קבוע ושקוף."
   },
   {
     question: "מה עם הכשרות?",
     answer: "אנחנו עובדים רק עם עסקים בעלי כשרות מוכרת. תוכל להציג את תעודת הכשרות שלך בעמוד העסק."
-  },
-  {
-    question: "האם אני יכול לנהל את ההזמנות בעצמי?",
-    answer: "בהחלט! יש לך שליטה מלאה - לקבל הזמנות, לסמן כמוכן, לעדכן סטטוס וזמני הכנה."
   },
   {
     question: "מה אם אני רוצה לבטל?",
@@ -360,10 +364,10 @@ export default function BusinessLanding() {
             </h1>
 
             <p className="text-base sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4">
-              הצטרף לפלטפורמת המשלוחים הכשרה הגדולה בישראל.
+              הצטרף לפלטפורמת העסקים הכשרה הגדולה בישראל.
               <br className="hidden sm:block" />
-              <span className="hidden sm:inline">בלי עלויות מראש, בלי התחייבות, עם תמיכה מלאה.</span>
-              <span className="sm:hidden">בלי עלויות מראש, עם תמיכה מלאה.</span>
+              <span className="hidden sm:inline">שיווק מתקדם, סליקה, דאשבורד חכם - כל מה שצריך להצליח.</span>
+              <span className="sm:hidden">שיווק מתקדם, סליקה וניהול חכם.</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
@@ -438,8 +442,8 @@ export default function BusinessLanding() {
                 {/* Floating badges */}
                 <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 flex flex-wrap gap-2 sm:gap-3">
                   <div className="bg-white/95 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg flex items-center gap-1.5 sm:gap-2 animate-slide-in-right" style={{ animationDelay: '0.3s' }}>
-                    <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-[#667eea]" />
-                    <span className="text-xs sm:text-sm font-bold text-slate-800">שליחים מקצועיים</span>
+                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5 text-[#667eea]" />
+                    <span className="text-xs sm:text-sm font-bold text-slate-800">קידום בגוגל</span>
                   </div>
                   <div className="bg-white/95 backdrop-blur-sm px-3 sm:px-4 py-1.5 sm:py-2 rounded-full shadow-lg flex items-center gap-1.5 sm:gap-2 animate-slide-in-right" style={{ animationDelay: '0.5s' }}>
                     <HeadphonesIcon className="w-4 h-4 sm:w-5 sm:h-5 text-[#764ba2]" />
@@ -460,16 +464,16 @@ export default function BusinessLanding() {
             {/* Bottom stats row */}
             <div className="mt-6 sm:mt-10 grid grid-cols-3 gap-3 sm:gap-6 max-w-2xl mx-auto">
               <div className="text-center p-3 sm:p-4 bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                <div className="text-xl sm:text-2xl md:text-3xl font-black bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">100+</div>
-                <div className="text-slate-600 text-xs sm:text-sm mt-1">שליחים פעילים</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-black bg-gradient-to-r from-[#667eea] to-[#764ba2] bg-clip-text text-transparent">200+</div>
+                <div className="text-slate-600 text-xs sm:text-sm mt-1">עסקים פעילים</div>
               </div>
               <div className="text-center p-3 sm:p-4 bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
-                <div className="text-xl sm:text-2xl md:text-3xl font-black bg-gradient-to-r from-[#764ba2] to-[#f093fb] bg-clip-text text-transparent">30 דק׳</div>
-                <div className="text-slate-600 text-xs sm:text-sm mt-1">זמן משלוח ממוצע</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-black bg-gradient-to-r from-[#764ba2] to-[#f093fb] bg-clip-text text-transparent">SEO</div>
+                <div className="text-slate-600 text-xs sm:text-sm mt-1">קידום בגוגל</div>
               </div>
               <div className="text-center p-3 sm:p-4 bg-white rounded-xl sm:rounded-2xl shadow-lg border border-slate-100 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
                 <div className="text-xl sm:text-2xl md:text-3xl font-black bg-gradient-to-r from-[#f093fb] to-[#667eea] bg-clip-text text-transparent">24/6</div>
-                <div className="text-slate-600 text-xs sm:text-sm mt-1">מוקד תמיכה</div>
+                <div className="text-slate-600 text-xs sm:text-sm mt-1">תמיכה טכנית</div>
               </div>
             </div>
           </div>
@@ -548,7 +552,7 @@ export default function BusinessLanding() {
                 </div>
                 <h3 className="text-base sm:text-xl font-bold text-cyan-600 mb-2 sm:mb-3">בואו לצמוח עם משלנו</h3>
                 <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  הצטרפו לשירות, איסוף עצמי ומשלוחים באמצעות אפליקציית משלנו וקבלו גישה לבסיס הלקוחות הפעילים שלנו.
+                  קבלו עמוד עסק מקצועי, קידום בגוגל, סליקה ודאשבורד מתקדם. הכל במקום אחד.
                 </p>
               </div>
 
@@ -574,7 +578,7 @@ export default function BusinessLanding() {
                 </div>
                 <h3 className="text-base sm:text-xl font-bold text-cyan-600 mb-2 sm:mb-3">קבלו יותר הזמנות</h3>
                 <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  עם משלנו, תוכלו לקבל גישה ללקוחות הפעילים שלנו ולהגדיל את מספר ההזמנות שלכם. ההצטרפות היא בחינם והתמחור מבוסס עמלה.
+                  הזמנות דרך האתר בעמלה קטנה, קידום בגוגל שמביא לקוחות חדשים, וכל ההזמנות ישירות אליכם לוואטסאפ.
                 </p>
               </div>
 
@@ -598,9 +602,9 @@ export default function BusinessLanding() {
                     </div>
                   </div>
                 </div>
-                <h3 className="text-base sm:text-xl font-bold text-cyan-600 mb-2 sm:mb-3">בצעו משלוחים ליותר לקוחות</h3>
+                <h3 className="text-base sm:text-xl font-bold text-cyan-600 mb-2 sm:mb-3">טכנולוגיה מתקדמת לעסק שלך</h3>
                 <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  לאחר ביצוע ההזמנה, שליחי משלנו יגיעו לאסוף ולמסור את המשלוח ללקוחות שלכם תוך כ-30 דקות.
+                  עמוד עסק מושלם, סליקה מאובטחת, ניהול הזמנות חכם ודאשבורד מתקדם - כל מה שעסק מצליח צריך.
                 </p>
               </div>
             </div>
@@ -657,9 +661,10 @@ export default function BusinessLanding() {
               <span className="inline-block px-3 sm:px-4 py-1 bg-white/20 text-white rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
                 מה אומרים עלינו
               </span>
-              <h2 id="testimonials-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
+              <h2 id="testimonials-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
                 בעלי עסקים מספרים
               </h2>
+              <p className="text-white/80 text-sm sm:text-base">איך משלנו עזרה להם להגדיל את העסק</p>
             </div>
 
             <div className="relative" role="region" aria-label="סיפורי הצלחה">
