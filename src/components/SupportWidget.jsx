@@ -204,9 +204,19 @@ export default function SupportWidget() {
         <Card className="w-[320px] sm:w-[380px] h-[500px] flex flex-col shadow-2xl border-slate-200 overflow-hidden rounded-2xl">
           {/* כותרת */}
           <div className="bg-slate-900 text-white p-4 flex justify-between items-center shrink-0">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
-              <h3 className="font-bold text-lg">תמיכה ודיווח תקלות</h3>
+            <div className="flex items-center gap-3">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/b19ce1f53_Gemini_Generated_Image_usq9rnusq9rnusq9.png"
+                alt="העוייזר שמחה"
+                className="w-12 h-12 rounded-full object-cover border-2 border-green-400"
+              />
+              <div>
+                <h3 className="font-bold text-lg">העוייזר שמחה</h3>
+                <div className="flex items-center gap-1.5 text-xs text-green-400">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                  <span>מחובר</span>
+                </div>
+              </div>
             </div>
             <div className="flex items-center gap-2">
               <a 
@@ -214,9 +224,15 @@ export default function SupportWidget() {
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-1.5 bg-[#25D366] hover:bg-[#128C7E] text-white text-xs font-bold px-3 py-1.5 rounded-full transition-colors shadow-sm hover:shadow-md ml-2"
-                aria-label="המשך בוואטסאפ"
+                aria-label="המשך עם העוייזר שמחה בוואטסאפ"
+                title="דבר עם העוייזר שמחה בוואטסאפ"
               >
-                <span>WhatsApp</span>
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/b19ce1f53_Gemini_Generated_Image_usq9rnusq9rnusq9.png"
+                  alt="העוייזר שמחה"
+                  className="w-4 h-4 rounded-full object-cover"
+                />
+                <span>שמחה</span>
                 <MessageCircle className="w-3.5 h-3.5" />
               </a>
               <Button 
