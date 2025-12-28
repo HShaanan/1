@@ -28,7 +28,6 @@ export default function Footer() {
               <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">עסקים</Link>
               <Link to={createPageUrl("BusinessLanding")} className="text-white/60 hover:text-white transition-colors text-sm">הצטרפות</Link>
               <Link to={createPageUrl("TermsOfUsePage")} className="text-white/60 hover:text-white transition-colors text-sm">תקנון</Link>
-              <Link to={createPageUrl("AccessibilityStatement")} className="text-white/60 hover:text-white transition-colors text-sm">הצהרת נגישות</Link>
               <Link to={createPageUrl("ContactPage")} className="text-white/60 hover:text-white transition-colors text-sm">צור קשר</Link>
             </nav>
           </div>
