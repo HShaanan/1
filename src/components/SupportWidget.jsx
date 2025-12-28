@@ -54,13 +54,12 @@ export default function SupportWidget() {
       }
       
       if (!savedConvId || !conversationId) {
-        // יצירת שיחה חדשה - תומך במשתמשים אורחים
+        // יצירת שיחה חדשה
         const conv = await base44.agents.createConversation({
           agent_name: "site_support",
           metadata: {
             source: "web_widget",
-            page_url: window.location.href,
-            anonymous: true
+            page_url: window.location.href
           }
         });
         
@@ -128,8 +127,7 @@ export default function SupportWidget() {
           agent_name: "site_support",
           metadata: {
             source: "web_widget",
-            page_url: window.location.href,
-            anonymous: true
+            page_url: window.location.href
           }
         });
         
