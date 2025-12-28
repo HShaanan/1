@@ -73,10 +73,19 @@ export const WebsiteSchema = ({ name = "משלנו", description, url }) => {
         "name": name,
         "url": siteUrl,
         "description": description || "הפלטפורמה הכשרה למשלוחים, מסעדות ועסקים בביתר עילית והסביבה.",
+        "image": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png",
         "potentialAction": {
             "@type": "SearchAction",
             "target": `${siteUrl}/Browse?q={search_term_string}`,
             "query-input": "required name=search_term_string"
+        },
+        "publisher": {
+            "@type": "Organization",
+            "name": "משלנו",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png"
+            }
         }
     };
 
