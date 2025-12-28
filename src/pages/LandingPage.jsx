@@ -316,7 +316,7 @@ export default function LandingPage() {
               <h4 className="font-bold text-white mb-4">קישורים</h4>
               <nav className="flex flex-col gap-2" aria-label="קישורים מהירים">
                 <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">עסקים</Link>
-                <Link to={createPageUrl("Add")} className="text-white/60 hover:text-white transition-colors text-sm">הצטרפות</Link>
+                <Link to={createPageUrl("BusinessLanding")} className="text-white/60 hover:text-white transition-colors text-sm">הצטרפות</Link>
                 <Link to={createPageUrl("AccessibilityStatement")} className="text-white/60 hover:text-white transition-colors text-sm">תקנון</Link>
                 <a href="mailto:support@meshelanu.co.il" className="text-white/60 hover:text-white transition-colors text-sm">צור קשר</a>
               </nav>

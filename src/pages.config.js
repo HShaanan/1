@@ -14,6 +14,7 @@ import AdminDynamicPagesAnalytics from './pages/AdminDynamicPagesAnalytics';
 import AdminEmailManagement from './pages/AdminEmailManagement';
 import AdminImageGenerator from './pages/AdminImageGenerator';
 import AdminImportPlaces from './pages/AdminImportPlaces';
+import AdminIndexing from './pages/AdminIndexing';
 import AdminIntegrations from './pages/AdminIntegrations';
 import AdminKashrut from './pages/AdminKashrut';
 import AdminLiveUsers from './pages/AdminLiveUsers';
@@ -67,7 +68,6 @@ import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
-import AdminIndexing from './pages/AdminIndexing';
 import __Layout from './Layout.jsx';
 
 
@@ -88,6 +88,7 @@ export const PAGES = {
     "AdminEmailManagement": AdminEmailManagement,
     "AdminImageGenerator": AdminImageGenerator,
     "AdminImportPlaces": AdminImportPlaces,
+    "AdminIndexing": AdminIndexing,
     "AdminIntegrations": AdminIntegrations,
     "AdminKashrut": AdminKashrut,
     "AdminLiveUsers": AdminLiveUsers,
@@ -141,7 +142,6 @@ export const PAGES = {
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
-    "AdminIndexing": AdminIndexing,
 }
 
 export const pagesConfig = {
