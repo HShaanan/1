@@ -113,11 +113,17 @@ export default function SupportWidget() {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
-    // אם אין conversation, צור אחד עכשיו
-    let currentConvId = conversationId;
-    if (!currentConvId) {
-      try {
-        setIsLoading(true);
+    const content = inputValue;
+    setInputValue("");
+    
+    // הוספה אופטימית לממשק
+    setMessages(prev => [...(Array.isArray(prev) ? prev : []), { role: "user", content }]);
+    setIsLoading(true);
+
+    try {
+      // אם אין conversation, צור אחד עכשיו
+      let currentConvId = conversationId;
+      if (!currentConvId) {
         const conv = await base44.agents.createConversation({
           agent_name: "site_support",
           metadata: {
@@ -127,33 +133,15 @@ export default function SupportWidget() {
           }
         });
         
-        if (conv && conv.id) {
-          currentConvId = conv.id;
-          setConversationId(conv.id);
-          sessionStorage.setItem("support_conversation_id", conv.id);
-        } else {
+        if (!conv || !conv.id) {
           throw new Error("Failed to create conversation");
         }
-      } catch (err) {
-        console.error("Failed to create conversation on send:", err);
-        setMessages(prev => [...(Array.isArray(prev) ? prev : []), { 
-          role: "assistant", 
-          content: "מצטער, לא הצלחתי לפתוח שיחה. אנא רענן את הדף." 
-        }]);
-        setIsLoading(false);
-        return;
-      } finally {
-        setIsLoading(false);
+        
+        currentConvId = conv.id;
+        setConversationId(conv.id);
+        sessionStorage.setItem("support_conversation_id", conv.id);
       }
-    }
 
-    const content = inputValue;
-    setInputValue("");
-    
-    // הוספה אופטימית לממשק
-    setMessages(prev => [...(Array.isArray(prev) ? prev : []), { role: "user", content }]);
-
-    try {
       // טען את ה-conversation המלא מה-API
       const conv = await base44.agents.getConversation(currentConvId);
       
@@ -177,6 +165,8 @@ export default function SupportWidget() {
         role: "assistant", 
         content: "סליחה, נתקלתי בשגיאה. אנא רענן את הדף ונסה שוב." 
       }]);
+    } finally {
+      setIsLoading(false);
     }
   };
 
