@@ -368,11 +368,11 @@ export default function SupportWidget() {
         size="lg"
         className={cn(
           "rounded-full w-14 h-14 shadow-xl transition-all duration-300 hover:scale-110 relative overflow-hidden group border-2 border-white/20",
-          isOpen ? "bg-slate-800 rotate-90" : "bg-blue-600 hover:bg-blue-700"
+          isOpen ? "bg-slate-800" : "bg-blue-600 hover:bg-blue-700"
         )}
         aria-expanded={isOpen}
         aria-label="פתח צ'אט תמיכה"
-        >
+      >
         <div className="absolute inset-0 bg-gradient-to-tr from-black/10 to-transparent pointer-events-none" />
         {isOpen ? (
           <X className="w-6 h-6 text-white relative z-10" />
