@@ -15,8 +15,22 @@ export default function SupportWidget() {
   const [conversationId, setConversationId] = useState(null);
   const [showBubble, setShowBubble] = useState(false);
   const [currentBubbleIndex, setCurrentBubbleIndex] = useState(0);
+  const [isWidgetHidden, setIsWidgetHidden] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
+  // טען את מצב ההסתרה מ-localStorage
+  useEffect(() => {
+    const hidden = localStorage.getItem('support_widget_hidden');
+    if (hidden === 'true') {
+      setIsWidgetHidden(true);
+    }
+  }, []);
+
+  const hideWidget = () => {
+    setIsWidgetHidden(true);
+    localStorage.setItem('support_widget_hidden', 'true');
+  };
 
   const bubbleMessages = [
     "שלום עליכם! יש שאלה? 🔍",
@@ -218,14 +232,18 @@ export default function SupportWidget() {
     }
   };
 
+  if (isWidgetHidden) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-24 sm:bottom-6 right-6 z-[60] font-sans" dir="rtl">
-      {/* Speech Bubble - Positioned Absolutely */}
+      {/* Speech Bubble - Desktop Only */}
       {showBubble && !isOpen && (
-        <div className="absolute bottom-0 left-24 sm:bottom-20 sm:right-0 sm:left-auto animate-bounce-in">
+        <div className="hidden sm:block absolute bottom-20 right-0 animate-bounce-in">
           <div className="relative bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-2xl px-4 py-2.5 max-w-[220px]">
             <p className="text-sm text-white font-medium leading-relaxed break-words">{bubbleMessages[currentBubbleIndex]}</p>
-            <div className="absolute -bottom-2 right-8 sm:right-8 sm:-bottom-2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-indigo-600"></div>
+            <div className="absolute -bottom-2 right-8 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-indigo-600"></div>
           </div>
         </div>
       )}
@@ -370,32 +388,48 @@ export default function SupportWidget() {
           isOpen ? "bg-slate-800/40" : "bg-blue-600/40 animate-pulse-slow"
         )} />
 
-        <Button
-          onClick={handleOpen}
-          size="lg"
-          className={cn(
-            "rounded-full w-20 h-20 shadow-2xl transition-all duration-300 hover:scale-110 relative overflow-visible p-0 border-4",
-            isOpen 
-              ? "bg-slate-800 hover:bg-slate-700 border-slate-600" 
-              : "bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-white"
+        <div className="relative">
+          <Button
+            onClick={handleOpen}
+            size="lg"
+            className={cn(
+              "rounded-full w-20 h-20 shadow-2xl transition-all duration-300 hover:scale-110 relative overflow-visible p-0 border-4",
+              isOpen 
+                ? "bg-slate-800 hover:bg-slate-700 border-slate-600" 
+                : "bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-white"
+            )}
+            aria-expanded={isOpen}
+            aria-label="פתח צ'אט תמיכה"
+          >
+            {isOpen ? (
+              <X className="w-7 h-7 text-white relative z-10" />
+            ) : (
+              <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative z-10">
+                <img 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1451ff216_Gemini_Generated_Image_b321zxb321zxb321.png"
+                  alt="שמחה - עוזר אישי חכם"
+                  className="w-full h-full object-cover"
+                />
+                {/* נקודה ירוקה "פעיל" */}
+                <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse" />
+              </div>
+            )}
+          </Button>
+
+          {/* כפתור X להסרה - רק במובייל */}
+          {!isOpen && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                hideWidget();
+              }}
+              className="sm:hidden absolute -top-1 -left-1 w-6 h-6 bg-red-500 hover:bg-red-600 rounded-full flex items-center justify-center shadow-lg z-20"
+              aria-label="סגור וידג'ט תמיכה"
+            >
+              <X className="w-4 h-4 text-white" />
+            </button>
           )}
-          aria-expanded={isOpen}
-          aria-label="פתח צ'אט תמיכה"
-        >
-          {isOpen ? (
-            <X className="w-7 h-7 text-white relative z-10" />
-          ) : (
-            <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative z-10">
-              <img 
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1451ff216_Gemini_Generated_Image_b321zxb321zxb321.png"
-                alt="שמחה - עוזר אישי חכם"
-                className="w-full h-full object-cover"
-              />
-              {/* נקודה ירוקה "פעיל" */}
-              <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse" />
-            </div>
-          )}
-        </Button>
+        </div>
       </div>
 
         <style>{`
