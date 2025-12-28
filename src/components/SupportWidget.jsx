@@ -102,16 +102,50 @@ export default function SupportWidget() {
     return () => unsubscribe();
   }, [conversationId]);
 
-  const handleOpen = () => {
+  const handleOpen = async () => {
     if (!isOpen && !conversationId) {
-      initConversation();
+      await initConversation();
     }
     setIsOpen(!isOpen);
   };
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!inputValue.trim() || !conversationId) return;
+    if (!inputValue.trim()) return;
+
+    // אם אין conversation, צור אחד עכשיו
+    let currentConvId = conversationId;
+    if (!currentConvId) {
+      try {
+        setIsLoading(true);
+        const conv = await base44.agents.createConversation({
+          agent_name: "site_support",
+          metadata: {
+            source: "web_widget",
+            page_url: window.location.href,
+            anonymous: true
+          }
+        });
+        
+        if (conv && conv.id) {
+          currentConvId = conv.id;
+          setConversationId(conv.id);
+          sessionStorage.setItem("support_conversation_id", conv.id);
+        } else {
+          throw new Error("Failed to create conversation");
+        }
+      } catch (err) {
+        console.error("Failed to create conversation on send:", err);
+        setMessages(prev => [...(Array.isArray(prev) ? prev : []), { 
+          role: "assistant", 
+          content: "מצטער, לא הצלחתי לפתוח שיחה. אנא רענן את הדף." 
+        }]);
+        setIsLoading(false);
+        return;
+      } finally {
+        setIsLoading(false);
+      }
+    }
 
     const content = inputValue;
     setInputValue("");
@@ -121,7 +155,7 @@ export default function SupportWidget() {
 
     try {
       // טען את ה-conversation המלא מה-API
-      const conv = await base44.agents.getConversation(conversationId);
+      const conv = await base44.agents.getConversation(currentConvId);
       
       if (!conv || !conv.id) {
         throw new Error("Conversation not found");
