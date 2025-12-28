@@ -706,16 +706,7 @@ export default function BusinessLanding() {
         </section>
       </main>
       
-      {/* WhatsApp Floating Button - Mobile Optimized Position */}
-      <a 
-        href="https://wa.me/972505196963?text=היי, אני מעוניין לשמוע עוד על הצטרפות למשלנו כבעל עסק"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="fixed bottom-20 sm:bottom-6 left-4 sm:left-auto sm:right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-3 sm:p-4 rounded-full shadow-2xl active:scale-95 sm:hover:scale-110 transition-all touch-manipulation"
-        aria-label="צור קשר בוואטסאפ"
-      >
-        <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />
-      </a>
+
     </div>
   );
 }

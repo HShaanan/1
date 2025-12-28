@@ -248,7 +248,7 @@ export default function SupportWidget() {
                 className="w-12 h-12 rounded-full object-cover border-2 border-green-400"
               />
               <div>
-                <h3 className="font-bold text-lg">העוייזר שמחה</h3>
+                <h3 className="font-bold text-lg">שמחה</h3>
                 <div className="flex items-center gap-1.5 text-xs text-green-400">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
                   <span>מחובר</span>
@@ -377,13 +377,13 @@ export default function SupportWidget() {
         {isOpen ? (
           <X className="w-6 h-6 text-white relative z-10" />
         ) : (
-          <>
+          <div className="w-14 h-14 rounded-full overflow-hidden relative z-10 border-2 border-white shadow-lg">
             <img 
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/db3170781_Gemini_Generated_Image_r9i6bkr9i6bkr9i6.png"
-              alt="העוייזר שמחה"
-              className="w-10 h-10 rounded-full object-cover relative z-10"
+              alt="שמחה - עוזר אישי חכם"
+              className="w-full h-full object-cover"
             />
-          </>
+          </div>
         )}
         </Button>
 
