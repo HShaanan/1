@@ -3,6 +3,7 @@ import AccessibilityWidget from "@/components/AccessibilityWidget";
 import SupportWidget from "@/components/SupportWidget";
 import AxeReporter from "@/components/utils/AxeReporter";
 import SessionTracker from "@/components/SessionTracker";
+import Footer from "@/components/Footer";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -813,13 +814,15 @@ export default function Layout({ children, currentPageName }) {
 
         <main 
           id="main-content"
-          className={isWizardPage ? "flex-1 overflow-y-auto" : "flex-1 pb-28 lg:pb-0"}
+          className={isWizardPage ? "flex-1 overflow-y-auto" : "flex-1"}
           role="main"
           aria-label="תוכן ראשי"
           tabIndex={-1}
         >
           {children}
         </main>
+
+        {!isWizardPage && <Footer />}
 
         {!isWizardPage && (
           <nav 
