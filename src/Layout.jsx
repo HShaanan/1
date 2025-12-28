@@ -923,5 +923,5 @@ export default function Layout({ children, currentPageName }) {
       <SupportWidget />
         </div>
       </HelmetProvider>
-      );
-      }
+    );
+  }
