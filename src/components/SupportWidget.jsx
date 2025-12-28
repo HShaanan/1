@@ -37,6 +37,19 @@ export default function SupportWidget() {
     try {
       setIsLoading(true);
       
+      // בדיקה אם המשתמש מחובר
+      const isAuth = await base44.auth.isAuthenticated();
+      
+      if (!isAuth) {
+        // משתמש לא מחובר - הצג הודעת הפניה
+        setMessages([{
+          role: "assistant",
+          content: "👋 שלום! כדי להשתמש בצ'אט התמיכה, יש להתחבר תחילה.\n\nלחלופין, אפשר [ליצור קשר דרך הטופס](/ContactPage) והצוות שלנו יחזור אליך בהקדם."
+        }]);
+        setIsLoading(false);
+        return;
+      }
+      
       // בדיקה אם יש שיחה שמורה ב-Session Storage
       const savedConvId = sessionStorage.getItem("support_conversation_id");
       
@@ -54,10 +67,9 @@ export default function SupportWidget() {
       }
       
       if (!savedConvId || !conversationId) {
-        // יצירת שיחה חדשה (תומכת במשתמשים אנונימיים)
+        // יצירת שיחה חדשה
         const conv = await base44.agents.createConversation({
           agent_name: "site_support",
-          anonymous: true,
           metadata: {
             source: "web_widget",
             page_url: window.location.href
@@ -81,7 +93,7 @@ export default function SupportWidget() {
       console.error("Failed to init conversation:", error);
       setMessages([{
         role: "assistant",
-        content: "מצטער, נתקלתי בבעיה בפתיחת הצ'אט. פרטי השגיאה: " + (error.message || "שגיאה לא ידועה")
+        content: "מצטער, נתקלתי בבעיה. אפשר [ליצור קשר דרך הטופס](/ContactPage) והצוות שלנו יחזור אליך."
       }]);
     } finally {
       setIsLoading(false);
@@ -112,6 +124,17 @@ export default function SupportWidget() {
     e.preventDefault();
     if (!inputValue.trim()) return;
 
+    // בדיקה אם המשתמש מחובר לפני שליחה
+    const isAuth = await base44.auth.isAuthenticated();
+    if (!isAuth) {
+      setMessages(prev => [...(Array.isArray(prev) ? prev : []), { 
+        role: "assistant", 
+        content: "כדי לשלוח הודעות, יש להתחבר תחילה. אפשר גם [ליצור קשר דרך הטופס](/ContactPage)." 
+      }]);
+      setInputValue("");
+      return;
+    }
+
     const content = inputValue;
     setInputValue("");
     
@@ -125,7 +148,6 @@ export default function SupportWidget() {
       if (!currentConvId) {
         const conv = await base44.agents.createConversation({
           agent_name: "site_support",
-          anonymous: true,
           metadata: {
             source: "web_widget",
             page_url: window.location.href
@@ -161,7 +183,7 @@ export default function SupportWidget() {
 
       setMessages(prev => [...(Array.isArray(prev) ? prev : []), { 
         role: "assistant", 
-        content: "שגיאה בשליחת ההודעה: " + (error.message || "לא ידועה") 
+        content: "שגיאה בשליחה. אפשר [ליצור קשר דרך הטופס](/ContactPage)." 
       }]);
     } finally {
       setIsLoading(false);
