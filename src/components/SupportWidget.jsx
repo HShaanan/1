@@ -37,19 +37,6 @@ export default function SupportWidget() {
     try {
       setIsLoading(true);
       
-      // בדיקה אם המשתמש מחובר
-      const isAuth = await base44.auth.isAuthenticated();
-      
-      if (!isAuth) {
-        // משתמש לא מחובר - הצג הודעה שמפנה להתחברות
-        setMessages([{
-          role: "assistant",
-          content: "👋 שלום! כדי לשלוח הודעות לתמיכה, נדרש להתחבר תחילה. זה עוזר לנו לעקוב אחר הפניות שלך ולתת לך מענה טוב יותר."
-        }]);
-        setIsLoading(false);
-        return;
-      }
-      
       // בדיקה אם יש שיחה שמורה ב-Session Storage
       const savedConvId = sessionStorage.getItem("support_conversation_id");
       
@@ -67,7 +54,7 @@ export default function SupportWidget() {
       }
       
       if (!savedConvId || !conversationId) {
-        // יצירת שיחה חדשה
+        // יצירת שיחה חדשה (תומכת במשתמשים אנונימיים)
         const conv = await base44.agents.createConversation({
           agent_name: "site_support",
           metadata: {
@@ -123,16 +110,6 @@ export default function SupportWidget() {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
-
-    // בדיקה אם המשתמש מחובר
-    const isAuth = await base44.auth.isAuthenticated();
-    if (!isAuth) {
-      setMessages(prev => [...(Array.isArray(prev) ? prev : []), { 
-        role: "assistant", 
-        content: "נדרש להתחבר כדי לשלוח הודעות. לחץ על כפתור ההתחברות בראש העמוד." 
-      }]);
-      return;
-    }
 
     const content = inputValue;
     setInputValue("");
