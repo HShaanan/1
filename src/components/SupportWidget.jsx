@@ -222,10 +222,10 @@ export default function SupportWidget() {
     <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end font-sans" dir="rtl">
       {/* Speech Bubble */}
       {showBubble && !isOpen && (
-        <div className="mb-3 animate-bounce-in">
-          <div className="relative bg-white rounded-2xl shadow-2xl px-4 py-3 max-w-[200px]">
-            <p className="text-sm text-slate-800 font-medium">{bubbleMessages[currentBubbleIndex]}</p>
-            <div className="absolute -bottom-2 right-6 w-4 h-4 bg-white transform rotate-45"></div>
+        <div className="mb-4 animate-bounce-in mr-2">
+          <div className="relative bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-2xl px-4 py-3 max-w-[220px]">
+            <p className="text-sm text-white font-medium leading-relaxed">{bubbleMessages[currentBubbleIndex]}</p>
+            <div className="absolute -bottom-2 right-8 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-indigo-600"></div>
           </div>
         </div>
       )}
@@ -362,41 +362,59 @@ export default function SupportWidget() {
         </Card>
       </div>
 
-      {/* כפתור צף */}
-      <Button
-        onClick={handleOpen}
-        size="lg"
-        className={cn(
-          "rounded-full w-14 h-14 shadow-xl transition-all duration-300 hover:scale-110 relative overflow-hidden group border-2 border-white/20",
-          isOpen ? "bg-slate-800" : "bg-blue-600 hover:bg-blue-700"
-        )}
-        aria-expanded={isOpen}
-        aria-label="פתח צ'אט תמיכה"
-      >
-        <div className="absolute inset-0 bg-gradient-to-tr from-black/10 to-transparent pointer-events-none" />
-        {isOpen ? (
-          <X className="w-6 h-6 text-white relative z-10" />
-        ) : (
-          <div className="w-14 h-14 rounded-full overflow-hidden relative z-10 border-2 border-white shadow-lg">
-            <img 
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/db3170781_Gemini_Generated_Image_r9i6bkr9i6bkr9i6.png"
-              alt="שמחה - עוזר אישי חכם"
-              className="w-full h-full object-cover"
-            />
-          </div>
-        )}
+      {/* כפתור צף מעוצב */}
+      <div className="relative">
+        {/* זוהר מאחורי הכפתור */}
+        <div className={cn(
+          "absolute inset-0 rounded-full blur-xl transition-all duration-300",
+          isOpen ? "bg-slate-800/40" : "bg-blue-600/40 animate-pulse-slow"
+        )} />
+
+        <Button
+          onClick={handleOpen}
+          size="lg"
+          className={cn(
+            "rounded-full w-16 h-16 shadow-2xl transition-all duration-300 hover:scale-110 relative overflow-visible p-0 border-4",
+            isOpen 
+              ? "bg-slate-800 hover:bg-slate-700 border-slate-600" 
+              : "bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-white"
+          )}
+          aria-expanded={isOpen}
+          aria-label="פתח צ'אט תמיכה"
+        >
+          {isOpen ? (
+            <X className="w-7 h-7 text-white relative z-10" />
+          ) : (
+            <div className="w-full h-full rounded-full overflow-hidden flex items-center justify-center relative z-10">
+              <img 
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/db3170781_Gemini_Generated_Image_r9i6bkr9i6bkr9i6.png"
+                alt="שמחה - עוזר אישי חכם"
+                className="w-full h-full object-cover"
+              />
+              {/* נקודה ירוקה "פעיל" */}
+              <div className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-white rounded-full animate-pulse" />
+            </div>
+          )}
         </Button>
+      </div>
 
         <style>{`
-        @keyframes bounce-in {
-          0% { opacity: 0; transform: scale(0.3) translateY(20px); }
-          50% { opacity: 1; transform: scale(1.05); }
-          70% { transform: scale(0.9); }
-          100% { opacity: 1; transform: scale(1); }
-        }
-        .animate-bounce-in {
-          animation: bounce-in 0.5s ease-out;
-        }
+          @keyframes bounce-in {
+            0% { opacity: 0; transform: scale(0.3) translateY(20px); }
+            50% { opacity: 1; transform: scale(1.05); }
+            70% { transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+          }
+          .animate-bounce-in {
+            animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+          }
+          .animate-pulse-slow {
+            animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+          }
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+          }
         `}</style>
         </div>
         );
