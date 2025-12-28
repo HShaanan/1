@@ -12,11 +12,12 @@ export default function Footer() {
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png"
               alt="לוגו משלנו"
-              className="h-12 sm:h-16 w-auto"
-            />
+              className="h-12 sm:h-16 w-auto" />
+
             <div className="text-center md:text-right">
               <h3 className="text-lg sm:text-xl font-bold">משלנו</h3>
-              <p className="text-white/50 text-xs sm:text-sm">הפלטפורמה הכשרה למשלוחים</p>
+              <p className="text-white/50 text-xs sm:text-sm">כל מה שטוב כשר וקרוב
+הכל במקום אחד</p>
             </div>
           </div>
 
@@ -60,6 +61,5 @@ export default function Footer() {
           © {new Date().getFullYear()} משלנו. כל הזכויות שמורות.
         </div>
       </div>
-    </footer>
-  );
+    </footer>);
 }
