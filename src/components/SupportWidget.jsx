@@ -19,10 +19,10 @@ export default function SupportWidget() {
   const inputRef = useRef(null);
 
   const bubbleMessages = [
-    "שלום! יש לכם שאלה? 🤔",
-    "אני כאן לעזור לכם 24/6! 💬",
-    "מחפשים משהו מסוים? 🔍",
-    "צריכים עזרה? לחצו עלי! 👋"
+    "שלום עליכם! מחפשים משהו מסוים? 🔍",
+    "אני כאן לעזור לכם! 💬",
+    "יש שאלה? בבקשה לחצו עלי 👋",
+    "מוזמנים לשאול אותי כל דבר! 😊"
   ];
 
   // גלילה אוטומטית למטה
@@ -219,10 +219,10 @@ export default function SupportWidget() {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-[9999] flex flex-col items-end font-sans" dir="rtl">
-      {/* Speech Bubble */}
+    <div className="fixed bottom-6 right-6 z-[9999] font-sans" dir="rtl">
+      {/* Speech Bubble - Positioned Absolutely */}
       {showBubble && !isOpen && (
-        <div className="mb-4 animate-bounce-in mr-2">
+        <div className="absolute bottom-20 right-0 animate-bounce-in">
           <div className="relative bg-gradient-to-br from-blue-600 to-indigo-600 rounded-2xl shadow-2xl px-4 py-3 max-w-[220px]">
             <p className="text-sm text-white font-medium leading-relaxed">{bubbleMessages[currentBubbleIndex]}</p>
             <div className="absolute -bottom-2 right-8 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-indigo-600"></div>
