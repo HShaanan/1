@@ -44,7 +44,7 @@ export default function SupportWidget() {
         // משתמש לא מחובר - הצג הודעת הפניה
         setMessages([{
           role: "assistant",
-          content: "👋 שלום! כדי להשתמש בצ'אט התמיכה, יש להתחבר תחילה.\n\nלחלופין, אפשר [ליצור קשר דרך הטופס](/ContactPage) והצוות שלנו יחזור אליך בהקדם."
+          content: "👋 שלום! כדי להשתמש בצ'אט התמיכה, יש להתחבר תחילה.\n\nאפשר להתחבר דרך הכפתור בראש העמוד, או [ליצור קשר דרך הטופס](/ContactPage) והצוות שלנו יחזור אליך בהקדם."
         }]);
         setIsLoading(false);
         return;
@@ -129,7 +129,7 @@ export default function SupportWidget() {
     if (!isAuth) {
       setMessages(prev => [...(Array.isArray(prev) ? prev : []), { 
         role: "assistant", 
-        content: "כדי לשלוח הודעות, יש להתחבר תחילה. אפשר גם [ליצור קשר דרך הטופס](/ContactPage)." 
+        content: "כדי לשלוח הודעות, יש להתחבר תחילה (כפתור בראש העמוד). אפשר גם [ליצור קשר דרך הטופס](/ContactPage)." 
       }]);
       setInputValue("");
       return;
