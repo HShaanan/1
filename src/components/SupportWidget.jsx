@@ -374,7 +374,7 @@ export default function SupportWidget() {
           onClick={handleOpen}
           size="lg"
           className={cn(
-            "rounded-full w-18 h-18 shadow-2xl transition-all duration-300 hover:scale-110 relative overflow-visible p-0 border-4",
+            "rounded-full w-20 h-20 shadow-2xl transition-all duration-300 hover:scale-110 relative overflow-visible p-0 border-4",
             isOpen 
               ? "bg-slate-800 hover:bg-slate-700 border-slate-600" 
               : "bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 border-white"
