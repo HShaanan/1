@@ -363,7 +363,7 @@ export default function SupportWidget() {
       </div>
 
       {/* כפתור צף מעוצב */}
-      <div className="relative">
+      <div className="relative z-[90]">
         {/* זוהר מאחורי הכפתור */}
         <div className={cn(
           "absolute inset-0 rounded-full blur-xl transition-all duration-300",

@@ -857,14 +857,7 @@ export default function Layout({ children, currentPageName }) {
                 <Search className="w-6 h-6" aria-hidden="true" />
               </Link>
 
-              <Link
-                to={createPageUrl("Add")}
-                className="flex flex-col items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-full shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-110 -mt-2"
-                aria-label="הצטרף למשלנו והוסף עסק"
-                aria-current={currentPageName === "Add" ? "page" : undefined}
-              >
-                <Plus className="w-7 h-7" aria-hidden="true" />
-              </Link>
+
 
               {user ? (
                 <Link
