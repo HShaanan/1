@@ -17,6 +17,7 @@ import AdminImportPlaces from './pages/AdminImportPlaces';
 import AdminIntegrations from './pages/AdminIntegrations';
 import AdminKashrut from './pages/AdminKashrut';
 import AdminLiveUsers from './pages/AdminLiveUsers';
+import AdminNotificationLog from './pages/AdminNotificationLog';
 import AdminOrders from './pages/AdminOrders';
 import AdminPaymentDebug from './pages/AdminPaymentDebug';
 import AdminProfessionalsImageSeeder from './pages/AdminProfessionalsImageSeeder';
@@ -66,7 +67,6 @@ import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
-import AdminNotificationLog from './pages/AdminNotificationLog';
 import __Layout from './Layout.jsx';
 
 
@@ -90,6 +90,7 @@ export const PAGES = {
     "AdminIntegrations": AdminIntegrations,
     "AdminKashrut": AdminKashrut,
     "AdminLiveUsers": AdminLiveUsers,
+    "AdminNotificationLog": AdminNotificationLog,
     "AdminOrders": AdminOrders,
     "AdminPaymentDebug": AdminPaymentDebug,
     "AdminProfessionalsImageSeeder": AdminProfessionalsImageSeeder,
@@ -139,7 +140,6 @@ export const PAGES = {
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
-    "AdminNotificationLog": AdminNotificationLog,
 }
 
 export const pagesConfig = {
