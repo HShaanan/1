@@ -36,6 +36,20 @@ export default function SupportWidget() {
   const initConversation = async () => {
     try {
       setIsLoading(true);
+      
+      // בדיקה אם המשתמש מחובר
+      const isAuth = await base44.auth.isAuthenticated();
+      
+      if (!isAuth) {
+        // משתמש לא מחובר - הצג הודעה שמפנה להתחברות
+        setMessages([{
+          role: "assistant",
+          content: "👋 שלום! כדי לשלוח הודעות לתמיכה, נדרש להתחבר תחילה. זה עוזר לנו לעקוב אחר הפניות שלך ולתת לך מענה טוב יותר."
+        }]);
+        setIsLoading(false);
+        return;
+      }
+      
       // בדיקה אם יש שיחה שמורה ב-Session Storage
       const savedConvId = sessionStorage.getItem("support_conversation_id");
       
@@ -49,7 +63,6 @@ export default function SupportWidget() {
         } catch (err) {
           console.warn("Failed to load saved conversation, creating new one", err);
           sessionStorage.removeItem("support_conversation_id");
-          // Continue to create new conversation
         }
       }
       
@@ -67,7 +80,7 @@ export default function SupportWidget() {
           setConversationId(conv.id);
           sessionStorage.setItem("support_conversation_id", conv.id);
           
-          // הודעת פתיחה אוטומטית מהסוכן (וירטואלית)
+          // הודעת פתיחה אוטומטית מהסוכן
           setMessages([{
             role: "assistant",
             content: "שלום! 👋 אני הסוכן החכם של האתר. אפשר לדווח לי על תקלות 🐛, להציע שיפורים 💡 או לשאול שאלות. איך אוכל לעזור?"
@@ -78,10 +91,9 @@ export default function SupportWidget() {
       }
     } catch (error) {
       console.error("Failed to init conversation:", error);
-      // הצג שגיאה למשתמש
       setMessages([{
         role: "assistant",
-        content: "מצטער, נתקלתי בבעיה בפתיחת הצ'אט. אנא נסה לרענן את הדף או צור קשר בדרך אחרת."
+        content: "מצטער, נתקלתי בבעיה בפתיחת הצ'אט. פרטי השגיאה: " + (error.message || "שגיאה לא ידועה")
       }]);
     } finally {
       setIsLoading(false);
@@ -111,6 +123,16 @@ export default function SupportWidget() {
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputValue.trim()) return;
+
+    // בדיקה אם המשתמש מחובר
+    const isAuth = await base44.auth.isAuthenticated();
+    if (!isAuth) {
+      setMessages(prev => [...(Array.isArray(prev) ? prev : []), { 
+        role: "assistant", 
+        content: "נדרש להתחבר כדי לשלוח הודעות. לחץ על כפתור ההתחברות בראש העמוד." 
+      }]);
+      return;
+    }
 
     const content = inputValue;
     setInputValue("");
@@ -155,13 +177,12 @@ export default function SupportWidget() {
     } catch (error) {
       console.error("Error sending message:", error);
       
-      // If catastrophic error, clear session to recover
       sessionStorage.removeItem("support_conversation_id");
       setConversationId(null);
 
       setMessages(prev => [...(Array.isArray(prev) ? prev : []), { 
         role: "assistant", 
-        content: "סליחה, נתקלתי בשגיאה. אנא רענן את הדף ונסה שוב." 
+        content: "שגיאה בשליחת ההודעה: " + (error.message || "לא ידועה") 
       }]);
     } finally {
       setIsLoading(false);
