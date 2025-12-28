@@ -672,7 +672,7 @@ export default function BusinessLanding() {
         </section>
 
         {/* CTA Section */}
-        <section className="py-12 sm:py-20 bg-slate-900" aria-labelledby="cta-heading">
+        <section className="py-12 sm:py-20 bg-slate-900 pb-28 sm:pb-20" aria-labelledby="cta-heading">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
               מוכן להצטרף למהפכה?
