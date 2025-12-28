@@ -792,15 +792,21 @@ export default function Layout({ children, currentPageName }) {
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminIndexing")} className="w-full flex items-center cursor-pointer">
+                          <Globe className="w-4 h-4 ml-2 text-blue-600" aria-hidden="true" />
+                          <span>Google Indexing</span>
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
                         <Link to={createPageUrl("AdminSettings")} className="w-full flex items-center cursor-pointer bg-slate-50 font-bold">
                           <Settings className="w-4 h-4 ml-2 text-slate-700" aria-hidden="true" />
                           <span>הגדרות מערכת</span>
                         </Link>
                       </DropdownMenuItem>
-                    </>
-                  )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                      </>
+                      )}
+                      </DropdownMenuContent>
+                      </DropdownMenu>
             </div>
           </div>
         </header>
