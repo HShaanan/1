@@ -215,17 +215,17 @@ export default function LandingPage() {
               </div>
             </ScrollReveal>
 
-            <StaggerContainer staggerDelay={80} className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-3 lg:gap-4">
+            <StaggerContainer staggerDelay={80} className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
           {topSubcategories.length > 0 ? topSubcategories.map((cat, i) => (
               <Link
                 key={cat.id}
                 to={createPageUrl(`Browse?q=${encodeURIComponent(cat.name)}`)}
-                className="group relative overflow-hidden rounded-2xl sm:rounded-3xl aspect-square flex flex-col items-center justify-end p-2 sm:p-4 text-white shadow-lg hover:shadow-2xl transition-all duration-300 active:scale-95 sm:hover:scale-105 touch-manipulation"
+                className="group relative overflow-hidden rounded-2xl sm:rounded-3xl aspect-square flex flex-col items-center justify-end p-2 sm:p-4 text-white shadow-lg hover:shadow-2xl transition-all duration-300 active:scale-95 sm:hover:scale-[1.03] touch-manipulation"
               >
                 <img 
                   src={cat.image} 
                   alt={cat.name}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
