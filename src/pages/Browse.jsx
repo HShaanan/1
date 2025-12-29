@@ -645,9 +645,44 @@ export default function BrowsePage({ preSelectedState }) {
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content">
         <div className="space-y-8">
-          {/* Pre-selected Subcategories Chips (from store pages) */}
-          {selectedSubcategories.length > 0 && (
+          {/* Active Filters Display */}
+          {(selectedSubcategories.length > 0 || selectedSubcategory || userLocation?.city || filters.kashrut.length > 0) && (
             <div className="mb-6 flex flex-wrap gap-2">
+              {/* Subcategory from URL */}
+              {selectedSubcategory && (
+                <button 
+                  onClick={() => setSelectedSubcategory(null)}
+                  className="px-4 py-2 bg-blue-100 text-blue-700 hover:bg-blue-200 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+                >
+                  {selectedSubcategory.icon} {selectedSubcategory.name}
+                  <span className="text-blue-500">✕</span>
+                </button>
+              )}
+
+              {/* City Filter */}
+              {userLocation?.city && (
+                <button 
+                  onClick={() => setUserLocation(null)}
+                  className="px-4 py-2 bg-green-100 text-green-700 hover:bg-green-200 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+                >
+                  📍 {userLocation.city}
+                  <span className="text-green-500">✕</span>
+                </button>
+              )}
+
+              {/* Kashrut Filters */}
+              {filters.kashrut.map(k => (
+                <button 
+                  key={k}
+                  onClick={() => setFilters(prev => ({ ...prev, kashrut: prev.kashrut.filter(item => item !== k) }))}
+                  className="px-4 py-2 bg-purple-100 text-purple-700 hover:bg-purple-200 rounded-full text-sm font-medium transition-colors flex items-center gap-2"
+                >
+                  ✨ {k}
+                  <span className="text-purple-500">✕</span>
+                </button>
+              ))}
+
+              {/* Pre-selected Subcategories (from store pages) */}
               {selectedSubcategories.map(subId => {
                 const subcat = categories.find(c => c.id === subId);
                 if (!subcat) return null;
