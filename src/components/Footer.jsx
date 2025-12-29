@@ -3,6 +3,34 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 
 export default function Footer() {
+  const [footerLinks, setFooterLinks] = React.useState([]);
+
+  React.useEffect(() => {
+    const loadFooterLinks = async () => {
+      try {
+        const links = await base44.entities.FooterLink.filter({ is_active: true }, "sort_order");
+        setFooterLinks(links || []);
+      } catch (error) {
+        console.error("Error loading footer links:", error);
+      }
+    };
+    loadFooterLinks();
+  }, []);
+
+  // Group links by column
+  const groupedLinks = footerLinks.reduce((acc, link) => {
+    const key = `${link.column_type}-${link.column_title}`;
+    if (!acc[key]) {
+      acc[key] = {
+        type: link.column_type,
+        title: link.column_title,
+        links: []
+      };
+    }
+    acc[key].links.push(link);
+    return acc;
+  }, {});
+
   return (
     <footer className="bg-slate-950 text-white py-8 sm:py-12 pb-24 sm:pb-12" dir="rtl">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -32,26 +60,39 @@ export default function Footer() {
             </nav>
           </div>
 
-          {/* Categories */}
-          <div className="text-center md:text-right">
-            <h4 className="font-bold text-white mb-4">קטגוריות פופולריות</h4>
-            <nav className="flex flex-col gap-2" aria-label="קטגוריות פופולריות">
-              <Link to={createPageUrl("Browse?q=פיצה")} className="text-white/60 hover:text-white transition-colors text-sm">פיצה</Link>
-              <Link to={createPageUrl("Browse?q=סושי")} className="text-white/60 hover:text-white transition-colors text-sm">סושי</Link>
-              <Link to={createPageUrl("Browse?q=המבורגר")} className="text-white/60 hover:text-white transition-colors text-sm">המבורגר</Link>
-              <Link to={createPageUrl("Browse?q=בשר")} className="text-white/60 hover:text-white transition-colors text-sm">בשר</Link>
-              <Link to={createPageUrl("Browse?q=מתוקים")} className="text-white/60 hover:text-white transition-colors text-sm">מתוקים</Link>
-            </nav>
-          </div>
+          {/* Dynamic Footer Columns */}
+          {Object.entries(groupedLinks).map(([key, column]) => (
+            <div key={key} className="text-center md:text-right">
+              <h4 className="font-bold text-white mb-4">{column.title}</h4>
+              <nav className="flex flex-col gap-2" aria-label={column.title}>
+                {column.links.map((link) => {
+                  const query = new URLSearchParams();
+                  query.set('q', link.subcategory_name);
+                  if (link.city) query.set('city', link.city);
+                  if (link.kashrut) query.set('kashrut', link.kashrut);
+                  
+                  return (
+                    <Link 
+                      key={link.id}
+                      to={createPageUrl(`Browse?${query.toString()}`)} 
+                      className="text-white/60 hover:text-white transition-colors text-sm"
+                    >
+                      {link.link_text}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
+          ))}
 
-          {/* Kashrut */}
+          {/* Keep existing "Quick Links" column */}
           <div className="text-center md:text-right">
-            <h4 className="font-bold text-white mb-4">כשרויות</h4>
-            <nav className="flex flex-col gap-2" aria-label="רשויות כשרות">
-              <Link to={createPageUrl("Browse?kashrut=בד%22צ%20העדה-החרדית")} className="text-white/60 hover:text-white transition-colors text-sm">בד"צ העדה החרדית</Link>
-              <Link to={createPageUrl("Browse?kashrut=בד%22צ%20בית%20יוסף")} className="text-white/60 hover:text-white transition-colors text-sm">בד"צ בית יוסף</Link>
-              <Link to={createPageUrl("Browse?kashrut=רבנות%20מהדרין")} className="text-white/60 hover:text-white transition-colors text-sm">רבנות מהדרין</Link>
-              <Link to={createPageUrl("Browse?kashrut=רבנות")} className="text-white/60 hover:text-white transition-colors text-sm">רבנות</Link>
+            <h4 className="font-bold text-white mb-4">קישורים</h4>
+            <nav className="flex flex-col gap-2" aria-label="קישורים מהירים">
+              <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">עסקים</Link>
+              <Link to={createPageUrl("BusinessLanding")} className="text-white/60 hover:text-white transition-colors text-sm">הצטרפות</Link>
+              <Link to={createPageUrl("TermsOfUsePage")} className="text-white/60 hover:text-white transition-colors text-sm">תקנון</Link>
+              <Link to={createPageUrl("ContactPage")} className="text-white/60 hover:text-white transition-colors text-sm">צור קשר</Link>
             </nav>
           </div>
         </div>
