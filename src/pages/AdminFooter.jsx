@@ -160,9 +160,12 @@ export default function AdminFooter() {
                   <Input
                     value={formData.column_title}
                     onChange={(e) => setFormData({...formData, column_title: e.target.value})}
-                    placeholder="למשל: 'ביתר עילית' או 'בד״ץ העדה החרדית'"
+                    placeholder="מתמלא אוטומטית לפי העיר/כשרות"
                     required
+                    disabled
+                    className="bg-gray-50"
                   />
+                  <p className="text-xs text-gray-500 mt-1">הכותרת מתמלאת אוטומטית בהתאם לבחירה שלך</p>
                 </div>
 
                 <div>
@@ -189,7 +192,7 @@ export default function AdminFooter() {
                     <label className="block text-sm font-medium mb-1">עיר</label>
                     <Select 
                       value={formData.city}
-                      onValueChange={(value) => setFormData({...formData, city: value})}
+                      onValueChange={(value) => setFormData({...formData, city: value, column_title: value})}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="בחר עיר..." />
@@ -206,7 +209,7 @@ export default function AdminFooter() {
                     <label className="block text-sm font-medium mb-1">כשרות</label>
                     <Select 
                       value={formData.kashrut}
-                      onValueChange={(value) => setFormData({...formData, kashrut: value})}
+                      onValueChange={(value) => setFormData({...formData, kashrut: value, column_title: value})}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="בחר כשרות..." />
