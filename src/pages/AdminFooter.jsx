@@ -50,18 +50,7 @@ export default function AdminFooter() {
     }
   };
 
-  const loadLinks = async () => {
-    setLoading(true);
-    try {
-      const data = await base44.entities.FooterLink.list("sort_order");
-      setLinks(data || []);
-    } catch (error) {
-      console.error("Error loading footer links:", error);
-      toast.error("שגיאה בטעינת קישורי הפוטר");
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
