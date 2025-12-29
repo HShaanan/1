@@ -68,8 +68,7 @@ export default function Footer() {
               <nav className="flex flex-col gap-2" aria-label={column.title}>
                 {column.links.map((link) => {
                   const query = new URLSearchParams();
-                  query.set('q', link.subcategory_name);
-                  if (link.city) query.set('city', link.city);
+                  query.set('subcategory', link.subcategory_name);
                   if (link.kashrut) query.set('kashrut', link.kashrut);
 
                   return (

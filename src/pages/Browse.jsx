@@ -46,14 +46,31 @@ export default function BrowsePage({ preSelectedState }) {
     } catch { return null; }
   });
 
-  // Handle URL search param
+  // Handle URL params
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const q = params.get("q");
+    const subcategoryParam = params.get("subcategory");
+    const kashrutParam = params.get("kashrut");
+
     if (q) {
       setSearchQuery(q);
     }
-  }, []);
+
+    if (subcategoryParam && categories.length > 0) {
+      const subcat = categories.find(c => c.name === subcategoryParam);
+      if (subcat) {
+        setSelectedSubcategory(subcat);
+      }
+    }
+
+    if (kashrutParam) {
+      setFilters(prev => ({
+        ...prev,
+        kashrut: [kashrutParam]
+      }));
+    }
+  }, [categories]);
 
   // Advanced Filters State
   const [filters, setFilters] = useState({
