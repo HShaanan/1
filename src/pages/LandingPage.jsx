@@ -215,7 +215,7 @@ export default function LandingPage() {
               </div>
             </ScrollReveal>
 
-            <StaggerContainer staggerDelay={80} className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 lg:gap-6">
+            <StaggerContainer staggerDelay={80} className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-8">
           {topSubcategories.length > 0 ? topSubcategories.map((cat, i) => (
               <Link
                 key={cat.id}
