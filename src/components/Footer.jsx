@@ -74,7 +74,7 @@ export default function Footer() {
                   return (
                     <Link 
                       key={link.id}
-                      to={createPageUrl(`Browse?${query.toString()}`)} 
+                      to={`${createPageUrl("Browse")}?${query.toString()}`}
                       className="text-white/60 hover:text-white transition-colors text-sm"
                     >
                       {link.link_text}
