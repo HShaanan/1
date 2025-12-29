@@ -70,6 +70,7 @@ export default function Footer() {
                   const query = new URLSearchParams();
                   query.set('subcategory', link.subcategory_name);
                   if (link.kashrut) query.set('kashrut', link.kashrut);
+                  if (link.city) query.set('city', link.city);
 
                   return (
                     <Link 

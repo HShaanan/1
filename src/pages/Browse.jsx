@@ -54,6 +54,7 @@ export default function BrowsePage({ preSelectedState }) {
     const q = params.get("q");
     const subcategoryParam = params.get("subcategory");
     const kashrutParam = params.get("kashrut");
+    const cityParam = params.get("city");
 
     if (q) {
       setSearchQuery(q);
@@ -78,6 +79,11 @@ export default function BrowsePage({ preSelectedState }) {
         kashrut: [kashrutParam]
       }));
       console.log('Applied kashrut filter:', kashrutParam);
+    }
+
+    if (cityParam) {
+      setUserLocation({ city: cityParam });
+      console.log('Applied city filter:', cityParam);
     }
   }, [categories]);
 
@@ -421,6 +427,13 @@ export default function BrowsePage({ preSelectedState }) {
 
     if (filters.openNow) {
       base = base.filter(l => isOpenNow(l.hours));
+    }
+
+    // Filter by city/location
+    if (userLocation?.city) {
+      base = base.filter(l => 
+        l.city && l.city.trim().toLowerCase() === userLocation.city.trim().toLowerCase()
+      );
     }
 
     return base;
