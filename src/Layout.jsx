@@ -654,6 +654,13 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminFooter')} className="flex items-center gap-2 cursor-pointer">
+                          <Layers className="w-4 h-4 text-indigo-600" aria-hidden="true" />
+                          <span>ניהול Footer</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminSettings')} className="flex items-center gap-2 cursor-pointer bg-slate-50">
                           <Settings className="w-4 h-4 text-slate-700" aria-hidden="true" />
                           <span className="font-bold text-slate-700">הגדרות מערכת</span>
@@ -798,6 +805,13 @@ export default function Layout({ children, currentPageName }) {
                           <span>Google Indexing</span>
                         </Link>
                       </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminFooter")} className="w-full flex items-center cursor-pointer">
+                          <Layers className="w-4 h-4 ml-2 text-indigo-600" aria-hidden="true" />
+                          <span>ניהול Footer</span>
+                        </Link>
+                      </DropdownMenuItem>
+
                       <DropdownMenuItem asChild>
                         <Link to={createPageUrl("AdminSettings")} className="w-full flex items-center cursor-pointer bg-slate-50 font-bold">
                           <Settings className="w-4 h-4 ml-2 text-slate-700" aria-hidden="true" />
