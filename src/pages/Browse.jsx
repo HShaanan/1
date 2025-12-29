@@ -63,12 +63,6 @@ export default function BrowsePage({ preSelectedState }) {
       const subcat = categories.find(c => c.name === subcategoryParam);
       if (subcat) {
         setSelectedSubcategory(subcat);
-        // Auto-detect tab based on subcategory
-        if (isFoodCatId(subcat.id) || isFoodCatId(subcat.parent_id)) {
-          setActiveTab("food");
-        } else if (isShopCatId(subcat.id) || isShopCatId(subcat.parent_id)) {
-          setActiveTab("shopping");
-        }
       }
     }
 
@@ -78,7 +72,7 @@ export default function BrowsePage({ preSelectedState }) {
         kashrut: [kashrutParam]
       }));
     }
-  }, [categories, isFoodCatId, isShopCatId]);
+  }, [categories]);
 
   // Advanced Filters State
   const [filters, setFilters] = useState({
