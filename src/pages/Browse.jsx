@@ -60,9 +60,15 @@ export default function BrowsePage({ preSelectedState }) {
     }
 
     if (subcategoryParam) {
-      const subcat = categories.find(c => c.name === subcategoryParam);
+      // Find subcategory by name (case-insensitive and trim)
+      const subcat = categories.find(c => 
+        c.name && c.name.trim().toLowerCase() === subcategoryParam.trim().toLowerCase()
+      );
       if (subcat) {
         setSelectedSubcategory(subcat);
+        console.log('Selected subcategory from URL:', subcat);
+      } else {
+        console.warn('Subcategory not found:', subcategoryParam);
       }
     }
 
@@ -71,6 +77,7 @@ export default function BrowsePage({ preSelectedState }) {
         ...prev,
         kashrut: [kashrutParam]
       }));
+      console.log('Applied kashrut filter:', kashrutParam);
     }
   }, [categories]);
 
