@@ -48,6 +48,8 @@ export default function BrowsePage({ preSelectedState }) {
 
   // Handle URL params
   useEffect(() => {
+    if (categories.length === 0) return;
+
     const params = new URLSearchParams(window.location.search);
     const q = params.get("q");
     const subcategoryParam = params.get("subcategory");
@@ -57,10 +59,16 @@ export default function BrowsePage({ preSelectedState }) {
       setSearchQuery(q);
     }
 
-    if (subcategoryParam && categories.length > 0) {
+    if (subcategoryParam) {
       const subcat = categories.find(c => c.name === subcategoryParam);
       if (subcat) {
         setSelectedSubcategory(subcat);
+        // Auto-detect tab based on subcategory
+        if (isFoodCatId(subcat.id) || isFoodCatId(subcat.parent_id)) {
+          setActiveTab("food");
+        } else if (isShopCatId(subcat.id) || isShopCatId(subcat.parent_id)) {
+          setActiveTab("shopping");
+        }
       }
     }
 
@@ -70,7 +78,7 @@ export default function BrowsePage({ preSelectedState }) {
         kashrut: [kashrutParam]
       }));
     }
-  }, [categories]);
+  }, [categories, isFoodCatId, isShopCatId]);
 
   // Advanced Filters State
   const [filters, setFilters] = useState({
