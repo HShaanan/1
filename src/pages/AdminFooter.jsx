@@ -11,6 +11,9 @@ export default function AdminFooter() {
   const [links, setLinks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editingLink, setEditingLink] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [subcategories, setSubcategories] = useState([]);
+  const [kashrutList, setKashrutList] = useState([]);
   const [formData, setFormData] = useState({
     column_type: "city",
     column_title: "",
@@ -23,8 +26,29 @@ export default function AdminFooter() {
   });
 
   useEffect(() => {
-    loadLinks();
+    loadData();
   }, []);
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const [linksData, catsData, kashrutData] = await Promise.all([
+        base44.entities.FooterLink.list("sort_order"),
+        base44.entities.Category.list("name"),
+        base44.entities.Kashrut.list("name")
+      ]);
+      
+      setLinks(linksData || []);
+      setCategories(catsData || []);
+      setSubcategories((catsData || []).filter(c => c.parent_id));
+      setKashrutList(kashrutData || []);
+    } catch (error) {
+      console.error("Error loading data:", error);
+      toast.error("שגיאה בטעינת נתונים");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const loadLinks = async () => {
     setLoading(true);
@@ -51,7 +75,7 @@ export default function AdminFooter() {
       }
       
       resetForm();
-      loadLinks();
+      loadData();
     } catch (error) {
       console.error("Error saving link:", error);
       toast.error("שגיאה בשמירת הקישור");
@@ -69,7 +93,7 @@ export default function AdminFooter() {
     try {
       await base44.entities.FooterLink.delete(id);
       toast.success("הקישור נמחק בהצלחה");
-      loadLinks();
+      loadData();
     } catch (error) {
       console.error("Error deleting link:", error);
       toast.error("שגיאה במחיקת הקישור");
@@ -94,7 +118,7 @@ export default function AdminFooter() {
     const newOrder = link.sort_order + (direction === 'up' ? -1 : 1);
     try {
       await base44.entities.FooterLink.update(link.id, { sort_order: newOrder });
-      loadLinks();
+      loadData();
     } catch (error) {
       toast.error("שגיאה בשינוי הסדר");
     }
@@ -154,35 +178,58 @@ export default function AdminFooter() {
 
                 <div>
                   <label className="block text-sm font-medium mb-1">תת קטגוריה</label>
-                  <Input
+                  <Select 
                     value={formData.subcategory_name}
-                    onChange={(e) => setFormData({...formData, subcategory_name: e.target.value})}
-                    placeholder="למשל: 'פיצה', 'סושי', 'המבורגר'"
-                    required
-                  />
+                    onValueChange={(value) => setFormData({...formData, subcategory_name: value})}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="בחר תת קטגוריה..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {subcategories.map((sub) => (
+                        <SelectItem key={sub.id} value={sub.name}>
+                          {sub.icon} {sub.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
 
                 {formData.column_type === "city" && (
                   <div>
                     <label className="block text-sm font-medium mb-1">עיר</label>
-                    <Input
+                    <Select 
                       value={formData.city}
-                      onChange={(e) => setFormData({...formData, city: e.target.value})}
-                      placeholder="ביתר עילית"
-                      required
-                    />
+                      onValueChange={(value) => setFormData({...formData, city: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="בחר עיר..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="ביתר עילית">ביתר עילית</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 )}
 
                 {formData.column_type === "kashrut" && (
                   <div>
                     <label className="block text-sm font-medium mb-1">כשרות</label>
-                    <Input
+                    <Select 
                       value={formData.kashrut}
-                      onChange={(e) => setFormData({...formData, kashrut: e.target.value})}
-                      placeholder="למשל: 'בד״ץ העדה החרדית'"
-                      required
-                    />
+                      onValueChange={(value) => setFormData({...formData, kashrut: value})}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="בחר כשרות..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {kashrutList.map((k) => (
+                          <SelectItem key={k.id} value={k.name}>
+                            {k.name}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
                 )}
 
