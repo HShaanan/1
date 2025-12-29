@@ -61,6 +61,17 @@ export default function Footer() {
             </nav>
           </div>
 
+          {/* Quick Links */}
+          <div className="text-center md:text-right">
+            <h4 className="font-bold text-white mb-4">קישורים</h4>
+            <nav className="flex flex-col gap-2" aria-label="קישורים מהירים">
+              <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">עסקים</Link>
+              <Link to={createPageUrl("BusinessLanding")} className="text-white/60 hover:text-white transition-colors text-sm">הצטרפות</Link>
+              <Link to={createPageUrl("TermsOfUsePage")} className="text-white/60 hover:text-white transition-colors text-sm">תקנון</Link>
+              <Link to={createPageUrl("ContactPage")} className="text-white/60 hover:text-white transition-colors text-sm">צור קשר</Link>
+            </nav>
+          </div>
+
           {/* Dynamic Footer Columns */}
           {Object.entries(groupedLinks).map(([key, column]) => (
             <div key={key} className="text-center md:text-right">
@@ -71,7 +82,7 @@ export default function Footer() {
                   query.set('q', link.subcategory_name);
                   if (link.city) query.set('city', link.city);
                   if (link.kashrut) query.set('kashrut', link.kashrut);
-                  
+
                   return (
                     <Link 
                       key={link.id}
@@ -85,18 +96,7 @@ export default function Footer() {
               </nav>
             </div>
           ))}
-
-          {/* Keep existing "Quick Links" column */}
-          <div className="text-center md:text-right">
-            <h4 className="font-bold text-white mb-4">קישורים</h4>
-            <nav className="flex flex-col gap-2" aria-label="קישורים מהירים">
-              <Link to={createPageUrl("Browse")} className="text-white/60 hover:text-white transition-colors text-sm">עסקים</Link>
-              <Link to={createPageUrl("BusinessLanding")} className="text-white/60 hover:text-white transition-colors text-sm">הצטרפות</Link>
-              <Link to={createPageUrl("TermsOfUsePage")} className="text-white/60 hover:text-white transition-colors text-sm">תקנון</Link>
-              <Link to={createPageUrl("ContactPage")} className="text-white/60 hover:text-white transition-colors text-sm">צור קשר</Link>
-            </nav>
           </div>
-        </div>
 
         <div className="border-t border-white/10 pt-6 sm:pt-8 text-center text-white/40 text-xs sm:text-sm">
           © {new Date().getFullYear()} משלנו. כל הזכויות שמורות.
