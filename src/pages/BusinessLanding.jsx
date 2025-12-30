@@ -528,11 +528,11 @@ export default function BusinessLanding() {
 
                   <div className="mb-6">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-slate-900">499₪</span>
-                      <span className="text-slate-500">הקמה</span>
+                      <span className="text-4xl font-bold text-slate-900">₪199</span>
+                      <span className="text-slate-600 text-lg">/חודש</span>
                     </div>
-                    <div className="mt-2 text-slate-600">
-                      + <span className="font-semibold text-slate-900">199₪</span>/חודש
+                    <div className="mt-2 text-slate-500 text-sm">
+                      דמי הקמה: <span className="font-semibold text-slate-700">₪499</span>
                     </div>
                   </div>
 
@@ -613,11 +613,11 @@ export default function BusinessLanding() {
 
                     <div className="mb-6">
                       <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-bold text-white">850₪</span>
-                        <span className="text-indigo-100">הקמה</span>
+                        <span className="text-4xl font-bold text-white">₪349</span>
+                        <span className="text-indigo-100 text-lg">/חודש</span>
                       </div>
-                      <div className="mt-2 text-indigo-100">
-                        + <span className="font-semibold text-white">349₪</span>/חודש
+                      <div className="mt-2 text-indigo-200 text-sm">
+                        דמי הקמה: <span className="font-semibold text-white">₪850</span>
                       </div>
                     </div>
 
@@ -675,11 +675,11 @@ export default function BusinessLanding() {
 
                   <div className="mb-6">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-slate-900">1,500₪</span>
-                      <span className="text-slate-500">הקמה</span>
+                      <span className="text-4xl font-bold text-slate-900">₪699</span>
+                      <span className="text-slate-600 text-lg">/חודש</span>
                     </div>
-                    <div className="mt-2 text-slate-600">
-                      + <span className="font-semibold text-slate-900">699₪+</span>/חודש
+                    <div className="mt-2 text-slate-500 text-sm">
+                      דמי הקמה: <span className="font-semibold text-slate-700">₪1,500</span>
                     </div>
                   </div>
 
