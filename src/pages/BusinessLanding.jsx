@@ -85,21 +85,21 @@ const testimonials = [
   {
     name: "ר' יוסי כהן",
     business: "מאפיית הטעמים",
-    text: "חשבתי שהמאפייה הקטנה שלי לא צריכה 'עמוד מפואר'. טעיתי. תוך שבועיים קיבלתי 60% יותר הזמנות. ההכנסות עלו ב-8,000 ₪ בחודש. רק צר לי שלא עשיתי את זה קודם.",
+    text: "חשבתי שהמאפייה הקטנה שלי לא צריכה 'עמוד מפואר'. טעיתי. העמוד המקצועי שיצר לי אמון ומהימנות, והלקוחות התחילו להגיע גם מחוץ לשכונה. צר לי שלא עשיתי את זה קודם.",
     rating: 5,
     image: BUSINESS_IMAGES.bakery
   },
   {
     name: "משה לוי",
     business: "גריל הבשרים",
-    text: "הייתי בטוח שאנשים יודעים עלי. אבל בגוגל הייתי שקוף לגמרי. עכשיו כשמישהו מחפש 'גריל כשר' - אני הראשון. כל יום מגיעות הזמנות חדשות. משלנו פשוט החזירה לי את העסק.",
+    text: "הייתי בטוח שאנשים יודעים עלי. אבל בגוגל הייתי שקוף לגמרי. עכשיו כשמישהו מחפש 'גריל כשר' - אני שם. הנוכחות הדיגיטלית שינתה לי את העסק לגמרי.",
     rating: 5,
     image: BUSINESS_IMAGES.meat
   },
   {
     name: "אברהם גולד",
     business: "סושי כשר",
-    text: "שילמתי פעם 4,500 ₪ למעצב שלקח חודש. כאן שילמתי 450 ₪ וקיבלתי עמוד מעוצב תוך 24 שעות + חיבור לגוגל + דאשבורד. זה לא הגיוני כמה זה שווה. הכי טובה החלטה שעשיתי השנה.",
+    text: "שילמתי פעם אלפי שקלים למעצב שלקח חודש. הפעם העבודה נעשתה מהר, מקצועית ובמחיר הוגן. העמוד נראה מדהים והחיבור לגוגל עובד מצוין. החלטה מצוינת.",
     rating: 5,
     image: BUSINESS_IMAGES.restaurant
   }
@@ -107,8 +107,8 @@ const testimonials = [
 
 const faqs = [
   {
-    question: "450 ₪? זה נשמע זול מדי. מה הקאץ'?",
-    answer: "אין קאץ'. ברצינות. זה המחיר כי אנחנו משתמשים ב-AI ולא במעצב אנושי שעולה אלפי שקלים. אתה משלם רק על הערך - עמוד מעוצב + חיבור לגוגל + סליקה + דאשבורד. זה לא 'זול', זה פשוט חכם."
+    question: "כמה עולה שירות העיצוב והפלטפורמה?",
+    answer: "המחיר משתנה בהתאם לצרכים של העסק והתאמה אישית. צרו קשר ונבנה לכם חבילה מדויקת - עמוד מעוצב + חיבור לגוגל + דאשבורד. אנחנו משקיעים בכל עסק כדי שתצליחו."
   },
   {
     question: "אני לא טכנולוג, זה יהיה מסובך בשבילי?",
@@ -413,11 +413,7 @@ export default function BusinessLanding() {
                   </span>
                 </Button>
               </Link>
-              <div className="flex items-center gap-2 text-white/90 text-sm sm:text-base font-semibold bg-gradient-to-r from-red-600 to-orange-600 px-5 py-3 rounded-full border border-orange-400/30 shadow-lg shadow-red-500/30">
-                <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                <span>47 עסקים הצטרפו היום</span>
               </div>
-            </div>
 
           </div>
         </div>
@@ -725,21 +721,21 @@ export default function BusinessLanding() {
         {/* CTA Section */}
         <section className="py-12 sm:py-20 bg-slate-900 pb-28 sm:pb-20" aria-labelledby="cta-heading">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-600 via-orange-500 to-red-600 text-white rounded-full text-sm font-bold mb-4 shadow-2xl shadow-red-500/50 border border-orange-400/30">
-              <AlertTriangle className="w-5 h-5 animate-pulse" aria-hidden="true" />
-              <span>מבצע מייסדים - רק ל-100 העסקים הראשונים</span>
-              <div className="w-2 h-2 bg-yellow-300 rounded-full animate-pulse"></div>
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-slate-800 via-indigo-900 to-slate-800 text-white rounded-full text-sm font-bold mb-4 shadow-2xl shadow-indigo-500/30 border border-indigo-500/30 backdrop-blur-sm">
+              <Sparkles className="w-5 h-5 text-cyan-400" aria-hidden="true" />
+              <span>עיצוב מקצועי + טכנולוגיית BASE44</span>
+              <Zap className="w-5 h-5 text-yellow-400" aria-hidden="true" />
             </div>
             <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
               תפסיק להסתכל איך המתחרים מצליחים.<br/>
               <span className="text-yellow-300">זה התור שלך.</span>
             </h2>
-            <p className="text-white text-sm sm:text-lg mb-6 sm:mb-10 max-w-2xl mx-auto px-4 font-bold">
-              עיצוב AI ששווה 5,000 ₪ - <span className="text-yellow-300 text-xl">רק 450 ₪</span>
+            <p className="text-slate-300 text-sm sm:text-lg mb-6 sm:mb-10 max-w-2xl mx-auto px-4">
+              עיצוב מקצועי מותאם אישית + טכנולוגיית BASE44 המהירה בעולם
               <br className="hidden sm:block" />
-              <span className="hidden sm:inline text-slate-300">+ חיבור לגוגל + סליקה + דאשבורד + תמיכה מלאה</span>
+              <span className="hidden sm:inline text-indigo-300">+ חיבור ישיר לנתוני גוגל + דאשבורד מתקדם + תמיכה מלאה</span>
               <br/>
-              <span className="text-red-400 text-base">המחיר עולה ל-890 ₪ ברגע שנגמרים המקומות</span>
+              <span className="text-cyan-400 text-lg font-bold">כל מה שעסק מצליח צריך. במקום אחד.</span>
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
@@ -758,10 +754,10 @@ export default function BusinessLanding() {
               </div>
             </div>
 
-            <div className="mt-8 text-white/70 text-xs sm:text-sm max-w-xl mx-auto">
+            <div className="mt-8 text-slate-300 text-xs sm:text-sm max-w-xl mx-auto">
               <strong className="text-white">הסיכון האמיתי?</strong> להישאר עם עמוד גנרי בזמן שהמתחרים גונבים את הלקוחות שלך.
               <br/>
-              <span className="text-yellow-300">450 ₪ עכשיו חוסכים לך אלפים בעתיד.</span>
+              <span className="text-cyan-400 font-bold">השקעה חכמה היום = לקוחות חדשים מחר.</span>
             </div>
           </div>
         </section>
