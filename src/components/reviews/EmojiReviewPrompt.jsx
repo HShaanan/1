@@ -1,5 +1,6 @@
 import React from "react";
 import { User } from "@/entities/User";
+import { motion } from "framer-motion";
 
 export default function EmojiReviewPrompt({ businessName = "העסק", onOpenForm, theme, isBlackTheme }) {
   const [hovered, setHovered] = React.useState(null);
@@ -37,26 +38,27 @@ export default function EmojiReviewPrompt({ businessName = "העסק", onOpenFor
         />
       </div>
 
-      {/* אימוג'ים */}
+      {/* אימוג'ים - With hover animations */}
       <div className="flex items-center gap-4">
         {emojis.map((e, i) => (
-          <button
+          <motion.button
             key={i}
             type="button"
             onMouseEnter={() => setHovered(i)}
             onMouseLeave={() => setHovered(null)}
             onClick={() => handleClick(i)}
+            whileHover={{ scale: 1.15, y: -4 }}
+            whileTap={{ scale: 0.95 }}
             className="w-12 h-12 rounded-full border bg-white flex items-center justify-center text-2xl shadow-[0_6px_12px_rgba(0,0,0,0.08)] hover:shadow-[0_10px_18px_rgba(0,0,0,0.12)] transition-all"
             title="דרג והוסף ביקורת"
             aria-label="הוסף ביקורת"
             style={{
               borderColor: primaryHover,
-              filter: hovered === i ? "none" : "grayscale(100%) saturate(0.7) opacity(0.9)",
-              transform: hovered === i ? "translateY(-2px)" : "translateY(0)"
+              filter: hovered === i ? "none" : "grayscale(100%) saturate(0.7) opacity(0.9)"
             }}
           >
             <span role="img" aria-hidden="true">{e}</span>
-          </button>
+          </motion.button>
         ))}
       </div>
     </div>
