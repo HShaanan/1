@@ -24,39 +24,39 @@ const BUSINESS_IMAGES = {
 const benefits = [
   {
     icon: Sparkles,
-    title: "עיצוב AI תוך 24 שעות",
-    description: "תשכח ממעצבים שלוקחים שבועות. ה-AI שלנו בונה לך עמוד מהמם תוך יום אחד - נראה כאילו משרד מיתוג עיצב.",
+    title: "עיצוב מקצועי תוך 24 שעות",
+    description: "אני בעצמי מעצב לך עמוד יוקרתי ומותאם אישית. תוך יום אחד - עמוד שנראה כמו של חברה ענקית, בלי שבועות המתנה.",
     color: "from-purple-500 to-indigo-600"
   },
   {
     icon: TrendingUp,
-    title: "חיבור ישיר לגוגל",
-    description: "אנחנו מחוברים ל-Google Search Console. אתה רואה נתונים אמיתיים - כמה אנשים מחפשים אותך, מי קולק, מי קונה.",
+    title: "חיבור ישיר לנתוני גוגל",
+    description: "מחובר ל-Google Search Console. אתה רואה דאטה אמיתית - כמה אנשים מחפשים אותך, מי קולק, מי מתעניין. לא הבטחות באוויר.",
     color: "from-green-500 to-emerald-600"
-  },
-  {
-    icon: DollarSign,
-    title: "תשלומים + סליקה אוטומטית",
-    description: "הלקוח משלם דרך האתר, הכסף מגיע אליך. בלי לרדוף אחרי תשלומים, בלי בעיות. הכל אוטומטי.",
-    color: "from-blue-500 to-cyan-600"
   },
   {
     icon: MessageCircle,
     title: "הזמנות לוואטסאפ בלחיצה",
-    description: "לקוח רוצה להזמין? קליק אחד והוא מדבר איתך בוואטסאפ. בלי אפליקציות, בלי סיפורים - פשוט עובד.",
+    description: "לקוח רוצה להזמין? קליק אחד והוא מדבר איתך בוואטסאפ. בלי מסך ביניים, בלי אפליקציות - ישר לעניין.",
     color: "from-green-400 to-teal-600"
   },
   {
     icon: Smartphone,
-    title: "דאשבורד שמראה הכל",
-    description: "כמה הזמנות נכנסו? מי ביקר בעמוד? איזה מוצר הכי מבוקש? כל המידע במקום אחד, בזמן אמת.",
+    title: "דאשבורד ניהול מתקדם",
+    description: "כמה הזמנות היום? מי ביקר בעמוד? איזה מוצר הכי פופולרי? כל הנתונים החיוניים במקום אחד, עדכון בזמן אמת.",
     color: "from-orange-500 to-red-600"
   },
   {
     icon: Store,
-    title: "מהירות BASE44",
-    description: "הטכנולוגיה הכי מהירה בשוק. העמוד שלך נטען ב-0.8 שניות. למה זה חשוב? כי לקוח לא מחכה - הוא עובר למתחרה.",
+    title: "טכנולוגיית BASE44 המהירה בעולם",
+    description: "העמוד שלך נטען ב-0.8 שניות. זה הכי מהיר בשוק. למה זה קריטי? כי לקוח לא מחכה - הוא עובר למתחרה.",
     color: "from-pink-500 to-rose-600"
+  },
+  {
+    icon: BarChart3,
+    title: "SEO ואופטימיזציה בגוגל",
+    description: "העמוד שלך מותאם מושלם למנועי חיפוש. כשמחפשים את הקטגוריה שלך - אתה מופיע בראש התוצאות. זה מה שמביא לקוחות.",
+    color: "from-blue-500 to-cyan-600"
   }
 ];
 
@@ -99,7 +99,7 @@ const testimonials = [
   {
     name: "אברהם גולד",
     business: "סושי כשר",
-    text: "שילמתי פעם 4,500 ₪ למעצב שלקח חודש. כאן שילמתי 450 ₪ וקיבלתי עמוד מעוצב תוך 24 שעות + חיבור לגוגל + סליקה + דאשבורד. זה לא הגיוני כמה זה שווה. הכי טובה החלטה שעשיתי השנה.",
+    text: "שילמתי פעם 4,500 ₪ למעצב שלקח חודש. כאן שילמתי 450 ₪ וקיבלתי עמוד מעוצב תוך 24 שעות + חיבור לגוגל + דאשבורד. זה לא הגיוני כמה זה שווה. הכי טובה החלטה שעשיתי השנה.",
     rating: 5,
     image: BUSINESS_IMAGES.restaurant
   }
@@ -119,8 +119,8 @@ const faqs = [
     answer: "טעות. הם כן משתמשים. הם פשוט לא מוצאים אותך. 87% מהאנשים מחפשים בגוגל לפני שהם קונים משהו. אם אתה לא שם, הם קונים מהמתחרה. זה פשוט."
   },
   {
-    question: "למה אני צריך 'עמוד מעוצב'? יש לי פייסבוק.",
-    answer: "פייסבוק זה טוב. אבל זה לא שלך. מחר פייסבוק משנים אלגוריתם ואתה נעלם. עמוד בגוגל? זה שלך לנצח. וגוגל הוא המקום שבו אנשים חיפשו אותך - לא פייסבוק."
+    question: "למה אני צריך 'עמוד מעוצב'? יש לי אתר פשוט.",
+    answer: "אתר פשוט זה טוב. אבל אם הוא לא מעוצב ולא מופיע בגוגל - אף אחד לא רואה אותו. עמוד מקצועי עם BASE44 + אופטימיזציה לגוגל? זה מה שגורם ללקוחות למצוא אותך ולבחור בך על פני המתחרים."
   },
   {
     question: "כמה זמן לוקח לראות תוצאות?",
@@ -221,10 +221,15 @@ export default function BusinessLanding() {
             transform: translateY(0);
           }
         }
-        
+
         @keyframes float {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-10px); }
+          0%, 100% { transform: translateY(0) rotate(0deg); }
+          50% { transform: translateY(-15px) rotate(5deg); }
+        }
+
+        @keyframes grid-flow {
+          0% { transform: translateX(0) translateY(0); }
+          100% { transform: translateX(50px) translateY(50px); }
         }
         
         @keyframes wiggle {
@@ -335,13 +340,28 @@ export default function BusinessLanding() {
 
       {/* Hero Section */}
       <section className="relative min-h-[75vh] sm:min-h-[90vh] flex items-center overflow-hidden">
-        {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-[#667eea] via-[#764ba2] to-[#f093fb]" />
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA2MCAwIEwgMCAwIDAgNjAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjA1KSIgc3Ryb2tlLXdpZHRoPSIxIi8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2dyaWQpIi8+PC9zdmc+')] opacity-20 sm:opacity-30" />
-        
-        {/* Floating orbs - Hidden on mobile for performance */}
-        <div className="hidden sm:block absolute top-20 left-[10%] w-72 h-72 bg-white/10 rounded-full blur-3xl animate-pulse" />
-        <div className="hidden sm:block absolute bottom-20 right-[15%] w-96 h-96 bg-pink-300/20 rounded-full blur-3xl" />
+        {/* Ultra-Premium Tech Background */}
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900" />
+
+        {/* Animated Grid Pattern */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+                             linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px)`,
+            backgroundSize: '50px 50px',
+            animation: 'grid-flow 20s linear infinite'
+          }} />
+        </div>
+
+        {/* Glowing Orbs - Premium Look */}
+        <div className="hidden sm:block absolute top-20 left-[10%] w-96 h-96 bg-indigo-500/30 rounded-full blur-3xl animate-pulse" />
+        <div className="hidden sm:block absolute bottom-20 right-[15%] w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl" />
+        <div className="hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
+
+        {/* Floating Tech Elements */}
+        <div className="hidden lg:block absolute top-40 right-20 w-32 h-32 border border-indigo-500/30 rounded-2xl rotate-45 animate-float" />
+        <div className="hidden lg:block absolute bottom-40 left-20 w-24 h-24 border border-purple-500/30 rounded-full animate-float" style={{ animationDelay: '0.5s' }} />
+        <div className="hidden lg:block absolute top-60 left-40 w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-lg rotate-12 animate-float" style={{ animationDelay: '1.5s' }} />
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
           <div className="text-center">
@@ -355,34 +375,47 @@ export default function BusinessLanding() {
               <span className="text-sm sm:text-base">חזרה לדף הבית</span>
             </Link>
 
+            {/* Tech Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 rounded-full backdrop-blur-sm mb-4">
+              <Zap className="w-4 h-4 text-yellow-400 animate-pulse" aria-hidden="true" />
+              <span className="text-indigo-200 text-sm font-semibold">פלטפורמת BASE44 המתקדמת בעולם</span>
+            </div>
+
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[1.2] sm:leading-tight mb-4 sm:mb-6 px-2">
               בזמן שאתה קורא את זה,
               <br />
-              <span className="bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent">
-                המתחרה שלך גונב את הלקוחות
+              <span className="relative inline-block">
+                <span className="absolute inset-0 blur-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 opacity-50"></span>
+                <span className="relative bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent">
+                  המתחרה שלך גונב את הלקוחות
+                </span>
               </span>
             </h1>
 
-            <p className="text-base sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4">
-              <span className="font-bold text-yellow-300">תוך 24 שעות</span> אנחנו הופכים את העסק שלך למכונת כסף דיגיטלית עם AI מתקדם + חיבור ישיר לגוגל.
+            <p className="text-base sm:text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4">
+              <span className="font-bold text-cyan-400">תוך 24 שעות</span> אני מעצב לך עמוד יוקרתי עם טכנולוגיית BASE44 המהירה בעולם + חיבור ישיר לנתוני גוגל.
               <br className="hidden sm:block" />
-              <span className="hidden sm:inline">בלי מעצבים, בלי שבועות המתנה, בלי אלפי שקלים. רק תוצאות.</span>
-              <span className="sm:hidden">AI + גוגל = לקוחות חדשים כל יום.</span>
+              <span className="hidden sm:inline text-indigo-300">בלי שבועות המתנה, בלי אלפי שקלים. עיצוב מקצועי שמביא תוצאות.</span>
+              <span className="sm:hidden text-indigo-300">עיצוב מקצועי + גוגל = לקוחות חדשים.</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
               <Link to={createPageUrl("ContactPage")} className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
-                  className="w-full sm:w-auto rounded-full bg-white text-[#667eea] hover:bg-white/95 font-bold px-8 sm:px-10 py-5 sm:py-7 text-lg sm:text-xl shadow-2xl active:scale-95 sm:hover:scale-105 transition-all duration-300 touch-manipulation min-h-[52px] relative overflow-hidden"
+                  className="group w-full sm:w-auto rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-bold px-8 sm:px-10 py-5 sm:py-7 text-lg sm:text-xl shadow-2xl shadow-indigo-500/50 active:scale-95 sm:hover:scale-105 transition-all duration-300 touch-manipulation min-h-[52px] relative overflow-hidden border border-white/20"
                 >
-                  <span className="relative z-10">אני רוצה לעצב את העסק שלי עכשיו</span>
-                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 opacity-0 hover:opacity-20 transition-opacity"></div>
-                  <Zap className="w-5 h-5 sm:w-6 sm:h-6 mr-2 animate-pulse" aria-hidden="true" />
+                  <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></span>
+                  <span className="relative z-10 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 animate-pulse" aria-hidden="true" />
+                    אני רוצה עמוד מקצועי עכשיו
+                    <ChevronLeft className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
+                  </span>
                 </Button>
               </Link>
-              <div className="text-white/90 text-sm sm:text-base font-semibold bg-red-600 px-4 py-2 rounded-full animate-pulse">
-                ⏰ 47 עסקים הצטרפו היום
+              <div className="flex items-center gap-2 text-white/90 text-sm sm:text-base font-semibold bg-gradient-to-r from-red-600 to-orange-600 px-5 py-3 rounded-full border border-orange-400/30 shadow-lg shadow-red-500/30">
+                <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
+                <span>47 עסקים הצטרפו היום</span>
               </div>
             </div>
 
@@ -402,15 +435,22 @@ export default function BusinessLanding() {
         <section id="benefits" className="py-12 sm:py-20 bg-white" aria-labelledby="benefits-heading">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 sm:mb-16">
-              <span className="inline-block px-3 sm:px-4 py-1 bg-red-100 text-red-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4 animate-fade-in-up">
-                🚨 תפסיק להפסיד כסף
-              </span>
+              <div className="inline-flex items-center gap-2 px-4 sm:px-5 py-2 bg-gradient-to-r from-red-500/10 via-orange-500/10 to-red-500/10 border border-red-500/30 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4 animate-fade-in-up backdrop-blur-sm">
+                <div className="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                <span className="text-red-700">תפסיק להפסיד כסף</span>
+                <AlertTriangle className="w-4 h-4 text-red-600" aria-hidden="true" />
+              </div>
               <h2 id="benefits-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 animate-fade-in-up px-2" style={{ animationDelay: '0.1s' }}>
-                המתחרה שלך כבר פה.<br/>
-                <span className="text-red-600">אתה מחכה למה?</span>
+                המתחרה שלך <span className="relative inline-block">כבר פה
+                  <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 100 8" preserveAspectRatio="none">
+                    <path d="M0,5 Q25,0 50,5 T100,5" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-500" />
+                  </svg>
+                </span>
+                <br/>
+                <span className="bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">אתה מחכה למה?</span>
               </h2>
               <p className="text-slate-600 text-sm sm:text-lg max-w-2xl mx-auto animate-fade-in-up px-4 font-bold" style={{ animationDelay: '0.2s' }}>
-                כל יום בלי עמוד מקצועי = לקוחות שבוחרים במתחרה שלך
+                כל יום בלי עמוד מקצועי = <span className="text-red-600">לקוחות שבוחרים במתחרה</span>
               </p>
             </div>
 
@@ -418,15 +458,23 @@ export default function BusinessLanding() {
               {benefits.map((benefit, i) => (
                 <Card 
                   key={i} 
-                  className="group hover:shadow-xl transition-all duration-300 active:scale-[0.98] sm:hover:-translate-y-2 border-0 bg-slate-50 animate-fade-in-up touch-manipulation"
+                  className="group hover:shadow-2xl transition-all duration-500 active:scale-[0.98] sm:hover:-translate-y-3 border border-slate-200/50 bg-gradient-to-br from-white via-slate-50 to-white hover:border-indigo-200 animate-fade-in-up touch-manipulation overflow-hidden relative"
                   style={{ animationDelay: `${i * 0.1}s` }}
                   role="listitem"
                 >
-                  <CardContent className="p-4 sm:p-6">
-                    <div className={`w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${benefit.color} flex items-center justify-center mb-3 sm:mb-5 shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
-                      <benefit.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" aria-hidden="true" />
+                  {/* Premium Glow Effect */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className={`absolute inset-0 bg-gradient-to-br ${benefit.color} opacity-5 blur-xl`}></div>
+                  </div>
+
+                  <CardContent className="p-4 sm:p-6 relative z-10">
+                    <div className="relative mb-3 sm:mb-5">
+                      <div className={`absolute inset-0 bg-gradient-to-br ${benefit.color} rounded-xl sm:rounded-2xl blur-md opacity-30 group-hover:opacity-50 transition-opacity`}></div>
+                      <div className={`relative w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-gradient-to-br ${benefit.color} flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
+                        <benefit.icon className="w-5 h-5 sm:w-7 sm:h-7 text-white" aria-hidden="true" />
+                      </div>
                     </div>
-                    <h3 className="text-sm sm:text-xl font-bold text-slate-900 mb-1 sm:mb-2">{benefit.title}</h3>
+                    <h3 className="text-sm sm:text-xl font-bold text-slate-900 mb-1 sm:mb-2 group-hover:text-indigo-700 transition-colors">{benefit.title}</h3>
                     <p className="text-slate-600 text-xs sm:text-base leading-relaxed hidden sm:block">{benefit.description}</p>
                   </CardContent>
                 </Card>
@@ -677,8 +725,10 @@ export default function BusinessLanding() {
         {/* CTA Section */}
         <section className="py-12 sm:py-20 bg-slate-900 pb-28 sm:pb-20" aria-labelledby="cta-heading">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-block px-4 py-2 bg-red-600 text-white rounded-full text-sm font-bold mb-4 animate-pulse">
-              ⚠️ מבצע מייסדים - רק ל-100 העסקים הראשונים
+            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-red-600 via-orange-500 to-red-600 text-white rounded-full text-sm font-bold mb-4 shadow-2xl shadow-red-500/50 border border-orange-400/30">
+              <AlertTriangle className="w-5 h-5 animate-pulse" aria-hidden="true" />
+              <span>מבצע מייסדים - רק ל-100 העסקים הראשונים</span>
+              <div className="w-2 h-2 bg-yellow-300 rounded-full animate-pulse"></div>
             </div>
             <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
               תפסיק להסתכל איך המתחרים מצליחים.<br/>
