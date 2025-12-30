@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   ChevronLeft, ChevronDown, Store, TrendingUp, Users,
   Zap, DollarSign, CheckCircle, Star, ArrowLeft,
-  Smartphone, BarChart3, HeadphonesIcon, Truck, Sparkles, Play, MessageCircle, ShoppingCart
+  Smartphone, BarChart3, HeadphonesIcon, Truck, Sparkles, Play, MessageCircle, ShoppingCart, AlertTriangle
 } from "lucide-react";
 
 // תמונות מותאמות לקהל החרדי (ללא נשים)
