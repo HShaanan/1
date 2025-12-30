@@ -1581,12 +1581,13 @@ export default function BusinessPageView() {
                   }
 
                   <ReviewList businessPageId={businessPage.id} />
-                </div>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </div>
+                  </div>
+                  </div>
+                  </div>
+                  </ScrollReveal>
+                  </div>
+                  </div>
+                  </div>
 
       {isGalleryOpen &&
         <ImageGallery
