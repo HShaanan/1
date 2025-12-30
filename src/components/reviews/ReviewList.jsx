@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Review } from "@/entities/Review";
 import { User } from "@/entities/User";
-// הסר את הייבוא של StarRating
-// import StarRating from "./StarRating";
 import { formatDateTimeWithOffset } from "@/components/utils/dateUtils";
 import { useSystemTimezone } from "@/components/hooks/useSystemTimezone";
 import { Button } from "@/components/ui/button";
 import { ThumbsUp, ThumbsDown, RefreshCw, Trash2 } from "lucide-react";
 import { toggleReviewReaction } from "@/functions/toggleReviewReaction";
 import { getMyReviewReaction } from "@/functions/getMyReviewReaction";
+import { motion } from "framer-motion";
+import { useInView } from "react-intersection-observer";
 
 // עזר לשם פרטי בלבד
 const firstNameOnly = (v) => {
@@ -27,6 +27,95 @@ const initialOf = (v) => {
   const s = firstNameOnly(v);
   return s.charAt(0).toUpperCase();
 };
+
+// Separate ReviewItem component with scroll animation
+function ReviewItem({ review: r, index, displayName, initial, my, emoji, me, handleToggle, handleAdminDelete, timezoneOffset }) {
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+
+  return (
+    <motion.li
+      ref={ref}
+      initial={{ opacity: 0, x: -20 }}
+      animate={inView ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
+      transition={{ duration: 0.4, delay: index * 0.1 }}
+    >
+      <article className="border rounded-lg p-3 bg-white hover:shadow-lg transition-shadow duration-300">
+        <header className="flex items-center justify-between mb-1">
+          <div className="flex items-center gap-2">
+            <div
+              className="w-8 h-8 rounded-full flex items-center justify-center text-white font-bold"
+              style={{ backgroundColor: "#1a73e8" }}
+              aria-hidden="true">
+              {initial}
+            </div>
+            <h3 className="font-semibold text-slate-900">{displayName}</h3>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <span className="text-xl" role="img" aria-label={`דירוג: ${emoji}`}>{emoji}</span>
+            {me?.role === 'admin' && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                onClick={() => handleAdminDelete(r.id)}
+                aria-label="מחק חוות דעת">
+                <Trash2 className="w-4 h-4" aria-hidden="true" />
+              </Button>
+            )}
+          </div>
+        </header>
+
+        <time className="text-xs text-slate-500 mb-2 block" dateTime={r.created_date}>
+          {formatDateTimeWithOffset(r.created_date, timezoneOffset)}
+        </time>
+        
+        <p className="text-sm text-slate-800 whitespace-pre-wrap">{r.review_text}</p>
+        
+        {r.response_from_owner && (
+          <aside className="mt-2 p-2 bg-slate-50 rounded border text-sm text-slate-700" aria-label="תגובת בעל העסק">
+            <strong className="font-semibold">תגובת בעל המודעה: </strong>
+            {r.response_from_owner}
+            {r.response_date && (
+              <time className="text-xs text-slate-400 mt-1 block" dateTime={r.response_date}>
+                {formatDateTimeWithOffset(r.response_date, timezoneOffset)}
+              </time>
+            )}
+          </aside>
+        )}
+
+        {/* כפתורי אהבתי / לא אהבתי */}
+        <div className="mt-3 flex items-center gap-2" dir="rtl" role="group" aria-label="תגובות על חוות הדעת">
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant={my === "like" ? "default" : "outline"}
+              size="sm"
+              className={my === "like" ? "bg-green-600 hover:bg-green-700 text-white" : ""}
+              onClick={() => handleToggle(r.id, "like")}
+              aria-label={`אהבתי (${typeof r.like_count === "number" ? r.like_count : 0})`}
+              aria-pressed={my === "like"}>
+              <ThumbsUp className="w-4 h-4 ml-1" aria-hidden="true" />
+              {typeof r.like_count === "number" ? r.like_count : 0}
+            </Button>
+          </motion.div>
+
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant={my === "dislike" ? "default" : "outline"}
+              size="sm"
+              className={my === "dislike" ? "bg-red-600 hover:bg-red-700 text-white" : ""}
+              onClick={() => handleToggle(r.id, "dislike")}
+              aria-label={`לא אהבתי (${typeof r.dislike_count === "number" ? r.dislike_count : 0})`}
+              aria-pressed={my === "dislike"}>
+              <ThumbsDown className="w-4 h-4 ml-1" aria-hidden="true" />
+              {typeof r.dislike_count === "number" ? r.dislike_count : 0}
+            </Button>
+          </motion.div>
+        </div>
+      </article>
+    </motion.li>
+  );
+}
 
 export default function ReviewList({ businessPageId, onAfterChange }) {
   const { timezoneOffset } = useSystemTimezone();
@@ -190,9 +279,17 @@ export default function ReviewList({ businessPageId, onAfterChange }) {
 
   if (overallLoading && reviews.length === 0 && !error) {
     return (
-      <div className="text-sm text-slate-500 p-3 flex items-center gap-2">
-        <RefreshCw className="w-4 h-4 animate-spin" />
-        טוען חוות דעת...
+      <div className="space-y-3">
+        {[...Array(3)].map((_, i) => (
+          <div key={i} className="border rounded-lg p-3 bg-white animate-pulse">
+            <div className="flex items-center gap-2 mb-2">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-slate-200 to-slate-100"></div>
+              <div className="h-4 bg-gradient-to-r from-slate-200 to-slate-100 rounded w-24"></div>
+            </div>
+            <div className="h-3 bg-gradient-to-r from-slate-200 to-slate-100 rounded w-full mb-2"></div>
+            <div className="h-3 bg-gradient-to-r from-slate-200 to-slate-100 rounded w-5/6"></div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -220,10 +317,10 @@ export default function ReviewList({ businessPageId, onAfterChange }) {
     <section className="space-y-3" aria-labelledby="reviews-heading">
       <h2 id="reviews-heading" className="sr-only">חוות דעת לקוחות</h2>
       
-      {/* סרגל סינון לפי אימוג׳י עם מונים */}
+      {/* סרגל סינון לפי אימוג׳י עם מונים - With CountUp animation */}
       <nav className="flex items-center justify-between mb-2 flex-wrap gap-2" aria-label="סינון חוות דעת">
         <div className="text-sm text-gray-600 flex-shrink-0" role="status" aria-live="polite">
-          📊 {reviews.length} חוות דעת
+          📊 <CountUp end={reviews.length} duration={1.5} /> חוות דעת
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end" dir="rtl" role="group" aria-label="סינון לפי דירוג">
           <Button
@@ -251,9 +348,9 @@ export default function ReviewList({ businessPageId, onAfterChange }) {
         </div>
       </nav>
       
-      {/* רשימת הביקורות (לאחר סינון) */}
+      {/* רשימת הביקורות (לאחר סינון) - With Scroll Animations */}
       <ul className="space-y-3" role="list" aria-label="רשימת חוות דעת">
-        {visibleReviews.map((r) => {
+        {visibleReviews.map((r, index) => {
           const displayName = firstNameOnly(r.reviewer_name || r.reviewer_email || "משתמש");
           const initial = initialOf(displayName);
           const my = myReactions[r.id] || null;
@@ -261,8 +358,10 @@ export default function ReviewList({ businessPageId, onAfterChange }) {
           const emoji = EMOJIS[mood - 1];
 
           return (
-            <li key={r.id}>
-              <article className="border rounded-lg p-3 bg-white">
+            <ReviewItem key={r.id} review={r} index={index} displayName={displayName} initial={initial} my={my} emoji={emoji} me={me} handleToggle={handleToggle} handleAdminDelete={handleAdminDelete} timezoneOffset={timezoneOffset} />
+          );
+        })}
+      </ul>
                 <header className="flex items-center justify-between mb-1">
                   <div className="flex items-center gap-2">
                     <div
