@@ -1,13 +1,14 @@
-
 import React from "react";
 import { Review } from "@/entities/Review";
 import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Send, AlertCircle } from "lucide-react";
+import { Loader2, Send, AlertCircle, CheckCircle2, Sparkles } from "lucide-react";
 import { analyzeReview } from "@/functions/analyzeReview";
 import { aggregateSmartRatings } from "@/functions/aggregateSmartRatings";
 import { getIsraelTime } from "@/functions/getIsraelTime";
+import { motion, AnimatePresence } from "framer-motion";
+import Lottie from "react-lottie";
 
 // עזר לשם פרטי בלבד
 const firstNameOnly = (v) => {
@@ -47,6 +48,7 @@ export default function ReviewForm({ businessPageId, onSubmit, initialEmoji, ini
   const [loading, setLoading] = React.useState(true);
   const [emoji, setEmoji] = React.useState(initialParsedEmoji); // שמור תמיד כסטרינג או null
   const [emojiMood, setEmojiMood] = React.useState(parseMoodNumber(initialMood)); // שמור תמיד כמספר או null
+  const [showSuccess, setShowSuccess] = React.useState(false);
 
   React.useEffect(() => {
     // אם המשתמש פתח את הטופס מאוחר יותר עם mood אחר
@@ -170,19 +172,23 @@ export default function ReviewForm({ businessPageId, onSubmit, initialEmoji, ini
       // עדכון הדירוג החכם של עמוד העסק
       try { await aggregateSmartRatings({ business_page_id: businessPageId }); } catch (e) { console.warn('Smart rating aggregation failed:', e); }
 
+      // Show success animation
+      setShowSuccess(true);
+      
       // לאחר יצירת ביקורת, נעדכן את ה-state כדי שהטופס יהפוך לבלתי פעיל ויציג את הביקורת הקיימת.
-      setExistingReview(createdReview);
-      setRating(typeof createdReview.rating === 'number' ? createdReview.rating : finalRating); // Ensure it's a number
-      setText(createdReview.review_text || "");
-      setEmoji(createdReview.emoji || emoji || null); // Prefer created review emoji, then current state, then null
-      setEmojiMood(typeof createdReview.emoji_mood === 'number' ? createdReview.emoji_mood : finalRating); // Ensure it's a number or null
-
-      // קריאה לפונקציית callback
-      if (onSubmit) {
-        onSubmit();
-      }
-
-      alert('הביקורת נשלחה בהצלחה! 🎉');
+      setTimeout(() => {
+        setExistingReview(createdReview);
+        setRating(typeof createdReview.rating === 'number' ? createdReview.rating : finalRating); // Ensure it's a number
+        setText(createdReview.review_text || "");
+        setEmoji(createdReview.emoji || emoji || null); // Prefer created review emoji, then current state, then null
+        setEmojiMood(typeof createdReview.emoji_mood === 'number' ? createdReview.emoji_mood : finalRating); // Ensure it's a number or null
+        setShowSuccess(false);
+        
+        // קריאה לפונקציית callback
+        if (onSubmit) {
+          onSubmit();
+        }
+      }, 2000);
 
     } catch (error) {
       console.error('❌ Error saving review:', error);
@@ -215,27 +221,129 @@ export default function ReviewForm({ businessPageId, onSubmit, initialEmoji, ini
     );
   }
 
+  // Success confetti animation data
+  const successAnimation = {
+    loop: false,
+    autoplay: true,
+    animationData: {
+      v: "5.5.7",
+      fr: 60,
+      ip: 0,
+      op: 60,
+      w: 400,
+      h: 400,
+      nm: "Success",
+      ddd: 0,
+      assets: [],
+      layers: [{
+        ddd: 0,
+        ind: 1,
+        ty: 4,
+        nm: "check",
+        sr: 1,
+        ks: {
+          o: { a: 0, k: 100 },
+          r: { a: 0, k: 0 },
+          p: { a: 0, k: [200, 200, 0] },
+          a: { a: 0, k: [0, 0, 0] },
+          s: { a: 1, k: [
+            { t: 0, s: [0, 0, 100], e: [120, 120, 100] },
+            { t: 30, s: [120, 120, 100], e: [100, 100, 100] },
+            { t: 40 }
+          ]}
+        },
+        ao: 0,
+        shapes: [{
+          ty: "gr",
+          it: [{
+            ty: "rc",
+            d: 1,
+            s: { a: 0, k: [100, 100] },
+            p: { a: 0, k: [0, 0] },
+            r: { a: 0, k: 50 }
+          }, {
+            ty: "fl",
+            c: { a: 0, k: [0.4, 0.8, 0.4, 1] },
+            o: { a: 0, k: 100 }
+          }],
+          nm: "Circle"
+        }],
+        ip: 0,
+        op: 60,
+        st: 0
+      }]
+    },
+    rendererSettings: { preserveAspectRatio: 'xMidYMid slice' }
+  };
+
   return (
-    <div className="p-4 bg-white rounded-lg border">
+    <div className="p-4 bg-white rounded-lg border relative">
+      {/* Success Animation Overlay */}
+      <AnimatePresence>
+        {showSuccess && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            className="absolute inset-0 z-50 bg-white/95 backdrop-blur-sm rounded-lg flex flex-col items-center justify-center"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+            >
+              <CheckCircle2 className="w-20 h-20 text-green-500 mb-4" />
+            </motion.div>
+            <motion.h3
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.4 }}
+              className="text-2xl font-bold text-slate-900 mb-2"
+            >
+              תודה רבה! 🎉
+            </motion.h3>
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
+              className="text-slate-600"
+            >
+              הביקורת שלך פורסמה בהצלחה
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="flex items-center justify-between mb-3">
         <span className="font-semibold text-slate-900">
           {existingReview ? "חוות הדעת שלך" : "הוסף חוות דעת"}
         </span>
         <div className="flex items-center gap-2">
           {emoji && (
-            <span className="text-2xl" title="האימוג׳י שנבחר">{emoji}</span>
+            <motion.span 
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200 }}
+              className="text-2xl" 
+              title="האימוג׳י שנבחר"
+            >
+              {emoji}
+            </motion.span>
           )}
-          {/* הסרת קומפוננטת דירוג הכוכבים */}
         </div>
       </div>
 
       {existingReview && (
-        <div className="mb-3 p-2 bg-amber-50 border border-amber-200 rounded-md">
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="mb-3 p-2 bg-amber-50 border border-amber-200 rounded-md"
+        >
           <div className="flex items-center gap-2 text-amber-700">
             <AlertCircle className="w-4 h-4" />
             <span className="text-sm">כבר פרסמת חוות דעת על עמוד עסק זה.</span>
           </div>
-        </div>
+        </motion.div>
       )}
 
       <Textarea
@@ -247,14 +355,16 @@ export default function ReviewForm({ businessPageId, onSubmit, initialEmoji, ini
         disabled={!!existingReview || saving}
       />
       <div className="flex justify-end mt-3">
-        <Button
-          onClick={handleSubmit}
-          disabled={saving || !text.trim() || !!existingReview}
-          className="gap-2"
-        >
-          {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
-          {existingReview ? "פורסם" : "פרסם"}
-        </Button>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Button
+            onClick={handleSubmit}
+            disabled={saving || !text.trim() || !!existingReview}
+            className="gap-2 transition-all"
+          >
+            {saving ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {existingReview ? "פורסם" : "פרסם"}
+          </Button>
+        </motion.div>
       </div>
     </div>
   );
