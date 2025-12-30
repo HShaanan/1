@@ -522,7 +522,7 @@ export default function BusinessLanding() {
               >
                 <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 h-full flex flex-col">
                   <div className="mb-6">
-                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Standard</h3>
+                    <h3 className="text-2xl font-bold text-slate-900 mb-2">חשיפה</h3>
                     <p className="text-slate-600 text-sm">נוכחות דיגיטלית בסיסית</p>
                   </div>
 
@@ -607,7 +607,7 @@ export default function BusinessLanding() {
 
                   <div className="relative z-10">
                     <div className="mb-6">
-                      <h3 className="text-2xl font-bold text-white mb-2">Growth</h3>
+                      <h3 className="text-2xl font-bold text-white mb-2">תנופה</h3>
                       <p className="text-indigo-100 text-sm">הכי נמכר - צמיחה מהירה</p>
                     </div>
 
@@ -647,7 +647,7 @@ export default function BusinessLanding() {
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <Link to={createPageUrl("ContactPage")} className="block">
                         <Button className="w-full bg-white hover:bg-amber-50 text-indigo-700 py-6 rounded-xl font-semibold shadow-lg">
-                          בחר Growth
+                          בחר תנופה
                         </Button>
                       </Link>
                     </motion.div>
@@ -667,7 +667,7 @@ export default function BusinessLanding() {
                 <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-amber-400 h-full flex flex-col">
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-2">
-                      VIP
+                      מהדרין
                       <span className="text-amber-500">👑</span>
                     </h3>
                     <p className="text-slate-600 text-sm">שותפות עסקית מלאה</p>
@@ -686,7 +686,7 @@ export default function BusinessLanding() {
                   <div className="flex-1 space-y-4 mb-8">
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-slate-700 font-medium">כל היתרונות של Growth</span>
+                      <span className="text-slate-700 font-medium">כל היתרונות של תנופה</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
