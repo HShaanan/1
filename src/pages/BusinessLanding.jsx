@@ -64,13 +64,13 @@ const steps = [
   {
     number: "1",
     title: "תן לנו 5 דקות",
-    description: "שם העסק + מספר טלפון. זהו. ה-AI שלנו כבר רץ לעבוד עבורך.",
+    description: "שם העסק + מספר טלפון. זהו. אנחנו כבר מתחילים לעבוד עבורך.",
     icon: Sparkles
   },
   {
     number: "2",
-    title: "ה-AI מעצב לך עמוד",
-    description: "תוך 24 שעות קיבלת עמוד שנראה כמו של חברה ענקית. בלי מעצב, בלי המתנה, בלי הוצאות.",
+    title: "אני מעצב לך עמוד מקצועי",
+    description: "בזמן קצר במיוחד - אתה מקבל עמוד שנראה כמו של חברה ענקית. תהליך מהיר במקום שבועות של המתנה.",
     icon: Store
   },
   {
@@ -211,6 +211,12 @@ export default function BusinessLanding() {
     <div className="min-h-screen bg-white" dir="rtl">
       {/* Animations CSS */}
       <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap');
+
+        * {
+          font-family: 'Assistant', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        }
+
         @keyframes fade-in-up {
           from {
             opacity: 0;
@@ -341,7 +347,7 @@ export default function BusinessLanding() {
       {/* Hero Section */}
       <section className="relative min-h-[75vh] sm:min-h-[90vh] flex items-center overflow-hidden">
         {/* Ultra-Premium Tech Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900" />
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-950" />
 
         {/* Animated Grid Pattern */}
         <div className="absolute inset-0 opacity-20">
@@ -393,9 +399,9 @@ export default function BusinessLanding() {
             </h1>
 
             <p className="text-base sm:text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4">
-              <span className="font-bold text-cyan-400">תוך 24 שעות</span> אני מעצב לך עמוד יוקרתי עם טכנולוגיית BASE44 המהירה בעולם + חיבור ישיר לנתוני גוגל.
+              <span className="font-bold text-cyan-400">במהירות שלא תאמינו</span> אני מעצב לך עמוד יוקרתי עם טכנולוגיית BASE44 המהירה בעולם + חיבור ישיר לנתוני גוגל.
               <br className="hidden sm:block" />
-              <span className="hidden sm:inline text-indigo-300">בלי שבועות המתנה, בלי אלפי שקלים. עיצוב מקצועי שמביא תוצאות.</span>
+              <span className="hidden sm:inline text-indigo-300">תהליך מהיר במיוחד - שבועות במקום חודשים. עיצוב מקצועי שמביא תוצאות.</span>
               <span className="sm:hidden text-indigo-300">עיצוב מקצועי + גוגל = לקוחות חדשים.</span>
             </p>
 
@@ -479,101 +485,7 @@ export default function BusinessLanding() {
           </div>
         </section>
 
-        {/* Why Partner With Us - 3 Cards Section */}
-        <section className="py-12 sm:py-20 bg-gradient-to-b from-slate-50 to-white" aria-labelledby="why-partner-heading">
-          <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 sm:mb-16">
-              <h2 id="why-partner-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4 animate-fade-in-up px-2">
-                למה כדאי להיות שותפים שלנו?
-              </h2>
-            </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-8">
-              {/* Card 1 - Growth */}
-              <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-300 active:scale-[0.98] sm:hover:-translate-y-2 animate-fade-in-up text-center touch-manipulation" style={{ animationDelay: '0.1s' }}>
-                <div className="relative h-32 sm:h-48 mb-4 sm:mb-6 flex items-center justify-center">
-                  {/* Illustration - Growth with Mashlanoo */}
-                  <div className="relative">
-                    <img 
-                      src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png"
-                      alt="לוגו משלנו"
-                      className="w-20 h-20 object-contain animate-float"
-                    />
-                    <div className="absolute -top-2 -right-2 text-3xl animate-bounce">⭐</div>
-                    <div className="absolute -bottom-2 -left-2 text-2xl animate-pulse">👍</div>
-                    <div className="absolute top-0 left-0 text-xl animate-bounce" style={{ animationDelay: '0.5s' }}>😊</div>
-                  </div>
-                  {/* Orthodox Jewish figures illustration */}
-                  <div className="absolute bottom-0 right-4 flex gap-1">
-                    <div className="w-12 h-16 bg-gradient-to-b from-slate-800 to-slate-900 rounded-t-full relative">
-                      <div className="absolute top-1 left-1/2 -translate-x-1/2 w-8 h-8 bg-[#E8BEAC] rounded-full"></div>
-                      <div className="absolute top-6 left-1/2 -translate-x-1/2 w-6 h-3 bg-slate-900 rounded-sm"></div>
-                    </div>
-                    <div className="w-10 h-14 bg-gradient-to-b from-blue-800 to-blue-900 rounded-t-full relative">
-                      <div className="absolute top-1 left-1/2 -translate-x-1/2 w-6 h-6 bg-[#E8BEAC] rounded-full"></div>
-                    </div>
-                  </div>
-                </div>
-                <h3 className="text-base sm:text-xl font-bold text-cyan-600 mb-2 sm:mb-3">בואו לצמוח עם משלנו</h3>
-                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  קבלו עמוד עסק מקצועי, קידום בגוגל, סליקה ודאשבורד מתקדם. הכל במקום אחד.
-                </p>
-              </div>
-
-              {/* Card 2 - More Orders */}
-              <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-300 active:scale-[0.98] sm:hover:-translate-y-2 animate-fade-in-up text-center touch-manipulation" style={{ animationDelay: '0.2s' }}>
-                <div className="relative h-32 sm:h-48 mb-4 sm:mb-6 flex items-center justify-center">
-                  {/* Store Illustration */}
-                  <div className="relative">
-                    <div className="w-32 h-24 bg-gradient-to-b from-yellow-400 to-yellow-500 rounded-lg shadow-lg relative">
-                      <div className="absolute -top-4 left-0 right-0 h-6 bg-gradient-to-b from-red-500 to-red-600 rounded-t-lg"></div>
-                      <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-8 h-10 bg-cyan-400 rounded-t-lg"></div>
-                      <div className="absolute top-4 left-2 w-5 h-5 bg-cyan-300 rounded"></div>
-                      <div className="absolute top-4 right-2 w-5 h-5 bg-cyan-300 rounded"></div>
-                    </div>
-                    {/* Delivery scooter */}
-                    <div className="absolute -bottom-2 -right-8 w-16 h-12">
-                      <div className="w-10 h-6 bg-cyan-500 rounded-lg"></div>
-                      <div className="absolute bottom-0 left-1 w-3 h-3 bg-slate-800 rounded-full"></div>
-                      <div className="absolute bottom-0 right-1 w-3 h-3 bg-slate-800 rounded-full"></div>
-                    </div>
-                    <div className="absolute -top-4 right-0 text-2xl animate-bounce">❤️</div>
-                  </div>
-                </div>
-                <h3 className="text-base sm:text-xl font-bold text-cyan-600 mb-2 sm:mb-3">קבלו יותר הזמנות</h3>
-                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  הזמנות דרך האתר בעמלה קטנה, קידום בגוגל שמביא לקוחות חדשים, וכל ההזמנות ישירות אליכם לוואטסאפ.
-                </p>
-              </div>
-
-              {/* Card 3 - Fast Delivery */}
-              <div className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 shadow-lg sm:shadow-xl hover:shadow-2xl transition-all duration-300 active:scale-[0.98] sm:hover:-translate-y-2 animate-fade-in-up text-center touch-manipulation" style={{ animationDelay: '0.3s' }}>
-                <div className="relative h-32 sm:h-48 mb-4 sm:mb-6 flex items-center justify-center">
-                  {/* Delivery Flow Illustration */}
-                  <div className="flex items-center gap-2">
-                    <div className="w-14 h-14 bg-cyan-100 rounded-full flex items-center justify-center">
-                      <ShoppingCart className="w-7 h-7 text-cyan-600" />
-                    </div>
-                    <div className="flex flex-col items-center">
-                      <div className="w-8 h-0.5 bg-cyan-400"></div>
-                      <div className="text-xs text-cyan-600 mt-1">→</div>
-                    </div>
-                    <div className="w-14 h-14 bg-green-100 rounded-full flex items-center justify-center relative">
-                      <ShoppingCart className="w-7 h-7 text-green-600" />
-                      <div className="absolute -top-1 -right-1 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-                        <CheckCircle className="w-3 h-3 text-white" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <h3 className="text-base sm:text-xl font-bold text-cyan-600 mb-2 sm:mb-3">טכנולוגיה מתקדמת לעסק שלך</h3>
-                <p className="text-slate-600 text-xs sm:text-sm leading-relaxed">
-                  עמוד עסק מושלם, סליקה מאובטחת, ניהול הזמנות חכם ודאשבורד מתקדם - כל מה שעסק מצליח צריך.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* How It Works */}
         <section className="py-12 sm:py-20 bg-white" aria-labelledby="how-it-works-heading">
