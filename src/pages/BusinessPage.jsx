@@ -1514,45 +1514,46 @@ export default function BusinessPageView() {
                     <Store className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />
                     עוד עסקים בקטגוריה
                   </h3>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                  {relatedBusinesses.map((related) => (
-                    <a
-                      key={related.id}
-                      href={createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`)}
-                      className="group block bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-slate-200"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        safeTrackEvent('related_business_click', { business_id: related.id });
-                        window.location.href = createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`);
-                      }}
-                    >
-                      <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
-                        {related.preview_image || related.images?.[0] ? (
-                          <LazyImage
-                            src={related.preview_image || related.images?.[0]}
-                            alt={related.business_name}
-                            className="w-full h-full"
-                            imgClassName="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center">
-                            <Store className="w-12 h-12 text-slate-400" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="p-3">
-                        <h4 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                          {related.business_name}
-                        </h4>
-                        {related.smart_rating > 0 && (
-                          <div className="flex items-center gap-1 mt-1">
-                            <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                            <span className="text-xs text-slate-600">{related.smart_rating.toFixed(1)}</span>
-                          </div>
-                        )}
-                      </div>
-                    </a>
-                  ))}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {relatedBusinesses.map((related) => (
+                      <a
+                        key={related.id}
+                        href={createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`)}
+                        className="group block bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-slate-200"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          safeTrackEvent('related_business_click', { business_id: related.id });
+                          window.location.href = createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`);
+                        }}
+                      >
+                        <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
+                          {related.preview_image || related.images?.[0] ? (
+                            <LazyImage
+                              src={related.preview_image || related.images?.[0]}
+                              alt={related.business_name}
+                              className="w-full h-full"
+                              imgClassName="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
+                            />
+                          ) : (
+                            <div className="w-full h-full flex items-center justify-center">
+                              <Store className="w-12 h-12 text-slate-400" />
+                            </div>
+                          )}
+                        </div>
+                        <div className="p-3">
+                          <h4 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
+                            {related.business_name}
+                          </h4>
+                          {related.smart_rating > 0 && (
+                            <div className="flex items-center gap-1 mt-1">
+                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                              <span className="text-xs text-slate-600">{related.smart_rating.toFixed(1)}</span>
+                            </div>
+                          )}
+                        </div>
+                      </a>
+                    ))}
+                  </div>
                 </div>
               </ScrollReveal>
             )}
@@ -1561,30 +1562,30 @@ export default function BusinessPageView() {
             <ScrollReveal delay={0.3}>
               <div id="reviews-section" ref={reviewsRef} className="pt-8 border-t">
                 <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-8 space-y-6">
-                <EmojiReviewPrompt
-                  businessName={businessPage.business_name || businessPage.display_title || "העסק"}
-                  onOpenForm={(mood) => {
-                    setSelectedMoodForReview(mood);
-                    setShowReviewForm(true);
-                  }}
-                  theme={theme} />
+                  <EmojiReviewPrompt
+                    businessName={businessPage.business_name || businessPage.display_title || "העסק"}
+                    onOpenForm={(mood) => {
+                      setSelectedMoodForReview(mood);
+                      setShowReviewForm(true);
+                    }}
+                    theme={theme} />
 
-                <div className="pt-2">
-                  {user && showReviewForm &&
-                    <div className="mb-8 bg-gradient-to-r from-slate-50 to-indigo-50 p-6 rounded-xl border border-indigo-200 shadow-lg">
-                      <ReviewForm
-                        businessPageId={businessPage.id}
-                        onSubmit={onReviewSubmitted}
-                        onCancel={() => setShowReviewForm(false)}
-                        initialMood={selectedMoodForReview} />
-                    </div>
-                  }
+                  <div className="pt-2">
+                    {user && showReviewForm &&
+                      <div className="mb-8 bg-gradient-to-r from-slate-50 to-indigo-50 p-6 rounded-xl border border-indigo-200 shadow-lg">
+                        <ReviewForm
+                          businessPageId={businessPage.id}
+                          onSubmit={onReviewSubmitted}
+                          onCancel={() => setShowReviewForm(false)}
+                          initialMood={selectedMoodForReview} />
+                      </div>
+                    }
 
-                  <ReviewList businessPageId={businessPage.id} />
+                    <ReviewList businessPageId={businessPage.id} />
                   </div>
-                  </div>
-                  </div>
-                  </ScrollReveal>
+                </div>
+              </div>
+            </ScrollReveal>
                   </div>
                   </div>
                   </div>

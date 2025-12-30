@@ -86,8 +86,8 @@
     "react-window": "^1.8.10",
     "@axe-core/react": "^4.10.1",
     "react-ga4": "^2.1.0",
-    "react-intersection-observer": "^9.13.1",
-    "react-countup": "^6.5.3",
+    "react-intersection-observer": "^9.13.0",
+    "react-countup": "^6.5.0",
     "react-lottie": "^1.2.4"
   },
   "devDependencies": {

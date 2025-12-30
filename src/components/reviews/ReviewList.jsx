@@ -9,6 +9,7 @@ import { toggleReviewReaction } from "@/functions/toggleReviewReaction";
 import { getMyReviewReaction } from "@/functions/getMyReviewReaction";
 import { motion } from "framer-motion";
 import { useInView } from "react-intersection-observer";
+import CountUp from "react-countup";
 
 // עזר לשם פרטי בלבד
 const firstNameOnly = (v) => {
