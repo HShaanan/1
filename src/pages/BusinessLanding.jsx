@@ -109,7 +109,7 @@ const testimonials = [
 const faqs = [
   {
     question: "כמה עולה שירות העיצוב והפלטפורמה?",
-    answer: "המחיר משתנה בהתאם לצרכים של העסק והתאמה אישית. צרו קשר ונבנה לכם חבילה מדויקת - עמוד מעוצב + חיבור לגוגל + דאשבורד. אנחנו משקיעים בכל עסק כדי שתצליחו."
+    answer: "יש לנו 3 מסלולים: חשיפה (499₪ הקמה + 199₪/חודש), תנופה (850₪ הקמה + 349₪/חודש) - הכי פופולרי, ומהדרין (1,500₪ הקמה + 699₪/חודש) לשותפות עסקית מלאה. כל מסלול כולל עמוד מעוצב + חיבור לגוגל + דאשבורד מתקדם."
   },
   {
     question: "אני לא טכנולוג, זה יהיה מסובך בשבילי?",
@@ -125,7 +125,7 @@ const faqs = [
   },
   {
     question: "כמה זמן לוקח לראות תוצאות?",
-    answer: "העמוד מוכן תוך 24 שעות. הלקוחות הראשונים מתחילים להגיע תוך שבוע. אחרי חודש, אתה רואה את ההבדל בהכנסות. זה לא קסם, זה פשוט נוכחות נכונה בגוגל."
+    answer: "העמוד מוכן תוך ימים ספורים. הלקוחות הראשונים מתחילים להגיע תוך שבוע. אחרי חודש, אתה רואה את ההבדל בהכנסות. זה לא קסם, זה פשוט נוכחות נכונה בגוגל."
   },
   {
     question: "מה אם אני לא אהיה מרוצה מהעיצוב?",
@@ -869,7 +869,7 @@ export default function BusinessLanding() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-slate-800 via-indigo-900 to-slate-800 text-white rounded-full text-sm font-bold mb-4 shadow-2xl shadow-indigo-500/30 border border-indigo-500/30 backdrop-blur-sm">
               <Sparkles className="w-5 h-5 text-cyan-400" aria-hidden="true" />
-              <span>עיצוב מקצועי + טכנולוגיית BASE44</span>
+              <span>עיצוב מקצועי בימים ספורים + BASE44</span>
               <Zap className="w-5 h-5 text-yellow-400" aria-hidden="true" />
             </div>
             <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
@@ -890,7 +890,7 @@ export default function BusinessLanding() {
                   size="lg" 
                   className="w-full sm:w-auto rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:opacity-90 text-white font-black px-8 sm:px-10 py-6 sm:py-8 text-lg sm:text-2xl shadow-2xl active:scale-95 sm:hover:scale-110 transition-all duration-300 touch-manipulation min-h-[52px] animate-pulse"
                 >
-                  כן! תעצבו לי את העסק תוך 24 שעות
+                  כן! תעצבו לי את העסק בימים ספורים
                   <Zap className="w-6 h-6 sm:w-7 sm:h-7 mr-2" aria-hidden="true" />
                 </Button>
               </Link>
@@ -903,7 +903,7 @@ export default function BusinessLanding() {
             <div className="mt-8 text-slate-300 text-xs sm:text-sm max-w-xl mx-auto">
               <strong className="text-white">הסיכון האמיתי?</strong> להישאר עם עמוד גנרי בזמן שהמתחרים גונבים את הלקוחות שלך.
               <br/>
-              <span className="text-cyan-400 font-bold">השקעה חכמה היום = לקוחות חדשים מחר.</span>
+              <span className="text-cyan-400 font-bold">תהליך בימים ספורים. השקעה חכמה היום = לקוחות חדשים מחר.</span>
             </div>
           </div>
         </section>
