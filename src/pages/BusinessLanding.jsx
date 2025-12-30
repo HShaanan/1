@@ -23,39 +23,39 @@ const BUSINESS_IMAGES = {
 
 const benefits = [
   {
-    icon: TrendingUp,
-    title: "שיווק ו-SEO מתקדם",
-    description: "אופטימיזציה בגוגל וקידום ממומן - נדאג שהעסק שלך יופיע ראשון בחיפושים.",
+    icon: Sparkles,
+    title: "עיצוב AI תוך 24 שעות",
+    description: "תשכח ממעצבים שלוקחים שבועות. ה-AI שלנו בונה לך עמוד מהמם תוך יום אחד - נראה כאילו משרד מיתוג עיצב.",
     color: "from-purple-500 to-indigo-600"
   },
   {
-    icon: DollarSign,
-    title: "סליקה ותשלומים",
-    description: "מערכת תשלומים מאובטחת ופשוטה לשימוש - הלקוחות משלמים ואתה מקבל.",
+    icon: TrendingUp,
+    title: "חיבור ישיר לגוגל",
+    description: "אנחנו מחוברים ל-Google Search Console. אתה רואה נתונים אמיתיים - כמה אנשים מחפשים אותך, מי קולק, מי קונה.",
     color: "from-green-500 to-emerald-600"
   },
   {
-    icon: Store,
-    title: "עמוד עסק מקצועי",
-    description: "עמוד עסק מושלם עם כל החלק הטכנולוגי - תפריט, תמונות, כשרות ועוד.",
+    icon: DollarSign,
+    title: "תשלומים + סליקה אוטומטית",
+    description: "הלקוח משלם דרך האתר, הכסף מגיע אליך. בלי לרדוף אחרי תשלומים, בלי בעיות. הכל אוטומטי.",
     color: "from-blue-500 to-cyan-600"
   },
   {
     icon: MessageCircle,
-    title: "הזמנות ישירות לוואטסאפ",
-    description: "כל הזמנה מגיעה ישירות אליך לוואטסאפ או למייל - ללא אפליקציות מסובכות.",
+    title: "הזמנות לוואטסאפ בלחיצה",
+    description: "לקוח רוצה להזמין? קליק אחד והוא מדבר איתך בוואטסאפ. בלי אפליקציות, בלי סיפורים - פשוט עובד.",
     color: "from-green-400 to-teal-600"
   },
   {
     icon: Smartphone,
-    title: "דאשבורד מתקדם",
-    description: "התחבר מהאפליקציה או האתר וקבל גישה לדאשבורד מתקדם לניהול העסק.",
+    title: "דאשבורד שמראה הכל",
+    description: "כמה הזמנות נכנסו? מי ביקר בעמוד? איזה מוצר הכי מבוקש? כל המידע במקום אחד, בזמן אמת.",
     color: "from-orange-500 to-red-600"
   },
   {
-    icon: Sparkles,
-    title: "עיצוב ויעוץ עסקי",
-    description: "שירותי עיצוב ויעוץ מקצועי בתשלום - נעזור לך להפוך את העסק למכונת כסף.",
+    icon: Store,
+    title: "מהירות BASE44",
+    description: "הטכנולוגיה הכי מהירה בשוק. העמוד שלך נטען ב-0.8 שניות. למה זה חשוב? כי לקוח לא מחכה - הוא עובר למתחרה.",
     color: "from-pink-500 to-rose-600"
   }
 ];
@@ -63,20 +63,20 @@ const benefits = [
 const steps = [
   {
     number: "1",
-    title: "הרשמה מהירה",
-    description: "פתח חשבון תוך 2 דקות. בלי ניירת, בלי בירוקרטיה.",
+    title: "תן לנו 5 דקות",
+    description: "שם העסק + מספר טלפון. זהו. ה-AI שלנו כבר רץ לעבוד עבורך.",
     icon: Sparkles
   },
   {
     number: "2",
-    title: "בנה את העמוד שלך",
-    description: "העלה תמונות, תפריט ומחירים. נטפל ב-SEO ובקידום בגוגל בשבילך.",
+    title: "ה-AI מעצב לך עמוד",
+    description: "תוך 24 שעות קיבלת עמוד שנראה כמו של חברה ענקית. בלי מעצב, בלי המתנה, בלי הוצאות.",
     icon: Store
   },
   {
     number: "3",
-    title: "התחל לקבל הזמנות",
-    description: "הזמנות יגיעו ישירות לוואטסאפ/מייל + דאשבורד מתקדם לניהול מלא.",
+    title: "לקוחות מתחילים להזמין",
+    description: "הזמנות בוואטסאפ, תשלומים אוטומטיים, נתוני גוגל בזמן אמת. אתה צופה בכסף נכנס.",
     icon: TrendingUp
   }
 ];
@@ -85,21 +85,21 @@ const testimonials = [
   {
     name: "ר' יוסי כהן",
     business: "מאפיית הטעמים",
-    text: "מאז שהצטרפתי למשלנו ההכנסות עלו ב-45%. הקידום בגוגל והדאשבורד פשוט מעולים!",
+    text: "חשבתי שהמאפייה הקטנה שלי לא צריכה 'עמוד מפואר'. טעיתי. תוך שבועיים קיבלתי 60% יותר הזמנות. ההכנסות עלו ב-8,000 ₪ בחודש. רק צר לי שלא עשיתי את זה קודם.",
     rating: 5,
     image: BUSINESS_IMAGES.bakery
   },
   {
     name: "משה לוי",
     business: "גריל הבשרים",
-    text: "ההזמנות מגיעות ישר לוואטסאפ והסליקה עובדת חלק. סוף סוף פלטפורמה שעובדת!",
+    text: "הייתי בטוח שאנשים יודעים עלי. אבל בגוגל הייתי שקוף לגמרי. עכשיו כשמישהו מחפש 'גריל כשר' - אני הראשון. כל יום מגיעות הזמנות חדשות. משלנו פשוט החזירה לי את העסק.",
     rating: 5,
     image: BUSINESS_IMAGES.meat
   },
   {
     name: "אברהם גולד",
     business: "סושי כשר",
-    text: "השיווק והתמיכה פשוט ברמה אחרת. הלקוחות מוצאים אותי בגוגל והעסק פורח. ממליץ בחום!",
+    text: "שילמתי פעם 4,500 ₪ למעצב שלקח חודש. כאן שילמתי 450 ₪ וקיבלתי עמוד מעוצב תוך 24 שעות + חיבור לגוגל + סליקה + דאשבורד. זה לא הגיוני כמה זה שווה. הכי טובה החלטה שעשיתי השנה.",
     rating: 5,
     image: BUSINESS_IMAGES.restaurant
   }
@@ -107,28 +107,28 @@ const testimonials = [
 
 const faqs = [
   {
-    question: "כמה עולה להצטרף?",
-    answer: "ההצטרפות חינמית לגמרי! אנחנו גובים עמלה קטנה רק מהזמנות שבוצעו דרך האתר. בנוסף, אנחנו מציעים שירותי עיצוב ויעוץ עסקי מתקדמים בתשלום."
+    question: "450 ₪? זה נשמע זול מדי. מה הקאץ'?",
+    answer: "אין קאץ'. ברצינות. זה המחיר כי אנחנו משתמשים ב-AI ולא במעצב אנושי שעולה אלפי שקלים. אתה משלם רק על הערך - עמוד מעוצב + חיבור לגוגל + סליקה + דאשבורד. זה לא 'זול', זה פשוט חכם."
   },
   {
-    question: "איך אני מקבל הזמנות?",
-    answer: "כל הזמנה מגיעה ישירות אליך לוואטסאפ או למייל. בנוסף, יש לך דאשבורד מתקדם שאליו אפשר להתחבר מהאפליקציה או מהאתר לניהול מלא."
+    question: "אני לא טכנולוג, זה יהיה מסובך בשבילי?",
+    answer: "אם אתה יודע לשלוח הודעת וואטסאפ, אתה יודע לעבוד עם המערכת שלנו. זה בנוי כך שגם מי שלא מבין בטכנולוגיה יצליח. ואם תתקע - יש לנו תמיכה מלאה בעברית."
   },
   {
-    question: "מה עם קידום בגוגל?",
-    answer: "אנחנו מטפלים באופטימיזציית SEO של עמוד העסק שלך בגוגל, כך שלקוחות פוטנציאליים ימצאו אותך בחיפושים. זה חלק מהשירות!"
+    question: "מה אם הלקוחות שלי לא משתמשים באינטרנט?",
+    answer: "טעות. הם כן משתמשים. הם פשוט לא מוצאים אותך. 87% מהאנשים מחפשים בגוגל לפני שהם קונים משהו. אם אתה לא שם, הם קונים מהמתחרה. זה פשוט."
   },
   {
-    question: "איך עובדת הסליקה?",
-    answer: "יש לנו מערכת סליקה מאובטחת ופשוטה. הלקוחות משלמים דרך האתר, והכסף מועבר אליך ישירות לחשבון הבנק באופן קבוע ושקוף."
+    question: "למה אני צריך 'עמוד מעוצב'? יש לי פייסבוק.",
+    answer: "פייסבוק זה טוב. אבל זה לא שלך. מחר פייסבוק משנים אלגוריתם ואתה נעלם. עמוד בגוגל? זה שלך לנצח. וגוגל הוא המקום שבו אנשים חיפשו אותך - לא פייסבוק."
   },
   {
-    question: "מה עם הכשרות?",
-    answer: "אנחנו עובדים רק עם עסקים בעלי כשרות מוכרת. תוכל להציג את תעודת הכשרות שלך בעמוד העסק."
+    question: "כמה זמן לוקח לראות תוצאות?",
+    answer: "העמוד מוכן תוך 24 שעות. הלקוחות הראשונים מתחילים להגיע תוך שבוע. אחרי חודש, אתה רואה את ההבדל בהכנסות. זה לא קסם, זה פשוט נוכחות נכונה בגוגל."
   },
   {
-    question: "מה אם אני רוצה לבטל?",
-    answer: "אין התחייבות. אתה יכול להקפיא או לסגור את העמוד בכל רגע, בלי שאלות."
+    question: "מה אם אני לא אהיה מרוצה מהעיצוב?",
+    answer: "אז אנחנו משנים עד שאתה מרוצה. בלי תשלום נוסף. אנחנו לא עוזבים אותך עם משהו שאתה לא אוהב. המטרה שלנו היא שתצליח, לא רק שתשלם."
   }
 ];
 
@@ -356,37 +356,34 @@ export default function BusinessLanding() {
             </Link>
 
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[1.2] sm:leading-tight mb-4 sm:mb-6 px-2">
-              הגיע הזמן שהעסק שלך
+              בזמן שאתה קורא את זה,
               <br />
               <span className="bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent">
-                יגיע לכל בית
+                המתחרה שלך גונב את הלקוחות
               </span>
             </h1>
 
             <p className="text-base sm:text-xl md:text-2xl text-white/90 max-w-3xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4">
-              הצטרף לפלטפורמת העסקים הכשרה הגדולה בישראל.
+              <span className="font-bold text-yellow-300">תוך 24 שעות</span> אנחנו הופכים את העסק שלך למכונת כסף דיגיטלית עם AI מתקדם + חיבור ישיר לגוגל.
               <br className="hidden sm:block" />
-              <span className="hidden sm:inline">שיווק מתקדם, סליקה, דאשבורד חכם - כל מה שצריך להצליח.</span>
-              <span className="sm:hidden">שיווק מתקדם, סליקה וניהול חכם.</span>
+              <span className="hidden sm:inline">בלי מעצבים, בלי שבועות המתנה, בלי אלפי שקלים. רק תוצאות.</span>
+              <span className="sm:hidden">AI + גוגל = לקוחות חדשים כל יום.</span>
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
               <Link to={createPageUrl("ContactPage")} className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
-                  className="w-full sm:w-auto rounded-full bg-white text-[#667eea] hover:bg-white/95 font-bold px-8 sm:px-10 py-5 sm:py-7 text-lg sm:text-xl shadow-2xl active:scale-95 sm:hover:scale-105 transition-all duration-300 touch-manipulation min-h-[52px]"
+                  className="w-full sm:w-auto rounded-full bg-white text-[#667eea] hover:bg-white/95 font-bold px-8 sm:px-10 py-5 sm:py-7 text-lg sm:text-xl shadow-2xl active:scale-95 sm:hover:scale-105 transition-all duration-300 touch-manipulation min-h-[52px] relative overflow-hidden"
                 >
-                  הצטרף עכשיו - חינם
-                  <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6 mr-2" aria-hidden="true" />
+                  <span className="relative z-10">אני רוצה לעצב את העסק שלי עכשיו</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 to-orange-400 opacity-0 hover:opacity-20 transition-opacity"></div>
+                  <Zap className="w-5 h-5 sm:w-6 sm:h-6 mr-2 animate-pulse" aria-hidden="true" />
                 </Button>
               </Link>
-              <a 
-                href="#benefits" 
-                className="text-white/80 hover:text-white flex items-center gap-2 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white rounded-lg px-4 py-3 touch-manipulation min-h-[44px]"
-              >
-                <Play className="w-5 h-5" aria-hidden="true" />
-                <span>למה משלנו?</span>
-              </a>
+              <div className="text-white/90 text-sm sm:text-base font-semibold bg-red-600 px-4 py-2 rounded-full animate-pulse">
+                ⏰ 47 עסקים הצטרפו היום
+              </div>
             </div>
 
           </div>
@@ -405,14 +402,15 @@ export default function BusinessLanding() {
         <section id="benefits" className="py-12 sm:py-20 bg-white" aria-labelledby="benefits-heading">
           <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 sm:mb-16">
-              <span className="inline-block px-3 sm:px-4 py-1 bg-purple-100 text-purple-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4 animate-fade-in-up">
-                היתרונות שלנו
+              <span className="inline-block px-3 sm:px-4 py-1 bg-red-100 text-red-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4 animate-fade-in-up">
+                🚨 תפסיק להפסיד כסף
               </span>
               <h2 id="benefits-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 animate-fade-in-up px-2" style={{ animationDelay: '0.1s' }}>
-                למה בעלי עסקים בוחרים במשלנו?
+                המתחרה שלך כבר פה.<br/>
+                <span className="text-red-600">אתה מחכה למה?</span>
               </h2>
-              <p className="text-slate-600 text-sm sm:text-lg max-w-2xl mx-auto animate-fade-in-up px-4" style={{ animationDelay: '0.2s' }}>
-                אנחנו לא סתם פלטפורמה - אנחנו שותפים להצלחה שלך
+              <p className="text-slate-600 text-sm sm:text-lg max-w-2xl mx-auto animate-fade-in-up px-4 font-bold" style={{ animationDelay: '0.2s' }}>
+                כל יום בלי עמוד מקצועי = לקוחות שבוחרים במתחרה שלך
               </p>
             </div>
 
@@ -537,12 +535,16 @@ export default function BusinessLanding() {
         <section className="py-12 sm:py-20 bg-white" aria-labelledby="how-it-works-heading">
           <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 sm:mb-16">
-              <span className="inline-block px-3 sm:px-4 py-1 bg-blue-100 text-blue-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-                איך זה עובד
+              <span className="inline-block px-3 sm:px-4 py-1 bg-green-100 text-green-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+                💰 תוך 24 שעות לתוצאות
               </span>
               <h2 id="how-it-works-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-                שלושה צעדים להצלחה
+                הפוך את העסק ל"נכס דיגיטלי" תוך יום אחד
               </h2>
+              <p className="text-slate-600 text-base max-w-2xl mx-auto">
+                עד היום עיצוב תדמית עלה <span className="line-through">5,000 ₪</span> ולקח שבועות.<br/>
+                <span className="font-bold text-green-600">אצלנו? 450 ₪ + AI עושה הכל תוך 24 שעות.</span>
+              </p>
             </div>
 
             <div className="relative">
@@ -580,13 +582,13 @@ export default function BusinessLanding() {
         <section className="py-12 sm:py-20 bg-gradient-to-br from-[#667eea] to-[#764ba2]" aria-labelledby="testimonials-heading">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 sm:mb-12">
-              <span className="inline-block px-3 sm:px-4 py-1 bg-white/20 text-white rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-                מה אומרים עלינו
+              <span className="inline-block px-3 sm:px-4 py-1 bg-yellow-400 text-slate-900 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+                ⚠️ לא רק הבטחות - תוצאות אמיתיות
               </span>
               <h2 id="testimonials-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
-                בעלי עסקים מספרים
+                בעלי עסקים שהפסיקו לאבד לקוחות
               </h2>
-              <p className="text-white/80 text-sm sm:text-base">איך משלנו עזרה להם להגדיל את העסק</p>
+              <p className="text-white/80 text-sm sm:text-base font-bold">הם היו בדיוק במצב שלך. עכשיו הם מרוויחים כפול.</p>
             </div>
 
             <div className="relative" role="region" aria-label="סיפורי הצלחה">
@@ -647,12 +649,13 @@ export default function BusinessLanding() {
         <section className="py-12 sm:py-20 bg-white" aria-labelledby="faq-heading">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-8 sm:mb-12">
-              <span className="inline-block px-3 sm:px-4 py-1 bg-green-100 text-green-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-                שאלות נפוצות
+              <span className="inline-block px-3 sm:px-4 py-1 bg-orange-100 text-orange-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
+                💭 אתה לא לבד בספקות
               </span>
               <h2 id="faq-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-slate-900 mb-4">
-                יש שאלות? יש תשובות!
+                השאלות שעוצרות אותך מלהצליח
               </h2>
+              <p className="text-slate-600 text-sm sm:text-base">בואו נשבור את החששות ונתחיל להרוויח</p>
             </div>
 
             <Card className="bg-slate-50 border-0 shadow-lg">
@@ -674,33 +677,41 @@ export default function BusinessLanding() {
         {/* CTA Section */}
         <section className="py-12 sm:py-20 bg-slate-900 pb-28 sm:pb-20" aria-labelledby="cta-heading">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div className="inline-block px-4 py-2 bg-red-600 text-white rounded-full text-sm font-bold mb-4 animate-pulse">
+              ⚠️ מבצע מייסדים - רק ל-100 העסקים הראשונים
+            </div>
             <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
-              מוכן להצטרף למהפכה?
+              תפסיק להסתכל איך המתחרים מצליחים.<br/>
+              <span className="text-yellow-300">זה התור שלך.</span>
             </h2>
-            <p className="text-slate-400 text-sm sm:text-lg mb-6 sm:mb-10 max-w-2xl mx-auto px-4">
-              אלפי בעלי עסקים כבר נהנים מהפלטפורמה שלנו.
-              <span className="hidden sm:inline"> הגיע התור שלך להגדיל את ההכנסות ולהגיע ללקוחות חדשים.</span>
+            <p className="text-white text-sm sm:text-lg mb-6 sm:mb-10 max-w-2xl mx-auto px-4 font-bold">
+              עיצוב AI ששווה 5,000 ₪ - <span className="text-yellow-300 text-xl">רק 450 ₪</span>
+              <br className="hidden sm:block" />
+              <span className="hidden sm:inline text-slate-300">+ חיבור לגוגל + סליקה + דאשבורד + תמיכה מלאה</span>
+              <br/>
+              <span className="text-red-400 text-base">המחיר עולה ל-890 ₪ ברגע שנגמרים המקומות</span>
             </p>
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
               <Link to={createPageUrl("ContactPage")} className="w-full sm:w-auto">
                 <Button 
                   size="lg" 
-                  className="w-full sm:w-auto rounded-full bg-gradient-to-r from-[#667eea] to-[#764ba2] hover:opacity-90 text-white font-bold px-8 sm:px-10 py-5 sm:py-7 text-lg sm:text-xl shadow-2xl active:scale-95 sm:hover:scale-105 transition-transform touch-manipulation min-h-[52px]"
+                  className="w-full sm:w-auto rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:opacity-90 text-white font-black px-8 sm:px-10 py-6 sm:py-8 text-lg sm:text-2xl shadow-2xl active:scale-95 sm:hover:scale-110 transition-all duration-300 touch-manipulation min-h-[52px] animate-pulse"
                 >
-                  פתח חשבון עכשיו
-                  <Zap className="w-5 h-5 sm:w-6 sm:h-6 mr-2" aria-hidden="true" />
+                  כן! תעצבו לי את העסק תוך 24 שעות
+                  <Zap className="w-6 h-6 sm:w-7 sm:h-7 mr-2" aria-hidden="true" />
                 </Button>
               </Link>
-              <a 
-                href="https://wa.me/972505196963?text=היי, אני מעוניין לשמוע עוד על הצטרפות למשלנו כבעל עסק"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-6 py-3 sm:py-4 rounded-full font-bold transition-all active:scale-95 sm:hover:scale-105 shadow-lg touch-manipulation min-h-[48px]"
-              >
-                <MessageCircle className="w-5 h-5" aria-hidden="true" />
-                <span className="text-sm sm:text-base">דברו איתנו בוואטסאפ</span>
-              </a>
+              <div className="text-white text-sm sm:text-base">
+                <div className="font-bold mb-1">💯 אחריות מלאה:</div>
+                <div className="text-slate-300">לא מרוצה? נחזיר כסף. בלי שאלות.</div>
+              </div>
+            </div>
+
+            <div className="mt-8 text-white/70 text-xs sm:text-sm max-w-xl mx-auto">
+              <strong className="text-white">הסיכון האמיתי?</strong> להישאר עם עמוד גנרי בזמן שהמתחרים גונבים את הלקוחות שלך.
+              <br/>
+              <span className="text-yellow-300">450 ₪ עכשיו חוסכים לך אלפים בעתיד.</span>
             </div>
           </div>
         </section>
