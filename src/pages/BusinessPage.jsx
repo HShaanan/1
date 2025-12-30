@@ -7,6 +7,9 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LazyImage } from "@/components/PerformanceOptimizations";
 import SeoMeta from "@/components/SeoMeta";
+import { useInView } from "react-intersection-observer";
+import CountUp from "react-countup";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin, Phone, ExternalLink, Heart, Share2, Star,
   Clock, Globe, AlertTriangle, ChevronLeft, Flag,
@@ -83,38 +86,44 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="absolute top-4 left-4 flex gap-3 z-30" role="group" aria-label="פעולות עמוד">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={onShare}
-            className="bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 hover:bg-white/90 text-gray-700 hover:text-gray-900 font-medium"
-            aria-label="שתף עמוד עסק">
-            <Share2 className="w-4 h-4 ml-2 text-blue-500" aria-hidden="true" />
-            שתף
-          </Button>
-          <Button
-            variant={isFavorited ? "destructive" : "secondary"}
-            size="sm"
-            onClick={onFavorite}
-            className={`${isFavorited ?
-              'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg hover:shadow-red-300/50' :
-              'bg-white/90 backdrop-blur-sm text-gray-700 hover:text-red-500 shadow-lg'} border-0 hover:shadow-xl hover:scale-105 transition-all duration-300 font-medium`
-            }
-            aria-label={isFavorited ? 'הסר מהמועדפים' : 'הוסף למועדפים'}
-            aria-pressed={isFavorited}>
-            <Heart className={`w-4 h-4 ml-2 ${isFavorited ? 'fill-current' : 'text-red-500'}`} aria-hidden="true" />
-            {isFavorited ? 'הוסר' : 'שמור'}
-          </Button>
-          {canEdit &&
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
             <Button
               variant="secondary"
               size="sm"
-              onClick={onEditClick}
-              className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl hover:shadow-indigo-300/50 hover:scale-105 transition-all duration-300 font-medium hover:from-indigo-600 hover:to-purple-700"
-              aria-label="עריכת עמוד העסק">
-              <Edit className="w-4 h-4 ml-2" aria-hidden="true" />
-              ערוך
+              onClick={onShare}
+              className="bg-white/90 backdrop-blur-sm border-0 shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-white/90 text-gray-700 hover:text-gray-900 font-medium"
+              aria-label="שתף עמוד עסק">
+              <Share2 className="w-4 h-4 ml-2 text-blue-500" aria-hidden="true" />
+              שתף
             </Button>
+          </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              variant={isFavorited ? "destructive" : "secondary"}
+              size="sm"
+              onClick={onFavorite}
+              className={`${isFavorited ?
+                'bg-gradient-to-r from-red-500 to-pink-500 text-white shadow-lg hover:shadow-red-300/50' :
+                'bg-white/90 backdrop-blur-sm text-gray-700 hover:text-red-500 shadow-lg'} border-0 hover:shadow-xl transition-all duration-300 font-medium`
+              }
+              aria-label={isFavorited ? 'הסר מהמועדפים' : 'הוסף למועדפים'}
+              aria-pressed={isFavorited}>
+              <Heart className={`w-4 h-4 ml-2 ${isFavorited ? 'fill-current' : 'text-red-500'}`} aria-hidden="true" />
+              {isFavorited ? 'הוסר' : 'שמור'}
+            </Button>
+          </motion.div>
+          {canEdit &&
+            <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={onEditClick}
+                className="bg-gradient-to-r from-indigo-500 to-purple-600 text-white border-0 shadow-lg hover:shadow-xl hover:shadow-indigo-300/50 transition-all duration-300 font-medium hover:from-indigo-600 hover:to-purple-700"
+                aria-label="עריכת עמוד העסק">
+                <Edit className="w-4 h-4 ml-2" aria-hidden="true" />
+                ערוך
+              </Button>
+            </motion.div>
           }
           {/* כפתור ניהול עסק - לבעלים/אדמין בלבד */}
           {canEdit &&
@@ -362,11 +371,17 @@ const BusinessAddressBar = ({ address }) => {
 function MenuItem({ item, theme, isBlackTheme, onOpenModifications }) {
   const [imageError, setImageError] = React.useState(false);
   const [imageLoaded, setImageLoaded] = React.useState(false);
+  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
 
   const hasAddons = item.addons && item.addons.length > 0;
 
   return (
-    <article className={`rounded-2xl shadow-lg border p-4 hover:shadow-xl transition-shadow duration-300 flex items-start gap-4 ${
+    <motion.article
+      ref={ref}
+      initial={{ opacity: 0, y: 20 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+      transition={{ duration: 0.5 }}
+      className={`rounded-2xl shadow-lg border p-4 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex items-start gap-4 ${
       isBlackTheme
         ? 'bg-slate-800/90 border-red-500/30'
         : 'bg-white border-slate-200'
@@ -391,14 +406,16 @@ function MenuItem({ item, theme, isBlackTheme, onOpenModifications }) {
           >
             {item.price}
           </p>
-          <Button
-            onClick={() => onOpenModifications(item)}
-            size="sm"
-            className="bg-indigo-600 hover:bg-indigo-700 text-white gap-1 disabled:bg-gray-400 disabled:cursor-not-allowed"
-            aria-label={`הוסף ${item.name} לסל`}>
-            <Plus className="w-3 h-3" aria-hidden="true" />
-            הוסף
-          </Button>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={() => onOpenModifications(item)}
+              size="sm"
+              className="bg-indigo-600 hover:bg-indigo-700 text-white gap-1 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+              aria-label={`הוסף ${item.name} לסל`}>
+              <Plus className="w-3 h-3" aria-hidden="true" />
+              הוסף
+            </Button>
+          </motion.div>
         </div>
       </div>
       {item.image && !imageError ? (
@@ -439,7 +456,7 @@ function MenuItem({ item, theme, isBlackTheme, onOpenModifications }) {
           <span className="text-3xl" role="img" aria-label="מזון">🍽️</span>
         </div>
       ) : null}
-    </article>
+    </motion.article>
   );
 }
 
@@ -1036,7 +1053,7 @@ export default function BusinessPageView() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden" dir="rtl">
+      <div className="min-h-screen relative overflow-hidden" dir="rtl">
         <div className="fixed inset-0 -z-10">
           <div className="absolute inset-0 bg-white-elegant"></div>
           <div className="bubble bubble-1"></div>
@@ -1048,9 +1065,29 @@ export default function BusinessPageView() {
           <div className="bubble bubble-7"></div>
           <div className="bubble bubble-8"></div>
         </div>
-        <div className="relative z-10 flex flex-col items-center p-6 bg-white/80 rounded-lg shadow-lg">
-          <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
-          <p className="mt-2 text-gray-700">טוען עמוד עסק...</p>
+        
+        {/* Modern Loading Skeleton */}
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Hero Skeleton */}
+          <div className="h-64 sm:h-80 md:h-96 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse rounded-b-3xl"></div>
+          
+          <div className="relative -mt-16 flex items-end space-x-5 space-x-reverse px-4">
+            <div className="h-32 w-32 rounded-2xl bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse shadow-xl"></div>
+          </div>
+          
+          <div className="mt-8 space-y-4">
+            {/* Title skeleton */}
+            <div className="h-8 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse rounded-xl w-2/3"></div>
+            <div className="h-4 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse rounded-lg w-full"></div>
+            <div className="h-4 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse rounded-lg w-5/6"></div>
+            
+            {/* Menu items skeleton */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+              {[...Array(6)].map((_, i) => (
+                <div key={i} className="h-32 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 animate-pulse rounded-2xl" style={{ animationDelay: `${i * 100}ms` }}></div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>);
 
@@ -1166,6 +1203,21 @@ export default function BusinessPageView() {
         console.error(e);
         alert("אירעה שגיאה");
     }
+  };
+
+  // ScrollReveal wrapper component
+  const ScrollReveal = ({ children, delay = 0 }) => {
+    const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+    return (
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 30 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+        transition={{ duration: 0.6, delay }}
+      >
+        {children}
+      </motion.div>
+    );
   };
 
   return (
@@ -1313,21 +1365,23 @@ export default function BusinessPageView() {
         <div className="grid grid-cols-1 gap-8 items-start">
           <div className="space-y-8">
 
-            {/* AI Executive Summary (Why Us) */}
+            {/* AI Executive Summary (Why Us) - With Scroll Animation */}
             {businessPage.ai_executive_summary && (
-              <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 rounded-2xl shadow-lg border border-indigo-100 relative overflow-hidden">
-                 <div className="absolute top-0 left-0 p-4 opacity-5 pointer-events-none">
-                    <Sparkles className="w-32 h-32 text-indigo-600" />
-                 </div>
-                 <h3 className="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2 relative z-10">
-                    <Sparkles className="w-5 h-5 text-indigo-600" />
-                    למה לבחור בנו?
-                 </h3>
-                 <div 
-                    className="prose prose-sm max-w-none text-slate-700 relative z-10 leading-relaxed [&>ul]:list-disc [&>ul]:pr-4 [&>ul>li]:mb-1"
-                    dangerouslySetInnerHTML={{ __html: businessPage.ai_executive_summary }}
-                 />
-              </div>
+              <ScrollReveal>
+                <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 rounded-2xl shadow-lg border border-indigo-100 relative overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                   <div className="absolute top-0 left-0 p-4 opacity-5 pointer-events-none">
+                      <Sparkles className="w-32 h-32 text-indigo-600" />
+                   </div>
+                   <h3 className="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2 relative z-10">
+                      <Sparkles className="w-5 h-5 text-indigo-600" />
+                      למה לבחור בנו?
+                   </h3>
+                   <div 
+                      className="prose prose-sm max-w-none text-slate-700 relative z-10 leading-relaxed [&>ul]:list-disc [&>ul]:pr-4 [&>ul>li]:mb-1"
+                      dangerouslySetInnerHTML={{ __html: businessPage.ai_executive_summary }}
+                   />
+                </div>
+              </ScrollReveal>
             )}
 
             {galleryImages.length > 0 &&
@@ -1339,11 +1393,13 @@ export default function BusinessPageView() {
 
             }
 
-            {/* לוח שעות פעילות */}
+            {/* לוח שעות פעילות - With Scroll Animation */}
             {businessPage.hours &&
-              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-slate-200/80">
-                <BusinessHoursDisplay hours={businessPage.hours} isBlackTheme={isBlackTheme} />
-              </div>
+              <ScrollReveal delay={0.1}>
+                <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-slate-200/80 hover:shadow-2xl transition-shadow duration-300">
+                  <BusinessHoursDisplay hours={businessPage.hours} isBlackTheme={isBlackTheme} />
+                </div>
+              </ScrollReveal>
             }
 
             {/* תגיות - דינמי לפי צבע העסק */}
@@ -1450,13 +1506,14 @@ export default function BusinessPageView() {
               </div>
             )}
 
-            {/* Related Businesses Section */}
+            {/* Related Businesses Section - With Scroll Animation */}
             {relatedBusinesses.length > 0 && (
-              <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-slate-200/80">
-                <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                  <Store className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />
-                  עוד עסקים בקטגוריה
-                </h3>
+              <ScrollReveal delay={0.2}>
+                <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-slate-200/80">
+                  <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
+                    <Store className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />
+                    עוד עסקים בקטגוריה
+                  </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                   {relatedBusinesses.map((related) => (
                     <a
@@ -1497,12 +1554,13 @@ export default function BusinessPageView() {
                     </a>
                   ))}
                 </div>
-              </div>
+              </ScrollReveal>
             )}
 
-            {/* ביקורות */}
-            <div id="reviews-section" ref={reviewsRef} className="pt-8 border-t">
-              <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-8 space-y-6">
+            {/* ביקורות - With Scroll Animation */}
+            <ScrollReveal delay={0.3}>
+              <div id="reviews-section" ref={reviewsRef} className="pt-8 border-t">
+                <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-8 space-y-6">
                 <EmojiReviewPrompt
                   businessName={businessPage.business_name || businessPage.display_title || "העסק"}
                   onOpenForm={(mood) => {
@@ -1525,7 +1583,7 @@ export default function BusinessPageView() {
                   <ReviewList businessPageId={businessPage.id} />
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           </div>
         </div>
       </div>
