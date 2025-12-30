@@ -25,8 +25,8 @@ const BUSINESS_IMAGES = {
 const benefits = [
   {
     icon: Sparkles,
-    title: "עיצוב מקצועי תוך 24 שעות",
-    description: "אני בעצמי מעצב לך עמוד יוקרתי ומותאם אישית. תוך יום אחד - עמוד שנראה כמו של חברה ענקית, בלי שבועות המתנה.",
+    title: "עיצוב מקצועי בזמן קצר",
+    description: "אנחנו מעצבים לך עמוד יוקרתי ומותאם אישית. בימים ספורים - עמוד שנראה כמו של חברה ענקית, במקום שבועות המתנה.",
     color: "from-purple-500 to-indigo-600"
   },
   {
@@ -70,8 +70,8 @@ const steps = [
   },
   {
     number: "2",
-    title: "אני מעצב לך עמוד מקצועי",
-    description: "בזמן קצר במיוחד - אתה מקבל עמוד שנראה כמו של חברה ענקית. תהליך מהיר במקום שבועות של המתנה.",
+    title: "אנחנו מעצבים לך עמוד מקצועי",
+    description: "בימים ספורים - אתה מקבל עמוד שנראה כמו של חברה ענקית. תהליך של ימים במקום שבועות של המתנה.",
     icon: Store
   },
   {
@@ -100,7 +100,7 @@ const testimonials = [
   {
     name: "אברהם גולד",
     business: "סושי כשר",
-    text: "שילמתי פעם אלפי שקלים למעצב שלקח חודש. הפעם העבודה נעשתה מהר, מקצועית ובמחיר הוגן. העמוד נראה מדהים והחיבור לגוגל עובד מצוין. החלטה מצוינת.",
+    text: "שילמתי פעם אלפי שקלים למעצב שלקח שבועות. הפעם העבודה נעשתה תוך ימים, מקצועית ובמחיר הוגן. העמוד נראה מדהים והחיבור לגוגל עובד מצוין. החלטה מצוינת.",
     rating: 5,
     image: BUSINESS_IMAGES.restaurant
   }
@@ -400,9 +400,9 @@ export default function BusinessLanding() {
             </h1>
 
             <p className="text-base sm:text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4">
-              <span className="font-bold text-cyan-400">במהירות שלא תאמינו</span> אני מעצב לך עמוד יוקרתי עם טכנולוגיית BASE44 המהירה בעולם + חיבור ישיר לנתוני גוגל.
+              <span className="font-bold text-cyan-400">בימים ספורים</span> אנחנו מעצבים לך עמוד יוקרתי עם טכנולוגיית BASE44 המהירה בעולם + חיבור ישיר לנתוני גוגל.
               <br className="hidden sm:block" />
-              <span className="hidden sm:inline text-indigo-300">תהליך מהיר במיוחד - שבועות במקום חודשים. עיצוב מקצועי שמביא תוצאות.</span>
+              <span className="hidden sm:inline text-indigo-300">תהליך בימים ספורים במקום שבועות. עיצוב מקצועי שמביא תוצאות.</span>
               <span className="sm:hidden text-indigo-300">עיצוב מקצועי + גוגל = לקוחות חדשים.</span>
             </p>
 
@@ -528,7 +528,7 @@ export default function BusinessLanding() {
 
                   <div className="mb-6">
                     <div className="flex items-baseline gap-2">
-                      <span className="text-4xl font-bold text-slate-900">450₪</span>
+                      <span className="text-4xl font-bold text-slate-900">499₪</span>
                       <span className="text-slate-500">הקמה</span>
                     </div>
                     <div className="mt-2 text-slate-600">
@@ -717,18 +717,7 @@ export default function BusinessLanding() {
               </motion.div>
             </div>
 
-            {/* Trust Badge */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="text-center mt-12"
-            >
-              <p className="text-slate-600 text-sm">
-                💯 <span className="font-semibold">אחריות מלאה:</span> לא מרוצה? נחזיר כסף. בלי שאלות.
-              </p>
-            </motion.div>
+
           </div>
         </section>
 
