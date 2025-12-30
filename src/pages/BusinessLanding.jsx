@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
 import {
   ChevronLeft, ChevronDown, Store, TrendingUp, Users,
   Zap, DollarSign, CheckCircle, Star, ArrowLeft,
@@ -486,6 +487,250 @@ export default function BusinessLanding() {
         </section>
 
 
+
+        {/* Pricing Section */}
+        <section className="py-12 sm:py-20 bg-gradient-to-b from-white to-slate-50" aria-labelledby="pricing-heading">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="inline-block px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 rounded-full text-sm font-semibold mb-4 border border-indigo-200">
+                  💎 בחר את המסלול המתאים לך
+                </span>
+                <h2 id="pricing-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+                  מסלולים שמתאימים לכל עסק
+                </h2>
+                <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+                  מנוכחות דיגיטלית בסיסית ועד שותפות עסקית מלאה
+                </p>
+              </motion.div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 max-w-6xl mx-auto">
+              {/* Standard Plan */}
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.1 }}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                className="relative"
+              >
+                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 h-full flex flex-col">
+                  <div className="mb-6">
+                    <h3 className="text-2xl font-bold text-slate-900 mb-2">Standard</h3>
+                    <p className="text-slate-600 text-sm">נוכחות דיגיטלית בסיסית</p>
+                  </div>
+
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-slate-900">450₪</span>
+                      <span className="text-slate-500">הקמה</span>
+                    </div>
+                    <div className="mt-2 text-slate-600">
+                      + <span className="font-semibold text-slate-900">199₪</span>/חודש
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-4 mb-8">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-700">פרופיל עסק בסיסי</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-700">תמונת AI מקצועית אחת</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-700">קישור ישיר לוואטסאפ</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-700">תמיכה בסיסית</span>
+                    </div>
+                  </div>
+
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Link to={createPageUrl("ContactPage")} className="block">
+                      <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 rounded-xl font-semibold">
+                        התחל עכשיו
+                      </Button>
+                    </Link>
+                  </motion.div>
+                </div>
+              </motion.div>
+
+              {/* Growth Plan - MOST POPULAR */}
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                whileHover={{ y: -12, transition: { duration: 0.3 } }}
+                className="relative md:-mt-4"
+              >
+                {/* Popular Badge */}
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    whileInView={{ scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.5, delay: 0.4, type: "spring" }}
+                    className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg"
+                  >
+                    ⭐ הכי פופולרי
+                  </motion.div>
+                </div>
+
+                <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-2xl p-8 shadow-2xl h-full flex flex-col relative overflow-hidden">
+                  {/* Animated Background Effect */}
+                  <motion.div
+                    className="absolute inset-0 opacity-20"
+                    animate={{
+                      backgroundPosition: ['0% 0%', '100% 100%'],
+                    }}
+                    transition={{
+                      duration: 10,
+                      repeat: Infinity,
+                      repeatType: "reverse"
+                    }}
+                    style={{
+                      backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.2) 0%, transparent 50%)',
+                      backgroundSize: '200% 200%'
+                    }}
+                  />
+
+                  <div className="relative z-10">
+                    <div className="mb-6">
+                      <h3 className="text-2xl font-bold text-white mb-2">Growth</h3>
+                      <p className="text-indigo-100 text-sm">הכי נמכר - צמיחה מהירה</p>
+                    </div>
+
+                    <div className="mb-6">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-4xl font-bold text-white">850₪</span>
+                        <span className="text-indigo-100">הקמה</span>
+                      </div>
+                      <div className="mt-2 text-indigo-100">
+                        + <span className="font-semibold text-white">349₪</span>/חודש
+                      </div>
+                    </div>
+
+                    <div className="flex-1 space-y-4 mb-8">
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
+                        <span className="text-white font-medium">פרופיל מאומת ומתקדם</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
+                        <span className="text-white font-medium">3 תמונות AI מקצועיות</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
+                        <span className="text-white font-medium">חיבור Google Console + SEO</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
+                        <span className="text-white font-medium">אופטימיזציה לדירוג גוגל</span>
+                      </div>
+                      <div className="flex items-start gap-3">
+                        <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
+                        <span className="text-white font-medium">תמיכה מועדפת</span>
+                      </div>
+                    </div>
+
+                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                      <Link to={createPageUrl("ContactPage")} className="block">
+                        <Button className="w-full bg-white hover:bg-amber-50 text-indigo-700 py-6 rounded-xl font-semibold shadow-lg">
+                          בחר Growth
+                        </Button>
+                      </Link>
+                    </motion.div>
+                  </div>
+                </div>
+              </motion.div>
+
+              {/* VIP Plan */}
+              <motion.div
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                whileHover={{ y: -8, transition: { duration: 0.3 } }}
+                className="relative"
+              >
+                <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-amber-400 h-full flex flex-col">
+                  <div className="mb-6">
+                    <h3 className="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+                      VIP
+                      <span className="text-amber-500">👑</span>
+                    </h3>
+                    <p className="text-slate-600 text-sm">שותפות עסקית מלאה</p>
+                  </div>
+
+                  <div className="mb-6">
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-4xl font-bold text-slate-900">1,500₪</span>
+                      <span className="text-slate-500">הקמה</span>
+                    </div>
+                    <div className="mt-2 text-slate-600">
+                      + <span className="font-semibold text-slate-900">699₪+</span>/חודש
+                    </div>
+                  </div>
+
+                  <div className="flex-1 space-y-4 mb-8">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-700 font-medium">כל היתרונות של Growth</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-700 font-medium">עדכוני AI חודשיים</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-700 font-medium">ניהול תקציב פרסום</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-700 font-medium">ייעוץ אסטרטגי חודשי</span>
+                    </div>
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
+                      <span className="text-slate-700 font-medium">תמיכה VIP 24/7</span>
+                    </div>
+                  </div>
+
+                  <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                    <Link to={createPageUrl("ContactPage")} className="block">
+                      <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white py-6 rounded-xl font-semibold shadow-lg">
+                        דברו איתנו
+                      </Button>
+                    </Link>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Trust Badge */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: 0.5 }}
+              className="text-center mt-12"
+            >
+              <p className="text-slate-600 text-sm">
+                💯 <span className="font-semibold">אחריות מלאה:</span> לא מרוצה? נחזיר כסף. בלי שאלות.
+              </p>
+            </motion.div>
+          </div>
+        </section>
 
         {/* How It Works */}
         <section className="py-12 sm:py-20 bg-white" aria-labelledby="how-it-works-heading">
