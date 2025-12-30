@@ -410,7 +410,16 @@ function MenuItem({ item, theme, isBlackTheme, onOpenModifications }) {
             <Button
               onClick={() => onOpenModifications(item)}
               size="sm"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white gap-1 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+              className="text-white gap-1 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
+              style={{
+                backgroundColor: theme.colors.primary,
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = theme.colors.primaryHover;
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = theme.colors.primary;
+              }}
               aria-label={`הוסף ${item.name} לסל`}>
               <Plus className="w-3 h-3" aria-hidden="true" />
               הוסף
