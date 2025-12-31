@@ -38,7 +38,8 @@ export default function AccessibilityStatementPage() {
         navigate(createPageUrl("Browse"));
     } catch (error) {
         console.error("Error accepting terms:", error);
-        toast.error("אירעה שגיאה באישור התקנון. אנא נסה שנית.");
+        const errorMessage = error?.message || error?.data?.error || "אירעה שגיאה באישור התקנון";
+        toast.error(errorMessage);
     } finally {
         setSubmitting(false);
     }
