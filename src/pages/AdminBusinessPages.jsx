@@ -675,6 +675,24 @@ export default function AdminBusinessPages() {
     }
   };
 
+  const handleCategoryChange = async (pageId, newCategoryId) => {
+    try {
+      await base44.entities.BusinessPage.update(pageId, {
+        category_id: newCategoryId,
+        subcategory_ids: [],
+        subcategory_id: null
+      });
+
+      setBusinessPages(prev =>
+        prev.map(p =>
+          p.id === pageId ? { ...p, category_id: newCategoryId, subcategory_ids: [], subcategory_id: null } : p
+        )
+      );
+    } catch (err) {
+      setError("שגיאה בעדכון קטגוריה: " + err.message);
+    }
+  };
+
   const getSubcategoriesForPage = (page) => {
     if (!page.category_id) return [];
     return categories.filter(c => c.parent_id === page.category_id);
@@ -1035,7 +1053,9 @@ export default function AdminBusinessPages() {
                 <th className="p-3" onClick={() => requestSort('business_owner_email')}>
                   <div className="flex items-center gap-1 cursor-pointer">בעל העסק {getSortIcon('business_owner_email')}</div>
                 </th>
-                <th className="p-3">קטגוריה</th>
+                <th className="p-3" onClick={() => requestSort('category_id')}>
+                  <div className="flex items-center gap-1 cursor-pointer">קטגוריה {getSortIcon('category_id')}</div>
+                </th>
                 <th className="p-3">תת-קטגוריה</th>
                 <th className="p-3" onClick={() => requestSort('created_date')}>
                   <div className="flex items-center gap-1 cursor-pointer">תאריך יצירה {getSortIcon('created_date')}</div>
@@ -1069,7 +1089,23 @@ export default function AdminBusinessPages() {
                       </div>
                     </td>
                     <td className="p-3">{getUserFullName(page.business_owner_email)}</td>
-                    <td className="p-3">{getCategoryName(page.category_id)}</td>
+                    <td className="p-3">
+                      <Select
+                        value={page.category_id || ""}
+                        onValueChange={(value) => handleCategoryChange(page.id, value)}
+                      >
+                        <SelectTrigger className="w-[180px] text-xs">
+                          <SelectValue placeholder="בחר קטגוריה" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {mainCategories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.id}>
+                              {cat.icon} {cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </td>
                     <td className="p-3">
                       <SubcategoryDropdown
                         page={page}
