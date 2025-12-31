@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import * as XLSX from 'npm:xlsx';
 
 Deno.serve(async (req) => {
   try {
@@ -17,15 +18,18 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    const csvText = await file.text();
-    const lines = csvText.split('\n').filter(line => line.trim());
+    // Read Excel file
+    const arrayBuffer = await file.arrayBuffer();
+    const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+    const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
     
-    if (lines.length < 2) {
-      return Response.json({ error: 'CSV file is empty or invalid' }, { status: 400 });
+    if (jsonData.length < 2) {
+      return Response.json({ error: 'Excel file is empty or invalid' }, { status: 400 });
     }
 
     // Skip header
-    const dataLines = lines.slice(1);
+    const dataLines = jsonData.slice(1);
     
     const results = {
       total: dataLines.length,
@@ -38,8 +42,7 @@ Deno.serve(async (req) => {
     const categories = await base44.asServiceRole.entities.Category.list();
     
     for (let i = 0; i < dataLines.length; i++) {
-      const line = dataLines[i];
-      const columns = line.split('\t'); // Tab-separated
+      const row = dataLines[i];
       
       try {
         const [
@@ -51,7 +54,7 @@ Deno.serve(async (req) => {
           kashrutStartDate,
           kashrutEndDate,
           email
-        ] = columns;
+        ] = row;
 
         if (!businessName?.trim() || !phone?.trim()) {
           results.failed++;

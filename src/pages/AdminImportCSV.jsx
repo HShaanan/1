@@ -60,7 +60,7 @@ export default function AdminImportCSV() {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <FileText className="w-6 h-6" />
-              ייבוא עסקים מ-CSV
+              ייבוא עסקים מ-Excel
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -70,7 +70,7 @@ export default function AdminImportCSV() {
               <AlertDescription>
                 <strong>פורמט נדרש:</strong>
                 <br />
-                CSV/TSV עם העמודות: שם עסק, טלפון, טלפון נוסף, כתובת, עיר, ממתי תוקף הכשרות, עד מתי תוקף הכשרות, אימייל
+                קובץ Excel (.xls/.xlsx) עם העמודות: שם עסק, טלפון, טלפון נוסף, כתובת, עיר, ממתי תוקף הכשרות, עד מתי תוקף הכשרות, אימייל
               </AlertDescription>
             </Alert>
 
@@ -81,12 +81,12 @@ export default function AdminImportCSV() {
                   <Upload className="w-12 h-12 mx-auto mb-3 text-gray-400" />
                   <input
                     type="file"
-                    accept=".csv,.tsv,.txt"
+                    accept=".xls,.xlsx"
                     onChange={handleFileChange}
                     className="hidden"
                   />
                   <p className="text-sm text-gray-600">
-                    {file ? file.name : 'לחץ לבחירת קובץ CSV'}
+                    {file ? file.name : 'לחץ לבחירת קובץ Excel'}
                   </p>
                 </div>
               </label>

@@ -88,7 +88,8 @@
     "react-ga4": "^2.1.0",
     "react-intersection-observer": "^9.13.0",
     "react-countup": "^6.5.0",
-    "react-lottie": "^1.2.4"
+    "react-lottie": "^1.2.4",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.19.0",
