@@ -261,6 +261,10 @@ export default function AdminBusinessPages() {
   const [subcatDialog, setSubcatDialog] = useState({ open: false, page: null, isBulk: false });
   const [selectedSubcatsForAssignment, setSelectedSubcatsForAssignment] = useState([]);
 
+  // Bulk kashrut assignment
+  const [kashrutDialog, setKashrutDialog] = useState(false);
+  const [selectedKashrutForBulk, setSelectedKashrutForBulk] = useState("");
+
   const debouncedSearchTerm = useDebounce(searchTerm, 300);
 
   const loadAllData = useCallback(async () => {
@@ -1002,6 +1006,29 @@ export default function AdminBusinessPages() {
     );
   };
 
+  const handleBulkKashrutUpdate = async () => {
+    if (selectedPageIds.length === 0) return;
+
+    setIsLoading(true);
+    try {
+      for (const pageId of selectedPageIds) {
+        await base44.entities.BusinessPage.update(pageId, {
+          kashrut_authority_name: selectedKashrutForBulk || null
+        });
+      }
+      
+      await loadAllData();
+      setSelectedPageIds([]);
+      setKashrutDialog(false);
+      setSelectedKashrutForBulk("");
+      alert(`✅ כשרות עודכנה עבור ${selectedPageIds.length} עמודים`);
+    } catch (err) {
+      setError("שגיאה בעדכון כשרות: " + err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   if (isLoading) {
     return <div className="p-8">טוען נתונים...</div>;
   }
@@ -1085,6 +1112,14 @@ export default function AdminBusinessPages() {
               >
                 <Tag className="w-4 h-4 ml-1" />
                 שייך לתתי-קטגוריות
+              </Button>
+              <Button
+                onClick={() => setKashrutDialog(true)}
+                size="sm"
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                <Star className="w-4 h-4 ml-1" />
+                שנה כשרות
               </Button>
               <Button
                 onClick={handleBulkDelete}
@@ -1430,6 +1465,83 @@ export default function AdminBusinessPages() {
                     הפשר עמוד
                   </>
                 )}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Bulk Kashrut Update Dialog */}
+        <Dialog open={kashrutDialog} onOpenChange={setKashrutDialog}>
+          <DialogContent className="max-w-lg" dir="rtl">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Star className="w-5 h-5 text-emerald-600" />
+                עדכון כשרות קבוצתי
+              </DialogTitle>
+              <DialogDescription>
+                בחר כשרות עבור {selectedPageIds.length} עמודים
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="space-y-3">
+              <Label className="text-sm font-medium">בחר כשרות:</Label>
+              <div className="space-y-2 max-h-96 overflow-y-auto bg-gray-50 rounded-lg p-3 border">
+                <button
+                  onClick={() => setSelectedKashrutForBulk("")}
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-right flex items-center gap-2 ${
+                    selectedKashrutForBulk === ""
+                      ? 'border-gray-500 bg-gray-100 shadow-sm'
+                      : 'border-gray-200 hover:border-gray-300 hover:bg-white'
+                  }`}
+                >
+                  <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                    selectedKashrutForBulk === "" ? 'bg-gray-500 border-gray-500' : 'border-gray-300'
+                  }`}>
+                    {selectedKashrutForBulk === "" && <Check className="w-3 h-3 text-white" />}
+                  </div>
+                  <span className="font-medium text-sm text-gray-600">ללא כשרות</span>
+                </button>
+
+                {kashrutList.map(kashrut => {
+                  const isSelected = selectedKashrutForBulk === kashrut.name;
+                  return (
+                    <button
+                      key={kashrut.id}
+                      onClick={() => setSelectedKashrutForBulk(kashrut.name)}
+                      className={`w-full p-3 rounded-lg border-2 transition-all text-right flex items-center gap-2 ${
+                        isSelected
+                          ? 'border-emerald-500 bg-emerald-50 shadow-sm'
+                          : 'border-gray-200 hover:border-emerald-300 hover:bg-white'
+                      }`}
+                    >
+                      <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                        isSelected ? 'bg-emerald-500 border-emerald-500' : 'border-gray-300'
+                      }`}>
+                        {isSelected && <Check className="w-3 h-3 text-white" />}
+                      </div>
+                      <span className="font-medium text-sm">{kashrut.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <DialogFooter>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setKashrutDialog(false);
+                  setSelectedKashrutForBulk("");
+                }}
+              >
+                ביטול
+              </Button>
+              <Button
+                onClick={handleBulkKashrutUpdate}
+                className="bg-emerald-600 hover:bg-emerald-700"
+              >
+                <Star className="w-4 h-4 ml-2" />
+                עדכן כשרות
               </Button>
             </DialogFooter>
           </DialogContent>
