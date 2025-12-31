@@ -738,9 +738,15 @@ export default function BusinessPageView() {
     try {
       let pageData;
 
-      // Try to load by slug first, then by ID
+      // Try to load by slug first
       if (pageSlug) {
         pageData = await base44.entities.BusinessPage.filter({ url_slug: pageSlug });
+        
+        // If slug looks like an ID (long string without hyphens), try by ID as fallback
+        if ((!pageData || (Array.isArray(pageData) && pageData.length === 0)) && pageSlug.length > 20 && !pageSlug.includes('-')) {
+          console.log('Slug looks like ID, trying ID lookup:', pageSlug);
+          pageData = await base44.entities.BusinessPage.filter({ id: pageSlug });
+        }
       }
 
       // If no page data from slug or no slug, try by ID
@@ -750,7 +756,7 @@ export default function BusinessPageView() {
         }
       }
 
-      const page = Array.isArray(pageData) ? pageData[0] : pageData; // Assuming filter returns an array, take the first item
+      const page = Array.isArray(pageData) ? pageData[0] : pageData;
 
       if (!page) {
         setError("עמוד העסק לא נמצא");
