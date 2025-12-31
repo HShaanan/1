@@ -22,9 +22,14 @@ export default function Footer() {
   const groupedLinks = footerLinks.reduce((acc, link) => {
     const key = `${link.column_type}-${link.column_title || ''}`;
     if (!acc[key]) {
+      // Default titles based on column type
+      let defaultTitle = 'קטגוריות';
+      if (link.column_type === 'city') defaultTitle = 'עיר';
+      else if (link.column_type === 'kashrut') defaultTitle = 'כשרות';
+      
       acc[key] = {
         type: link.column_type,
-        title: link.column_title || link.column_type || 'קטגוריות',
+        title: link.column_title || defaultTitle,
         links: []
       };
     }
