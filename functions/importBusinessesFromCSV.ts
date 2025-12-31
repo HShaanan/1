@@ -84,17 +84,6 @@ Deno.serve(async (req) => {
           categoryId = categories[0].id;
         }
 
-        // יצירת url_slug ייחודי
-        const slugBase = businessName.trim().toLowerCase()
-          .replace(/['"״״]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/[^\u0590-\u05FFa-z0-9-]/g, '')
-          .replace(/-+/g, '-')
-          .replace(/^-|-$/g, '');
-
-        const citySlug = (city?.trim() || 'בית-שמש').toLowerCase().replace(/\s+/g, '-');
-        const url_slug = `${slugBase}-${citySlug}-${Date.now().toString().slice(-6)}`;
-
         const businessData = {
           business_name: businessName.trim(),
           display_title: businessName.trim(),
@@ -104,7 +93,6 @@ Deno.serve(async (req) => {
           address: address?.trim() || '',
           business_owner_email: email?.trim() || user.email,
           category_id: categoryId,
-          url_slug: url_slug,
           is_active: false, // Requires approval
           approval_status: 'pending',
           metadata: {
