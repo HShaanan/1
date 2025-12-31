@@ -773,9 +773,17 @@ export default function BusinessPageView() {
       // אם העמוד לא פעיל, לא מאושר, או מוקפא - רק הבעלים/אדמין יכולים לראות (במצב preview)
       if (!page.is_active || page.approval_status !== 'approved' || page.is_frozen) {
         if (!isPreview || !canPreview) {
-          const msg = page.is_frozen 
-            ? "עמוד העסק מוקפא זמנית ואינו זמין כעת" 
-            : "עמוד העסק אינו זמין כעת";
+          let msg = "עמוד העסק אינו זמין כעת";
+          
+          if (page.is_frozen) {
+            const reason = page.frozen_reason ? ` עקב ${page.frozen_reason}` : "";
+            msg = `עמוד העסק מוקפא זמנית${reason}. נשמח לעדכן כשיהיה פעיל שוב.`;
+          } else if (page.approval_status === 'pending') {
+            msg = "עמוד העסק ממתין לאישור מנהל המערכת.";
+          } else if (page.approval_status === 'rejected') {
+            msg = "עמוד העסק נדחה על ידי מנהל המערכת.";
+          }
+          
           setError(msg);
           setIsLoading(false);
           return;
