@@ -32,11 +32,16 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Excel file is empty or invalid' }, { status: 400 });
     }
 
+    // Debug: Print actual column names
+    const firstRowKeys = Object.keys(jsonData[0] || {});
+    console.log('📋 Excel columns found:', firstRowKeys);
+
     const results = {
       total: jsonData.length,
       success: 0,
       failed: 0,
-      errors: []
+      errors: [],
+      debug: { columns: firstRowKeys }
     };
 
     // Get all categories for mapping
@@ -46,18 +51,30 @@ Deno.serve(async (req) => {
       const row = jsonData[i];
 
       try {
-        const businessName = row['שם עסק']?.toString().trim();
-        const phone = row['טלפון']?.toString().trim();
-        const phoneExtra = row['טלפון נוסף']?.toString().trim();
-        const address = row['כתובת']?.toString().trim();
-        const city = row['עיר']?.toString().trim();
-        const kashrutStartDate = row['ממתי תוקף הכשרות']?.toString().trim();
-        const kashrutEndDate = row['עד מתי תוקף הכשרות']?.toString().trim();
-        const email = row['אימייל']?.toString().trim();
+        // Flexible column matching - find key that contains the text
+        const getColumnValue = (keywords) => {
+          for (const key of Object.keys(row)) {
+            const normalizedKey = key.trim().toLowerCase();
+            if (keywords.some(kw => normalizedKey.includes(kw.toLowerCase()))) {
+              const val = row[key];
+              return val ? String(val).trim() : '';
+            }
+          }
+          return '';
+        };
+
+        const businessName = getColumnValue(['שם עסק', 'עסק', 'שם']);
+        const phone = getColumnValue(['טלפון', 'פלאפון', 'נייד', 'טל']);
+        const phoneExtra = getColumnValue(['טלפון נוסף', 'נוסף', 'טלפון 2']);
+        const address = getColumnValue(['כתובת', 'רחוב', 'מען']);
+        const city = getColumnValue(['עיר', 'יישוב']);
+        const kashrutStartDate = getColumnValue(['ממתי תוקף', 'תוקף מ', 'תחילת']);
+        const kashrutEndDate = getColumnValue(['עד מתי תוקף', 'תוקף עד', 'סיום']);
+        const email = getColumnValue(['אימייל', 'מייל', 'email', 'דוא"ל']);
 
         if (!businessName || !phone) {
           results.failed++;
-          results.errors.push(`Row ${i + 2}: Missing business name or phone`);
+          results.errors.push(`Row ${i + 2}: Missing name="${businessName || 'EMPTY'}" or phone="${phone || 'EMPTY'}"`);
           continue;
         }
 
