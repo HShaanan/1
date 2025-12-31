@@ -764,10 +764,13 @@ export default function BusinessPageView() {
       const isAdmin = currentUser && currentUser.role === 'admin';
       const canPreview = isOwner || isAdmin;
 
-      // אם העמוד לא פעיל או לא מאושר, רק הבעלים/אדמין יכולים לראות (במצב preview)
-      if (!page.is_active || page.approval_status !== 'approved') {
+      // אם העמוד לא פעיל, לא מאושר, או מוקפא - רק הבעלים/אדמין יכולים לראות (במצב preview)
+      if (!page.is_active || page.approval_status !== 'approved' || page.is_frozen) {
         if (!isPreview || !canPreview) {
-          setError("עמוד העסק אינו זמין כעת");
+          const msg = page.is_frozen 
+            ? "עמוד העסק מוקפא זמנית ואינו זמין כעת" 
+            : "עמוד העסק אינו זמין כעת";
+          setError(msg);
           setIsLoading(false);
           return;
         }
