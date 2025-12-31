@@ -20,11 +20,11 @@ export default function Footer() {
 
   // Group links by column
   const groupedLinks = footerLinks.reduce((acc, link) => {
-    const key = `${link.column_type}-${link.column_title}`;
+    const key = `${link.column_type}-${link.column_title || ''}`;
     if (!acc[key]) {
       acc[key] = {
         type: link.column_type,
-        title: link.column_title,
+        title: link.column_title || link.column_type || 'קטגוריות',
         links: []
       };
     }
