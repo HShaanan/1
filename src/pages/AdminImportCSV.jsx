@@ -25,10 +25,14 @@ export default function AdminImportCSV() {
     setResults(null);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      // Convert file to base64 for backend function
+      const arrayBuffer = await file.arrayBuffer();
+      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
 
-      const response = await base44.functions.invoke('importBusinessesFromCSV', formData);
+      const response = await base44.functions.invoke('importBusinessesFromCSV', {
+        fileData: base64,
+        fileName: file.name
+      });
 
       if (response.data?.success) {
         setResults(response.data.results);

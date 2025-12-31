@@ -11,15 +11,19 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const formData = await req.formData();
-    const file = formData.get('file');
+    const { fileData, fileName } = await req.json();
     
-    if (!file) {
+    if (!fileData) {
       return Response.json({ error: 'No file provided' }, { status: 400 });
     }
 
-    // Read Excel file
-    const arrayBuffer = await file.arrayBuffer();
+    // Decode base64 to arrayBuffer
+    const binaryString = atob(fileData);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
+    const arrayBuffer = bytes.buffer;
     const workbook = XLSX.read(arrayBuffer, { type: 'array' });
     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
     const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
