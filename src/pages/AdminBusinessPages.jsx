@@ -134,11 +134,98 @@ const SubcategoryDropdown = ({ page, categories, onSave }) => {
   );
 };
 
+const KashrutDropdown = ({ page, kashrutList, onSave }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(page.kashrut_authority_name || "");
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const handleSelect = (kashrutName) => {
+    setSelected(kashrutName);
+    setHasChanges(true);
+  };
+
+  const handleSave = async () => {
+    await onSave(page.id, selected);
+    setHasChanges(false);
+    setIsOpen(false);
+  };
+
+  const displayText = selected || "לא נבחר";
+
+  return (
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="w-full justify-between text-xs">
+          <span className="truncate">{displayText}</span>
+          <ChevronDown className="w-3 h-3 mr-1" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-64 p-3" dir="rtl">
+        <div className="space-y-2 max-h-80 overflow-y-auto">
+          <div
+            onClick={() => handleSelect("")}
+            className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+              !selected ? 'bg-gray-100 border border-gray-300' : 'hover:bg-gray-50'
+            }`}
+          >
+            <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+              !selected ? 'bg-gray-600 border-gray-600' : 'border-gray-300'
+            }`}>
+              {!selected && <Check className="w-3 h-3 text-white" />}
+            </div>
+            <span className="text-sm text-gray-500">ללא כשרות</span>
+          </div>
+          {kashrutList.map(kashrut => {
+            const isSelected = selected === kashrut.name;
+            return (
+              <div
+                key={kashrut.id}
+                onClick={() => handleSelect(kashrut.name)}
+                className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+                  isSelected ? 'bg-green-100 border border-green-300' : 'hover:bg-gray-100'
+                }`}
+              >
+                <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+                  isSelected ? 'bg-green-600 border-green-600' : 'border-gray-300'
+                }`}>
+                  {isSelected && <Check className="w-3 h-3 text-white" />}
+                </div>
+                <span className="text-sm">{kashrut.name}</span>
+              </div>
+            );
+          })}
+        </div>
+        {hasChanges && (
+          <div className="mt-3 pt-3 border-t flex gap-2">
+            <Button size="sm" onClick={handleSave} className="flex-1 bg-green-600 hover:bg-green-700">
+              <Check className="w-3 h-3 ml-1" />
+              שמור
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setSelected(page.kashrut_authority_name || "");
+                setHasChanges(false);
+                setIsOpen(false);
+              }}
+              className="flex-1"
+            >
+              ביטול
+            </Button>
+          </div>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 
 export default function AdminBusinessPages() {
   const [businessPages, setBusinessPages] = useState([]);
   const [categories, setCategories] = useState([]);
   const [users, setUsers] = useState([]);
+  const [kashrutList, setKashrutList] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -226,6 +313,20 @@ export default function AdminBusinessPages() {
         usersData = [];
       }
 
+      // המתנה קצרה
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // שלב 4: טעינת כשרויות
+      let kashrutData = [];
+      try {
+        console.log('✡️ Loading kashrut list...');
+        kashrutData = await base44.entities.Kashrut.list();
+        console.log('✅ Kashrut loaded:', kashrutData.length);
+      } catch (err) {
+        console.warn('⚠️ Failed to load kashrut, using empty array:', err.message);
+        kashrutData = [];
+      }
+
       console.log('✅ All data loaded successfully');
       console.log('📊 Pages by status:', {
         pending: pagesData.filter(p => p.approval_status === 'pending').length,
@@ -238,6 +339,7 @@ export default function AdminBusinessPages() {
       setBusinessPages(pagesData);
       setCategories(catsData);
       setUsers(usersData);
+      setKashrutList(kashrutData);
       setError("");
 
     } catch (err) {
@@ -693,6 +795,22 @@ export default function AdminBusinessPages() {
     }
   };
 
+  const handleKashrutChange = async (pageId, kashrutName) => {
+    try {
+      await base44.entities.BusinessPage.update(pageId, {
+        kashrut_authority_name: kashrutName || null
+      });
+
+      setBusinessPages(prev =>
+        prev.map(p =>
+          p.id === pageId ? { ...p, kashrut_authority_name: kashrutName } : p
+        )
+      );
+    } catch (err) {
+      setError("שגיאה בעדכון כשרות: " + err.message);
+    }
+  };
+
   const getSubcategoriesForPage = (page) => {
     if (!page.category_id) return [];
     return categories.filter(c => c.parent_id === page.category_id);
@@ -1057,6 +1175,7 @@ export default function AdminBusinessPages() {
                   <div className="flex items-center gap-1 cursor-pointer">קטגוריה {getSortIcon('category_id')}</div>
                 </th>
                 <th className="p-3">תת-קטגוריה</th>
+                <th className="p-3">כשרות</th>
                 <th className="p-3" onClick={() => requestSort('created_date')}>
                   <div className="flex items-center gap-1 cursor-pointer">תאריך יצירה {getSortIcon('created_date')}</div>
                 </th>
@@ -1113,6 +1232,13 @@ export default function AdminBusinessPages() {
                         onSave={handleSubcategoryChange}
                       />
                     </td>
+                    <td className="p-3">
+                      <KashrutDropdown
+                        page={page}
+                        kashrutList={kashrutList}
+                        onSave={handleKashrutChange}
+                      />
+                    </td>
                     <td className="p-3">{new Date(page.created_date).toLocaleDateString('he-IL')}</td>
                     <td className="p-3"><StatusBadge status={page.approval_status} /></td>
                     <td className="p-3 text-center">
@@ -1160,7 +1286,7 @@ export default function AdminBusinessPages() {
                   </tr>
                   {expandedPageId === page.id && (
                     <tr className="bg-red-50">
-                      <td colSpan="8" className="p-4">
+                      <td colSpan="9" className="p-4">
                         <h4 className="font-semibold mb-2">סיבת דחייה:</h4>
                         <Input
                           placeholder="לדוגמה: תיאור העסק חסר, תמונות לא רלוונטיות וכו'."
