@@ -26,17 +26,14 @@ Deno.serve(async (req) => {
     const arrayBuffer = bytes.buffer;
     const workbook = XLSX.read(arrayBuffer, { type: 'array' });
     const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-    const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
-    
-    if (jsonData.length < 2) {
+    const jsonData = XLSX.utils.sheet_to_json(firstSheet);
+
+    if (jsonData.length === 0) {
       return Response.json({ error: 'Excel file is empty or invalid' }, { status: 400 });
     }
 
-    // Skip header
-    const dataLines = jsonData.slice(1);
-    
     const results = {
-      total: dataLines.length,
+      total: jsonData.length,
       success: 0,
       failed: 0,
       errors: []
@@ -44,25 +41,23 @@ Deno.serve(async (req) => {
 
     // Get all categories for mapping
     const categories = await base44.asServiceRole.entities.Category.list();
-    
-    for (let i = 0; i < dataLines.length; i++) {
-      const row = dataLines[i];
-      
-      try {
-        const [
-          businessName,
-          phone,
-          phoneExtra,
-          address,
-          city,
-          kashrutStartDate,
-          kashrutEndDate,
-          email
-        ] = row;
 
-        if (!businessName?.trim() || !phone?.trim()) {
+    for (let i = 0; i < jsonData.length; i++) {
+      const row = jsonData[i];
+
+      try {
+        const businessName = row['שם עסק']?.toString().trim();
+        const phone = row['טלפון']?.toString().trim();
+        const phoneExtra = row['טלפון נוסף']?.toString().trim();
+        const address = row['כתובת']?.toString().trim();
+        const city = row['עיר']?.toString().trim();
+        const kashrutStartDate = row['ממתי תוקף הכשרות']?.toString().trim();
+        const kashrutEndDate = row['עד מתי תוקף הכשרות']?.toString().trim();
+        const email = row['אימייל']?.toString().trim();
+
+        if (!businessName || !phone) {
           results.failed++;
-          results.errors.push(`Row ${i + 2}: Missing required fields (business name or phone)`);
+          results.errors.push(`Row ${i + 2}: Missing business name or phone`);
           continue;
         }
 
