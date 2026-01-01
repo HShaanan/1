@@ -97,7 +97,15 @@ export default function KashrutSection({ value = {}, onChange }) {
           <Label className="mb-1 block">שם הגוף</Label>
           <Select
             value={v.kashrut_authority_name || ""}
-            onValueChange={(val) => onChange?.({ ...v, kashrut_authority_name: val })}
+            onValueChange={(val) => {
+              // מצא את הכשרות ברשימה ועדכן גם את הלוגו
+              const selected = filteredByType.find(r => r.name === val);
+              const patch = {
+                kashrut_authority_name: val,
+                kashrut_logo_url: selected?.logo_url || v.kashrut_logo_url || ""
+              };
+              onChange?.({ ...v, ...patch });
+            }}
           >
             <SelectTrigger><SelectValue placeholder="בחר מרשימת הגופים" /></SelectTrigger>
             <SelectContent>
