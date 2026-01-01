@@ -350,7 +350,7 @@ export default function BusinessLanding() {
         {/* Background Image */}
         <div className="absolute inset-0">
           <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/f09bd2e51_image6.jpg"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/f86e25430_image1.jpg"
             alt="ראש שלכם בעסק, כל השאר עלינו - משלנו"
             className="w-full h-full object-cover"
           />
