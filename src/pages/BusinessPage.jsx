@@ -177,7 +177,7 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
               <button
                 type="button"
                 onClick={onLogoClick}
-                className="h-32 w-32 sm:h-48 sm:w-48 rounded-3xl overflow-hidden flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-blue-400/20 bg-white transition-all duration-300 hover:scale-105 active:scale-95"
+                className="h-40 w-40 sm:h-56 sm:w-56 rounded-3xl overflow-hidden flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-blue-400/20 bg-white transition-all duration-300 hover:scale-105 active:scale-95"
                 style={{
                   boxShadow: '0 25px 70px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1), inset 0 2px 8px rgba(255, 255, 255, 0.95), inset 0 -2px 8px rgba(0, 0, 0, 0.04)'
                 }}
