@@ -90,18 +90,18 @@ export default function BlobCursor() {
             <motion.div
               className="absolute"
               style={{
-                width: isPointer ? 60 : 40,
-                height: isPointer ? 60 : 40,
+                width: isPointer ? 50 : 35,
+                height: isPointer ? 50 : 35,
                 background: 'linear-gradient(135deg, #3B82F6 0%, #8B5CF6 40%, #EC4899 100%)',
                 animation: 'blob-morph 6s ease-in-out infinite',
-                filter: 'blur(4px)',
+                filter: 'blur(2px)',
                 transform: 'translate(-50%, -50%)',
-                boxShadow: '0 0 20px rgba(59, 130, 246, 0.6), 0 0 40px rgba(139, 92, 246, 0.4)',
+                boxShadow: '0 0 15px rgba(59, 130, 246, 0.8), 0 0 30px rgba(139, 92, 246, 0.5)',
               }}
               animate={{
-                width: isPointer ? 60 : 40,
-                height: isPointer ? 60 : 40,
-                opacity: isPointer ? 0.85 : 0.7,
+                width: isPointer ? 50 : 35,
+                height: isPointer ? 50 : 35,
+                opacity: isPointer ? 0.95 : 0.85,
               }}
               transition={{
                 type: "spring",
@@ -114,16 +114,16 @@ export default function BlobCursor() {
             <motion.div
               className="absolute"
               style={{
-                width: isPointer ? 90 : 65,
-                height: isPointer ? 90 : 65,
-                background: 'radial-gradient(circle, rgba(59,130,246,0.25) 0%, rgba(139,92,246,0.15) 35%, transparent 65%)',
-                filter: 'blur(12px)',
+                width: isPointer ? 70 : 55,
+                height: isPointer ? 70 : 55,
+                background: 'radial-gradient(circle, rgba(59,130,246,0.35) 0%, rgba(139,92,246,0.25) 35%, transparent 65%)',
+                filter: 'blur(10px)',
                 transform: 'translate(-50%, -50%)',
               }}
               animate={{
-                width: isPointer ? 90 : 65,
-                height: isPointer ? 90 : 65,
-                scale: [1, 1.15, 1],
+                width: isPointer ? 70 : 55,
+                height: isPointer ? 70 : 55,
+                scale: [1, 1.12, 1],
               }}
               transition={{
                 scale: {
@@ -148,11 +148,11 @@ export default function BlobCursor() {
             <motion.div
               className="absolute rounded-full"
               style={{
-                width: 4,
-                height: 4,
+                width: 6,
+                height: 6,
                 background: 'white',
                 transform: 'translate(-50%, -50%)',
-                boxShadow: '0 0 8px rgba(255, 255, 255, 0.8)',
+                boxShadow: '0 0 10px rgba(255, 255, 255, 1), 0 0 20px rgba(59, 130, 246, 0.6)',
               }}
               animate={{
                 scale: isPointer ? 0 : 1,
@@ -168,14 +168,15 @@ export default function BlobCursor() {
             {/* טבעות הרחבה בלחיצה */}
             {isPointer && (
               <motion.div
-                className="absolute rounded-full border-2 border-white/40"
+                className="absolute rounded-full border-2"
                 style={{
-                  width: 70,
-                  height: 70,
+                  width: 60,
+                  height: 60,
                   transform: 'translate(-50%, -50%)',
+                  borderColor: 'rgba(255, 255, 255, 0.6)',
                 }}
                 initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1.2, opacity: [0.6, 0] }}
+                animate={{ scale: 1.3, opacity: [0.7, 0] }}
                 transition={{
                   duration: 1,
                   repeat: Infinity,
