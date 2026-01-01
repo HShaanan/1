@@ -64,11 +64,11 @@ export default function ImageComparison({
         <img 
           src={afterImage} 
           alt={afterLabel}
-          className="w-full h-auto"
+          className="w-full h-auto block"
           draggable={false}
         />
         {/* After Label */}
-        <div className="absolute top-4 left-4 bg-green-600 text-white px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2">
+        <div className="absolute top-4 left-4 bg-green-600 text-white px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2 z-10">
           <span className="text-lg">✨</span>
           <span>{afterLabel}</span>
         </div>
@@ -79,14 +79,23 @@ export default function ImageComparison({
         className="absolute inset-0 overflow-hidden"
         style={{ width: `${sliderPosition}%` }}
       >
-        <img 
-          src={beforeImage} 
-          alt={beforeLabel}
-          className="w-full h-auto"
-          draggable={false}
-        />
+        <div className="relative w-full h-full">
+          <img 
+            src={beforeImage} 
+            alt={beforeLabel}
+            className="absolute inset-0 w-full h-full object-cover"
+            draggable={false}
+            style={{ 
+              width: '100vw',
+              maxWidth: 'none',
+              position: 'absolute',
+              right: 0,
+              top: 0
+            }}
+          />
+        </div>
         {/* Before Label */}
-        <div className="absolute top-4 right-4 bg-slate-600 text-white px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2">
+        <div className="absolute top-4 right-4 bg-slate-600 text-white px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2 z-10">
           <span>{beforeLabel}</span>
           <span className="text-lg">😕</span>
         </div>
