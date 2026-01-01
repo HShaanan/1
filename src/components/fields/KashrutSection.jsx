@@ -4,9 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { UploadFile } from "@/integrations/Core";
+import { base44 } from "@/api/base44Client";
 import { Image as ImageIcon, Upload, Trash2 } from "lucide-react";
-import { Kashrut } from "@/entities/Kashrut";
 
 const AUTHORITY_OPTIONS = ["בד\"צ", "רבנות מהדרין", "רבנות", "אחר"];
 
@@ -19,7 +18,7 @@ export default function KashrutSection({ value = {}, onChange }) {
   React.useEffect(() => {
     (async () => {
       try {
-        const rows = await Kashrut.filter({ is_active: true });
+        const rows = await base44.entities.Kashrut.filter({ is_active: true });
         setList(rows || []);
       } catch {
         setList([]);
@@ -43,12 +42,14 @@ export default function KashrutSection({ value = {}, onChange }) {
       setLoading(true);
       try {
         if (kind === "logo") {
-          const { file_url } = await UploadFile({ file: files[0] });
+          const res = await base44.integrations.Core.UploadFile({ file: files[0] });
+          const file_url = res?.file_url;
           onChange?.({ ...v, kashrut_logo_url: file_url });
         } else {
           const uploaded = [];
           for (const f of files) {
-            const { file_url } = await UploadFile({ file: f });
+            const res = await base44.integrations.Core.UploadFile({ file: f });
+            const file_url = res?.file_url;
             uploaded.push(file_url);
           }
           onChange?.({

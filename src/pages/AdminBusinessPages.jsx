@@ -1,7 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { BusinessPage } from "@/entities/BusinessPage";
-import { Category } from "@/entities/Category";
-import { User } from "@/entities/User";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -430,7 +427,7 @@ export default function AdminBusinessPages() {
         updateData.is_active = false;
       }
 
-      await BusinessPage.update(pageId, updateData);
+      await base44.entities.BusinessPage.update(pageId, updateData);
 
       setBusinessPages(prevPages =>
         prevPages.map(p =>
@@ -459,7 +456,7 @@ export default function AdminBusinessPages() {
         frozen_reason: freezeReason || null
       };
 
-      await BusinessPage.update(freezeDialog.page.id, updateData);
+      await base44.entities.BusinessPage.update(freezeDialog.page.id, updateData);
 
       setBusinessPages(prev =>
         prev.map(p =>
@@ -492,7 +489,7 @@ export default function AdminBusinessPages() {
         frozen_reason: null
       };
 
-      await BusinessPage.update(unfreezeDialog.page.id, updateData);
+      await base44.entities.BusinessPage.update(unfreezeDialog.page.id, updateData);
 
       setBusinessPages(prev =>
         prev.map(p =>
@@ -884,7 +881,7 @@ export default function AdminBusinessPages() {
     setIsLoading(true);
     try {
       for (const pageId of selectedPageIds) {
-        await BusinessPage.update(pageId, {
+        await base44.entities.BusinessPage.update(pageId, {
           approval_status: 'approved',
           is_active: true,
           rejection_reason: null
@@ -910,7 +907,7 @@ export default function AdminBusinessPages() {
     setIsLoading(true);
     try {
       for (const pageId of selectedPageIds) {
-        await BusinessPage.update(pageId, {
+        await base44.entities.BusinessPage.update(pageId, {
           approval_status: 'rejected',
           is_active: false,
           rejection_reason: reason

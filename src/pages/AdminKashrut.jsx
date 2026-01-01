@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Kashrut } from "@/entities/Kashrut";
-import { UploadFile } from "@/integrations/Core";
+import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
@@ -18,7 +17,7 @@ export default function AdminKashrut() {
   const [isCropperOpen, setIsCropperOpen] = useState(false);
 
   const load = async () => {
-    const rows = await Kashrut.list("name");
+    const rows = await base44.entities.Kashrut.list("name");
     setItems(rows || []);
   };
 
@@ -47,7 +46,8 @@ export default function AdminKashrut() {
       if (!file) return;
       setLoading(true);
       try {
-        const { file_url } = await UploadFile({ file });
+        const res = await base44.integrations.Core.UploadFile({ file });
+        const file_url = res?.file_url;
         setForm((p) => ({ ...p, logo_url: file_url }));
       } finally {
         setLoading(false);
@@ -61,7 +61,8 @@ export default function AdminKashrut() {
     setIsCropperOpen(false);
     try {
       const file = new File([blob], "logo_positioned.jpg", { type: "image/jpeg" });
-      const { file_url } = await UploadFile({ file });
+      const res = await base44.integrations.Core.UploadFile({ file });
+      const file_url = res?.file_url;
       setForm((p) => ({ ...p, logo_url: file_url }));
     } catch (e) {
       console.error("Error uploading cropped image:", e);
@@ -76,16 +77,14 @@ export default function AdminKashrut() {
     setLoading(true);
     try {
       if (editingId) {
-        await Kashrut.update(editingId, {
+        await base44.entities.Kashrut.update(editingId, {
           authority_type: form.authority_type || "אחר",
           name: form.name.trim(),
-          logo_url: form.logo_url || "",
-          // is_active might be important if editing, but outline doesn't mention changing it
-          // Assuming it stays true as per create method or is handled elsewhere
+          logo_url: form.logo_url || ""
         });
         setEditingId(null);
       } else {
-        await Kashrut.create({
+        await base44.entities.Kashrut.create({
           authority_type: form.authority_type || "אחר",
           name: form.name.trim(),
           logo_url: form.logo_url || "",
@@ -100,7 +99,7 @@ export default function AdminKashrut() {
   };
 
   const remove = async (id) => {
-    await Kashrut.delete(id);
+    await base44.entities.Kashrut.delete(id);
     await load();
   };
 
