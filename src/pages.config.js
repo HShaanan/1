@@ -7,6 +7,7 @@ import AdminBusinessOwnership from './pages/AdminBusinessOwnership';
 import AdminBusinessPages from './pages/AdminBusinessPages';
 import AdminCategories from './pages/AdminCategories';
 import AdminCategoryOrder from './pages/AdminCategoryOrder';
+import AdminDataQuality from './pages/AdminDataQuality';
 import AdminDebug from './pages/AdminDebug';
 import AdminDebugListing from './pages/AdminDebugListing';
 import AdminDeleteRecent from './pages/AdminDeleteRecent';
@@ -18,7 +19,6 @@ import AdminImportCSV from './pages/AdminImportCSV';
 import AdminImportPlaces from './pages/AdminImportPlaces';
 import AdminIndexing from './pages/AdminIndexing';
 import AdminIntegrations from './pages/AdminIntegrations';
-import AdminKashrut from './pages/AdminKashrut';
 import AdminLiveUsers from './pages/AdminLiveUsers';
 import AdminNotificationLog from './pages/AdminNotificationLog';
 import AdminOrders from './pages/AdminOrders';
@@ -53,7 +53,6 @@ import EditBusinessHours from './pages/EditBusinessHours';
 import EditBusinessImages from './pages/EditBusinessImages';
 import EditBusinessKashrut from './pages/EditBusinessKashrut';
 import EditBusinessMenu from './pages/EditBusinessMenu';
-import EditBusinessPage from './pages/EditBusinessPage';
 import EditBusinessTags from './pages/EditBusinessTags';
 import EditBusinessTheme from './pages/EditBusinessTheme';
 import EditListing from './pages/EditListing';
@@ -71,7 +70,8 @@ import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
-import AdminDataQuality from './pages/AdminDataQuality';
+import AdminKashrut from './pages/AdminKashrut';
+import EditBusinessPage from './pages/EditBusinessPage';
 import __Layout from './Layout.jsx';
 
 
@@ -85,6 +85,7 @@ export const PAGES = {
     "AdminBusinessPages": AdminBusinessPages,
     "AdminCategories": AdminCategories,
     "AdminCategoryOrder": AdminCategoryOrder,
+    "AdminDataQuality": AdminDataQuality,
     "AdminDebug": AdminDebug,
     "AdminDebugListing": AdminDebugListing,
     "AdminDeleteRecent": AdminDeleteRecent,
@@ -96,7 +97,6 @@ export const PAGES = {
     "AdminImportPlaces": AdminImportPlaces,
     "AdminIndexing": AdminIndexing,
     "AdminIntegrations": AdminIntegrations,
-    "AdminKashrut": AdminKashrut,
     "AdminLiveUsers": AdminLiveUsers,
     "AdminNotificationLog": AdminNotificationLog,
     "AdminOrders": AdminOrders,
@@ -131,7 +131,6 @@ export const PAGES = {
     "EditBusinessImages": EditBusinessImages,
     "EditBusinessKashrut": EditBusinessKashrut,
     "EditBusinessMenu": EditBusinessMenu,
-    "EditBusinessPage": EditBusinessPage,
     "EditBusinessTags": EditBusinessTags,
     "EditBusinessTheme": EditBusinessTheme,
     "EditListing": EditListing,
@@ -149,7 +148,8 @@ export const PAGES = {
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
-    "AdminDataQuality": AdminDataQuality,
+    "AdminKashrut": AdminKashrut,
+    "EditBusinessPage": EditBusinessPage,
 }
 
 export const pagesConfig = {

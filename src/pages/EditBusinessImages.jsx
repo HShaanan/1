@@ -9,7 +9,7 @@ import { Save, AlertTriangle, Loader2, ImageIcon,
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import InlineImageEditor from "@/components/images/InlineImageEditor";
-import ImageZoomViewer from "@/components/images/ImageZoomViewer";
+import LogoPositioner from "@/components/images/LogoPositioner";
 import ImageGeneratorModal from "@/components/ImageGeneratorModal";
 
 export default function EditBusinessImagesPage() {
@@ -270,21 +270,20 @@ export default function EditBusinessImagesPage() {
       )}
 
       <Dialog open={isLogoEditorOpen} onOpenChange={setIsLogoEditorOpen}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-auto" dir="rtl">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-auto" dir="rtl">
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold">עריכת מיצוב הלוגו</DialogTitle>
             <p className="text-sm text-slate-600 mt-2">
-              גרור את התמונה, זום בגלגלת העכבר, וגרור את הידיות הסגולות לשינוי גודל המסגרת
+              גרור את התמונה, זום בגלגלת העכבר, ומצב את הלוגו בדיוק איך שאתה רוצה שיוצג
             </p>
           </DialogHeader>
           {editingLogoUrl && (
-            <ImageZoomViewer
-              initialImage={editingLogoUrl}
-              onSaved={handleLogoSaved}
-              height={600}
-              frameSize={300}
-              onPositionSave={handleLogoPositionSave}
+            <LogoPositioner
+              imageUrl={editingLogoUrl}
               initialPosition={form.metadata?.logo_position}
+              onPositionSave={handleLogoPositionSave}
+              onLogoSave={handleLogoSaved}
+              cropSize={360}
             />
           )}
         </DialogContent>
