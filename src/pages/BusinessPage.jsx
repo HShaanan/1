@@ -1001,11 +1001,24 @@ export default function BusinessPageView() {
     safeTrackEvent('favorite_click', { action: isFavorited ? 'remove' : 'add' });
 
     if (!user) {
-      // Changed to use User.loginWithRedirect as per common pattern.
-      // If `base44.auth.redirectToLogin` is a specific implementation, adjust accordingly.
       base44.auth.redirectToLogin(window.location.href);
       return;
     }
+
+    // ScrollReveal wrapper component
+    const ScrollReveal = ({ children, delay = 0 }) => {
+      const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
+      return (
+        <motion.div
+          ref={ref}
+          initial={{ opacity: 0, y: 30 }}
+          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+          transition={{ duration: 0.6, delay }}
+        >
+          {children}
+        </motion.div>
+      );
+    };
 
     try {
       if (isFavorited) {
@@ -1458,6 +1471,7 @@ export default function BusinessPageView() {
             {/* AI Executive Summary (Why Us) - With Scroll Animation */}
             {businessPage.ai_executive_summary && (
               <ScrollReveal>
+              <ScrollReveal>
                 <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 rounded-2xl shadow-lg border border-indigo-100 relative overflow-hidden hover:shadow-xl transition-shadow duration-300">
                    <div className="absolute top-0 left-0 p-4 opacity-5 pointer-events-none">
                       <Sparkles className="w-32 h-32 text-indigo-600" />
@@ -1484,7 +1498,7 @@ export default function BusinessPageView() {
             }
 
             {/* לוח שעות פעילות - With Scroll Animation */}
-            {businessPage.hours &&
+            {businessPage.hours && (
               <ScrollReveal delay={0.1}>
                 <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-slate-200/80 hover:shadow-2xl transition-shadow duration-300">
                   <BusinessHoursDisplay hours={businessPage.hours} isBlackTheme={isBlackTheme} />
@@ -1644,12 +1658,12 @@ export default function BusinessPageView() {
                       </a>
                     ))}
                   </div>
-                </div>
-              </ScrollReveal>
-            )}
+                  </div>
+                  </ScrollReveal>
+                  )}
 
-            {/* ביקורות - With Scroll Animation */}
-            <ScrollReveal delay={0.3}>
+                  {/* ביקורות - With Scroll Animation */}
+                  <ScrollReveal delay={0.3}>
               <div id="reviews-section" ref={reviewsRef} className="pt-8 border-t">
                 <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-8 space-y-6">
                   <EmojiReviewPrompt
