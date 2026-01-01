@@ -347,28 +347,15 @@ export default function BusinessLanding() {
 
       {/* Hero Section */}
       <section className="relative min-h-[75vh] sm:min-h-[90vh] flex items-center overflow-hidden">
-        {/* Ultra-Premium Tech Background */}
-        <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-950" />
-
-        {/* Animated Grid Pattern */}
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute inset-0" style={{
-            backgroundImage: `linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
-                             linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px)`,
-            backgroundSize: '50px 50px',
-            animation: 'grid-flow 20s linear infinite'
-          }} />
+        {/* Background Image */}
+        <div className="absolute inset-0">
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/f09bd2e51_image6.jpg"
+            alt="ראש שלכם בעסק, כל השאר עלינו - משלנו"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/40 to-black/30" />
         </div>
-
-        {/* Glowing Orbs - Premium Look */}
-        <div className="hidden sm:block absolute top-20 left-[10%] w-96 h-96 bg-indigo-500/30 rounded-full blur-3xl animate-pulse" />
-        <div className="hidden sm:block absolute bottom-20 right-[15%] w-[500px] h-[500px] bg-purple-500/20 rounded-full blur-3xl" />
-        <div className="hidden sm:block absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-cyan-500/10 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }} />
-
-        {/* Floating Tech Elements */}
-        <div className="hidden lg:block absolute top-40 right-20 w-32 h-32 border border-indigo-500/30 rounded-2xl rotate-45 animate-float" />
-        <div className="hidden lg:block absolute bottom-40 left-20 w-24 h-24 border border-purple-500/30 rounded-full animate-float" style={{ animationDelay: '0.5s' }} />
-        <div className="hidden lg:block absolute top-60 left-40 w-16 h-16 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-lg rotate-12 animate-float" style={{ animationDelay: '1.5s' }} />
 
         <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
           <div className="text-center">
