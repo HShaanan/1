@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import {
   FileText, Search, X, Edit, Eye, AlertTriangle, Check, Ban, Clock, Users,
-  Mail, Phone, Star, ChevronDown, ChevronUp, Loader2, Snowflake, Play, MapPin, Download, Tag, Trash2, CheckSquare, Square
+  Mail, Phone, Star, ChevronDown, ChevronUp, Loader2, Snowflake, Play, MapPin, Download, Tag, Trash2, CheckSquare, Square, Shield
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import {
@@ -136,13 +136,20 @@ const KashrutDropdown = ({ page, kashrutList, onSave }) => {
   const [selected, setSelected] = useState(page.kashrut_authority_name || "");
   const [hasChanges, setHasChanges] = useState(false);
 
-  const handleSelect = (kashrutName) => {
-    setSelected(kashrutName);
+  const handleSelect = (kashrut) => {
+    setSelected(kashrut.name);
     setHasChanges(true);
   };
 
   const handleSave = async () => {
-    await onSave(page.id, selected);
+    const kashrutItem = kashrutList.find(k => k.name === selected);
+    const updateData = {
+      kashrut_authority_name: selected || null,
+      kashrut_authority_type: kashrutItem?.authority_type || null,
+      kashrut_logo_url: kashrutItem?.logo_url || null
+    };
+    
+    await base44.entities.BusinessPage.update(page.id, updateData);
     setHasChanges(false);
     setIsOpen(false);
   };
@@ -157,37 +164,56 @@ const KashrutDropdown = ({ page, kashrutList, onSave }) => {
           <ChevronDown className="w-3 h-3 mr-1" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-64 p-3" dir="rtl">
-        <div className="space-y-2 max-h-80 overflow-y-auto">
+      <DropdownMenuContent className="w-80 p-3" dir="rtl">
+        <div className="space-y-2 max-h-[500px] overflow-y-auto">
           <div
-            onClick={() => handleSelect("")}
-            className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
-              !selected ? 'bg-gray-100 border border-gray-300' : 'hover:bg-gray-50'
+            onClick={() => {
+              setSelected("");
+              setHasChanges(true);
+            }}
+            className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
+              !selected ? 'bg-gray-100 border-2 border-gray-300' : 'hover:bg-gray-50 border-2 border-transparent'
             }`}
           >
-            <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+            <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
               !selected ? 'bg-gray-600 border-gray-600' : 'border-gray-300'
             }`}>
               {!selected && <Check className="w-3 h-3 text-white" />}
             </div>
-            <span className="text-sm text-gray-500">ללא כשרות</span>
+            <span className="text-sm text-gray-500 font-medium">ללא כשרות</span>
           </div>
           {kashrutList.map(kashrut => {
             const isSelected = selected === kashrut.name;
             return (
               <div
                 key={kashrut.id}
-                onClick={() => handleSelect(kashrut.name)}
-                className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
-                  isSelected ? 'bg-green-100 border border-green-300' : 'hover:bg-gray-100'
+                onClick={() => handleSelect(kashrut)}
+                className={`flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
+                  isSelected ? 'bg-green-50 border-2 border-green-300' : 'hover:bg-gray-50 border-2 border-transparent'
                 }`}
               >
-                <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+                <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
                   isSelected ? 'bg-green-600 border-green-600' : 'border-gray-300'
                 }`}>
                   {isSelected && <Check className="w-3 h-3 text-white" />}
                 </div>
-                <span className="text-sm">{kashrut.name}</span>
+                {kashrut.logo_url ? (
+                  <img
+                    src={kashrut.logo_url}
+                    alt={kashrut.name}
+                    className="w-10 h-10 object-contain rounded border bg-white"
+                  />
+                ) : (
+                  <div className="w-10 h-10 rounded border bg-slate-50 flex items-center justify-center">
+                    <Shield className="w-5 h-5 text-slate-400" />
+                  </div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-800 truncate">{kashrut.name}</p>
+                  {kashrut.authority_type && (
+                    <p className="text-xs text-slate-600">{kashrut.authority_type}</p>
+                  )}
+                </div>
               </div>
             );
           })}
@@ -798,13 +824,18 @@ export default function AdminBusinessPages() {
 
   const handleKashrutChange = async (pageId, kashrutName) => {
     try {
-      await base44.entities.BusinessPage.update(pageId, {
-        kashrut_authority_name: kashrutName || null
-      });
+      const kashrutItem = kashrutList.find(k => k.name === kashrutName);
+      const updateData = {
+        kashrut_authority_name: kashrutName || null,
+        kashrut_authority_type: kashrutItem?.authority_type || null,
+        kashrut_logo_url: kashrutItem?.logo_url || null
+      };
+      
+      await base44.entities.BusinessPage.update(pageId, updateData);
 
       setBusinessPages(prev =>
         prev.map(p =>
-          p.id === pageId ? { ...p, kashrut_authority_name: kashrutName } : p
+          p.id === pageId ? { ...p, ...updateData } : p
         )
       );
     } catch (err) {
@@ -1008,10 +1039,15 @@ export default function AdminBusinessPages() {
 
     setIsLoading(true);
     try {
+      const kashrutItem = kashrutList.find(k => k.name === selectedKashrutForBulk);
+      const updateData = {
+        kashrut_authority_name: selectedKashrutForBulk || null,
+        kashrut_authority_type: kashrutItem?.authority_type || null,
+        kashrut_logo_url: kashrutItem?.logo_url || null
+      };
+      
       for (const pageId of selectedPageIds) {
-        await base44.entities.BusinessPage.update(pageId, {
-          kashrut_authority_name: selectedKashrutForBulk || null
-        });
+        await base44.entities.BusinessPage.update(pageId, updateData);
       }
       
       await loadAllData();
@@ -1485,7 +1521,7 @@ export default function AdminBusinessPages() {
               <div className="space-y-2 max-h-96 overflow-y-auto bg-gray-50 rounded-lg p-3 border">
                 <button
                   onClick={() => setSelectedKashrutForBulk("")}
-                  className={`w-full p-3 rounded-lg border-2 transition-all text-right flex items-center gap-2 ${
+                  className={`w-full p-3 rounded-lg border-2 transition-all text-right flex items-center gap-3 ${
                     selectedKashrutForBulk === ""
                       ? 'border-gray-500 bg-gray-100 shadow-sm'
                       : 'border-gray-200 hover:border-gray-300 hover:bg-white'
@@ -1505,7 +1541,7 @@ export default function AdminBusinessPages() {
                     <button
                       key={kashrut.id}
                       onClick={() => setSelectedKashrutForBulk(kashrut.name)}
-                      className={`w-full p-3 rounded-lg border-2 transition-all text-right flex items-center gap-2 ${
+                      className={`w-full p-3 rounded-lg border-2 transition-all text-right flex items-center gap-3 ${
                         isSelected
                           ? 'border-emerald-500 bg-emerald-50 shadow-sm'
                           : 'border-gray-200 hover:border-emerald-300 hover:bg-white'
@@ -1516,7 +1552,23 @@ export default function AdminBusinessPages() {
                       }`}>
                         {isSelected && <Check className="w-3 h-3 text-white" />}
                       </div>
-                      <span className="font-medium text-sm">{kashrut.name}</span>
+                      {kashrut.logo_url ? (
+                        <img
+                          src={kashrut.logo_url}
+                          alt={kashrut.name}
+                          className="w-12 h-12 object-contain rounded border bg-white"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded border bg-slate-50 flex items-center justify-center">
+                          <Shield className="w-6 h-6 text-slate-400" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0 text-right">
+                        <p className="font-semibold text-sm text-slate-800 truncate">{kashrut.name}</p>
+                        {kashrut.authority_type && (
+                          <p className="text-xs text-slate-600">{kashrut.authority_type}</p>
+                        )}
+                      </div>
                     </button>
                   );
                 })}
