@@ -276,15 +276,33 @@ export default function BrowsePage({ preSelectedState }) {
 
   const isFoodCatId = useCallback((id) => {
     if (!id) return false;
-    const name = idToName.get(id) || "";
-    return foodRegex.test(name);
-  }, [idToName, foodRegex]);
+    const cat = categories.find(c => c.id === id);
+    if (!cat) return false;
+    
+    // אם זו קטגוריה ראשית - בדוק את שמה
+    if (!cat.parent_id) {
+      return foodRegex.test(cat.name || "");
+    }
+    
+    // אם זו תת-קטגוריה - בדוק את שם ה-PARENT שלה
+    const parentName = idToName.get(cat.parent_id) || "";
+    return foodRegex.test(parentName);
+  }, [categories, idToName, foodRegex]);
 
   const isShopCatId = useCallback((id) => {
     if (!id) return false;
-    const name = idToName.get(id) || "";
-    return shopRegex.test(name);
-  }, [idToName, shopRegex]);
+    const cat = categories.find(c => c.id === id);
+    if (!cat) return false;
+    
+    // אם זו קטגוריה ראשית - בדוק את שמה
+    if (!cat.parent_id) {
+      return shopRegex.test(cat.name || "");
+    }
+    
+    // אם זו תת-קטגוריה - בדוק את שם ה-PARENT שלה
+    const parentName = idToName.get(cat.parent_id) || "";
+    return shopRegex.test(parentName);
+  }, [categories, idToName, shopRegex]);
 
   const categoryFilterPredicate = useCallback((cat) => {
     if (!cat || cat.parent_id) return false;
