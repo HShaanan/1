@@ -446,8 +446,8 @@ export default function BusinessLanding() {
               transition={{ duration: 0.8 }}
             >
               <ImageComparison
-                beforeImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/before-basic.png"
-                afterImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/c21619598_image.png"
+                beforeImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/c21619598_image.png"
+                afterImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1d773a7c9_image.png"
                 beforeLabel="עמוד רגיל"
                 afterLabel="עמוד מקצועי"
               />
