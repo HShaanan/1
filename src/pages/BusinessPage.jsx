@@ -237,20 +237,24 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-6 sm:mt-8 z-20 relative">
-          <div className="bg-transparent p-4 rounded-2xl backdrop-blur-md border border-slate-200 shadow-xl sm:p-6">
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 leading-snug">
+          <div className="bg-white/95 backdrop-blur-xl p-6 rounded-3xl border-2 border-white/80 shadow-2xl sm:p-8 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-purple-50/30 pointer-events-none" />
+            
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight relative z-10 tracking-tight">
               {title}
             </h1>
             {shortDesc &&
-              <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed">
+              <p className="mt-4 text-base sm:text-lg text-slate-700 leading-relaxed font-medium relative z-10">
                 {shortDesc}
               </p>
             }
             {restDesc &&
-              <p className="mt-2 text-sm sm:text-base text-slate-700 leading-relaxed whitespace-pre-line">
+              <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed whitespace-pre-line relative z-10">
                 {restDesc}
               </p>
             }
+            
+            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
           </div>
         </div>
       </div>
