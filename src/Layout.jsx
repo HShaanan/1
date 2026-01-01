@@ -4,6 +4,7 @@ import SupportWidget from "@/components/SupportWidget";
 import AxeReporter from "@/components/utils/AxeReporter";
 import SessionTracker from "@/components/SessionTracker";
 import Footer from "@/components/Footer";
+import BlobCursor from "@/components/BlobCursor";
 import { Link } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
@@ -945,7 +946,9 @@ export default function Layout({ children, currentPageName }) {
       <AccessibilityWidget />
       {/* וידג'ט תמיכה וצ'אט */}
       <SupportWidget />
+      {/* Blob Cursor אפקט */}
+      <BlobCursor />
         </div>
       </HelmetProvider>
-    );
-  }
+      );
+      }
