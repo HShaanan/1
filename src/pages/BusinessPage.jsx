@@ -275,22 +275,6 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
 
 };
 
-// בתוך קומפוננטת BusinessInfoBar, הוסף props של trackEvent:
-const BusinessAddressBar = ({ address }) => {
-  if (!address) return null;
-
-  return (
-    <div className="bg-white/90 backdrop-blur-sm border-b border-slate-200/80 py-3">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center gap-2 text-slate-700">
-          <MapPin className="w-4 h-4 text-blue-600 flex-shrink-0" />
-          <span className="text-sm font-medium">{address}</span>
-        </div>
-      </div>
-    </div>
-  );
-};
-
 const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigationClick, onWebsiteClick, theme }) => {
   const [phoneRevealed, setPhoneRevealed] = React.useState(false);
   const [navMenuOpen, setNavMenuOpen] = React.useState(false);
@@ -1455,8 +1439,6 @@ export default function BusinessPageView() {
         onKashrutLogoClick={handleKashrutLogoClick}
         theme={theme} />
 
-
-      <BusinessAddressBar address={businessPage.address} />
 
       <BusinessInfoBar
         businessPage={businessPage}
