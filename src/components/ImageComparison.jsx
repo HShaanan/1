@@ -82,12 +82,7 @@ export default function ImageComparison({
         <img 
           src={beforeImage} 
           alt={beforeLabel}
-          className="h-full w-auto"
-          style={{ 
-            width: containerRef.current ? `${(containerRef.current.offsetWidth / sliderPosition) * 100}%` : '100%',
-            maxWidth: 'none',
-            height: '100%'
-          }}
+          className="w-full h-auto"
           draggable={false}
         />
         {/* Before Label */}
