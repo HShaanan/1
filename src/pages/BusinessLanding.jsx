@@ -447,7 +447,7 @@ export default function BusinessLanding() {
             >
               <ImageComparison
                 beforeImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/before-basic.png"
-                afterImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1d773a7c9_image.png"
+                afterImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/c21619598_image.png"
                 beforeLabel="עמוד רגיל"
                 afterLabel="עמוד מקצועי"
               />
