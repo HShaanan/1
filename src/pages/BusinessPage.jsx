@@ -1664,7 +1664,7 @@ export default function BusinessPageView() {
 
                   {/* ביקורות - With Scroll Animation */}
                   <ScrollReveal delay={0.3}>
-              <div id="reviews-section" ref={reviewsRef} className="pt-8 border-t">
+                  <div id="reviews-section" ref={reviewsRef} className="pt-8 border-t">
                 <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-8 space-y-6">
                   <EmojiReviewPrompt
                     businessName={businessPage.business_name || businessPage.display_title || "העסק"}
