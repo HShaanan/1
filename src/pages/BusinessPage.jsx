@@ -1005,21 +1005,6 @@ export default function BusinessPageView() {
       return;
     }
 
-    // ScrollReveal wrapper component
-    const ScrollReveal = ({ children, delay = 0 }) => {
-      const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
-      return (
-        <motion.div
-          ref={ref}
-          initial={{ opacity: 0, y: 30 }}
-          animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-          transition={{ duration: 0.6, delay }}
-        >
-          {children}
-        </motion.div>
-      );
-    };
-
     try {
       if (isFavorited) {
         // Changed to use Favorite.filter() and Favorite.delete() directly.
@@ -1471,7 +1456,6 @@ export default function BusinessPageView() {
             {/* AI Executive Summary (Why Us) - With Scroll Animation */}
             {businessPage.ai_executive_summary && (
               <ScrollReveal>
-              <ScrollReveal>
                 <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 rounded-2xl shadow-lg border border-indigo-100 relative overflow-hidden hover:shadow-xl transition-shadow duration-300">
                    <div className="absolute top-0 left-0 p-4 opacity-5 pointer-events-none">
                       <Sparkles className="w-32 h-32 text-indigo-600" />
@@ -1504,7 +1488,7 @@ export default function BusinessPageView() {
                   <BusinessHoursDisplay hours={businessPage.hours} isBlackTheme={isBlackTheme} />
                 </div>
               </ScrollReveal>
-            }
+            )}
 
             {/* תגיות - דינמי לפי צבע העסק */}
             {Array.isArray(tags) && tags.length > 0 &&
