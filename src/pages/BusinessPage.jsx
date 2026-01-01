@@ -193,21 +193,29 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
               <button
                 type="button"
                 onClick={onKashrutLogoClick}
-                className="relative group h-12 w-12 sm:h-16 sm:w-16 rounded-xl bg-white shadow-md ring-2 ring-white/60 flex items-center justify-center overflow-hidden focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer"
+                className="relative group h-20 w-20 sm:h-28 sm:w-28 rounded-2xl bg-gradient-to-br from-white via-white to-slate-50 shadow-2xl hover:shadow-emerald-300/40 flex items-center justify-center overflow-hidden focus:outline-none focus:ring-4 focus:ring-emerald-400/50 cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95"
+                style={{
+                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.05)',
+                  border: '2px solid rgba(255, 255, 255, 0.8)',
+                }}
                 aria-label="הצגת תעודת כשרות">
+
+                <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-transparent opacity-60 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tl from-slate-200/20 via-transparent to-white/40 opacity-50 pointer-events-none" />
 
                 <LazyImage
                   src={kashrutLogo}
                   alt="לוגו כשרות"
-                  className="w-full h-full"
-                  imgClassName="object-cover w-full h-full scale-[1.28] -translate-y-1 transition-all duration-200 group-hover:grayscale" />
+                  className="w-full h-full relative z-10"
+                  imgClassName="object-contain w-full h-full p-2 transition-all duration-300 group-hover:scale-110" />
 
-                <div className="absolute inset-0 bg-black/35 opacity-0 group-hover:opacity-100 transition-opacity duration-200" aria-hidden="true" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white text-xs sm:text-sm font-bold">
+                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-emerald-800/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-2 z-20" aria-hidden="true">
+                  <span className="text-white text-xs sm:text-sm font-bold drop-shadow-lg">
                     תעודה
                   </span>
                 </div>
+
+                <div className="absolute -inset-0.5 bg-gradient-to-br from-emerald-200/30 via-green-200/20 to-emerald-300/30 rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300 -z-10" />
               </button>
             </div>
           }
