@@ -303,9 +303,10 @@ const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigati
   };
 
   return (
-    <div className="bg-white/95 backdrop-blur-xl border-y border-slate-200/80 shadow-lg relative z-20">
+    <div className="bg-transparent relative z-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="bg-white/40 backdrop-blur-md rounded-3xl p-6 border border-white/60 shadow-xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           
           {/* כפתור טלפון */}
           {cleanPhone && (
@@ -426,6 +427,7 @@ const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigati
               </div>
             </button>
           )}
+          </div>
         </div>
       </div>
     </div>
