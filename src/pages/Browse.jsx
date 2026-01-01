@@ -632,17 +632,17 @@ export default function BrowsePage({ preSelectedState }) {
           onSearchChange={setSearchQuery}
       />
       
-      <nav className="bg-white/80 border-b sticky top-[64px] lg:top-28 z-30 transition-all" aria-label="ניווט עליון - לשוניות וסינון">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3">
+      <nav className="bg-white/90 backdrop-blur-sm border-b shadow-sm" aria-label="ניווט עליון - לשוניות וסינון">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
           <TopTabs active={activeTab} onChange={setActiveTab} />
           
-          <div className="hidden lg:block relative flex-1 max-w-xl mx-6">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+          <div className="hidden lg:block relative flex-1 max-w-2xl mx-8">
+            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
             <Input 
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="חפש עסקים, שירותים או תגיות..."
-              className="pr-10 bg-slate-50 border-slate-300 focus:bg-white focus:border-blue-500 transition-all rounded-xl h-10 placeholder:text-slate-600 text-slate-900 font-medium"
+              className="pr-12 bg-white border-slate-200 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all rounded-2xl h-12 placeholder:text-slate-500 text-slate-900 font-medium text-base shadow-sm"
             />
           </div>
 
@@ -665,7 +665,7 @@ export default function BrowsePage({ preSelectedState }) {
         <div className="space-y-8">
           {/* Active Filters Display */}
           {(selectedSubcategories.length > 0 || selectedSubcategory || userLocation?.city || filters.kashrut.length > 0) && (
-            <div className="mb-6 flex flex-wrap gap-2">
+            <div className="mb-8 flex flex-wrap gap-3">
               {/* Subcategory from URL */}
               {selectedSubcategory && (
                 <button 
