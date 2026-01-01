@@ -184,7 +184,7 @@ export default function AdminFooter() {
                       onValueChange={(value) => setFormData({
                         ...formData, 
                         city: value, 
-                        column_title: value,
+                        column_title: "עיר",
                         link_text: value
                       })}
                     >
@@ -211,7 +211,7 @@ export default function AdminFooter() {
                       onValueChange={(value) => setFormData({
                         ...formData, 
                         kashrut: value, 
-                        column_title: value,
+                        column_title: "כשרות",
                         link_text: value
                       })}
                     >
@@ -237,11 +237,10 @@ export default function AdminFooter() {
                       <Select 
                         value={formData.category_id}
                         onValueChange={(value) => {
-                          const cat = categories.find(c => c.id === value);
                           setFormData({
                             ...formData, 
                             category_id: value,
-                            column_title: cat?.name || "",
+                            column_title: "קטגוריה",
                             subcategory_id: "",
                             link_text: ""
                           });
@@ -269,6 +268,7 @@ export default function AdminFooter() {
                           setFormData({
                             ...formData, 
                             subcategory_id: value,
+                            column_title: "קטגוריה",
                             link_text: subcat?.name || ""
                           });
                         }}
