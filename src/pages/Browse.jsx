@@ -659,9 +659,7 @@ export default function BrowsePage({ preSelectedState }) {
         kashrutList={kashrutList} 
       />
 
-
-      
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6" id="main-content">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
         <div className="space-y-8">
           {/* Active Filters Display */}
           {(selectedSubcategories.length > 0 || selectedSubcategory || userLocation?.city || filters.kashrut.length > 0) && (
