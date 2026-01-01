@@ -276,7 +276,7 @@ export default function LandingPage() {
             >
               <div className="relative overflow-hidden">
                 <img 
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1052bfba5_prompt-data_167864307029-8280832736374030336_877de5aa-6c2b-4e78-a4c7-6914d47d053a-.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1a949b365_image6.jpg"
                   alt="הצטרף כבעל עסק למשלנו - הראש שלכם בעסק, כל השאר עלינו"
                   className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] object-cover transform group-hover:scale-[1.02] transition-transform duration-700 ease-out"
                 />
