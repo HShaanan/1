@@ -291,110 +291,161 @@ const BusinessAddressBar = ({ address }) => {
   );
 };
 
-      const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigationClick, onWebsiteClick, theme }) => {
+const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigationClick, onWebsiteClick, theme }) => {
+  const [phoneRevealed, setPhoneRevealed] = React.useState(false);
   const [navMenuOpen, setNavMenuOpen] = React.useState(false);
-  const navBtnRef = React.useRef(null);
-  const navMenuRef = React.useRef(null);
-
-  React.useEffect(() => {
-    const onDocClick = (e) => {
-      if (!navMenuOpen) return;
-      const t = e.target;
-      if (navBtnRef.current && navBtnRef.current.contains(t)) return;
-      if (navMenuRef.current && navMenuRef.current.contains(t)) return;
-      setNavMenuOpen(false);
-    };
-    document.addEventListener('click', onDocClick);
-    return () => document.removeEventListener('click', onDocClick);
-  }, [navMenuOpen]);
-
+  
   const cleanPhone = businessPage.contact_phone ? businessPage.contact_phone.replace(/\D/g, '') : '';
   const websiteUrl = businessPage.website_url;
+  const address = businessPage.address || '';
+  const city = businessPage.city || '';
+  
+  // פורמט טלפון יפה
+  const formatPhone = (phone) => {
+    if (!phone) return '';
+    const clean = phone.replace(/\D/g, '');
+    if (clean.length === 10) {
+      return `${clean.slice(0, 3)}-${clean.slice(3, 6)}-${clean.slice(6)}`;
+    }
+    return phone;
+  };
 
-  const iconBtn = "relative h-12 w-12 rounded-2xl text-white flex items-center justify-center shadow-[0_10px_20px_rgba(0,0,0,0.15)] ring-1 ring-white/60 hover:scale-105 active:translate-y-[1px] transition-all duration-200";
+  const handlePhoneClick = () => {
+    if (!phoneRevealed) {
+      setPhoneRevealed(true);
+    } else {
+      onPhoneClick(cleanPhone);
+    }
+  };
 
   return (
-    <div className="bg-transparent border-b relative z-20"> {/* Added z-20 to ensure it's above the background animation */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-        <div className="flex items-center justify-center md:justify-start gap-4">
-          {cleanPhone &&
+    <div className="bg-white/95 backdrop-blur-xl border-y border-slate-200/80 shadow-lg relative z-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          
+          {/* כפתור טלפון */}
+          {cleanPhone && (
             <button
-              onClick={() => onPhoneClick(cleanPhone)}
-              className={`${iconBtn} bg-gradient-to-br from-violet-500 to-fuchsia-500`}
-              title="חייגו לעסק"
-              aria-label="חייגו לעסק">
-
-              <Phone className="w-6 h-6 drop-shadow-sm" aria-hidden="true" />
-              <span className="sr-only">טלפון</span>
+              onClick={handlePhoneClick}
+              className="group relative bg-gradient-to-br from-violet-500 to-fuchsia-600 hover:from-violet-600 hover:to-fuchsia-700 text-white p-5 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-95 overflow-hidden"
+              aria-label={phoneRevealed ? 'חייג לעסק' : 'הצג מספר טלפון'}>
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
+              
+              <div className="relative z-10 flex items-center justify-center gap-3">
+                <Phone className="w-6 h-6 flex-shrink-0" />
+                <div className="text-right flex-1">
+                  <div className="font-bold text-lg">
+                    {phoneRevealed ? formatPhone(businessPage.contact_phone) : 'הצג מספר'}
+                  </div>
+                  <div className="text-xs text-white/80 mt-0.5">
+                    {phoneRevealed ? 'לחץ להתקשר' : 'לחץ לצפייה'}
+                  </div>
+                </div>
+              </div>
             </button>
-          }
+          )}
 
-          {websiteUrl &&
-            <button
-              onClick={() => onWebsiteClick(websiteUrl)}
-              className={`${iconBtn} bg-gradient-to-br from-purple-500 to-pink-500`}
-              title="לאתר העסק"
-              aria-label="לאתר העסק">
-              <Globe className="w-6 h-6 drop-shadow-sm" aria-hidden="true" />
-              <span className="sr-only">אתר אינטרנט</span>
-            </button>
-          }
-
-          {businessPage.address &&
+          {/* כפתור כתובת + ניווט */}
+          {address && (
             <div className="relative">
               <button
-                ref={navBtnRef}
-                onClick={() => setNavMenuOpen((v) => !v)}
-                onDoubleClick={() => onNavigationClick(businessPage.address, 'default')}
-                className={`${iconBtn} bg-gradient-to-br from-sky-500 to-cyan-500`}
-                title="ניווט (לחיצה לפתיחת בחירה • דאבל-קליק לפתיחה מהירה)"
-                aria-label="ניווט">
-
-                <MapPin className="w-6 h-6 drop-shadow-sm" aria-hidden="true" />
-                <span className="sr-only">ניווט</span>
+                onClick={() => setNavMenuOpen(!navMenuOpen)}
+                className="w-full group bg-gradient-to-br from-sky-500 to-cyan-600 hover:from-sky-600 hover:to-cyan-700 text-white p-5 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-95 overflow-hidden"
+                aria-label="פתח אפשרויות ניווט">
+                
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
+                
+                <div className="relative z-10 flex items-center justify-center gap-3">
+                  <MapPin className="w-6 h-6 flex-shrink-0" />
+                  <div className="text-right flex-1 min-w-0">
+                    <div className="font-bold text-base line-clamp-1">
+                      {address}
+                    </div>
+                    {city && (
+                      <div className="text-xs text-white/90 mt-0.5">
+                        {city}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </button>
 
-              {navMenuOpen &&
-                <div
-                  ref={navMenuRef}
-                  className="absolute top-[110%] right-0 bg-white rounded-xl border border-slate-200 shadow-xl p-2 flex items-center gap-2 z-20">
-
+              {/* תפריט ניווט */}
+              {navMenuOpen && (
+                <div className="absolute top-full mt-2 right-0 left-0 bg-white rounded-xl shadow-2xl border-2 border-slate-200 p-3 z-30 grid grid-cols-2 gap-3">
                   <button
-                    onClick={() => { onNavigationClick(businessPage.address, 'google'); setNavMenuOpen(false); }}
-                    className={`${iconBtn} h-10 w-10 bg-gradient-to-br from-emerald-500 to-teal-500`}
-                    title="Google Maps"
-                    aria-label="Google Maps">
-
-                    <Globe className="w-5 h-5" aria-hidden="true" />
+                    onClick={() => {
+                      onNavigationClick(address, 'waze');
+                      setNavMenuOpen(false);
+                    }}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 transition-all hover:scale-105 shadow-md"
+                    aria-label="פתח ב-Waze">
+                    <Navigation className="w-7 h-7" />
+                    <span className="text-sm font-bold">Waze</span>
                   </button>
+                  
                   <button
-                    onClick={() => { onNavigationClick(businessPage.address, 'waze'); setNavMenuOpen(false); }}
-                    className={`${iconBtn} h-10 w-10 bg-gradient-to-br from-indigo-500 to-blue-600`}
-                    title="Waze"
-                    aria-label="Waze">
-
-                    <Navigation className="w-5 h-5" aria-hidden="true" />
+                    onClick={() => {
+                      onNavigationClick(address, 'google');
+                      setNavMenuOpen(false);
+                    }}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white hover:from-emerald-600 hover:to-teal-700 transition-all hover:scale-105 shadow-md"
+                    aria-label="פתח ב-Google Maps">
+                    <Globe className="w-7 h-7" />
+                    <span className="text-sm font-bold">Google Maps</span>
                   </button>
                 </div>
-              }
+              )}
             </div>
-          }
+          )}
 
-          {(businessPage.smart_rating > 0 || businessPage.reviews_count > 0) &&
+          {/* כפתור אתר */}
+          {websiteUrl && (
+            <button
+              onClick={() => onWebsiteClick(websiteUrl)}
+              className="group bg-gradient-to-br from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white p-5 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-95 overflow-hidden"
+              aria-label="עבור לאתר העסק">
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
+              
+              <div className="relative z-10 flex items-center justify-center gap-3">
+                <Globe className="w-6 h-6 flex-shrink-0" />
+                <div className="text-right flex-1">
+                  <div className="font-bold text-lg">לאתר העסק</div>
+                  <div className="text-xs text-white/80 mt-0.5 truncate">
+                    {websiteUrl.replace(/^https?:\/\/(www\.)?/, '')}
+                  </div>
+                </div>
+                <ExternalLink className="w-4 h-4 opacity-70" />
+              </div>
+            </button>
+          )}
+
+          {/* כפתור ביקורות */}
+          {(businessPage.smart_rating > 0 || businessPage.reviews_count > 0) && (
             <button
               onClick={onRatingClick}
-              className={`${iconBtn} bg-gradient-to-br from-amber-400 to-orange-500`}
-              title="צפו בביקורות"
-              aria-label="ביקורות">
-
-              <Star className="w-6 h-6 drop-shadow-sm" aria-hidden="true" />
-              <span className="sr-only">ביקורות</span>
+              className="group bg-gradient-to-br from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white p-5 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-95 overflow-hidden"
+              aria-label="צפה בביקורות">
+              
+              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
+              
+              <div className="relative z-10 flex items-center justify-center gap-3">
+                <Star className="w-6 h-6 flex-shrink-0 fill-white" />
+                <div className="text-right flex-1">
+                  <div className="font-bold text-lg">ביקורות</div>
+                  <div className="text-xs text-white/90 mt-0.5">
+                    {businessPage.smart_rating?.toFixed(1)} ⭐ ({businessPage.reviews_count})
+                  </div>
+                </div>
+              </div>
             </button>
-          }
+          )}
         </div>
       </div>
-    </div>);
-
+    </div>
+  );
 };
 
 function MenuItem({ item, theme, isBlackTheme, onOpenModifications }) {
