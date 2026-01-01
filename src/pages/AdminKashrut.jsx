@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trash2, Upload, Image as ImageIcon, Shield, Pencil, Crop } from "lucide-react";
+import { Trash2, Upload, Image as ImageIcon, Shield, Pencil, Crop, Wand2 } from "lucide-react";
 import ImageCropper from "@/components/ImageCropper";
+import SmartImageGenerator from "@/components/image/SmartImageGenerator";
 
 const TYPES = ["בד\"צ", "רבנות מהדרין", "רבנות", "אחר"];
 
@@ -16,6 +17,7 @@ export default function AdminKashrut() {
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState(null); // מצב עריכה
   const [isCropperOpen, setIsCropperOpen] = useState(false);
+  const [isSmartGenOpen, setIsSmartGenOpen] = useState(false);
 
   const load = async () => {
     const rows = await Kashrut.list("name");
@@ -136,6 +138,9 @@ export default function AdminKashrut() {
               </div>
               <div className="flex items-end gap-2">
                 <div className="flex gap-2">
+                  <Button variant="outline" onClick={() => setIsSmartGenOpen(true)} className="gap-2" disabled={loading}>
+                    <Wand2 className="w-4 h-4" /> צור ב-AI
+                  </Button>
                   <Button variant="outline" onClick={uploadLogo} className="gap-2" disabled={loading}>
                     <Upload className="w-4 h-4" /> העלה לוגו
                   </Button>
@@ -217,6 +222,17 @@ export default function AdminKashrut() {
           { name: "ריבוע", ratio: 1, icon: Shield },
           { name: "חופשי", ratio: null, icon: ImageIcon }
         ]}
+      />
+
+      <SmartImageGenerator
+        isOpen={isSmartGenOpen}
+        onClose={() => setIsSmartGenOpen(false)}
+        onImageGenerated={(url) => {
+          setForm((p) => ({ ...p, logo_url: url }));
+          setIsSmartGenOpen(false);
+        }}
+        defaultType="kashrut_logo"
+        title="יצירת לוגו כשרות חכם"
       />
     </div>
   );
