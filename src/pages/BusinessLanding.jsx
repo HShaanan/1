@@ -346,70 +346,12 @@ export default function BusinessLanding() {
       </a>
 
       {/* Hero Section */}
-      <section className="relative min-h-[75vh] sm:min-h-[90vh] flex items-center overflow-hidden">
-        {/* Background Image */}
-        <div className="absolute inset-0">
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/85db3e7c0_image1.jpg"
-            alt="ראש שלכם בעסק, כל השאר עלינו - משלנו"
-            className="w-full h-full object-cover"
-          />
-        </div>
-
-        <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-20">
-          <div className="text-center">
-            {/* Back button */}
-            <Link 
-              to={createPageUrl("LandingPage")} 
-              className="inline-flex items-center gap-2 text-white/80 hover:text-white mb-4 sm:mb-8 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-purple-600 rounded-lg px-2 py-2 touch-manipulation min-h-[44px]"
-              aria-label="חזרה לדף הבית"
-            >
-              <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-              <span className="text-sm sm:text-base">חזרה לדף הבית</span>
-            </Link>
-
-            {/* Tech Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-indigo-500/20 border border-indigo-500/30 rounded-full backdrop-blur-sm mb-4">
-              <Zap className="w-4 h-4 text-yellow-400 animate-pulse" aria-hidden="true" />
-              <span className="text-indigo-200 text-sm font-semibold">פלטפורמת BASE44 המתקדמת בעולם</span>
-            </div>
-
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black text-white leading-[1.2] sm:leading-tight mb-4 sm:mb-6 px-2">
-              בזמן שאתה קורא את זה,
-              <br />
-              <span className="relative inline-block">
-                <span className="absolute inset-0 blur-2xl bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 opacity-50"></span>
-                <span className="relative bg-gradient-to-r from-yellow-300 via-amber-200 to-yellow-400 bg-clip-text text-transparent">
-                  המתחרה שלך גונב את הלקוחות
-                </span>
-              </span>
-            </h1>
-
-            <p className="text-base sm:text-xl md:text-2xl text-slate-300 max-w-3xl mx-auto mb-6 sm:mb-10 leading-relaxed px-4">
-              <span className="font-bold text-cyan-400">בימים ספורים</span> אנחנו מעצבים לך עמוד יוקרתי עם טכנולוגיית BASE44 המהירה בעולם + חיבור ישיר לנתוני גוגל.
-              <br className="hidden sm:block" />
-              <span className="hidden sm:inline text-indigo-300">תהליך בימים ספורים במקום שבועות. עיצוב מקצועי שמביא תוצאות.</span>
-              <span className="sm:hidden text-indigo-300">עיצוב מקצועי + גוגל = לקוחות חדשים.</span>
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
-              <Link to={createPageUrl("ContactPage")} className="w-full sm:w-auto">
-                <Button 
-                  size="lg" 
-                  className="group w-full sm:w-auto rounded-2xl bg-gradient-to-r from-cyan-500 via-indigo-500 to-purple-600 hover:from-cyan-400 hover:via-indigo-400 hover:to-purple-500 text-white font-bold px-8 sm:px-10 py-5 sm:py-7 text-lg sm:text-xl shadow-2xl shadow-indigo-500/50 active:scale-95 sm:hover:scale-105 transition-all duration-300 touch-manipulation min-h-[52px] relative overflow-hidden border border-white/20"
-                >
-                  <span className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-200%] group-hover:translate-x-[200%] transition-transform duration-1000"></span>
-                  <span className="relative z-10 flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 animate-pulse" aria-hidden="true" />
-                    אני רוצה עמוד מקצועי עכשיו
-                    <ChevronLeft className="w-5 h-5 group-hover:translate-x-1 transition-transform" aria-hidden="true" />
-                  </span>
-                </Button>
-              </Link>
-              </div>
-
-          </div>
-        </div>
+      <section className="relative w-full overflow-hidden">
+        <img 
+          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/85db3e7c0_image1.jpg"
+          alt="ראש שלכם בעסק, כל השאר עלינו - משלנו"
+          className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] object-cover"
+        />
 
         {/* Wave */}
         <div className="absolute bottom-0 left-0 right-0">
