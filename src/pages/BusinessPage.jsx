@@ -174,19 +174,29 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
 
         <div className="relative -mt-16 sm:-mt-24 flex items-end space-x-5 space-x-reverse">
           <div className="relative z-10">
-            <button
-              type="button"
-              onClick={onLogoClick}
-              className="h-24 w-24 sm:h-32 sm:w-32 rounded-2xl overflow-hidden flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-lg"
-              aria-label={`הגדלת לוגו ${title}`}>
-              <img
-                src={croppedLogo}
-                alt={`לוגו ${title}`}
-                className="w-full h-full object-cover select-none"
-                draggable={false}
-              />
-            </button>
-          </div>
+              <button
+                type="button"
+                onClick={onLogoClick}
+                className="h-32 w-32 sm:h-48 sm:w-48 rounded-3xl overflow-hidden flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-blue-400/20 bg-white transition-all duration-300 hover:scale-105 active:scale-95"
+                style={{
+                  boxShadow: '0 25px 70px rgba(0, 0, 0, 0.15), 0 10px 20px rgba(0, 0, 0, 0.1), inset 0 2px 8px rgba(255, 255, 255, 0.95), inset 0 -2px 8px rgba(0, 0, 0, 0.04)'
+                }}
+                aria-label={`הגדלת לוגו ${title}`}>
+                <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/30 to-transparent opacity-90 pointer-events-none rounded-3xl" />
+                <div className="absolute inset-0 bg-gradient-to-tl from-slate-50/50 via-transparent to-white/70 opacity-80 pointer-events-none rounded-3xl" />
+                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/95 via-white/50 to-transparent pointer-events-none rounded-t-3xl" />
+
+                <img
+                  src={croppedLogo}
+                  alt={`לוגו ${title}`}
+                  className="w-full h-full object-cover select-none relative z-10"
+                  draggable={false}
+                />
+
+                <div className="absolute inset-0 ring-1 ring-inset ring-white/60 rounded-3xl pointer-events-none" />
+                <div className="absolute -inset-2 bg-gradient-to-br from-blue-100/30 via-indigo-100/20 to-purple-100/20 rounded-3xl opacity-0 group-hover:opacity-100 blur-2xl transition-all duration-500 -z-10" />
+              </button>
+            </div>
 
           {kashrutLogo &&
             <div className="relative z-10">
