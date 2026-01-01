@@ -1,13 +1,10 @@
-
 import React, { useEffect, useMemo, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Search as SearchIcon, Upload, Trash2 } from "lucide-react";
-import { Kashrut } from "@/entities/Kashrut";
-import { BusinessPage } from "@/entities/BusinessPage";
-import { UploadFile } from "@/integrations/Core";
+import { base44 } from "@/api/base44Client";
 import ImageGallery from "@/components/ImageGallery";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -61,7 +58,7 @@ export default function KashrutBox({
     const load = async () => {
       setLoading(true);
       try {
-        const rows = await Kashrut.list("name");
+        const rows = await base44.entities.Kashrut.list("name");
         setList(rows || []);
       } finally {
         setLoading(false);
@@ -81,7 +78,7 @@ export default function KashrutBox({
 
   const pushPatch = async (patch) => {
     if (mode === "entity") {
-      await BusinessPage.update(businessPage.id, patch);
+      await base44.entities.BusinessPage.update(businessPage.id, patch);
     }
     onUpdated?.(patch);
   };
@@ -111,8 +108,8 @@ export default function KashrutBox({
       try {
         const uploaded = [];
         for (const f of files) {
-          const res = await UploadFile({ file: f });
-          const url = res?.data?.file_url || res?.file_url;
+          const res = await base44.integrations.Core.UploadFile({ file: f });
+          const url = res?.file_url;
           if (url) uploaded.push(url);
         }
         if (uploaded.length) {
