@@ -236,25 +236,38 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
       }
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mt-6 sm:mt-8 z-20 relative">
-          <div className="bg-white/95 backdrop-blur-xl p-6 rounded-3xl border-2 border-white/80 shadow-2xl sm:p-8 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/30 via-transparent to-purple-50/30 pointer-events-none" />
+        <div className="mt-8 sm:mt-12 z-20 relative px-2">
+          <div className="bg-white/98 backdrop-blur-2xl px-6 py-8 sm:px-10 sm:py-12 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.12)] relative overflow-hidden border border-slate-100/60">
+            {/* עיצוב גרדיאנט עדין ברקע */}
+            <div className="absolute inset-0 bg-gradient-to-bl from-slate-50/40 via-white to-blue-50/20 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/5 to-transparent rounded-full blur-3xl pointer-events-none" />
             
-            <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 leading-tight relative z-10 tracking-tight">
+            {/* כותרת - בולטת וברורה */}
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.15] relative z-10 mb-2"
+                style={{ 
+                  fontFamily: '"Ronda", "Heebo", "Noto Sans Hebrew", system-ui, sans-serif',
+                  letterSpacing: '-0.02em'
+                }}>
               {title}
             </h1>
+            
+            {/* תיאור קצר - בולט */}
             {shortDesc &&
-              <p className="mt-4 text-base sm:text-lg text-slate-700 leading-relaxed font-medium relative z-10">
+              <p className="mt-5 text-lg sm:text-xl lg:text-2xl text-slate-700 leading-relaxed font-semibold relative z-10 max-w-4xl"
+                 style={{ fontFamily: '"Ronda", "Heebo", sans-serif' }}>
                 {shortDesc}
               </p>
             }
+            
+            {/* תיאור מלא - משני */}
             {restDesc &&
-              <p className="mt-3 text-sm sm:text-base text-slate-600 leading-relaxed whitespace-pre-line relative z-10">
+              <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed whitespace-pre-line relative z-10 max-w-3xl font-normal">
                 {restDesc}
               </p>
             }
             
-            <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
+            {/* קו דקורטיבי תחתון */}
+            <div className="absolute bottom-0 right-8 left-8 h-1.5 bg-gradient-to-l from-blue-500/0 via-blue-500/30 to-blue-500/0 rounded-full" />
           </div>
         </div>
       </div>
