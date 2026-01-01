@@ -12,14 +12,15 @@ export default function AdminFooter() {
   const [loading, setLoading] = useState(true);
   const [editingLink, setEditingLink] = useState(null);
   const [categories, setCategories] = useState([]);
-  const [subcategories, setSubcategories] = useState([]);
   const [kashrutList, setKashrutList] = useState([]);
+  const [cities, setCities] = useState([]);
   const [formData, setFormData] = useState({
     column_type: "city",
     column_title: "",
-    subcategory_name: "",
-    city: "ביתר עילית",
+    city: "",
     kashrut: "",
+    category_id: "",
+    subcategory_id: "",
     link_text: "",
     sort_order: 0,
     is_active: true
@@ -32,16 +33,24 @@ export default function AdminFooter() {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [linksData, catsData, kashrutData] = await Promise.all([
+      const [linksData, catsData, kashrutData, businessPages] = await Promise.all([
         base44.entities.FooterLink.list("sort_order"),
         base44.entities.Category.list("name"),
-        base44.entities.Kashrut.list("name")
+        base44.entities.Kashrut.list("name"),
+        base44.entities.BusinessPage.list()
       ]);
+      
+      // חילוץ ערים ייחודיות מעמודי העסק
+      const uniqueCities = [...new Set(
+        (businessPages || [])
+          .map(p => p.city)
+          .filter(Boolean)
+      )].sort();
       
       setLinks(linksData || []);
       setCategories(catsData || []);
-      setSubcategories((catsData || []).filter(c => c.parent_id));
       setKashrutList(kashrutData || []);
+      setCities(uniqueCities);
     } catch (error) {
       console.error("Error loading data:", error);
       toast.error("שגיאה בטעינת נתונים");
@@ -94,9 +103,10 @@ export default function AdminFooter() {
     setFormData({
       column_type: "city",
       column_title: "",
-      subcategory_name: "",
-      city: "ביתר עילית",
+      city: "",
       kashrut: "",
+      category_id: "",
+      subcategory_id: "",
       link_text: "",
       sort_order: 0,
       is_active: true
@@ -143,7 +153,16 @@ export default function AdminFooter() {
                   <label className="block text-sm font-medium mb-1">סוג עמודה</label>
                   <Select 
                     value={formData.column_type}
-                    onValueChange={(value) => setFormData({...formData, column_type: value})}
+                    onValueChange={(value) => setFormData({
+                      ...formData, 
+                      column_type: value,
+                      column_title: "",
+                      city: "",
+                      kashrut: "",
+                      category_id: "",
+                      subcategory_id: "",
+                      link_text: ""
+                    })}
                   >
                     <SelectTrigger>
                       <SelectValue />
@@ -151,65 +170,50 @@ export default function AdminFooter() {
                     <SelectContent>
                       <SelectItem value="city">לפי עיר</SelectItem>
                       <SelectItem value="kashrut">לפי כשרות</SelectItem>
+                      <SelectItem value="category">לפי קטגוריה</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
-                <div>
-                  <label className="block text-sm font-medium mb-1">כותרת העמודה</label>
-                  <Input
-                    value={formData.column_title}
-                    onChange={(e) => setFormData({...formData, column_title: e.target.value})}
-                    placeholder="מתמלא אוטומטית לפי העיר/כשרות"
-                    required
-                    disabled
-                    className="bg-gray-50"
-                  />
-                  <p className="text-xs text-gray-500 mt-1">הכותרת מתמלאת אוטומטית בהתאם לבחירה שלך</p>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium mb-1">תת קטגוריה</label>
-                  <Select 
-                    value={formData.subcategory_name}
-                    onValueChange={(value) => setFormData({...formData, subcategory_name: value})}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="בחר תת קטגוריה..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {subcategories.map((sub) => (
-                        <SelectItem key={sub.id} value={sub.name}>
-                          {sub.icon} {sub.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
+                {/* עמודת עיר */}
                 {formData.column_type === "city" && (
                   <div>
                     <label className="block text-sm font-medium mb-1">עיר</label>
                     <Select 
                       value={formData.city}
-                      onValueChange={(value) => setFormData({...formData, city: value, column_title: value})}
+                      onValueChange={(value) => setFormData({
+                        ...formData, 
+                        city: value, 
+                        column_title: value,
+                        link_text: value
+                      })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="בחר עיר..." />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="ביתר עילית">ביתר עילית</SelectItem>
+                        {cities.map((city) => (
+                          <SelectItem key={city} value={city}>
+                            {city}
+                          </SelectItem>
+                        ))}
                       </SelectContent>
                     </Select>
                   </div>
                 )}
 
+                {/* עמודת כשרות */}
                 {formData.column_type === "kashrut" && (
                   <div>
                     <label className="block text-sm font-medium mb-1">כשרות</label>
                     <Select 
                       value={formData.kashrut}
-                      onValueChange={(value) => setFormData({...formData, kashrut: value, column_title: value})}
+                      onValueChange={(value) => setFormData({
+                        ...formData, 
+                        kashrut: value, 
+                        column_title: value,
+                        link_text: value
+                      })}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="בחר כשרות..." />
@@ -225,14 +229,77 @@ export default function AdminFooter() {
                   </div>
                 )}
 
+                {/* עמודת קטגוריה */}
+                {formData.column_type === "category" && (
+                  <>
+                    <div>
+                      <label className="block text-sm font-medium mb-1">קטגוריה ראשית</label>
+                      <Select 
+                        value={formData.category_id}
+                        onValueChange={(value) => {
+                          const cat = categories.find(c => c.id === value);
+                          setFormData({
+                            ...formData, 
+                            category_id: value,
+                            column_title: cat?.name || "",
+                            subcategory_id: "",
+                            link_text: ""
+                          });
+                        }}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="בחר קטגוריה..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.filter(c => !c.parent_id).map((cat) => (
+                            <SelectItem key={cat.id} value={cat.id}>
+                              {cat.icon} {cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium mb-1">תת-קטגוריה</label>
+                      <Select 
+                        value={formData.subcategory_id}
+                        onValueChange={(value) => {
+                          const subcat = categories.find(c => c.id === value);
+                          setFormData({
+                            ...formData, 
+                            subcategory_id: value,
+                            link_text: subcat?.name || ""
+                          });
+                        }}
+                        disabled={!formData.category_id}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="בחר תת-קטגוריה..." />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {categories.filter(c => c.parent_id === formData.category_id).map((sub) => (
+                            <SelectItem key={sub.id} value={sub.id}>
+                              {sub.icon} {sub.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </>
+                )}
+
                 <div>
                   <label className="block text-sm font-medium mb-1">טקסט הקישור</label>
                   <Input
                     value={formData.link_text}
                     onChange={(e) => setFormData({...formData, link_text: e.target.value})}
-                    placeholder="למשל: 'פיצה בביתר עילית'"
+                    placeholder="מתמלא אוטומטית לפי הבחירה"
                     required
+                    disabled
+                    className="bg-gray-50"
                   />
+                  <p className="text-xs text-gray-500 mt-1">הטקסט מתמלא אוטומטית מהבחירה שלך</p>
                 </div>
 
                 <div>
@@ -286,26 +353,36 @@ export default function AdminFooter() {
                         {column.type === "city" ? "🏙️" : "✨"} {column.title}
                       </h3>
                       <div className="space-y-2">
-                        {column.links.map((link) => (
-                          <div 
-                            key={link.id}
-                            className={`flex items-center justify-between p-2 rounded-lg border ${
-                              link.is_active ? 'bg-white border-slate-200' : 'bg-gray-100 border-gray-300 opacity-60'
-                            }`}
-                          >
-                            <div className="flex-1">
-                              <a
-                                href={`/Browse?q=${encodeURIComponent(link.subcategory_name)}${
-                                  link.city ? `&city=${encodeURIComponent(link.city)}` : ''
-                                }${
-                                  link.kashrut ? `&kashrut=${encodeURIComponent(link.kashrut)}` : ''
-                                }`}
-                                className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
-                                target="_blank"
-                              >
-                                {link.link_text}
-                              </a>
-                            </div>
+                        {column.links.map((link) => {
+                          // בניית ה-URL לפי סוג העמודה
+                          let url = '/Browse?';
+                          if (link.column_type === 'city' && link.city) {
+                            url += `city=${encodeURIComponent(link.city)}`;
+                          } else if (link.column_type === 'kashrut' && link.kashrut) {
+                            url += `kashrut=${encodeURIComponent(link.kashrut)}`;
+                          } else if (link.column_type === 'category' && link.subcategory_id) {
+                            const subcat = categories.find(c => c.id === link.subcategory_id);
+                            if (subcat) {
+                              url += `q=${encodeURIComponent(subcat.name)}`;
+                            }
+                          }
+
+                          return (
+                            <div 
+                              key={link.id}
+                              className={`flex items-center justify-between p-2 rounded-lg border ${
+                                link.is_active ? 'bg-white border-slate-200' : 'bg-gray-100 border-gray-300 opacity-60'
+                              }`}
+                            >
+                              <div className="flex-1">
+                                <a
+                                  href={url}
+                                  className="text-sm text-slate-600 hover:text-blue-600 transition-colors"
+                                  target="_blank"
+                                >
+                                  {link.link_text}
+                                </a>
+                              </div>
                             <div className="flex gap-1">
                               <Button
                                 size="icon"
@@ -341,7 +418,8 @@ export default function AdminFooter() {
                               </Button>
                             </div>
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     </div>
                   ))}
