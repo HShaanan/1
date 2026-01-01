@@ -9,6 +9,7 @@ import {
   Zap, DollarSign, CheckCircle, Star, ArrowLeft,
   Smartphone, BarChart3, HeadphonesIcon, Truck, Sparkles, Play, MessageCircle, ShoppingCart, AlertTriangle
 } from "lucide-react";
+import ImageComparison from "@/components/ImageComparison";
 
 // תמונות מותאמות לקהל החרדי (ללא נשים)
 const BUSINESS_IMAGES = {
@@ -416,8 +417,70 @@ export default function BusinessLanding() {
 
 
 
+        {/* Before/After Comparison Section */}
+        <section className="py-12 sm:py-20 bg-gradient-to-b from-white to-slate-50">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-12">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.6 }}
+              >
+                <span className="inline-block px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-full text-sm font-semibold mb-4 border border-blue-200">
+                  🔄 ההבדל בין רגיל למקצועי
+                </span>
+                <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">
+                  מה ההבדל בין עמוד רגיל לעמוד מקצועי?
+                </h2>
+                <p className="text-slate-600 text-lg max-w-2xl mx-auto">
+                  גרור את המחוון כדי לראות את השינוי המדהים
+                </p>
+              </motion.div>
+            </div>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.8 }}
+            >
+              <ImageComparison
+                beforeImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/before-basic.png"
+                afterImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/after-professional.png"
+                beforeLabel="עמוד רגיל"
+                afterLabel="עמוד מקצועי"
+              />
+            </motion.div>
+
+            <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+              <div className="text-center p-6 bg-slate-100 rounded-xl">
+                <div className="text-4xl mb-3">😕</div>
+                <h3 className="font-bold text-lg text-slate-900 mb-2">עמוד רגיל</h3>
+                <ul className="text-sm text-slate-600 space-y-2 text-right">
+                  <li>• עיצוב בסיסי וגנרי</li>
+                  <li>• ללא אופטימיזציה לגוגל</li>
+                  <li>• טעינה איטית</li>
+                  <li>• לא מותאם למובייל</li>
+                </ul>
+              </div>
+
+              <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200">
+                <div className="text-4xl mb-3">✨</div>
+                <h3 className="font-bold text-lg text-green-900 mb-2">עמוד מקצועי</h3>
+                <ul className="text-sm text-green-800 space-y-2 text-right">
+                  <li>✓ עיצוב יוקרתי ומותאם אישית</li>
+                  <li>✓ חיבור Google Console + SEO</li>
+                  <li>✓ טעינה מהירה (0.8 שניות)</li>
+                  <li>✓ חווית משתמש מושלמת</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
         {/* Pricing Section */}
-        <section className="py-12 sm:py-20 bg-gradient-to-b from-white to-slate-50" aria-labelledby="pricing-heading">
+        <section className="py-12 sm:py-20 bg-gradient-to-b from-slate-50 to-white" aria-labelledby="pricing-heading">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <motion.div
