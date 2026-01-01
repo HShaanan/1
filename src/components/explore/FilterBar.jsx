@@ -64,8 +64,8 @@ export default function FilterBar({
   );
 
   return (
-    <div className="bg-white border-b sticky top-[120px] z-20 shadow-sm transition-all">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+    <div className="bg-white border-b shadow-sm">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center gap-2 overflow-x-auto hide-scrollbar pb-1">
           
           {/* Main Filter Icon / Clear */}
