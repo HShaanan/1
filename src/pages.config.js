@@ -7,7 +7,6 @@ import AdminBusinessOwnership from './pages/AdminBusinessOwnership';
 import AdminBusinessPages from './pages/AdminBusinessPages';
 import AdminCategories from './pages/AdminCategories';
 import AdminCategoryOrder from './pages/AdminCategoryOrder';
-import AdminDataQuality from './pages/AdminDataQuality';
 import AdminDebug from './pages/AdminDebug';
 import AdminDebugListing from './pages/AdminDebugListing';
 import AdminDeleteRecent from './pages/AdminDeleteRecent';
@@ -72,6 +71,7 @@ import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
+import AdminDataQuality from './pages/AdminDataQuality';
 import __Layout from './Layout.jsx';
 
 
@@ -85,7 +85,6 @@ export const PAGES = {
     "AdminBusinessPages": AdminBusinessPages,
     "AdminCategories": AdminCategories,
     "AdminCategoryOrder": AdminCategoryOrder,
-    "AdminDataQuality": AdminDataQuality,
     "AdminDebug": AdminDebug,
     "AdminDebugListing": AdminDebugListing,
     "AdminDeleteRecent": AdminDeleteRecent,
@@ -150,6 +149,7 @@ export const PAGES = {
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
+    "AdminDataQuality": AdminDataQuality,
 }
 
 export const pagesConfig = {

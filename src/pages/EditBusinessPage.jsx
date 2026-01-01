@@ -26,7 +26,7 @@ import KashrutBox from "@/components/kashrut/KashrutBox";
 import { agentSDK } from "@/agents";
 import ImageZoomViewer from "@/components/images/ImageZoomViewer";
 import InlineImageEditor from "@/components/images/InlineImageEditor";
-import SmartImageGenerator from "@/components/image/SmartImageGenerator";
+import ImageGeneratorModal from "@/components/ImageGeneratorModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import ColorPicker from "@/components/theme/ColorPicker";
 import {
