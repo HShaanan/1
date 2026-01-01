@@ -173,18 +173,27 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
         </div>
 
         <div className="relative -mt-16 sm:-mt-24 flex items-end space-x-5 space-x-reverse">
-          <div className="relative z-10">
+          <div className="relative z-10 group">
             <button
               type="button"
               onClick={onLogoClick}
-              className="h-24 w-24 sm:h-32 sm:w-32 rounded-2xl overflow-hidden flex items-center justify-center focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-lg"
+              className="h-36 w-36 sm:h-44 sm:w-44 rounded-3xl overflow-hidden flex items-center justify-center focus:outline-none focus:ring-4 focus:ring-blue-400/50 relative"
+              style={{
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
+                boxShadow: '0 20px 60px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.1)',
+                backdropFilter: 'blur(10px)',
+                border: '2px solid rgba(255,255,255,0.5)',
+              }}
               aria-label={`הגדלת לוגו ${title}`}>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-black/5 rounded-3xl pointer-events-none"></div>
+              <div className="absolute top-2 left-2 right-[60%] h-[30%] bg-gradient-to-br from-white/60 to-transparent rounded-full blur-xl opacity-70 pointer-events-none"></div>
               <img
                 src={croppedLogo}
                 alt={`לוגו ${title}`}
-                className="w-full h-full object-cover select-none"
+                className="w-full h-full object-contain select-none relative z-10 p-3 drop-shadow-lg group-hover:scale-105 transition-transform duration-300"
                 draggable={false}
               />
+              <div className="absolute inset-0 rounded-3xl ring-1 ring-black/10 pointer-events-none"></div>
             </button>
           </div>
 

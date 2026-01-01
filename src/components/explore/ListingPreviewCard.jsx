@@ -79,15 +79,26 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
           </div>
         )}
 
-        {/* לוגו כשרות - ימין למטה, מוגדל */}
+        {/* לוגו כשרות - ימין למטה, מוגדל עם אפקט זכוכית */}
         {kashrutLogo && (
-          <div className="absolute bottom-2 right-2 bg-white p-1 rounded-xl shadow-md z-10 w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center border border-slate-100">
+          <div 
+            className="absolute bottom-2 right-2 z-10 w-20 h-20 sm:w-24 sm:h-24 rounded-2xl flex items-center justify-center group"
+            style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.85) 100%)',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.9), inset 0 -1px 0 rgba(0,0,0,0.1)',
+              backdropFilter: 'blur(8px)',
+              border: '2px solid rgba(255,255,255,0.5)',
+            }}
+          >
+            <div className="absolute inset-0 bg-gradient-to-br from-white/40 via-transparent to-black/5 rounded-2xl pointer-events-none"></div>
+            <div className="absolute top-1 left-1 right-[60%] h-[30%] bg-gradient-to-br from-white/60 to-transparent rounded-full blur-lg opacity-70 pointer-events-none"></div>
             <LazyImage
               src={kashrutLogo}
               alt="לוגו כשרות"
-              className="w-full h-full"
-              imgClassName="object-contain w-full h-full"
+              className="w-full h-full p-2"
+              imgClassName="object-contain w-full h-full drop-shadow-md group-hover:scale-105 transition-transform duration-300"
             />
+            <div className="absolute inset-0 rounded-2xl ring-1 ring-black/10 pointer-events-none"></div>
           </div>
         )}
       </div>
