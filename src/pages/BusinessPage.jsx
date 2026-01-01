@@ -193,29 +193,26 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
               <button
                 type="button"
                 onClick={onKashrutLogoClick}
-                className="relative group h-20 w-20 sm:h-28 sm:w-28 rounded-2xl bg-gradient-to-br from-white via-white to-slate-50 shadow-2xl hover:shadow-emerald-300/40 flex items-center justify-center overflow-hidden focus:outline-none focus:ring-4 focus:ring-emerald-400/50 cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95"
+                className="relative group h-28 w-28 sm:h-36 sm:w-36 rounded-3xl bg-white flex items-center justify-center overflow-hidden focus:outline-none focus:ring-4 focus:ring-blue-400/30 cursor-pointer transition-all duration-300 hover:scale-105 active:scale-95"
                 style={{
-                  boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 0 rgba(0, 0, 0, 0.05)',
-                  border: '2px solid rgba(255, 255, 255, 0.8)',
+                  boxShadow: '0 20px 60px rgba(0, 0, 0, 0.15), 0 8px 16px rgba(0, 0, 0, 0.1), inset 0 2px 4px rgba(255, 255, 255, 0.95), inset 0 -2px 4px rgba(0, 0, 0, 0.03)',
+                  border: '1px solid rgba(255, 255, 255, 0.9)',
                 }}
                 aria-label="הצגת תעודת כשרות">
 
-                <div className="absolute inset-0 bg-gradient-to-br from-white/50 via-transparent to-transparent opacity-60 pointer-events-none" />
-                <div className="absolute inset-0 bg-gradient-to-tl from-slate-200/20 via-transparent to-white/40 opacity-50 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-br from-white/60 via-transparent to-transparent opacity-80 pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-tl from-slate-100/30 via-transparent to-white/50 opacity-70 pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-1/3 bg-gradient-to-b from-white/80 to-transparent pointer-events-none" />
 
                 <LazyImage
                   src={kashrutLogo}
                   alt="לוגו כשרות"
                   className="w-full h-full relative z-10"
-                  imgClassName="object-contain w-full h-full p-2 transition-all duration-300 group-hover:scale-110" />
+                  imgClassName="object-contain w-full h-full p-3 transition-all duration-300 group-hover:brightness-110" />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-emerald-900/80 via-emerald-800/60 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-end justify-center pb-2 z-20" aria-hidden="true">
-                  <span className="text-white text-xs sm:text-sm font-bold drop-shadow-lg">
-                    תעודה
-                  </span>
-                </div>
+                <div className="absolute inset-0 ring-1 ring-inset ring-white/40 rounded-3xl pointer-events-none" />
 
-                <div className="absolute -inset-0.5 bg-gradient-to-br from-emerald-200/30 via-green-200/20 to-emerald-300/30 rounded-2xl opacity-0 group-hover:opacity-100 blur-sm transition-opacity duration-300 -z-10" />
+                <div className="absolute -inset-1 bg-gradient-to-br from-blue-200/20 via-indigo-200/15 to-purple-200/20 rounded-3xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500 -z-10" />
               </button>
             </div>
           }
