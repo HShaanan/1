@@ -58,14 +58,13 @@ export default function ImageComparison({
       className="relative w-full max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-2xl cursor-col-resize select-none"
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
-      style={{ aspectRatio: '16/9' }}
     >
       {/* After Image (Full) */}
-      <div className="absolute inset-0">
+      <div className="relative w-full">
         <img 
           src={afterImage} 
           alt={afterLabel}
-          className="w-full h-full object-cover"
+          className="w-full h-auto"
           draggable={false}
         />
         {/* After Label */}
@@ -83,10 +82,11 @@ export default function ImageComparison({
         <img 
           src={beforeImage} 
           alt={beforeLabel}
-          className="w-full h-full object-cover"
+          className="h-full w-auto"
           style={{ 
             width: containerRef.current ? `${(containerRef.current.offsetWidth / sliderPosition) * 100}%` : '100%',
-            maxWidth: 'none'
+            maxWidth: 'none',
+            height: '100%'
           }}
           draggable={false}
         />
