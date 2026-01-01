@@ -72,7 +72,6 @@ import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
-import SalesforceDashboard from './pages/SalesforceDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -151,7 +150,6 @@ export const PAGES = {
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
-    "SalesforceDashboard": SalesforceDashboard,
 }
 
 export const pagesConfig = {
