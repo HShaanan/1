@@ -836,22 +836,12 @@ export default function BusinessLanding() {
         {/* CTA Section */}
         <section className="py-12 sm:py-20 bg-slate-900 pb-28 sm:pb-20" aria-labelledby="cta-heading">
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-3 px-6 py-3 bg-gradient-to-r from-slate-800 via-indigo-900 to-slate-800 text-white rounded-full text-sm font-bold mb-4 shadow-2xl shadow-indigo-500/30 border border-indigo-500/30 backdrop-blur-sm">
-              <Sparkles className="w-5 h-5 text-cyan-400" aria-hidden="true" />
-              <span>עיצוב מקצועי בימים ספורים + BASE44</span>
-              <Zap className="w-5 h-5 text-yellow-400" aria-hidden="true" />
-            </div>
+
             <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
               תפסיק להסתכל איך המתחרים מצליחים.<br/>
               <span className="text-yellow-300">זה התור שלך.</span>
             </h2>
-            <p className="text-slate-300 text-sm sm:text-lg mb-6 sm:mb-10 max-w-2xl mx-auto px-4">
-              עיצוב מקצועי מותאם אישית + טכנולוגיית BASE44 המהירה בעולם
-              <br className="hidden sm:block" />
-              <span className="hidden sm:inline text-indigo-300">+ חיבור ישיר לנתוני גוגל + דאשבורד מתקדם + תמיכה מלאה</span>
-              <br/>
-              <span className="text-cyan-400 text-lg font-bold">כל מה שעסק מצליח צריך. במקום אחד.</span>
-            </p>
+            
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
               <Link to={createPageUrl("ContactPage")} className="w-full sm:w-auto">
