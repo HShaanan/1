@@ -738,71 +738,7 @@ export default function BusinessLanding() {
         </section>
 
         {/* Testimonials */}
-        <section className="py-12 sm:py-20 bg-gradient-to-br from-[#667eea] to-[#764ba2]" aria-labelledby="testimonials-heading">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 sm:mb-12">
-              <span className="inline-block px-3 sm:px-4 py-1 bg-yellow-400 text-slate-900 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-                ⚠️ לא רק הבטחות - תוצאות אמיתיות
-              </span>
-              <h2 id="testimonials-heading" className="text-2xl sm:text-3xl md:text-4xl font-bold text-white mb-2">
-                בעלי עסקים שהפסיקו לאבד לקוחות
-              </h2>
-              <p className="text-white/80 text-sm sm:text-base font-bold">הם היו בדיוק במצב שלך. עכשיו הם מרוויחים כפול.</p>
-            </div>
 
-            <div className="relative" role="region" aria-label="סיפורי הצלחה">
-              {testimonials.map((t, i) => (
-                <div
-                  key={i}
-                  className={`transition-all duration-500 ${activeTestimonial === i ? 'opacity-100 scale-100' : 'opacity-0 absolute inset-0 scale-95 pointer-events-none'}`}
-                  aria-hidden={activeTestimonial !== i}
-                >
-                  <Card className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-8 md:p-10 shadow-2xl overflow-hidden mx-2 sm:mx-0">
-                    <CardContent className="p-0">
-                      <div className="flex flex-col md:flex-row items-center gap-4 sm:gap-6">
-                        {/* Business Image */}
-                        <div className="w-24 h-24 sm:w-32 sm:h-32 md:w-40 md:h-40 rounded-xl sm:rounded-2xl overflow-hidden shadow-lg flex-shrink-0">
-                          <img src={t.image} alt={t.business} className="w-full h-full object-cover" />
-                        </div>
-                        
-                        <div className="text-center md:text-right flex-1">
-                          <div className="flex justify-center md:justify-start mb-2 sm:mb-3" role="img" aria-label={`דירוג ${t.rating} מתוך 5 כוכבים`}>
-                            {[...Array(t.rating)].map((_, j) => (
-                              <Star key={j} className="w-4 h-4 sm:w-5 sm:h-5 fill-yellow-400 text-yellow-400" aria-hidden="true" />
-                            ))}
-                          </div>
-                          <blockquote>
-                            <p className="text-sm sm:text-lg md:text-xl text-slate-700 mb-3 sm:mb-4 leading-relaxed">"{t.text}"</p>
-                            <footer>
-                              <cite className="not-italic">
-                                <div className="font-bold text-slate-900 text-base sm:text-lg">{t.name}</div>
-                                <div className="text-slate-500 text-sm sm:text-base">{t.business}</div>
-                              </cite>
-                            </footer>
-                          </blockquote>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              ))}
-              
-              {/* Dots - Larger touch targets on mobile */}
-              <div className="flex justify-center gap-3 sm:gap-2 mt-6 sm:mt-8" role="tablist" aria-label="בחר סיפור">
-                {testimonials.map((_, i) => (
-                  <button
-                    key={i}
-                    onClick={() => setActiveTestimonial(i)}
-                    className={`h-3 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white touch-manipulation min-w-[44px] sm:min-w-0 ${activeTestimonial === i ? 'bg-white w-10 sm:w-8' : 'bg-white/40 w-10 sm:w-3 hover:bg-white/60'}`}
-                    aria-label={`סיפור ${i + 1}`}
-                    aria-selected={activeTestimonial === i}
-                    role="tab"
-                  />
-                ))}
-              </div>
-            </div>
-          </div>
-        </section>
 
         {/* FAQ Section */}
         <section className="py-12 sm:py-20 bg-white" aria-labelledby="faq-heading">
