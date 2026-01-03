@@ -11,6 +11,17 @@ import {
 } from "lucide-react";
 import ImageComparison from "@/components/ImageComparison";
 
+// תמונות מותאמות לקהל החרדי (ללא נשים)
+const BUSINESS_IMAGES = {
+  bakery: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
+  restaurant: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80",
+  grocery: "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/15fb42d92_Gemini_Generated_Image_1ctlgd1ctlgd1ctl.png",
+  meat: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=800&q=80",
+  delivery: "https://images.unsplash.com/photo-1526367790999-0150786686a2?w=800&q=80",
+  coffee: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80",
+  food: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80",
+  challah: "https://images.unsplash.com/photo-1603379016822-e6d5e2770ece?w=800&q=80"
+};
 
 const benefits = [
   {
@@ -78,21 +89,21 @@ const testimonials = [
     business: "מאפיית הטעמים",
     text: "חשבתי שהמאפייה הקטנה שלי לא צריכה 'עמוד מפואר'. טעיתי. העמוד המקצועי שיצר לי אמון ומהימנות, והלקוחות התחילו להגיע גם מחוץ לשכונה. צר לי שלא עשיתי את זה קודם.",
     rating: 5,
-    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80"
+    image: BUSINESS_IMAGES.bakery
   },
   {
     name: "משה לוי",
     business: "גריל הבשרים",
     text: "הייתי בטוח שאנשים יודעים עלי. אבל בגוגל הייתי שקוף לגמרי. עכשיו כשמישהו מחפש 'גריל כשר' - אני שם. הנוכחות הדיגיטלית שינתה לי את העסק לגמרי.",
     rating: 5,
-    image: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=800&q=80"
+    image: BUSINESS_IMAGES.meat
   },
   {
     name: "אברהם גולד",
     business: "סושי כשר",
     text: "שילמתי פעם אלפי שקלים למעצב שלקח שבועות. הפעם העבודה נעשתה תוך ימים, מקצועית ובמחיר הוגן. העמוד נראה מדהים והחיבור לגוגל עובד מצוין. החלטה מצוינת.",
     rating: 5,
-    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80"
+    image: BUSINESS_IMAGES.restaurant
   }
 ];
 
