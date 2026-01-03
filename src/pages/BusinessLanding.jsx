@@ -597,15 +597,15 @@ export default function BusinessLanding() {
                     <div className="flex-1 space-y-4 mb-8">
                       <div className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
-                        <span className="text-white font-medium">3 תמונות AI מקצועיות</span>
+                        <span className="text-white font-medium">3עיצוב מותאם בדיוק לעסק שלכם</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
-                        <span className="text-white font-medium">חיבור Google Console + SEO</span>
+                        <span className="text-white font-medium">קידום באתר!</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
-                        <span className="text-white font-medium">אופטימיזציה לדירוג גוגל</span>
+                        <span className="text-white font-medium">תפריט + זרימת הזמנות בווטסאפ / אפליקציה</span>
                       </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
@@ -648,7 +648,7 @@ export default function BusinessLanding() {
                       <span className="text-slate-600 text-lg">/חודש</span>
                     </div>
                     <div className="mt-2 text-slate-500 text-sm">
-                      דמי הקמה: <span className="font-semibold text-slate-700">₪1,500</span>
+                      דמי הקמה: <span className="font-semibold text-slate-700">₪800</span>
                     </div>
                   </div>
 
@@ -671,7 +671,7 @@ export default function BusinessLanding() {
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-slate-700 font-medium">תמיכה VIP 24/7</span>
+                      <span className="text-slate-700 font-medium">תמיכה VIP 24/6</span>
                     </div>
                   </div>
 
