@@ -456,16 +456,7 @@ export default function BusinessLanding() {
             <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
 
 
-              <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200">
-                <div className="text-4xl mb-3">✨</div>
-                <h3 className="font-bold text-lg text-green-900 mb-2">עמוד מקצועי</h3>
-                <ul className="text-sm text-green-800 space-y-2 text-right">
-                  <li>✓ עיצוב יוקרתי ומותאם אישית</li>
-                  <li>✓ חיבור Google Console + SEO</li>
-                  <li>✓ טעינה מהירה (0.8 שניות)</li>
-                  <li>✓ חווית משתמש מושלמת</li>
-                </ul>
-              </div>
+
             </div>
           </div>
         </section>
@@ -514,7 +505,7 @@ export default function BusinessLanding() {
                       <span className="text-slate-600 text-lg">/חודש</span>
                     </div>
                     <div className="mt-2 text-slate-500 text-sm">
-                      דמי הקמה: <span className="font-semibold text-slate-700">₪499</span>
+                      דמי הקמה: <span className="font-semibold text-slate-700">₪300</span>
                     </div>
                   </div>
 
@@ -604,10 +595,6 @@ export default function BusinessLanding() {
                     </div>
 
                     <div className="flex-1 space-y-4 mb-8">
-                      <div className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
-                        <span className="text-white font-medium">פרופיל מאומת ומתקדם</span>
-                      </div>
                       <div className="flex items-start gap-3">
                         <CheckCircle className="w-5 h-5 text-amber-300 flex-shrink-0 mt-0.5" />
                         <span className="text-white font-medium">3 תמונות AI מקצועיות</span>
