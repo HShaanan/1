@@ -8,7 +8,7 @@ export default function ImageComparison({
   beforeLabel = "לפני", 
   afterLabel = "אחרי" 
 }) {
-  const [sliderPosition, setSliderPosition] = useState(50);
+  const [sliderPosition, setSliderPosition] = useState(0);
   const containerRef = useRef(null);
 
   const bind = useDrag(
@@ -59,30 +59,30 @@ export default function ImageComparison({
       onMouseMove={handleMouseMove}
       onTouchMove={handleTouchMove}
     >
-      {/* After Image (Full) */}
+      {/* Before Image (Full Background) */}
       <div className="relative w-full">
         <img 
-          src={afterImage} 
-          alt={afterLabel}
+          src={beforeImage} 
+          alt={beforeLabel}
           className="w-full h-auto block"
           draggable={false}
         />
-        {/* After Label */}
-        <div className="absolute top-4 left-4 bg-green-600 text-white px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2 z-10">
-          <span className="text-lg">✨</span>
-          <span>{afterLabel}</span>
+        {/* Before Label */}
+        <div className="absolute top-4 right-4 bg-slate-600 text-white px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2 z-10">
+          <span>{beforeLabel}</span>
+          <span className="text-lg">😕</span>
         </div>
       </div>
 
-      {/* Before Image (Clipped) */}
+      {/* After Image (Clipped from left) */}
       <div 
         className="absolute inset-0 overflow-hidden"
         style={{ width: `${sliderPosition}%` }}
       >
         <div className="relative w-full h-full">
           <img 
-            src={beforeImage} 
-            alt={beforeLabel}
+            src={afterImage} 
+            alt={afterLabel}
             className="absolute inset-0 w-full h-full object-cover"
             draggable={false}
             style={{ 
@@ -94,10 +94,10 @@ export default function ImageComparison({
             }}
           />
         </div>
-        {/* Before Label */}
-        <div className="absolute top-4 right-4 bg-slate-600 text-white px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2 z-10">
-          <span>{beforeLabel}</span>
-          <span className="text-lg">😕</span>
+        {/* After Label */}
+        <div className="absolute top-4 left-4 bg-green-600 text-white px-4 py-2 rounded-full font-bold shadow-lg flex items-center gap-2 z-10">
+          <span className="text-lg">✨</span>
+          <span>{afterLabel}</span>
         </div>
       </div>
 
