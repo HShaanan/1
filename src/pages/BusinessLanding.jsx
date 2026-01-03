@@ -516,11 +516,11 @@ export default function BusinessLanding() {
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-slate-700">תמונת AI מקצועית אחת</span>
+                      <span className="text-slate-700">עיצוב תמונת רקע + לוגו</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
-                      <span className="text-slate-700">קישור ישיר לוואטסאפ</span>
+                      <span className="text-slate-700">דאשבורד ניהול מתקדם</span>
                     </div>
                     <div className="flex items-start gap-3">
                       <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" />
@@ -586,11 +586,11 @@ export default function BusinessLanding() {
 
                     <div className="mb-6">
                       <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-bold text-white">₪349</span>
+                        <span className="text-4xl font-bold text-white">₪350</span>
                         <span className="text-indigo-100 text-lg">/חודש</span>
                       </div>
                       <div className="mt-2 text-indigo-200 text-sm">
-                        דמי הקמה: <span className="font-semibold text-white">₪850</span>
+                        דמי הקמה: <span className="font-semibold text-white">₪500</span>
                       </div>
                     </div>
 
