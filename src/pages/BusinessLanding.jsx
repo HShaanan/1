@@ -78,21 +78,21 @@ const testimonials = [
     business: "מאפיית הטעמים",
     text: "חשבתי שהמאפייה הקטנה שלי לא צריכה 'עמוד מפואר'. טעיתי. העמוד המקצועי שיצר לי אמון ומהימנות, והלקוחות התחילו להגיע גם מחוץ לשכונה. צר לי שלא עשיתי את זה קודם.",
     rating: 5,
-    image: BUSINESS_IMAGES.bakery
+    image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80"
   },
   {
     name: "משה לוי",
     business: "גריל הבשרים",
     text: "הייתי בטוח שאנשים יודעים עלי. אבל בגוגל הייתי שקוף לגמרי. עכשיו כשמישהו מחפש 'גריל כשר' - אני שם. הנוכחות הדיגיטלית שינתה לי את העסק לגמרי.",
     rating: 5,
-    image: BUSINESS_IMAGES.meat
+    image: "https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?w=800&q=80"
   },
   {
     name: "אברהם גולד",
     business: "סושי כשר",
     text: "שילמתי פעם אלפי שקלים למעצב שלקח שבועות. הפעם העבודה נעשתה תוך ימים, מקצועית ובמחיר הוגן. העמוד נראה מדהים והחיבור לגוגל עובד מצוין. החלטה מצוינת.",
     rating: 5,
-    image: BUSINESS_IMAGES.restaurant
+    image: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80"
   }
 ];
 
