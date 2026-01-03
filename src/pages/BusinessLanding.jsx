@@ -849,13 +849,13 @@ export default function BusinessLanding() {
                   size="lg" 
                   className="w-full sm:w-auto rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:opacity-90 text-white font-black px-8 sm:px-10 py-6 sm:py-8 text-lg sm:text-2xl shadow-2xl active:scale-95 sm:hover:scale-110 transition-all duration-300 touch-manipulation min-h-[52px] animate-pulse"
                 >
-                  כן! תעצבו לי את העסק בימים ספורים
+                  כן! תעצבו לי את העסק 
                   <Zap className="w-6 h-6 sm:w-7 sm:h-7 mr-2" aria-hidden="true" />
                 </Button>
               </Link>
               <div className="text-white text-sm sm:text-base">
-                <div className="font-bold mb-1">💯 אחריות מלאה:</div>
-                <div className="text-slate-300">לא מרוצה? נחזיר כסף. בלי שאלות.</div>
+
+
               </div>
             </div>
 
