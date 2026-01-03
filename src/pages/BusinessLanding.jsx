@@ -379,7 +379,7 @@ export default function BusinessLanding() {
                   </svg>
                 </span>
                 <br/>
-                <span className="bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">מחכה אתה למה?</span>
+                <span className="bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">למה אתה מחכה?</span>
               </h2>
               <p className="text-slate-600 text-sm sm:text-lg max-w-2xl mx-auto animate-fade-in-up px-4 font-bold" style={{ animationDelay: '0.2s' }}>
                 כל יום בלי עמוד מקצועי = <span className="text-red-600">לקוחות שבוחרים במתחרה</span>
