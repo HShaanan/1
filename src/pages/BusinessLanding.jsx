@@ -692,49 +692,7 @@ export default function BusinessLanding() {
 
         {/* How It Works */}
         <section className="py-12 sm:py-20 bg-white" aria-labelledby="how-it-works-heading">
-          <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-8 sm:mb-16">
-              <span className="inline-block px-3 sm:px-4 py-1 bg-green-100 text-green-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-                💰 תוך 24 שעות לתוצאות
-              </span>
-              <h2 id="how-it-works-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-4">
-                הפוך את העסק ל"נכס דיגיטלי" תוך יום אחד
-              </h2>
-              <p className="text-slate-600 text-base max-w-2xl mx-auto">
-                עד היום עיצוב תדמית עלה <span className="line-through">5,000 ₪</span> ולקח שבועות.<br/>
-                <span className="font-bold text-green-600">אצלנו? 450 ₪ + AI עושה הכל תוך 24 שעות.</span>
-              </p>
-            </div>
 
-            <div className="relative">
-              {/* Connection line - Hidden on mobile */}
-              <div className="hidden md:block absolute top-1/2 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 rounded-full transform -translate-y-1/2" aria-hidden="true" />
-              
-              <div className="grid grid-cols-3 md:grid-cols-3 gap-3 sm:gap-8" role="list">
-                {steps.map((step, i) => (
-                  <div key={i} className="relative text-center" role="listitem">
-                    <div className="relative z-10 w-14 h-14 sm:w-20 sm:h-20 mx-auto mb-3 sm:mb-6 rounded-full bg-white shadow-lg sm:shadow-xl flex items-center justify-center border-2 sm:border-4 border-purple-500">
-                      <span className="text-xl sm:text-3xl font-black text-purple-600">{step.number}</span>
-                    </div>
-                    <h3 className="text-sm sm:text-xl font-bold text-slate-900 mb-1 sm:mb-3">{step.title}</h3>
-                    <p className="text-slate-600 text-xs sm:text-base hidden sm:block">{step.description}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="text-center mt-8 sm:mt-12">
-              <Link to={createPageUrl("ContactPage")}>
-                <Button 
-                  size="lg" 
-                  className="rounded-full bg-gradient-to-r from-[#667eea] to-[#764ba2] hover:opacity-90 text-white font-bold px-8 sm:px-10 py-5 sm:py-6 text-base sm:text-lg shadow-xl active:scale-95 sm:hover:scale-105 transition-transform touch-manipulation min-h-[52px]"
-                >
-                  בואו נתחיל!
-                  <Sparkles className="w-5 h-5 mr-2" aria-hidden="true" />
-                </Button>
-              </Link>
-            </div>
-          </div>
         </section>
 
         {/* Testimonials */}
