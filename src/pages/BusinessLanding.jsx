@@ -454,16 +454,7 @@ export default function BusinessLanding() {
             </motion.div>
 
             <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              <div className="text-center p-6 bg-slate-100 rounded-xl">
-                <div className="text-4xl mb-3">😕</div>
-                <h3 className="font-bold text-lg text-slate-900 mb-2">עמוד רגיל</h3>
-                <ul className="text-sm text-slate-600 space-y-2 text-right">
-                  <li>• עיצוב בסיסי וגנרי</li>
-                  <li>• ללא אופטימיזציה לגוגל</li>
-                  <li>• טעינה איטית</li>
-                  <li>• לא מותאם למובייל</li>
-                </ul>
-              </div>
+
 
               <div className="text-center p-6 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl border-2 border-green-200">
                 <div className="text-4xl mb-3">✨</div>
