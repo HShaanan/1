@@ -4,7 +4,8 @@ Deno.serve(async (req) => {
     try {
         // For scheduled tasks, use service role directly
         const appId = Deno.env.get("BASE44_APP_ID");
-        const base44 = createClient(appId);
+        const serviceToken = Deno.env.get("BASE44_SERVICE_TOKEN");
+        const base44 = createClient(appId, { serviceToken });
 
         const { mode = 'preview', maxPages = 50 } = await req.json().catch(() => ({}));
 
