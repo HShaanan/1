@@ -12,14 +12,14 @@ Deno.serve(async (req) => {
 
         const { mode = 'preview', limit = 10 } = await req.json().catch(() => ({}));
 
-        // Find businesses without coordinates
+        // Find all active businesses (will override existing coordinates too)
         const allBusinesses = await base44.asServiceRole.entities.BusinessPage.filter({
             is_active: true,
             approval_status: 'approved'
         });
 
         const businessesNeedingGeocode = allBusinesses.filter(b => 
-            (!b.lat || !b.lng) && (b.address || b.city)
+            b.address || b.city
         );
 
         console.log(`Found ${businessesNeedingGeocode.length} businesses needing geocoding`);
