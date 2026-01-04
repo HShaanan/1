@@ -1,28 +1,32 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, lazy, Suspense } from "react";
 import { base44 } from "@/api/base44Client";
-import ListingGrid from "@/components/explore/ListingGrid";
-import CategoryGallery from "@/components/explore/CategoryGallery";
-import SubcategoryChips from "@/components/explore/SubcategoryChips";
-import ProfessionalsGrouping from "@/components/explore/ProfessionalsGrouping";
-import MobileTopBar from "@/components/explore/MobileTopBar";
-import StickyChips from "@/components/explore/StickyChips";
-import { dataCache } from "@/components/PerformanceOptimizations";
+import { dataCache, useDebounce } from "@/components/PerformanceOptimizations";
 import { buildProfessionalsGroups } from "@/components/explore/ProfessionalsGrouping";
 import SeoMeta from "@/components/SeoMeta";
 import { useFuse } from "@/components/hooks/useFuse";
 import { WebsiteSchema, LocalBusinessListSchema } from "@/components/seo/SchemaOrg";
 import { Input } from "@/components/ui/input";
-import { Search } from "lucide-react";
+import { Search, Loader2 } from "lucide-react";
 import { Helmet } from "react-helmet-async";
-
-// New imports
-import TopTabs from "@/components/explore/TopTabs";
-import LocationSelector from "@/components/explore/LocationSelector";
-import BannerDuo from "@/components/banners/BannerDuo";
-import FoodSubcategoryGallery from "@/components/explore/FoodSubcategoryGallery";
-import ShoppingSubcategoryGallery from "@/components/explore/ShoppingSubcategoryGallery";
-import FilterBar from "@/components/explore/FilterBar";
 import { isOpenNow } from "@/components/utils/businessTime";
+
+// Lazy load heavy components
+const ListingGrid = lazy(() => import("@/components/explore/ListingGrid"));
+const ProfessionalsGrouping = lazy(() => import("@/components/explore/ProfessionalsGrouping"));
+const MobileTopBar = lazy(() => import("@/components/explore/MobileTopBar"));
+const TopTabs = lazy(() => import("@/components/explore/TopTabs"));
+const LocationSelector = lazy(() => import("@/components/explore/LocationSelector"));
+const BannerDuo = lazy(() => import("@/components/banners/BannerDuo"));
+const FoodSubcategoryGallery = lazy(() => import("@/components/explore/FoodSubcategoryGallery"));
+const ShoppingSubcategoryGallery = lazy(() => import("@/components/explore/ShoppingSubcategoryGallery"));
+const FilterBar = lazy(() => import("@/components/explore/FilterBar"));
+
+// Loading fallback component
+const LoadingFallback = () => (
+  <div className="flex items-center justify-center py-8">
+    <Loader2 className="w-6 h-6 animate-spin text-blue-600" />
+  </div>
+);
 
 export default function BrowsePage({ preSelectedState }) {
   const [activeListings, setActiveListings] = useState([]);
@@ -39,6 +43,7 @@ export default function BrowsePage({ preSelectedState }) {
   // New state variables
   const [activeTab, setActiveTab] = useState("food");
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 300); // Debounce search for better performance
   const [kashrutList, setKashrutList] = useState([]);
   const [kashrutData, setKashrutData] = useState([]);
   const [userLocation, setUserLocation] = useState(() => {
@@ -197,7 +202,7 @@ export default function BrowsePage({ preSelectedState }) {
     return [];
   }, [selectedCategory, activeTab, categories]);
 
-  // Fuzzy Search Integration
+  // Fuzzy Search Integration with debounced query
   const fuseKeys = useMemo(() => [
     'business_name', 
     'description', 
@@ -206,7 +211,7 @@ export default function BrowsePage({ preSelectedState }) {
     'subcategory_names'
   ], []);
   
-  const searchResults = useFuse(activeListings, searchQuery, fuseKeys);
+  const searchResults = useFuse(activeListings, debouncedSearch, fuseKeys);
 
   const loadData = useCallback(async () => {
     setLoading(true);
@@ -360,8 +365,8 @@ export default function BrowsePage({ preSelectedState }) {
   }, [loading, activeListings, isFoodCatId, isShopCatId]); // Run once when data loads
 
   const filteredListings = useMemo(() => {
-    // Start with fuse results instead of raw list if searching
-    let base = searchQuery ? searchResults : activeListings;
+    // Start with fuse results instead of raw list if searching (using debounced search)
+    let base = debouncedSearch ? searchResults : activeListings;
 
     // Category Tabs (Only if NOT searching, or force tab even when searching? 
     // Usually better to search globally if query exists, but UI has tabs. 
@@ -459,7 +464,7 @@ export default function BrowsePage({ preSelectedState }) {
     }
 
     return base;
-  }, [activeListings, searchResults, activeTab, selectedCategory, selectedSubcategory, selectedSubcategories, selectedProfGroup, categories, isFoodCatId, isShopCatId, filters, searchQuery]);
+  }, [activeListings, searchResults, activeTab, selectedCategory, selectedSubcategory, selectedSubcategories, selectedProfGroup, categories, isFoodCatId, isShopCatId, filters, debouncedSearch, userLocation]);
 
   // Dynamic SEO based on selected filters
   const seoTitle = selectedSubcategory 
@@ -638,43 +643,47 @@ export default function BrowsePage({ preSelectedState }) {
         }
       `}</style>
 
-      <MobileTopBar 
-          onCategoryClick={handleCategorySelect} 
-          categories={categories.filter(c => !c.parent_id)} 
-          selectedCategoryName={selectedCategory?.name || selectedProfGroup?.label}
-          onBackToCategories={() => { setSelectedCategory(null); setSelectedSubcategory(null); setSelectedProfGroup(null); }}
-          onClearAll={() => { setSelectedCategory(null); setSelectedSubcategory(null); setSelectedProfGroup(null); setSearchQuery(""); }}
-          allowSearch={true}
-          searchTerm={searchQuery}
-          onSearchChange={setSearchQuery}
-      />
+      <Suspense fallback={<LoadingFallback />}>
+        <MobileTopBar 
+            onCategoryClick={handleCategorySelect} 
+            categories={categories.filter(c => !c.parent_id)} 
+            selectedCategoryName={selectedCategory?.name || selectedProfGroup?.label}
+            onBackToCategories={() => { setSelectedCategory(null); setSelectedSubcategory(null); setSelectedProfGroup(null); }}
+            onClearAll={() => { setSelectedCategory(null); setSelectedSubcategory(null); setSelectedProfGroup(null); setSearchQuery(""); }}
+            allowSearch={true}
+            searchTerm={searchQuery}
+            onSearchChange={setSearchQuery}
+        />
+      </Suspense>
       
-      <nav className="bg-white/90 backdrop-blur-sm border-b shadow-sm" aria-label="ניווט עליון - לשוניות וסינון">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
-          <TopTabs active={activeTab} onChange={setActiveTab} />
-          
-          <div className="hidden lg:block relative flex-1 max-w-2xl mx-8">
-            <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-            <Input 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="חפש עסקים, שירותים או תגיות..."
-              className="pr-12 bg-white border-slate-200 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all rounded-2xl h-12 placeholder:text-slate-500 text-slate-900 font-medium text-base shadow-sm"
+      <Suspense fallback={<LoadingFallback />}>
+        <nav className="bg-white/90 backdrop-blur-sm border-b shadow-sm" aria-label="ניווט עליון - לשוניות וסינון">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between gap-4">
+            <TopTabs active={activeTab} onChange={setActiveTab} />
+            
+            <div className="hidden lg:block relative flex-1 max-w-2xl mx-8">
+              <Search className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+              <Input 
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="חפש עסקים, שירותים או תגיות..."
+                className="pr-12 bg-white border-slate-200 focus:bg-white focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all rounded-2xl h-12 placeholder:text-slate-500 text-slate-900 font-medium text-base shadow-sm"
+              />
+            </div>
+
+            <LocationSelector
+              value={userLocation}
+              onChange={(loc) => setUserLocation(loc)}
             />
           </div>
+        </nav>
 
-          <LocationSelector
-            value={userLocation}
-            onChange={(loc) => setUserLocation(loc)}
-          />
-        </div>
-      </nav>
-
-      <FilterBar 
-        filters={filters} 
-        onFilterChange={handleFilterChange}
-        kashrutList={kashrutList} 
-      />
+        <FilterBar 
+          filters={filters} 
+          onFilterChange={handleFilterChange}
+          kashrutList={kashrutList} 
+        />
+      </Suspense>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="main-content">
         <div className="space-y-8">
@@ -733,69 +742,77 @@ export default function BrowsePage({ preSelectedState }) {
             </div>
           )}
           
-          {!selectedCategory && !selectedSubcategory && !selectedProfGroup && selectedSubcategories.length === 0 && (
-            <>
-              {activeTab === "food" ? (
-                <section aria-labelledby="food-subcategories-heading">
-                  <h2 id="food-subcategories-heading" className="sr-only">קטגוריות אוכל</h2>
-                  <FoodSubcategoryGallery
-                    categories={categories}
-                    onSelect={(id) => handleSubcategorySelect(id)}
-                    selectedId={selectedSubcategory?.id}
-                    loading={loading}
-                  />
-                </section>
-              ) : (
-                <section aria-labelledby="shopping-subcategories-heading">
-                  <h2 id="shopping-subcategories-heading" className="sr-only">קטגוריות קניות</h2>
-                  <ShoppingSubcategoryGallery
-                    categories={categories}
-                    onSelect={(id) => handleSubcategorySelect(id)}
-                    selectedId={selectedSubcategory?.id}
-                    loading={loading}
-                  />
-                </section>
-              )}
-            </>
-          )}
+          <Suspense fallback={<LoadingFallback />}>
+            {!selectedCategory && !selectedSubcategory && !selectedProfGroup && selectedSubcategories.length === 0 && (
+              <>
+                {activeTab === "food" ? (
+                  <section aria-labelledby="food-subcategories-heading">
+                    <h2 id="food-subcategories-heading" className="sr-only">קטגוריות אוכל</h2>
+                    <FoodSubcategoryGallery
+                      categories={categories}
+                      onSelect={(id) => handleSubcategorySelect(id)}
+                      selectedId={selectedSubcategory?.id}
+                      loading={loading}
+                    />
+                  </section>
+                ) : (
+                  <section aria-labelledby="shopping-subcategories-heading">
+                    <h2 id="shopping-subcategories-heading" className="sr-only">קטגוריות קניות</h2>
+                    <ShoppingSubcategoryGallery
+                      categories={categories}
+                      onSelect={(id) => handleSubcategorySelect(id)}
+                      selectedId={selectedSubcategory?.id}
+                      loading={loading}
+                    />
+                  </section>
+                )}
+              </>
+            )}
+          </Suspense>
 
-          <section aria-label="באנרים פרסומיים">
-            <BannerDuo />
-          </section>
-
-          {!selectedCategory && !selectedSubcategory && !selectedProfGroup && (
-            <section aria-labelledby="professionals-heading">
-              <h2 id="professionals-heading" className="sr-only">קבוצות מקצועיות</h2>
-              <ProfessionalsGrouping 
-                groups={professionalsGroups}
-                onSelect={handleProfGroupSelect}
-                loading={loading}
-              />
+          <Suspense fallback={<LoadingFallback />}>
+            <section aria-label="באנרים פרסומיים">
+              <BannerDuo />
             </section>
-          )}
+          </Suspense>
 
-          {(selectedCategory || selectedProfGroup || activeTab) && (
-            <section aria-labelledby="listings-heading">
-              <h2 id="listings-heading" className="sr-only">
-                {selectedSubcategory 
-                  ? `עסקים בקטגוריית ${selectedSubcategory.name}` 
-                  : selectedCategory 
-                    ? `עסקים בקטגוריית ${selectedCategory.name}`
-                    : selectedProfGroup
-                      ? `עסקים ב${selectedProfGroup.label}`
-                      : activeTab === "food" 
-                        ? "עסקי אוכל"
-                        : "עסקי קניות"
-                }
-              </h2>
-              <ListingGrid 
-                listings={filteredListings} 
-                loading={loading} 
-                categories={categories}
-                kashrutData={kashrutData}
-              />
-            </section>
-          )}
+          <Suspense fallback={<LoadingFallback />}>
+            {!selectedCategory && !selectedSubcategory && !selectedProfGroup && (
+              <section aria-labelledby="professionals-heading">
+                <h2 id="professionals-heading" className="sr-only">קבוצות מקצועיות</h2>
+                <ProfessionalsGrouping 
+                  groups={professionalsGroups}
+                  onSelect={handleProfGroupSelect}
+                  loading={loading}
+                />
+              </section>
+            )}
+          </Suspense>
+
+          <Suspense fallback={<LoadingFallback />}>
+            {(selectedCategory || selectedProfGroup || activeTab) && (
+              <section aria-labelledby="listings-heading">
+                <h2 id="listings-heading" className="sr-only">
+                  {selectedSubcategory 
+                    ? `עסקים בקטגוריית ${selectedSubcategory.name}` 
+                    : selectedCategory 
+                      ? `עסקים בקטגוריית ${selectedCategory.name}`
+                      : selectedProfGroup
+                        ? `עסקים ב${selectedProfGroup.label}`
+                        : activeTab === "food" 
+                          ? "עסקי אוכל"
+                          : "עסקי קניות"
+                  }
+                </h2>
+                <ListingGrid 
+                  listings={filteredListings} 
+                  loading={loading} 
+                  categories={categories}
+                  kashrutData={kashrutData}
+                />
+              </section>
+            )}
+          </Suspense>
         </div>
       </div>
     </div>
