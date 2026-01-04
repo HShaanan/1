@@ -1424,7 +1424,7 @@ export default function BusinessPageView() {
       {/* פס קריאה לבעלות על עסק - למשתמשים שאינם בעלים */}
       {user && !canEdit && (
         <div className="sticky top-0 z-50 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-600 shadow-lg border-b-2 border-indigo-700">
-          <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="relative">
                 <Store className="w-6 h-6 text-white" />
@@ -1434,19 +1434,46 @@ export default function BusinessPageView() {
                   זה העסק שלך?
                 </p>
                 <p className="text-blue-100 text-xs sm:text-sm">
-                  קח בעלות על העמוד ותנהל אותו בעצמך
+                  קח בעלות או דווח על עמוד לא רלוונטי
                 </p>
               </div>
             </div>
-            <a
-              href={createPageUrl("BusinessLanding")}
-              className="bg-white hover:bg-blue-50 text-indigo-700 px-4 py-2 rounded-lg font-bold text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center gap-2"
-              onClick={() => safeTrackEvent('ownership_request_click', { from_page: businessPage.id })}
-            >
-              <Sparkles className="w-4 h-4" />
-              <span className="hidden sm:inline">בקש בעלות</span>
-              <span className="sm:hidden">בקש</span>
-            </a>
+            <div className="flex gap-2 w-full sm:w-auto">
+              <a
+                href={createPageUrl("BusinessLanding")}
+                className="flex-1 sm:flex-none bg-white hover:bg-blue-50 text-indigo-700 px-4 py-2 rounded-lg font-bold text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+                onClick={() => safeTrackEvent('ownership_request_click', { from_page: businessPage.id })}
+              >
+                <Sparkles className="w-4 h-4" />
+                <span className="hidden sm:inline">בקש בעלות</span>
+                <span className="sm:hidden">בקש בעלות</span>
+              </a>
+              <button
+                onClick={async () => {
+                  const reason = prompt("למה לדעתך צריך להסיר את העמוד הזה?");
+                  if (!reason || reason.trim() === "") return;
+                  
+                  try {
+                    await base44.entities.Report.create({
+                      report_type: "inappropriate",
+                      report_text: `בקשה להסרת עמוד עסק: ${businessPage.business_name} (ID: ${businessPage.id})\nסיבה: ${reason}`,
+                      user_email: user.email,
+                      user_name: user.full_name,
+                      page_url: window.location.href
+                    });
+                    alert("הדיווח נשלח בהצלחה. נבדוק את הבקשה בהקדם.");
+                    safeTrackEvent('removal_request', { from_page: businessPage.id });
+                  } catch (error) {
+                    alert("שגיאה בשליחת הדיווח. נסה שוב.");
+                  }
+                }}
+                className="flex-1 sm:flex-none bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg font-bold text-sm shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-2"
+              >
+                <Flag className="w-4 h-4" />
+                <span className="hidden sm:inline">דווח להסרה</span>
+                <span className="sm:hidden">הסר</span>
+              </button>
+            </div>
           </div>
         </div>
       )}
