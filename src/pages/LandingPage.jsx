@@ -284,6 +284,81 @@ export default function LandingPage() {
             </Link>
           </div>
         </ScrollReveal>
+
+        {/* CTA Section - Share with Community */}
+        <ScrollReveal animation="fadeUp" delay={400}>
+          <div className="mt-16 sm:mt-20 mx-auto max-w-4xl">
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 p-1 shadow-2xl">
+              <div className="relative bg-white/95 backdrop-blur-sm rounded-[22px] p-8 sm:p-12 text-center">
+                <div className="absolute -top-6 -right-6 w-32 h-32 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full opacity-20 blur-2xl animate-pulse-slow"></div>
+                <div className="absolute -bottom-6 -left-6 w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full opacity-20 blur-2xl animate-pulse-slower"></div>
+                
+                <div className="relative z-10">
+                  <div className="inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full mb-6 shadow-lg">
+                    <Users className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+                  </div>
+                  
+                  <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-slate-900 mb-4">
+                    עזרו לנו לשתף את הקהילה! 🤝
+                  </h2>
+                  
+                  <p className="text-base sm:text-lg text-slate-600 mb-6 max-w-2xl mx-auto leading-relaxed">
+                    משלנו שייכת לכולם! ספרו לחברים, משפחה ובני קהילה על הפלטפורמה שלנו. 
+                    ביחד נבנה קהילה דיגיטלית חזקה ומשגשגת שתועיל לכולם.
+                  </p>
+                  
+                  <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <Button 
+                      size="lg" 
+                      onClick={() => {
+                        if (navigator.share) {
+                          navigator.share({
+                            title: 'משלנו - כל מה שטוב כשר וקרוב',
+                            text: 'גיליתי פלטפורמה מדהימה לעסקים ושירותים בקהילה! בואו להצטרף 🎉',
+                            url: window.location.origin
+                          }).catch(() => {});
+                        } else {
+                          navigator.clipboard.writeText(window.location.origin);
+                          alert('הקישור הועתק! שתפו אותו עם חברים ומשפחה');
+                        }
+                      }}
+                      className="rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white font-bold px-8 py-6 text-base sm:text-lg shadow-xl hover:shadow-2xl transition-all duration-300 group min-h-[48px]"
+                    >
+                      <Heart className="w-5 h-5 ml-2 group-hover:scale-110 transition-transform" />
+                      שתפו עם חברים
+                    </Button>
+                    
+                    <Link to={createPageUrl("BusinessLanding")}>
+                      <Button 
+                        size="lg" 
+                        variant="outline"
+                        className="rounded-full border-2 border-purple-600 text-purple-600 hover:bg-purple-50 font-bold px-8 py-6 text-base sm:text-lg min-h-[48px]"
+                      >
+                        <Sparkles className="w-5 h-5 ml-2" />
+                        הצטרפו כבעלי עסק
+                      </Button>
+                    </Link>
+                  </div>
+                  
+                  <div className="mt-8 flex flex-wrap justify-center gap-6 text-sm text-slate-500">
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                      <span>חינם לחלוטין</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                      <span>קל ופשוט</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div>
+                      <span>מועיל לקהילה</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
         </section>
 
       {/* ============== CINEMATIC SHOWCASE SECTION ============== */}
