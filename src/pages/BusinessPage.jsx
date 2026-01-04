@@ -60,7 +60,7 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
   
   const mainImage = businessPage.images?.[0] || defaultHeroImage; // This is the main hero image with fallback
   const croppedLogo = businessPage.images?.[1] || defaultLogo; // This is the explicitly cropped logo image (images[1]) with fallback
-  const kashrutLogo = businessPage.kashrut_logo_url || null;
+  const kashrutLogo = businessPage.kashrutLogoFromDb || businessPage.kashrut_logo_url || null;
 
   // קריאת הגדרות מיקום לוגו מה-metadata
   // Default values for logo position: zoom 1, center (50% x, 50% y), no rotation (0)
@@ -860,6 +860,21 @@ export default function BusinessPageView() {
       // This changes the URL in the browser without a full page reload.
       if (pageId && page.url_slug && !pageSlug) {
         window.history.replaceState(null, '', `${window.location.pathname}?slug=${page.url_slug}`);
+      }
+
+      // טעינת לוגו כשרות מטבלת Kashrut
+      if (page.kashrut_authority_name) {
+        try {
+          const kashrutRecords = await base44.entities.Kashrut.filter({ 
+            name: page.kashrut_authority_name,
+            is_active: true 
+          });
+          if (kashrutRecords && kashrutRecords.length > 0) {
+            page.kashrutLogoFromDb = kashrutRecords[0].logo_url || null;
+          }
+        } catch (error) {
+          console.error('Error loading kashrut logo:', error);
+        }
       }
 
       setBusinessPage(page);

@@ -39,6 +39,7 @@ export default function BrowsePage({ preSelectedState }) {
   const [activeTab, setActiveTab] = useState("food");
   const [searchQuery, setSearchQuery] = useState("");
   const [kashrutList, setKashrutList] = useState([]);
+  const [kashrutData, setKashrutData] = useState([]);
   const [userLocation, setUserLocation] = useState(() => {
     try {
       const raw = localStorage.getItem("meshlanoo_browse_location");
@@ -217,6 +218,7 @@ export default function BrowsePage({ preSelectedState }) {
         setActiveListings(cached.listings);
         setProfessionalsGroups(cached.profGroups);
         setKashrutList(cached.kashrut || []);
+        setKashrutData(cached.kashrut || []);
         
         console.log('📦 [Browse] Loaded from cache');
         console.log('📊 Total listings:', cached.listings.length);
@@ -228,7 +230,7 @@ export default function BrowsePage({ preSelectedState }) {
             approval_status: 'approved',
             is_frozen: false
           }, "-created_date", 200),
-          base44.entities.Kashrut.list("name")
+          base44.entities.Kashrut.filter({ is_active: true })
         ]);
         
         console.log('🔍 [Browse] Loaded fresh data');
@@ -247,6 +249,7 @@ export default function BrowsePage({ preSelectedState }) {
         setActiveListings(pages);
         setProfessionalsGroups(profGroups);
         setKashrutList(kashrut || []);
+        setKashrutData(kashrut || []);
         dataCache.set(cacheKey, { categories: cats, listings: pages, profGroups, kashrut }, 600);
       }
     } catch (error) {
@@ -775,6 +778,7 @@ export default function BrowsePage({ preSelectedState }) {
                 listings={filteredListings} 
                 loading={loading} 
                 categories={categories}
+                kashrutData={kashrutData}
               />
             </section>
           )}

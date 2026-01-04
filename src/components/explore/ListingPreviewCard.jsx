@@ -5,11 +5,51 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, Truck, ShoppingBag } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { LazyImage } from "@/components/PerformanceOptimizations";
+import { base44 } from "@/api/base44Client";
 
-export default function ListingPreviewCard({ businessPage, onClick, categories = [] }) {
+export default function ListingPreviewCard({ businessPage, onClick, categories = [], kashrutData = [] }) {
   const navigate = useNavigate();
+  const [kashrutLogo, setKashrutLogo] = React.useState(null);
   
   if (!businessPage) return null;
+
+  // טעינת לוגו כשרות מטבלת Kashrut לפי kashrut_authority_name
+  React.useEffect(() => {
+    const loadKashrutLogo = async () => {
+      if (!businessPage.kashrut_authority_name) {
+        setKashrutLogo(null);
+        return;
+      }
+      
+      try {
+        // נסה למצוא בנתונים שהועברו (אופטימיזציה)
+        if (kashrutData && kashrutData.length > 0) {
+          const kashrut = kashrutData.find(k => k.name === businessPage.kashrut_authority_name);
+          if (kashrut?.logo_url) {
+            setKashrutLogo(kashrut.logo_url);
+            return;
+          }
+        }
+        
+        // אם לא נמצא בנתונים שהועברו, טען מהשרת
+        const kashrutRecords = await base44.entities.Kashrut.filter({ 
+          name: businessPage.kashrut_authority_name,
+          is_active: true 
+        });
+        
+        if (kashrutRecords && kashrutRecords.length > 0) {
+          setKashrutLogo(kashrutRecords[0].logo_url || null);
+        } else {
+          setKashrutLogo(null);
+        }
+      } catch (error) {
+        console.error('Error loading kashrut logo:', error);
+        setKashrutLogo(null);
+      }
+    };
+
+    loadKashrutLogo();
+  }, [businessPage.kashrut_authority_name, kashrutData]);
 
   const handleClick = () => {
     if (onClick) {
@@ -22,7 +62,6 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
 
   const defaultImage = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/e8b173c76_image2.jpg";
   const displayImage = businessPage.preview_image || businessPage.images?.[0] || defaultImage;
-  const kashrutLogo = businessPage.kashrut_logo_url;
 
   return (
     <Card
