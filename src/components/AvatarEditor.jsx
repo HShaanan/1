@@ -50,6 +50,7 @@ export default function AvatarEditorModal({ isOpen, imageUrl, onSave, onCancel, 
               color={[255, 255, 255, 0.8]}
               scale={scale}
               rotate={rotate}
+              crossOrigin="anonymous"
               className="shadow-2xl"
             />
           </div>
