@@ -32,6 +32,7 @@ export default function BrowsePage({ preSelectedState }) {
   const [activeListings, setActiveListings] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
   const [selectedSubcategories, setSelectedSubcategories] = useState([]);
@@ -279,9 +280,29 @@ export default function BrowsePage({ preSelectedState }) {
     }
   }, []);
 
+  // Check authentication before loading data
   useEffect(() => {
-    loadData();
-  }, [loadData]);
+    const checkAuth = async () => {
+      try {
+        const isAuth = await base44.auth.isAuthenticated();
+        if (!isAuth) {
+          await base44.auth.redirectToLogin(window.location.href);
+          return;
+        }
+        setAuthLoading(false);
+      } catch (error) {
+        console.error("Auth check failed:", error);
+        await base44.auth.redirectToLogin(window.location.href);
+      }
+    };
+    checkAuth();
+  }, []);
+
+  useEffect(() => {
+    if (!authLoading) {
+      loadData();
+    }
+  }, [loadData, authLoading]);
 
   const subCategories = useMemo(() => {
     if (!selectedCategory) return [];
@@ -490,6 +511,28 @@ export default function BrowsePage({ preSelectedState }) {
         : "קניות ושירותים";
   
   const seoCity = userLocation?.city || "ביתר עילית";
+
+  // Show loading while checking authentication
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+        <div className="fixed inset-0 -z-10 overflow-hidden">
+          <div className="absolute inset-0 animate-gradient-smooth"></div>
+          <div className="bubble bubble-1"></div>
+          <div className="bubble bubble-2"></div>
+        </div>
+        <style>{`
+          .animate-gradient-smooth { background: linear-gradient(-45deg, #FFFFFF, #F0F9FF, #E0F2FE, #BAE6FD); background-size: 400% 400%; animation: gradient-flow 20s ease infinite; }
+          @keyframes gradient-flow { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
+          .bubble { position: absolute; border-radius: 50%; background: radial-gradient(circle at 30% 30%, rgba(186, 230, 253, 0.25), rgba(240, 249, 255, 0.1)); backdrop-filter: blur(3px); }
+          .bubble-1 { width: 80px; height: 80px; left: 10%; animation: float-up 12s linear infinite; }
+          .bubble-2 { width: 60px; height: 60px; left: 25%; animation: float-up 15s linear infinite 2s; }
+          @keyframes float-up { 0% { transform: translateY(100vh) scale(0); opacity: 0; } 100% { transform: translateY(-100vh) scale(1); opacity: 0; } }
+        `}</style>
+        <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+      </div>
+    );
+  }
 
   return (
     <div dir="rtl" className="min-h-screen relative">
