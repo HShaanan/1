@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trash2, Upload, Image as ImageIcon, Shield, Pencil, Crop } from "lucide-react";
-import ImageCropper from "@/components/ImageCropper";
+import AvatarEditorModal from "@/components/AvatarEditor";
 
 const TYPES = ["בד\"צ", "רבנות מהדרין", "רבנות", "אחר"];
 
@@ -207,15 +207,12 @@ export default function AdminKashrut() {
         </Card>
       </div>
 
-      <ImageCropper
+      <AvatarEditorModal
         isOpen={isCropperOpen}
         imageUrl={form.logo_url}
-        onCropComplete={handleCropSave}
+        onSave={handleCropSave}
         onCancel={() => setIsCropperOpen(false)}
-        aspectRatioOptions={[
-          { name: "ריבוע", ratio: 1, icon: Shield },
-          { name: "חופשי", ratio: null, icon: ImageIcon }
-        ]}
+        title="עריכת לוגו כשרות"
       />
     </div>
   );
