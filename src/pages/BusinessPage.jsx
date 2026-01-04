@@ -213,7 +213,7 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
                   src={kashrutLogo}
                   alt="לוגו כשרות"
                   className="w-full h-full relative z-10"
-                  imgClassName="object-contain w-full h-full transition-all duration-300 group-hover:brightness-110 group-hover:scale-105"
+                  imgClassName="object-contain w-full h-full transition-all duration-300 group-hover:brightness-110 group-hover:scale-105 rounded-2xl"
                   style={{ imageRendering: 'crisp-edges' }} />
 
                 <div className="absolute -inset-1.5 bg-gradient-to-br from-blue-50/20 via-indigo-50/20 to-purple-50/20 rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500 -z-10" />
