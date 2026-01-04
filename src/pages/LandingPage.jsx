@@ -188,7 +188,7 @@ export default function LandingPage() {
           className="block w-full touch-manipulation group"
         >
           <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/ce0889ec3_image.png"
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/fb8c8a10a_image3.jpg"
             alt="כל מה שטוב, כשר וקרוב - זירת המסחר הדיגיטלית החדשה של המגזר החרדי"
             className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] object-cover transform group-hover:scale-[1.01] transition-transform duration-700"
           />
