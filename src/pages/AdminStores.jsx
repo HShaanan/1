@@ -31,6 +31,8 @@ export default function AdminStoresPage() {
         const [businessLandingGenerating, setBusinessLandingGenerating] = useState(false);
         const [businessLandingDialogOpen, setBusinessLandingDialogOpen] = useState(false);
         const [businessLandingPreview, setBusinessLandingPreview] = useState(null);
+        const [selectedCity, setSelectedCity] = useState("all");
+        const [availableCities, setAvailableCities] = useState([]);
 
   // Form State
   const [formState, setFormState] = useState({
@@ -70,6 +72,13 @@ export default function AdminStoresPage() {
       setCategories(cats);
       setKashrutList(kashrut);
       setAllBusinesses(businesses.map(b => ({ id: b.id, name: b.business_name })));
+      
+      // Extract unique cities
+      const citiesSet = new Set();
+      businesses.forEach(b => {
+        if (b.city) citiesSet.add(b.city);
+      });
+      setAvailableCities(Array.from(citiesSet).sort());
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -305,7 +314,7 @@ export default function AdminStoresPage() {
     try {
         const res = await base44.functions.invoke('generateBusinessLandingPages', {
             mode: 'preview',
-            city: 'ביתר עילית'
+            city: selectedCity === "all" ? null : selectedCity
         });
         if (res.data?.success) {
             setBusinessLandingPreview(res.data);
@@ -323,7 +332,7 @@ export default function AdminStoresPage() {
     try {
         const res = await base44.functions.invoke('generateBusinessLandingPages', {
             mode: 'create',
-            city: 'ביתר עילית'
+            city: selectedCity === "all" ? null : selectedCity
         });
         if (res.data?.success) {
             alert(`נוצרו בהצלחה ${res.data.stats.created} דפי נחיתה לעסקים!`);
@@ -776,8 +785,32 @@ export default function AdminStoresPage() {
         <Dialog open={businessLandingDialogOpen} onOpenChange={setBusinessLandingDialogOpen}>
           <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
-              <DialogTitle>יצירת דפי נחיתה לעסקים - ביתר עילית</DialogTitle>
+              <DialogTitle>יצירת דפי נחיתה לעסקים</DialogTitle>
             </DialogHeader>
+
+            {/* City Selector */}
+            <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+              <Label className="mb-2 block font-bold text-blue-900">בחר עיר:</Label>
+              <Select value={selectedCity} onValueChange={setSelectedCity}>
+                <SelectTrigger className="bg-white">
+                  <SelectValue placeholder="כל הערים" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">כל הערים</SelectItem>
+                  {availableCities.map(city => (
+                    <SelectItem key={city} value={city}>{city}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button 
+                onClick={handleBusinessLandingGenerate} 
+                className="mt-3 w-full bg-blue-600 hover:bg-blue-700"
+                disabled={businessLandingGenerating}
+              >
+                {businessLandingGenerating ? <Loader2 className="w-4 h-4 ml-2 animate-spin" /> : <Search className="w-4 h-4 ml-2" />}
+                טען תצוגה מקדימה
+              </Button>
+            </div>
 
             {businessLandingGenerating && !businessLandingPreview ? (
               <div className="flex flex-col items-center justify-center py-12 gap-4">

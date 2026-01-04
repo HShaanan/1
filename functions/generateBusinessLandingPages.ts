@@ -9,9 +9,10 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Unauthorized - Admin only' }, { status: 401 });
         }
 
-        const { city = 'ביתר עילית', mode = 'preview' } = await req.json().catch(() => ({}));
+        const { city = null, mode = 'preview' } = await req.json().catch(() => ({}));
 
-        console.log(`🚀 Starting business landing pages generation for ${city}`);
+        const cityLabel = city || 'כל הערים';
+        console.log(`🚀 Starting business landing pages generation for ${cityLabel}`);
 
         // שלב 1: שליפת כל העסקים הפעילים
         const businesses = await base44.asServiceRole.entities.BusinessPage.filter({ 
@@ -22,12 +23,12 @@ Deno.serve(async (req) => {
 
         console.log(`📊 Found ${businesses.length} active businesses`);
 
-        // סינון עסקים לפי עיר אם צוין
+        // סינון עסקים לפי עיר אם צוין, אחרת כולם
         const cityBusinesses = city 
             ? businesses.filter(b => b.city === city)
             : businesses;
 
-        console.log(`🏙️ ${cityBusinesses.length} businesses in ${city}`);
+        console.log(`🏙️ ${cityBusinesses.length} businesses in ${cityLabel}`);
 
         // שלב 2: בדיקת דפים קיימים
         const existingPages = await base44.asServiceRole.entities.LandingPage.list();
@@ -38,14 +39,16 @@ Deno.serve(async (req) => {
         // שלב 3: בניית רשימת דפים לייצור
         const pagesToCreate = cityBusinesses
             .filter(business => {
-                const slug = `${business.business_name}-${city}`
+                const businessCity = business.city || 'ביתר עילית';
+                const slug = `${business.business_name}-${businessCity}`
                     .toLowerCase()
                     .replace(/\s+/g, '-')
                     .replace(/[^\u0590-\u05FFa-z0-9-]/g, '');
                 return !existingSlugs.has(slug);
             })
             .map(business => {
-                const slug = `${business.business_name}-${city}`
+                const businessCity = business.city || 'ביתר עילית';
+                const slug = `${business.business_name}-${businessCity}`
                     .toLowerCase()
                     .replace(/\s+/g, '-')
                     .replace(/[^\u0590-\u05FFa-z0-9-]/g, '');
@@ -53,9 +56,10 @@ Deno.serve(async (req) => {
                 return {
                     business,
                     slug,
-                    title: `${business.business_name} ב${city}`,
-                    meta_title: `${business.business_name} ב${city} | משלנו`,
-                    meta_description: `מצא את ${business.business_name} ב${city}. ${business.description?.substring(0, 100) || 'עסק מומלץ במשלנו'}`
+                    city: businessCity,
+                    title: `${business.business_name} ב${businessCity}`,
+                    meta_title: `${business.business_name} ב${businessCity} | משלנו`,
+                    meta_description: `מצא את ${business.business_name} ב${businessCity}. ${business.description?.substring(0, 100) || 'עסק מומלץ במשלנו'}`
                 };
             });
 
@@ -85,11 +89,11 @@ Deno.serve(async (req) => {
             try {
                 // יצירת תוכן AI
                 const contentResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
-                    prompt: `צור תוכן SEO איכותי ומושך לדף נחיתה של העסק "${pageData.business.business_name}" ב${city}.
+                    prompt: `צור תוכן SEO איכותי ומושך לדף נחיתה של העסק "${pageData.business.business_name}" ב${pageData.city}.
                     
 העסק: ${pageData.business.business_name}
 תיאור: ${pageData.business.description || 'עסק מומלץ'}
-עיר: ${city}
+עיר: ${pageData.city}
 
 כתוב תוכן בעברית תקנית, 150-250 מילים, בסגנון AIDA:
 - Attention: למה כדאי לבחור בעסק הזה
@@ -114,7 +118,7 @@ Deno.serve(async (req) => {
                 const newPage = await base44.asServiceRole.entities.LandingPage.create({
                     business_page_id: pageData.business.id,
                     business_name: pageData.business.business_name,
-                    city: city,
+                    city: pageData.city,
                     slug: pageData.slug,
                     title: pageData.title,
                     meta_title: pageData.meta_title,
