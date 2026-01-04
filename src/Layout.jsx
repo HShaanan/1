@@ -10,12 +10,12 @@ import { Button } from "@/components/ui/button";
 import { createPageUrl } from "@/utils";
 import { HelmetProvider } from "react-helmet-async";
 import {
-        Menu, X, Store, Plus, Search, User as UserIcon, Heart,
-        Tag, UserCircle, LogOut, Shield,
-        AlertTriangle, Users, FileText, Settings, Sparkles, Zap, Mail, Wand2, Layers,
-        MessageSquare, Activity, Key, ImageIcon, Megaphone, FileText as ReviewsIcon,
-        Bug, Bot, ListChecks, Clock, Truck, ShoppingBag, Globe, Database, MapPin
-        } from "lucide-react";
+  Menu, X, Store, Plus, Search, User as UserIcon, Heart,
+  Tag, UserCircle, LogOut, Shield,
+  AlertTriangle, Users, FileText, Settings, Sparkles, Zap, Mail, Wand2, Layers,
+  MessageSquare, Activity, Key, ImageIcon, Megaphone, FileText as ReviewsIcon,
+  Bug, Bot, ListChecks, Clock, Truck, ShoppingBag, Globe, Database, MapPin } from
+"lucide-react";
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
@@ -71,7 +71,7 @@ export default function Layout({ children, currentPageName }) {
 
     try {
       const timeoutPromise = new Promise((_, reject) =>
-        setTimeout(() => reject(new Error('Admin stats request timed out after 10 seconds')), 10000)
+      setTimeout(() => reject(new Error('Admin stats request timed out after 10 seconds')), 10000)
       );
 
       // Using base44.functions.invoke instead of direct import
@@ -112,9 +112,9 @@ export default function Layout({ children, currentPageName }) {
 
         // 2. Handle User & Categories
         const [categoriesResult, userResult] = await Promise.allSettled([
-          categoriesPromise,
-          userPromise
-        ]);
+        categoriesPromise,
+        userPromise]
+        );
 
         // Handle Categories
         if (categoriesResult.status === 'fulfilled') {
@@ -133,7 +133,7 @@ export default function Layout({ children, currentPageName }) {
         // 3. Logic for Logged In User
         if (currentUser) {
           if (currentUser.role === 'admin') {
-             loadAdminStats(); 
+            loadAdminStats();
           }
 
           // TERMS ENFORCEMENT - STRICT BLOCKING
@@ -141,26 +141,26 @@ export default function Layout({ children, currentPageName }) {
           const isExemptPage = currentPageName === 'TermsOfUsePage' || currentPageName === 'LandingPage';
 
           if (!isExemptPage) {
-              const cached = sessionStorage.getItem(`terms_accepted_${CURRENT_TERMS_VERSION}`);
+            const cached = sessionStorage.getItem(`terms_accepted_${CURRENT_TERMS_VERSION}`);
 
-              if (cached !== 'true') {
-                  // Must verify with DB before allowing render
-                  const agreements = await base44.entities.UserAgreement.filter({
-                      user_email: currentUser.email,
-                      agreement_type: 'terms_of_use',
-                      agreement_version: CURRENT_TERMS_VERSION
-                  });
+            if (cached !== 'true') {
+              // Must verify with DB before allowing render
+              const agreements = await base44.entities.UserAgreement.filter({
+                user_email: currentUser.email,
+                agreement_type: 'terms_of_use',
+                agreement_version: CURRENT_TERMS_VERSION
+              });
 
-                  if (agreements.length === 0) {
-                      console.log("Terms not accepted, strictly redirecting...");
-                      // Redirect and RETURN immediately so isLoading stays TRUE
-                      // This effectively blocks any content rendering until redirect completes
-                      navigate(createPageUrl('TermsOfUsePage') + '?mode=accept');
-                      return; 
-                  } else {
-                      sessionStorage.setItem(`terms_accepted_${CURRENT_TERMS_VERSION}`, 'true');
-                  }
+              if (agreements.length === 0) {
+                console.log("Terms not accepted, strictly redirecting...");
+                // Redirect and RETURN immediately so isLoading stays TRUE
+                // This effectively blocks any content rendering until redirect completes
+                navigate(createPageUrl('TermsOfUsePage') + '?mode=accept');
+                return;
+              } else {
+                sessionStorage.setItem(`terms_accepted_${CURRENT_TERMS_VERSION}`, 'true');
               }
+            }
           }
         }
 
@@ -207,7 +207,7 @@ export default function Layout({ children, currentPageName }) {
       localStorage.removeItem('meshlanoo_user_session');
       Object.keys(localStorage).forEach((k) => {
         if (k.toLowerCase().includes('cache') || k.startsWith('meshlanoo_')) {
-          try { localStorage.removeItem(k); } catch (e) {}
+          try {localStorage.removeItem(k);} catch (e) {}
         }
       });
       sessionStorage.clear();
@@ -229,8 +229,8 @@ export default function Layout({ children, currentPageName }) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -239,14 +239,14 @@ export default function Layout({ children, currentPageName }) {
         dir="rtl"
         lang="he"
         className="min-h-screen font-sans text-text-primary"
-        style={{ fontFamily: '"Ronda", "Heebo", "Noto Sans Hebrew", system-ui, -apple-system, "Rubik", Arial, Helvetica, sans-serif' }}
-      >
+        style={{ fontFamily: '"Ronda", "Heebo", "Noto Sans Hebrew", system-ui, -apple-system, "Rubik", Arial, Helvetica, sans-serif' }}>
+
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link
-        href="https://fonts.googleapis.com/css2?family=Ronda:wght@300;400;500;600;700;800&family=Assistant:wght@300;400;500;600;700;800&display=swap&subset=hebrew"
-        rel="stylesheet"
-      />
+          href="https://fonts.googleapis.com/css2?family=Ronda:wght@300;400;500;600;700;800&family=Assistant:wght@300;400;500;600;700;800&display=swap&subset=hebrew"
+          rel="stylesheet" />
+
 
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-gray-50 via-blue-50 to-indigo-50" />
@@ -348,28 +348,28 @@ export default function Layout({ children, currentPageName }) {
       `}</style>
 
       <div className="relative z-10 min-h-screen flex flex-col">
-        <a 
-          href="#main-content" 
-          className="skip-to-content"
-          tabIndex={0}
-        >
+        <a
+            href="#main-content"
+            className="skip-to-content"
+            tabIndex={0}>
+
           דלג לתוכן הראשי
         </a>
 
-        <header 
-          className="bg-white border-b px-3 lg:px-6 py-3 sticky top-0 z-40 h-24 lg:h-28 flex items-center shadow-sm" 
-          role="banner"
-          aria-label="ניווט ראשי"
-        >
+        <header
+            className="bg-white border-b px-3 lg:px-6 py-3 sticky top-0 z-40 h-24 lg:h-28 flex items-center shadow-sm"
+            role="banner"
+            aria-label="ניווט ראשי">
+
           <div className="relative flex items-center justify-between w-full max-w-7xl mx-auto">
             <div className="flex items-center gap-2 lg:gap-4">
-              {user ? (
+              {user ?
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button
                       className="w-10 h-10 lg:w-10 lg:h-10 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center shadow-sm hover:shadow-md transition-all duration-200 hover:scale-105 focus:outline-none"
-                      aria-label={`תפריט משתמש - ${user.full_name || 'משתמש'}`}
-                    >
+                      aria-label={`תפריט משתמש - ${user.full_name || 'משתמש'}`}>
+
                       <span className="text-white font-bold text-sm lg:text-sm" aria-hidden="true">
                         {user.full_name ? user.full_name.charAt(0) : 'מ'}
                       </span>
@@ -393,8 +393,8 @@ export default function Layout({ children, currentPageName }) {
                       <span>התנתק</span>
                     </DropdownMenuItem>
                   </DropdownMenuContent>
-                </DropdownMenu>
-              ) : (
+                </DropdownMenu> :
+
                 <button
                   onClick={async () => {
                     try {
@@ -404,25 +404,25 @@ export default function Layout({ children, currentPageName }) {
                     }
                   }}
                   className="lg:block hidden"
-                  aria-label="התחבר למערכת"
-                >
+                  aria-label="התחבר למערכת">
+
                   <Button variant="outline" className="button-hover rounded-xl shadow-sm text-xs lg:text-sm px-2 lg:px-4 py-1 lg:py-2">
                     <UserIcon className="w-3 h-3 lg:w-4 lg:h-4 ml-1 lg:ml-2" aria-hidden="true" />
                     <span className="hidden sm:inline">התחברות</span>
                     <span className="sm:hidden">כניסה</span>
                   </Button>
                 </button>
-              )}
+                }
 
               <nav className="hidden lg:flex items-center gap-1" aria-label="ניווט ראשי">
                 <Link to={createPageUrl("Browse")} aria-label="עמוד משלנו ביזנעס">
                   <Button
-                    variant="ghost"
-                    className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
-                      currentPageName === "Browse" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
-                    }`}
-                    aria-current={currentPageName === "Browse" ? "page" : undefined}
-                  >
+                      variant="ghost"
+                      className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
+                      currentPageName === "Browse" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"}`
+                      }
+                      aria-current={currentPageName === "Browse" ? "page" : undefined}>
+
                     <Store className="w-4 h-4 ml-2" aria-hidden="true" />
                     משלנו ביזנעס
                   </Button>
@@ -430,12 +430,12 @@ export default function Layout({ children, currentPageName }) {
 
                 <Link to={createPageUrl("BusinessLanding")} aria-label="הצטרף למשלנו והוסף עסק">
                   <Button
-                    variant="ghost"
-                    className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring relative overflow-hidden ${
-                      currentPageName === "BusinessLanding" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
-                    }`}
-                    aria-current={currentPageName === "BusinessLanding" ? "page" : undefined}
-                  >
+                      variant="ghost"
+                      className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring relative overflow-hidden ${
+                      currentPageName === "BusinessLanding" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"}`
+                      }
+                      aria-current={currentPageName === "BusinessLanding" ? "page" : undefined}>
+
                     <div className="relative flex items-center">
                       <Sparkles className="w-4 h-4 ml-2 ai-sparkle" aria-hidden="true" />
                       <span>הצטרפו למשלנו</span>
@@ -446,27 +446,27 @@ export default function Layout({ children, currentPageName }) {
 
                 <Link to={createPageUrl("Search")} aria-label="בצע חיפוש מתקדם לעסקים">
                   <Button
-                    variant="ghost"
-                    className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
-                      currentPageName === "Search" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
-                    }`}
-                    aria-current={currentPageName === "Search" ? "page" : undefined}
-                  >
+                      variant="ghost"
+                      className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
+                      currentPageName === "Search" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"}`
+                      }
+                      aria-current={currentPageName === "Search" ? "page" : undefined}>
+
                     <Search className="w-4 h-4 ml-2" aria-hidden="true" />
                     חיפוש מתקדם
                   </Button>
                 </Link>
 
-                {user && (user.user_type === 'business' || user.role === 'admin') && (
+                {user && (user.user_type === 'business' || user.role === 'admin') &&
                   <>
                     <Link to={createPageUrl("MyBusinessPages")} aria-label="צפה בעסקים שברשותי">
                       <Button
                         variant="ghost"
                         className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
-                          currentPageName === "MyBusinessPages" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
-                        }`}
-                        aria-current={currentPageName === "MyBusinessPages" ? "page" : undefined}
-                      >
+                        currentPageName === "MyBusinessPages" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"}`
+                        }
+                        aria-current={currentPageName === "MyBusinessPages" ? "page" : undefined}>
+
                         <ListChecks className="w-4 h-4 ml-2" aria-hidden="true" />
                         העסקים שלי
                       </Button>
@@ -475,40 +475,40 @@ export default function Layout({ children, currentPageName }) {
                       <Button
                         variant="ghost"
                         className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
-                          currentPageName === "OrdersManagement" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
-                        }`}
-                        aria-current={currentPageName === "OrdersManagement" ? "page" : undefined}
-                      >
+                        currentPageName === "OrdersManagement" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"}`
+                        }
+                        aria-current={currentPageName === "OrdersManagement" ? "page" : undefined}>
+
                         <ShoppingBag className="w-4 h-4 ml-2" aria-hidden="true" />
                         ניהול הזמנות
                       </Button>
                     </Link>
                   </>
-                )}
+                  }
 
-                {user && (
+                {user &&
                   <Link to={createPageUrl("Favorites")} aria-label="צפה בעסקים מועדפים">
                     <Button
                       variant="ghost"
                       className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
-                        currentPageName === "Favorites" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"
-                      }`}
-                      aria-current={currentPageName === "Favorites" ? "page" : undefined}
-                    >
+                      currentPageName === "Favorites" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"}`
+                      }
+                      aria-current={currentPageName === "Favorites" ? "page" : undefined}>
+
                       <Heart className="w-4 h-4 ml-2 heart-pulse text-red-500" aria-hidden="true" />
                       מועדפים
                     </Button>
                   </Link>
-                )}
+                  }
 
-                {isAdmin && (
+                {isAdmin &&
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
                         className="button-hover rounded-xl text-sm px-3 py-2 focus-ring text-slate-600 hover:text-slate-900 hover:bg-gray-100"
-                        aria-label="כלי ניהול מערכת"
-                      >
+                        aria-label="כלי ניהול מערכת">
+
                         <Shield className="w-4 h-4 ml-2 text-purple-600" aria-hidden="true" />
                         כלי ניהול
                       </Button>
@@ -518,9 +518,9 @@ export default function Layout({ children, currentPageName }) {
                         <Link to={createPageUrl('AdminBusinessPages')} className="flex items-center gap-2 cursor-pointer">
                           <FileText className="w-4 h-4 text-orange-600" aria-hidden="true" />
                           <span>ניהול עמודי עסק</span>
-                          {pendingBusinessPages > 0 && (
-                            <Badge variant="destructive" className="mr-auto">{pendingBusinessPages}</Badge>
-                          )}
+                          {pendingBusinessPages > 0 &&
+                          <Badge variant="destructive" className="mr-auto">{pendingBusinessPages}</Badge>
+                          }
                         </Link>
                       </DropdownMenuItem>
 
@@ -542,9 +542,9 @@ export default function Layout({ children, currentPageName }) {
                         <Link to={createPageUrl('AdminReports')} className="flex items-center gap-2 cursor-pointer">
                           <AlertTriangle className="w-4 h-4 text-red-600" aria-hidden="true" />
                           <span>דיווחים</span>
-                          {newReportsCount > 0 && (
-                            <Badge variant="destructive" className="mr-auto">{newReportsCount}</Badge>
-                          )}
+                          {newReportsCount > 0 &&
+                          <Badge variant="destructive" className="mr-auto">{newReportsCount}</Badge>
+                          }
                         </Link>
                       </DropdownMenuItem>
 
@@ -682,32 +682,32 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
                       </DropdownMenuContent>
                   </DropdownMenu>
-                )}
+                  }
               </nav>
             </div>
 
             <Link to={createPageUrl("Browse")} className="flex-shrink-0" aria-label="חזרה לדף הבית - משלנו">
               <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/7bef7ebb0_image.png"
-                alt="לוגו משלנו - חזרה לדף הבית"
-                className="h-16 lg:h-20 w-auto object-cover hover:scale-105 transition-transform duration-200"
-              />
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/7bef7ebb0_image.png"
+                  alt="לוגו משלנו - חזרה לדף הבית" className="py-1 h-16 lg:h-20 w-auto object-cover hover:scale-105 transition-transform duration-200" />
+
+
             </Link>
 
             <div className="lg:hidden">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    variant="ghost"
-                    size="sm"
-                    className="p-2 relative z-[100]"
-                    aria-label="תפריט ניווט"
-                  >
+                      variant="ghost"
+                      size="sm"
+                      className="p-2 relative z-[100]"
+                      aria-label="תפריט ניווט">
+
                     <Menu className="w-5 h-5" aria-hidden="true" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56 max-h-[80vh] overflow-y-auto">
-                  {!user && (
+                  {!user &&
                     <>
                       <DropdownMenuItem onClick={async () => {
                         try {
@@ -721,7 +721,7 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                     </>
-                  )}
+                    }
 
                   <DropdownMenuItem asChild>
                     <Link to={createPageUrl("Browse")} className="w-full flex items-center cursor-pointer">
@@ -747,25 +747,25 @@ export default function Layout({ children, currentPageName }) {
                     </Link>
                   </DropdownMenuItem>
 
-                  {user && (user.user_type === 'business' || user.role === 'admin') && (
+                  {user && (user.user_type === 'business' || user.role === 'admin') &&
                     <DropdownMenuItem asChild>
                       <Link to={createPageUrl("MyBusinessPages")} className="w-full flex items-center cursor-pointer">
                         <ListChecks className="w-4 h-4 ml-2 text-teal-600" aria-hidden="true" />
                         <span>העסקים שלי</span>
                       </Link>
                     </DropdownMenuItem>
-                  )}
+                    }
 
-                  {user && (
+                  {user &&
                     <DropdownMenuItem asChild>
                       <Link to={createPageUrl("Favorites")} className="w-full flex items-center cursor-pointer">
                         <Heart className="w-4 h-4 ml-2 text-red-600 heart-pulse" aria-hidden="true" />
                         <span>מועדפים</span>
                       </Link>
                     </DropdownMenuItem>
-                  )}
+                    }
 
-                  {user && isAdmin && (
+                  {user && isAdmin &&
                     <>
                       <DropdownMenuSeparator />
                       <div className="px-2 py-1" role="presentation">
@@ -840,106 +840,106 @@ export default function Layout({ children, currentPageName }) {
                         </Link>
                       </DropdownMenuItem>
                       </>
-                      )}
+                    }
                       </DropdownMenuContent>
                       </DropdownMenu>
             </div>
           </div>
         </header>
 
-        <main 
-          id="main-content"
-          className={isWizardPage ? "flex-1 overflow-y-auto" : "flex-1"}
-          role="main"
-          aria-label="תוכן ראשי"
-          tabIndex={-1}
-        >
+        <main
+            id="main-content"
+            className={isWizardPage ? "flex-1 overflow-y-auto" : "flex-1"}
+            role="main"
+            aria-label="תוכן ראשי"
+            tabIndex={-1}>
+
           {children}
         </main>
 
         {!isWizardPage && <Footer />}
 
-        {!isWizardPage && (
-          <nav 
+        {!isWizardPage &&
+          <nav
             className="lg:hidden fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-200/50 z-[100] shadow-lg min-h-20 block"
             role="navigation"
-            aria-label="ניווט תחתון"
-          >
+            aria-label="ניווט תחתון">
+
             <div className="flex items-center justify-around px-2 py-3">
               <Link
                 to={createPageUrl("Browse")}
                 className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200 ${
-                  currentPageName === "Browse"
-                    ? "bg-blue-100 text-blue-700 shadow-md scale-105"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                }`}
+                currentPageName === "Browse" ?
+                "bg-blue-100 text-blue-700 shadow-md scale-105" :
+                "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`
+                }
                 aria-label="משלנו ביזנעס"
-                aria-current={currentPageName === "Browse" ? "page" : undefined}
-              >
+                aria-current={currentPageName === "Browse" ? "page" : undefined}>
+
                 <Store className="w-6 h-6" aria-hidden="true" />
               </Link>
 
               <Link
                 to={createPageUrl("Search")}
                 className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200 ${
-                  currentPageName === "Search"
-                    ? "bg-blue-100 text-blue-700 shadow-md scale-105"
-                    : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                }`}
+                currentPageName === "Search" ?
+                "bg-blue-100 text-blue-700 shadow-md scale-105" :
+                "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`
+                }
                 aria-label="חיפוש מתקדם"
-                aria-current={currentPageName === "Search" ? "page" : undefined}
-              >
+                aria-current={currentPageName === "Search" ? "page" : undefined}>
+
                 <Search className="w-6 h-6" aria-hidden="true" />
               </Link>
 
 
 
-              {user ? (
-                <Link
-                  to={createPageUrl("Favorites")}
-                  className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200 relative ${
-                    currentPageName === "Favorites"
-                      ? "bg-blue-100 text-blue-700 shadow-md scale-105"
-                      : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                  }`}
-                  aria-label="מועדפים"
-                  aria-current={currentPageName === "Favorites" ? "page" : undefined}
-                >
+              {user ?
+              <Link
+                to={createPageUrl("Favorites")}
+                className={`flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200 relative ${
+                currentPageName === "Favorites" ?
+                "bg-blue-100 text-blue-700 shadow-md scale-105" :
+                "text-gray-500 hover:text-gray-700 hover:bg-gray-50"}`
+                }
+                aria-label="מועדפים"
+                aria-current={currentPageName === "Favorites" ? "page" : undefined}>
+
                   <Heart className="w-6 h-6 heart-pulse" aria-hidden="true" />
-                </Link>
-              ) : (
-                <button
-                  onClick={async () => {
-                    try {
-                      await base44.auth.redirectToLogin(window.location.href);
-                    } catch (error) {
-                      console.error("Login failed:", error);
-                    }
-                  }}
-                  className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                  aria-label="התחבר למערכת"
-                >
+                </Link> :
+
+              <button
+                onClick={async () => {
+                  try {
+                    await base44.auth.redirectToLogin(window.location.href);
+                  } catch (error) {
+                    console.error("Login failed:", error);
+                  }
+                }}
+                className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                aria-label="התחבר למערכת">
+
                   <UserIcon className="w-6 h-6" aria-hidden="true" />
                 </button>
-              )}
+              }
 
-              {user && (
-                <button
-                  onClick={() => handleDropdownOpen('user-profile')}
-                  className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                  aria-label={`תפריט משתמש - ${user.full_name || 'משתמש'}`}
-                  aria-expanded={openDropdown === 'user-profile'}
-                >
+              {user &&
+              <button
+                onClick={() => handleDropdownOpen('user-profile')}
+                className="flex flex-col items-center justify-center w-14 h-14 rounded-2xl transition-all duration-200 text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                aria-label={`תפריט משתמש - ${user.full_name || 'משתמש'}`}
+                aria-expanded={openDropdown === 'user-profile'}>
+
                   <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-full flex items-center justify-center shadow-sm">
                     <span className="text-white font-bold text-sm" aria-hidden="true">
                       {user.full_name ? user.full_name.charAt(0) : 'מ'}
                     </span>
                   </div>
                 </button>
-              )}
+              }
             </div>
           </nav>
-        )}
+          }
       </div>
 
       {/* כלי דיאגנוסטיקה לנגישות (מדפיס לקונסול) */}
@@ -953,6 +953,6 @@ export default function Layout({ children, currentPageName }) {
       {/* וידג'ט תמיכה וצ'אט */}
       <SupportWidget />
         </div>
-      </HelmetProvider>
-    );
-  }
+      </HelmetProvider>);
+
+}
