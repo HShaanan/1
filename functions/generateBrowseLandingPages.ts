@@ -1,13 +1,10 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import { createClient } from 'npm:@base44/sdk@0.8.6';
 
 Deno.serve(async (req) => {
     try {
-        const base44 = createClientFromRequest(req);
-        const user = await base44.auth.me();
-
-        if (!user || user.role !== 'admin') {
-            return Response.json({ error: 'Unauthorized - Admin only' }, { status: 401 });
-        }
+        // For scheduled tasks, use service role directly
+        const appId = Deno.env.get("BASE44_APP_ID");
+        const base44 = createClient(appId);
 
         const { mode = 'preview', maxPages = 50 } = await req.json().catch(() => ({}));
 
