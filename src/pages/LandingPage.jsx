@@ -13,6 +13,7 @@ import {
 import { ScrollReveal, StaggerContainer, CountUp, RevealOnScroll } from "@/components/landing/ScrollAnimations";
 import WordSlider from "@/components/landing/WordSlider";
 import { WebsiteSchema, OrganizationSchema } from "@/components/seo/SchemaOrg";
+import { Helmet } from "react-helmet-async";
 
 // Hero images for Orthodox Jewish audience (no women)
 const HERO_IMAGES = {
@@ -178,6 +179,19 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFBFC] overflow-x-hidden" dir="rtl">
+      {/* Google Analytics / Google Ads Tracking */}
+      <Helmet>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-M5SP53RELQ"></script>
+        <script>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-M5SP53RELQ');
+          `}
+        </script>
+      </Helmet>
+
       <WebsiteSchema />
       <OrganizationSchema />
       
