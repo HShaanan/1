@@ -234,37 +234,45 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mt-8 sm:mt-12 z-20 relative px-2">
-          <div className="bg-white/98 backdrop-blur-2xl px-6 py-8 sm:px-10 sm:py-12 rounded-[2rem] shadow-[0_8px_40px_rgba(0,0,0,0.12)] relative overflow-hidden border border-slate-100/60">
-            {/* עיצוב גרדיאנט עדין ברקע */}
-            <div className="absolute inset-0 bg-gradient-to-bl from-slate-50/40 via-white to-blue-50/20 pointer-events-none" />
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/5 to-transparent rounded-full blur-3xl pointer-events-none" />
+          <div className="bg-white/95 backdrop-blur-3xl px-6 py-10 sm:px-12 sm:py-14 rounded-[2.5rem] shadow-[0_10px_60px_rgba(0,0,0,0.15)] relative overflow-hidden border-2 border-slate-200/50">
+            {/* עיצוב גרדיאנט חזק ברקע */}
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/60 via-white to-indigo-50/40 pointer-events-none" />
+            <div className="absolute top-0 right-0 w-96 h-96 bg-gradient-to-br from-blue-400/8 to-purple-400/8 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-0 w-72 h-72 bg-gradient-to-tr from-indigo-400/6 to-transparent rounded-full blur-3xl pointer-events-none" />
             
-            {/* כותרת - בולטת וברורה */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.15] relative z-10 mb-2"
+            {/* כותרת - דרמטית ובולטת */}
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black leading-[1.1] relative z-10 mb-6 bg-gradient-to-l from-slate-900 via-slate-800 to-slate-900 bg-clip-text text-transparent"
                 style={{ 
                   fontFamily: '"Ronda", "Heebo", "Noto Sans Hebrew", system-ui, sans-serif',
-                  letterSpacing: '-0.02em'
+                  letterSpacing: '-0.03em',
+                  textShadow: '0 2px 20px rgba(0,0,0,0.08)'
                 }}>
               {title}
             </h1>
             
-            {/* תיאור קצר - בולט */}
+            {/* קו מפריד אלגנטי */}
+            <div className="w-24 h-1.5 bg-gradient-to-l from-blue-600 via-indigo-500 to-purple-600 rounded-full mb-6 relative z-10 shadow-lg shadow-blue-500/30" />
+            
+            {/* תיאור קצר - חזק וברור */}
             {shortDesc &&
-              <p className="mt-5 text-lg sm:text-xl lg:text-2xl text-slate-700 leading-relaxed font-semibold relative z-10 max-w-4xl"
-                 style={{ fontFamily: '"Ronda", "Heebo", sans-serif' }}>
+              <p className="mt-2 text-xl sm:text-2xl lg:text-3xl text-slate-800 leading-[1.5] font-bold relative z-10 max-w-4xl"
+                 style={{ 
+                   fontFamily: '"Ronda", "Heebo", sans-serif',
+                   textShadow: '0 1px 3px rgba(0,0,0,0.05)'
+                 }}>
                 {shortDesc}
               </p>
             }
             
-            {/* תיאור מלא - משני */}
+            {/* תיאור מלא - ברור עם ניגודיות */}
             {restDesc &&
-              <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed whitespace-pre-line relative z-10 max-w-3xl font-normal">
+              <p className="mt-6 text-lg sm:text-xl text-slate-700 leading-[1.7] whitespace-pre-line relative z-10 max-w-3xl font-medium">
                 {restDesc}
               </p>
             }
             
-            {/* קו דקורטיבי תחתון */}
-            <div className="absolute bottom-0 right-8 left-8 h-1.5 bg-gradient-to-l from-blue-500/0 via-blue-500/30 to-blue-500/0 rounded-full" />
+            {/* קו דקורטיבי תחתון מודגש */}
+            <div className="absolute bottom-0 right-0 left-0 h-2 bg-gradient-to-l from-blue-600/0 via-blue-500/50 to-purple-600/0 rounded-full" />
           </div>
         </div>
       </div>
