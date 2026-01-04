@@ -483,6 +483,49 @@ export default function AdminDynamicPagesAnalytics() {
           </CardContent>
         </Card>
 
+        {/* Google Search Console URL */}
+        <Card className="mt-8 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-green-900">
+              <ExternalLink className="w-5 h-5" />
+              הוספת Sitemap ל-Google Search Console
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div>
+                <p className="text-sm text-green-800 mb-2 font-semibold">כתובת ה-Sitemap שלך:</p>
+                <div className="bg-white border-2 border-green-300 rounded-lg p-4 font-mono text-sm select-all">
+                  https://meshelanu.co.il/api/functions/generateExpandedSitemap
+                </div>
+              </div>
+              
+              <div className="bg-white rounded-lg p-4 border border-green-200">
+                <p className="font-semibold text-green-900 mb-2">📝 הוראות הוספה ל-Google Search Console:</p>
+                <ol className="text-sm text-slate-700 space-y-2 mr-6 list-decimal">
+                  <li>היכנס ל-<a href="https://search.google.com/search-console" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Google Search Console</a></li>
+                  <li>בחר את האתר שלך (meshelanu.co.il)</li>
+                  <li>לחץ על "Sitemaps" בתפריט השמאלי</li>
+                  <li>הדבק את הכתובת: <code className="bg-slate-100 px-2 py-1 rounded text-xs">https://meshelanu.co.il/api/functions/generateExpandedSitemap</code></li>
+                  <li>לחץ "Submit"</li>
+                </ol>
+              </div>
+
+              <a
+                href="https://search.google.com/search-console/sitemaps"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <Button className="w-full bg-green-600 hover:bg-green-700 text-white">
+                  <ExternalLink className="w-4 h-4 ml-2" />
+                  פתח Google Search Console
+                </Button>
+              </a>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Sitemap Viewer */}
         <Card className="mt-8">
           <CardHeader>
