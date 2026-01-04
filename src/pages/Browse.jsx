@@ -286,13 +286,13 @@ export default function BrowsePage({ preSelectedState }) {
       try {
         const isAuth = await base44.auth.isAuthenticated();
         if (!isAuth) {
-          await base44.auth.redirectToLogin(window.location.href);
-          return;
+          base44.auth.redirectToLogin(window.location.href);
+        } else {
+          setAuthLoading(false);
         }
-        setAuthLoading(false);
       } catch (error) {
         console.error("Auth check failed:", error);
-        await base44.auth.redirectToLogin(window.location.href);
+        base44.auth.redirectToLogin(window.location.href);
       }
     };
     checkAuth();
