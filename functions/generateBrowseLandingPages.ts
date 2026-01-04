@@ -3,20 +3,13 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
-        
-        // Check if called from scheduled task (no real user) or from API
-        let isScheduledTask = false;
-        try {
-            const user = await base44.auth.me();
-            if (!user || user.role !== 'admin') {
-                return Response.json({ error: 'Unauthorized - Admin only' }, { status: 401 });
-            }
-        } catch (error) {
-            // If auth fails, assume it's a scheduled task
-            isScheduledTask = true;
+        const user = await base44.auth.me();
+
+        if (!user || user.role !== 'admin') {
+            return Response.json({ error: 'Unauthorized - Admin only' }, { status: 401 });
         }
 
-        const { mode = 'create', maxPages = 50 } = await req.json().catch(() => ({}));
+        const { mode = 'preview', maxPages = 50 } = await req.json().catch(() => ({}));
 
         console.log(`🚀 Starting Browse landing pages generation`);
 
