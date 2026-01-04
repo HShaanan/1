@@ -78,8 +78,11 @@ export default function BrowsePage({ preSelectedState }) {
         // Auto-switch to correct tab based on subcategory
         const parentCat = categories.find(cat => cat.id === subcat.parent_id);
         if (parentCat) {
-          const isFoodCategory = foodRegex.test(parentCat.name || "");
-          const isShopCategory = shopRegex.test(parentCat.name || "");
+          const foodPattern = /(אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|מאפ|קונדיט|חלבי|בשרי|שף|טבח|שווארמה|קפה|קונדיטור|מאפים)/i;
+          const shopPattern = /(חנות|קניות|ציוד|חשמל|אלקטרוניקה|מחשבים|ביגוד|אופנה|לבוש|הנעלה|ספרים|צעצוע|ריהוט|בית|קוסמטיקה|פארם|מתנות|כלי|מוצר)/i;
+          
+          const isFoodCategory = foodPattern.test(parentCat.name || "");
+          const isShopCategory = shopPattern.test(parentCat.name || "");
           
           if (isFoodCategory) setActiveTab("food");
           else if (isShopCategory) setActiveTab("shopping");
@@ -103,7 +106,7 @@ export default function BrowsePage({ preSelectedState }) {
       setUserLocation({ city: cityParam });
       console.log('Applied city filter:', cityParam);
     }
-  }, [categories, activeListings, foodRegex, shopRegex]);
+  }, [categories, activeListings]);
 
   // Advanced Filters State
   const [filters, setFilters] = useState({
