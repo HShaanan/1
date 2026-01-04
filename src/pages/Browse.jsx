@@ -13,6 +13,7 @@ import { useFuse } from "@/components/hooks/useFuse";
 import { WebsiteSchema, LocalBusinessListSchema } from "@/components/seo/SchemaOrg";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
+import { Helmet } from "react-helmet-async";
 
 // New imports
 import TopTabs from "@/components/explore/TopTabs";
@@ -473,6 +474,19 @@ export default function BrowsePage({ preSelectedState }) {
 
   return (
     <div dir="rtl" className="min-h-screen relative">
+      {/* Google Analytics / Google Ads Tracking */}
+      <Helmet>
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-M5SP53RELQ"></script>
+        <script>
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-M5SP53RELQ');
+          `}
+        </script>
+      </Helmet>
+
       {/* Dynamic SEO Meta Tags */}
       <SeoMeta
         category={seoTitle}

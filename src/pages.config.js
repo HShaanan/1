@@ -39,6 +39,7 @@ import Browse from './pages/Browse';
 import BusinessAnalytics from './pages/BusinessAnalytics';
 import BusinessLanding from './pages/BusinessLanding';
 import BusinessManage from './pages/BusinessManage';
+import BusinessPage from './pages/BusinessPage';
 import ContactPage from './pages/ContactPage';
 import CourierDashboard from './pages/CourierDashboard';
 import CourierFleetManagement from './pages/CourierFleetManagement';
@@ -60,6 +61,7 @@ import EditListing from './pages/EditListing';
 import Favorites from './pages/Favorites';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
+import LandingPage from './pages/LandingPage';
 import MediaCreator from './pages/MediaCreator';
 import MyBusinessPages from './pages/MyBusinessPages';
 import OrderCheckout from './pages/OrderCheckout';
@@ -70,8 +72,6 @@ import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
-import LandingPage from './pages/LandingPage';
-import BusinessPage from './pages/BusinessPage';
 import __Layout from './Layout.jsx';
 
 
@@ -117,6 +117,7 @@ export const PAGES = {
     "BusinessAnalytics": BusinessAnalytics,
     "BusinessLanding": BusinessLanding,
     "BusinessManage": BusinessManage,
+    "BusinessPage": BusinessPage,
     "ContactPage": ContactPage,
     "CourierDashboard": CourierDashboard,
     "CourierFleetManagement": CourierFleetManagement,
@@ -138,6 +139,7 @@ export const PAGES = {
     "Favorites": Favorites,
     "Home": Home,
     "Landing": Landing,
+    "LandingPage": LandingPage,
     "MediaCreator": MediaCreator,
     "MyBusinessPages": MyBusinessPages,
     "OrderCheckout": OrderCheckout,
@@ -148,8 +150,6 @@ export const PAGES = {
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
-    "LandingPage": LandingPage,
-    "BusinessPage": BusinessPage,
 }
 
 export const pagesConfig = {
