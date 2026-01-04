@@ -389,7 +389,7 @@ export default function SearchPage() {
 
       {/* Map Area */}
       <div className="flex-1 h-96 md:h-[calc(100vh-120px)] order-1 md:order-2">
-         <div className="sticky top-24 h-full w-full rounded-2xl overflow-hidden shadow-lg">
+         <div className="sticky top-24 h-full w-full rounded-2xl overflow-hidden shadow-lg relative">
             <InteractiveMap
                listings={mapMarkers}
                userLocation={userLocation}
@@ -406,6 +406,9 @@ export default function SearchPage() {
                }}
                className="w-full h-full border-0"
              />
+             <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs text-gray-600 z-[1000] pointer-events-none">
+               Map data © OpenStreetMap contributors
+             </div>
          </div>
       </div>
     </div>
