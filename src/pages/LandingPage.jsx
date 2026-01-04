@@ -234,7 +234,7 @@ export default function LandingPage() {
             <ScrollReveal animation="fadeUp">
               <div className="text-center mb-8 sm:mb-12">
                 <span className="inline-block px-3 sm:px-4 py-1 bg-purple-100 text-purple-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
-                  קטגוריות
+                  משלנו
                 </span>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 flex flex-wrap justify-center items-center gap-x-2">
                   <span className="">משלנו, כל מה שטוב כשר וקרוב ב:</span>
