@@ -8,8 +8,8 @@ import { Helmet } from "react-helmet-async";
 import {
   ChevronLeft, ChevronDown, Store, TrendingUp, Users,
   Zap, DollarSign, CheckCircle, Star, ArrowLeft,
-  Smartphone, BarChart3, HeadphonesIcon, Truck, Sparkles, Play, MessageCircle, ShoppingCart, AlertTriangle
-} from "lucide-react";
+  Smartphone, BarChart3, HeadphonesIcon, Truck, Sparkles, Play, MessageCircle, ShoppingCart, AlertTriangle } from
+"lucide-react";
 import ImageComparison from "@/components/ImageComparison";
 
 // תמונות מותאמות לקהל החרדי (ללא נשים)
@@ -25,144 +25,144 @@ const BUSINESS_IMAGES = {
 };
 
 const benefits = [
-  {
-    icon: Sparkles,
-    title: "עיצוב מקצועי בזמן קצר",
-    description: "אנחנו מעצבים לך עמוד יוקרתי ומותאם אישית. בימים ספורים - עמוד שנראה כמו של חברה ענקית, במקום שבועות המתנה.",
-    color: "from-purple-500 to-indigo-600"
-  },
-  {
-    icon: TrendingUp,
-    title: "דאשבורד נתונים מתקדם",
-    description: ". אתה רואה דאטה אמיתית - כמה אנשים מחפשים אותך, מי קולק, מי מתעניין. לא הבטחות באוויר.",
-    color: "from-green-500 to-emerald-600"
-  },
-  {
-    icon: MessageCircle,
-    title: "יש לך שירות משלוחים? הזמנות יזרמו לך לווטסאפ!",
-    description: "לקוח רוצה להזמין? כמה קליקים וההזמנה אצלך בוואטסאפ. בלי מסך ביניים, בלי אפליקציות - ישר לעניין.",
-    color: "from-green-400 to-teal-600"
-  },
-  {
-    icon: Smartphone,
-    title: "דאשבורד ניהול מתקדם",
-    description: "כמה הזמנות היום? מי ביקר בעמוד? איזה מוצר הכי פופולרי? כל הנתונים החיוניים במקום אחד, עדכון בזמן אמת.",
-    color: "from-orange-500 to-red-600"
-  },
-  {
-    icon: Store,
-    title: "נראות דיגיטלית מושלמת? זה קטן עלינו (ועליכם)",
-    description: "חבל על הזמן והאנרגיה שלכם. במשלנו אנחנו עושים את העבודה הקשה בשבילכם עם כלי AI חכמים וגרפיקה נקייה. מקבלים תוצאה ברמה הכי גבוהה בלי כאב ראש מיותר. בואו תראו איך העסק שלכם הופך למותג בקליק אחד.",
-    color: "from-pink-500 to-rose-600"
-  },
-  {
-    icon: BarChart3,
-    title: "גוגל פשוט יעוף עליכם!",
-    description: "העמוד שלך מותאם באופן מושלם למנועי חיפוש. כשמחפשים את הקטגוריה שלך - אתה מופיע בראש התוצאות. זה מה שמביא לקוחות.",
-    color: "from-blue-500 to-cyan-600"
-  }
-];
+{
+  icon: Sparkles,
+  title: "עיצוב מקצועי בזמן קצר",
+  description: "אנחנו מעצבים לך עמוד יוקרתי ומותאם אישית. בימים ספורים - עמוד שנראה כמו של חברה ענקית, במקום שבועות המתנה.",
+  color: "from-purple-500 to-indigo-600"
+},
+{
+  icon: TrendingUp,
+  title: "דאשבורד נתונים מתקדם",
+  description: ". אתה רואה דאטה אמיתית - כמה אנשים מחפשים אותך, מי קולק, מי מתעניין. לא הבטחות באוויר.",
+  color: "from-green-500 to-emerald-600"
+},
+{
+  icon: MessageCircle,
+  title: "יש לך שירות משלוחים? הזמנות יזרמו לך לווטסאפ!",
+  description: "לקוח רוצה להזמין? כמה קליקים וההזמנה אצלך בוואטסאפ. בלי מסך ביניים, בלי אפליקציות - ישר לעניין.",
+  color: "from-green-400 to-teal-600"
+},
+{
+  icon: Smartphone,
+  title: "דאשבורד ניהול מתקדם",
+  description: "כמה הזמנות היום? מי ביקר בעמוד? איזה מוצר הכי פופולרי? כל הנתונים החיוניים במקום אחד, עדכון בזמן אמת.",
+  color: "from-orange-500 to-red-600"
+},
+{
+  icon: Store,
+  title: "נראות דיגיטלית מושלמת? זה קטן עלינו (ועליכם)",
+  description: "חבל על הזמן והאנרגיה שלכם. במשלנו אנחנו עושים את העבודה הקשה בשבילכם עם כלי AI חכמים וגרפיקה נקייה. מקבלים תוצאה ברמה הכי גבוהה בלי כאב ראש מיותר. בואו תראו איך העסק שלכם הופך למותג בקליק אחד.",
+  color: "from-pink-500 to-rose-600"
+},
+{
+  icon: BarChart3,
+  title: "גוגל פשוט יעוף עליכם!",
+  description: "העמוד שלך מותאם באופן מושלם למנועי חיפוש. כשמחפשים את הקטגוריה שלך - אתה מופיע בראש התוצאות. זה מה שמביא לקוחות.",
+  color: "from-blue-500 to-cyan-600"
+}];
+
 
 const steps = [
-  {
-    number: "1",
-    title: "תן לנו 5 דקות",
-    description: "שם העסק + מספר טלפון. זהו. אנחנו כבר מתחילים לעבוד עבורך.",
-    icon: Sparkles
-  },
-  {
-    number: "2",
-    title: "אנחנו מעצבים לך עמוד מקצועי",
-    description: "בימים ספורים - אתה מקבל עמוד שנראה כמו של חברה ענקית. תהליך של ימים במקום שבועות של המתנה.",
-    icon: Store
-  },
-  {
-    number: "3",
-    title: "לקוחות מתחילים להזמין",
-    description: "הזמנות בוואטסאפ, תשלומים אוטומטיים, נתוני גוגל בזמן אמת. אתה צופה בכסף נכנס.",
-    icon: TrendingUp
-  }
-];
+{
+  number: "1",
+  title: "תן לנו 5 דקות",
+  description: "שם העסק + מספר טלפון. זהו. אנחנו כבר מתחילים לעבוד עבורך.",
+  icon: Sparkles
+},
+{
+  number: "2",
+  title: "אנחנו מעצבים לך עמוד מקצועי",
+  description: "בימים ספורים - אתה מקבל עמוד שנראה כמו של חברה ענקית. תהליך של ימים במקום שבועות של המתנה.",
+  icon: Store
+},
+{
+  number: "3",
+  title: "לקוחות מתחילים להזמין",
+  description: "הזמנות בוואטסאפ, תשלומים אוטומטיים, נתוני גוגל בזמן אמת. אתה צופה בכסף נכנס.",
+  icon: TrendingUp
+}];
+
 
 const testimonials = [
-  {
-    name: "ר' יוסי כהן",
-    business: "מאפיית הטעמים",
-    text: "חשבתי שהמאפייה הקטנה שלי לא צריכה 'עמוד מפואר'. טעיתי. העמוד המקצועי שיצר לי אמון ומהימנות, והלקוחות התחילו להגיע גם מחוץ לשכונה. צר לי שלא עשיתי את זה קודם.",
-    rating: 5,
-    image: BUSINESS_IMAGES.bakery
-  },
-  {
-    name: "משה לוי",
-    business: "גריל הבשרים",
-    text: "הייתי בטוח שאנשים יודעים עלי. אבל בגוגל הייתי שקוף לגמרי. עכשיו כשמישהו מחפש 'גריל כשר' - אני שם. הנוכחות הדיגיטלית שינתה לי את העסק לגמרי.",
-    rating: 5,
-    image: BUSINESS_IMAGES.meat
-  },
-  {
-    name: "אברהם גולד",
-    business: "סושי כשר",
-    text: "שילמתי פעם אלפי שקלים למעצב שלקח שבועות. הפעם העבודה נעשתה תוך ימים, מקצועית ובמחיר הוגן. העמוד נראה מדהים והחיבור לגוגל עובד מצוין. החלטה מצוינת.",
-    rating: 5,
-    image: BUSINESS_IMAGES.restaurant
-  }
-];
+{
+  name: "ר' יוסי כהן",
+  business: "מאפיית הטעמים",
+  text: "חשבתי שהמאפייה הקטנה שלי לא צריכה 'עמוד מפואר'. טעיתי. העמוד המקצועי שיצר לי אמון ומהימנות, והלקוחות התחילו להגיע גם מחוץ לשכונה. צר לי שלא עשיתי את זה קודם.",
+  rating: 5,
+  image: BUSINESS_IMAGES.bakery
+},
+{
+  name: "משה לוי",
+  business: "גריל הבשרים",
+  text: "הייתי בטוח שאנשים יודעים עלי. אבל בגוגל הייתי שקוף לגמרי. עכשיו כשמישהו מחפש 'גריל כשר' - אני שם. הנוכחות הדיגיטלית שינתה לי את העסק לגמרי.",
+  rating: 5,
+  image: BUSINESS_IMAGES.meat
+},
+{
+  name: "אברהם גולד",
+  business: "סושי כשר",
+  text: "שילמתי פעם אלפי שקלים למעצב שלקח שבועות. הפעם העבודה נעשתה תוך ימים, מקצועית ובמחיר הוגן. העמוד נראה מדהים והחיבור לגוגל עובד מצוין. החלטה מצוינת.",
+  rating: 5,
+  image: BUSINESS_IMAGES.restaurant
+}];
+
 
 const faqs = [
-  {
-    question: "כמה עולה שירות העיצוב והפלטפורמה?",
-    answer: "יש לנו 3 מסלולים: חשיפה (300₪ הקמה + 199₪/חודש), תנופה (500₪ הקמה + 349₪/חודש) - הכי פופולרי, ומהדרין (800₪ הקמה + 699₪/חודש) לשותפות עסקית מלאה. כל מסלול כולל עמוד מעוצב + חיבור לגוגל + דאשבורד מתקדם."
-  },
-  {
-    question: "אני לא טכנולוג, זה יהיה מסובך בשבילי?",
-    answer: "אם אתה יודע לשלוח הודעת וואטסאפ, אתה יודע לעבוד עם המערכת שלנו. זה בנוי כך שגם מי שלא מבין בטכנולוגיה יצליח. ואם תתקע - אנחנו תמיד נהיה כאן איתך."
-  },
-  {
-    question: "מה אם הלקוחות שלי לא משתמשים באינטרנט?",
-    answer: "טעות. הם כן משתמשים. הם פשוט לא מוצאים אותך. 87% מהאנשים מחפשים בגוגל לפני שהם קונים משהו. אם אתה לא שם, הם קונים מהמתחרה. זה פשוט."
-  },
-  {
-    question: "למה אני צריך 'עמוד מעוצב'? יש לי אתר פשוט.",
-    answer: "אתר פשוט זה טוב. אבל אם הוא לא מעוצב ולא מופיע בגוגל - אף אחד לא רואה אותו. עמוד מקצועי עם  אופטימיזציה לגוגל? זה מה שגורם ללקוחות למצוא אותך ולבחור בך על פני המתחרים."
-  },
-  {
-    question: "כמה זמן לוקח לראות תוצאות?",
-    answer: "העמוד מוכן תוך ימים ספורים. הלקוחות הראשונים מתחילים להגיע תוך שבוע. אחרי חודש, אתה רואה את ההבדל בהכנסות. זה לא קסם, זה פשוט נוכחות נכונה בגוגל."
-  },
-  {
-    question: "מה אם אני לא אהיה מרוצה מהעיצוב?",
-    answer: "אז אנחנו משנים עד שאתה מרוצה. בלי תשלום נוסף. אנחנו לא עוזבים אותך עם משהו שאתה לא אוהב. המטרה שלנו היא שתצליח, לא רק שתשלם."
-  }
-];
+{
+  question: "כמה עולה שירות העיצוב והפלטפורמה?",
+  answer: "יש לנו 3 מסלולים: חשיפה (300₪ הקמה + 199₪/חודש), תנופה (500₪ הקמה + 349₪/חודש) - הכי פופולרי, ומהדרין (800₪ הקמה + 699₪/חודש) לשותפות עסקית מלאה. כל מסלול כולל עמוד מעוצב + חיבור לגוגל + דאשבורד מתקדם."
+},
+{
+  question: "אני לא טכנולוג, זה יהיה מסובך בשבילי?",
+  answer: "אם אתה יודע לשלוח הודעת וואטסאפ, אתה יודע לעבוד עם המערכת שלנו. זה בנוי כך שגם מי שלא מבין בטכנולוגיה יצליח. ואם תתקע - אנחנו תמיד נהיה כאן איתך."
+},
+{
+  question: "מה אם הלקוחות שלי לא משתמשים באינטרנט?",
+  answer: "טעות. הם כן משתמשים. הם פשוט לא מוצאים אותך. 87% מהאנשים מחפשים בגוגל לפני שהם קונים משהו. אם אתה לא שם, הם קונים מהמתחרה. זה פשוט."
+},
+{
+  question: "למה אני צריך 'עמוד מעוצב'? יש לי אתר פשוט.",
+  answer: "אתר פשוט זה טוב. אבל אם הוא לא מעוצב ולא מופיע בגוגל - אף אחד לא רואה אותו. עמוד מקצועי עם  אופטימיזציה לגוגל? זה מה שגורם ללקוחות למצוא אותך ולבחור בך על פני המתחרים."
+},
+{
+  question: "כמה זמן לוקח לראות תוצאות?",
+  answer: "העמוד מוכן תוך ימים ספורים. הלקוחות הראשונים מתחילים להגיע תוך שבוע. אחרי חודש, אתה רואה את ההבדל בהכנסות. זה לא קסם, זה פשוט נוכחות נכונה בגוגל."
+},
+{
+  question: "מה אם אני לא אהיה מרוצה מהעיצוב?",
+  answer: "אז אנחנו משנים עד שאתה מרוצה. בלי תשלום נוסף. אנחנו לא עוזבים אותך עם משהו שאתה לא אוהב. המטרה שלנו היא שתצליח, לא רק שתשלם."
+}];
+
 
 function FAQItem({ question, answer, isOpen, onClick }) {
   return (
-    <div 
+    <div
       className="border-b border-slate-200 last:border-0"
-      role="listitem"
-    >
+      role="listitem">
+
       <button
         onClick={onClick}
         className="w-full py-4 sm:py-5 px-3 sm:px-4 flex items-center justify-between text-right hover:bg-slate-50 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 rounded-lg touch-manipulation min-h-[52px]"
         aria-expanded={isOpen}
-        aria-controls={`faq-answer-${question.replace(/\s/g, '-')}`}
-      >
+        aria-controls={`faq-answer-${question.replace(/\s/g, '-')}`}>
+
         <span className="font-semibold text-slate-800 text-sm sm:text-lg leading-snug">{question}</span>
-        <ChevronDown 
-          className={`w-5 h-5 text-slate-400 transition-transform duration-300 flex-shrink-0 mr-2 ${isOpen ? 'rotate-180' : ''}`} 
-          aria-hidden="true"
-        />
+        <ChevronDown
+          className={`w-5 h-5 text-slate-400 transition-transform duration-300 flex-shrink-0 mr-2 ${isOpen ? 'rotate-180' : ''}`}
+          aria-hidden="true" />
+
       </button>
-      <div 
+      <div
         id={`faq-answer-${question.replace(/\s/g, '-')}`}
         className={`overflow-hidden transition-all duration-300 ${isOpen ? 'max-h-64 pb-4 sm:pb-5' : 'max-h-0'}`}
         role="region"
-        aria-hidden={!isOpen}
-      >
+        aria-hidden={!isOpen}>
+
         <p className="px-3 sm:px-4 text-slate-600 leading-relaxed text-sm sm:text-base">{answer}</p>
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 // אנימציה של ספירה
@@ -205,7 +205,7 @@ export default function BusinessLanding() {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveTestimonial(prev => (prev + 1) % testimonials.length);
+      setActiveTestimonial((prev) => (prev + 1) % testimonials.length);
     }, 5000);
     return () => clearInterval(timer);
   }, []);
@@ -236,7 +236,7 @@ export default function BusinessLanding() {
           {JSON.stringify({
             "@context": "https://schema.org",
             "@type": "FAQPage",
-            "mainEntity": faqs.map(faq => ({
+            "mainEntity": faqs.map((faq) => ({
               "@type": "Question",
               "name": faq.question,
               "acceptedAnswer": {
@@ -283,37 +283,37 @@ export default function BusinessLanding() {
               "@type": "OfferCatalog",
               "name": "חבילות עיצוב עמוד עסק",
               "itemListElement": [
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "חבילת חשיפה",
-                    "description": "פרופיל עסק בסיסי + עיצוב תמונת רקע ולוגו + דאשבורד ניהול"
-                  },
-                  "price": "199",
-                  "priceCurrency": "ILS"
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "חבילת חשיפה",
+                  "description": "פרופיל עסק בסיסי + עיצוב תמונת רקע ולוגו + דאשבורד ניהול"
                 },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "חבילת תנופה",
-                    "description": "עיצוב מותאם + קידום באתר + תפריט והזמנות בווטסאפ + תמיכה מועדפת"
-                  },
-                  "price": "350",
-                  "priceCurrency": "ILS"
+                "price": "199",
+                "priceCurrency": "ILS"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "חבילת תנופה",
+                  "description": "עיצוב מותאם + קידום באתר + תפריט והזמנות בווטסאפ + תמיכה מועדפת"
                 },
-                {
-                  "@type": "Offer",
-                  "itemOffered": {
-                    "@type": "Service",
-                    "name": "חבילת מהדרין",
-                    "description": "שותפות עסקית מלאה + עדכוני AI + ניהול פרסום + ייעוץ אסטרטגי"
-                  },
-                  "price": "699",
-                  "priceCurrency": "ILS"
-                }
-              ]
+                "price": "350",
+                "priceCurrency": "ILS"
+              },
+              {
+                "@type": "Offer",
+                "itemOffered": {
+                  "@type": "Service",
+                  "name": "חבילת מהדרין",
+                  "description": "שותפות עסקית מלאה + עדכוני AI + ניהול פרסום + ייעוץ אסטרטגי"
+                },
+                "price": "699",
+                "priceCurrency": "ILS"
+              }]
+
             }
           })}
         </script>
@@ -447,25 +447,25 @@ export default function BusinessLanding() {
       `}</style>
       
       {/* Skip to main content - Accessibility */}
-      <a 
-        href="#main-content" 
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:right-4 focus:z-50 focus:bg-blue-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg"
-      >
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:right-4 focus:z-50 focus:bg-blue-600 focus:text-white focus:px-4 focus:py-2 focus:rounded-lg">
+
         דלג לתוכן הראשי
       </a>
 
       {/* Hero Section */}
       <section className="relative w-full overflow-hidden">
-        <img 
+        <img
           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/85db3e7c0_image1.jpg"
           alt="ראש שלכם בעסק, כל השאר עלינו - משלנו"
-          className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] object-cover"
-        />
+          className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] object-cover" />
+
 
         {/* Wave */}
         <div className="absolute bottom-0 left-0 right-0">
           <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full" aria-hidden="true">
-            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white"/>
+            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="white" />
           </svg>
         </div>
       </section>
@@ -486,7 +486,7 @@ export default function BusinessLanding() {
                     <path d="M0,5 Q25,0 50,5 T100,5" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-500" />
                   </svg>
                 </span>
-                <br/>
+                <br />
                 <span className="bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">למה אתה מחכה?</span>
               </h1>
               <p className="text-slate-600 text-sm sm:text-lg max-w-2xl mx-auto animate-fade-in-up px-4 font-bold" style={{ animationDelay: '0.2s' }}>
@@ -495,13 +495,13 @@ export default function BusinessLanding() {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6" role="list">
-              {benefits.map((benefit, i) => (
-                <Card 
-                  key={i} 
-                  className="group hover:shadow-2xl transition-all duration-500 active:scale-[0.98] sm:hover:-translate-y-3 border border-slate-200/50 bg-gradient-to-br from-white via-slate-50 to-white hover:border-indigo-200 animate-fade-in-up touch-manipulation overflow-hidden relative"
-                  style={{ animationDelay: `${i * 0.1}s` }}
-                  role="listitem"
-                >
+              {benefits.map((benefit, i) =>
+              <Card
+                key={i}
+                className="group hover:shadow-2xl transition-all duration-500 active:scale-[0.98] sm:hover:-translate-y-3 border border-slate-200/50 bg-gradient-to-br from-white via-slate-50 to-white hover:border-indigo-200 animate-fade-in-up touch-manipulation overflow-hidden relative"
+                style={{ animationDelay: `${i * 0.1}s` }}
+                role="listitem">
+
                   {/* Premium Glow Effect */}
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                     <div className={`absolute inset-0 bg-gradient-to-br ${benefit.color} opacity-5 blur-xl`}></div>
@@ -518,7 +518,7 @@ export default function BusinessLanding() {
                     <p className="text-slate-600 text-xs sm:text-base leading-relaxed hidden sm:block">{benefit.description}</p>
                   </CardContent>
                 </Card>
-              ))}
+              )}
             </div>
           </div>
         </section>
@@ -533,8 +533,8 @@ export default function BusinessLanding() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
+                transition={{ duration: 0.6 }}>
+
                 <span className="inline-block px-4 py-2 bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 rounded-full text-sm font-semibold mb-4 border border-blue-200">
                   🔄 ההבדל בין רגיל למקצועי
                 </span>
@@ -551,14 +551,14 @@ export default function BusinessLanding() {
               initial={{ opacity: 0, scale: 0.95 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
-            >
+              transition={{ duration: 0.8 }}>
+
               <ImageComparison
                 beforeImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/c21619598_image.png"
                 afterImage="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/1d773a7c9_image.png"
                 beforeLabel="עמוד רגיל"
-                afterLabel="עמוד מקצועי"
-              />
+                afterLabel="עמוד מקצועי" />
+
             </motion.div>
 
             <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
@@ -577,13 +577,13 @@ export default function BusinessLanding() {
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6 }}
-              >
+                transition={{ duration: 0.6 }}>
+
                 <span className="inline-block px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-800 rounded-full text-sm font-semibold mb-4 border border-indigo-200">
                   💎 בחר את המסלול המתאים לך
                 </span>
-                <h2 id="pricing-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-                  מחירון עיצוב עמוד עסק - חבילות החל מ-199₪ לחודש
+                <h2 id="pricing-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">חבילות החל מ-199₪ לחודש
+
                 </h2>
                 <p className="text-slate-600 text-lg max-w-2xl mx-auto">
                   מנוכחות דיגיטלית בסיסית ועד שותפות עסקית מלאה
@@ -599,8 +599,8 @@ export default function BusinessLanding() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.1 }}
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                className="relative"
-              >
+                className="relative">
+
                 <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-200 h-full flex flex-col">
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-slate-900 mb-2">חשיפה</h3>
@@ -653,8 +653,8 @@ export default function BusinessLanding() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.2 }}
                 whileHover={{ y: -12, transition: { duration: 0.3 } }}
-                className="relative md:-mt-4"
-              >
+                className="relative md:-mt-4">
+
                 {/* Popular Badge */}
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 z-10">
                   <motion.div
@@ -662,8 +662,8 @@ export default function BusinessLanding() {
                     whileInView={{ scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.5, delay: 0.4, type: "spring" }}
-                    className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg"
-                  >
+                    className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-6 py-2 rounded-full text-sm font-bold shadow-lg">
+
                     ⭐ הכי פופולרי
                   </motion.div>
                 </div>
@@ -673,7 +673,7 @@ export default function BusinessLanding() {
                   <motion.div
                     className="absolute inset-0 opacity-20"
                     animate={{
-                      backgroundPosition: ['0% 0%', '100% 100%'],
+                      backgroundPosition: ['0% 0%', '100% 100%']
                     }}
                     transition={{
                       duration: 10,
@@ -683,8 +683,8 @@ export default function BusinessLanding() {
                     style={{
                       backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.2) 0%, transparent 50%)',
                       backgroundSize: '200% 200%'
-                    }}
-                  />
+                    }} />
+
 
                   <div className="relative z-10">
                     <div className="mb-6">
@@ -739,8 +739,8 @@ export default function BusinessLanding() {
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: 0.3 }}
                 whileHover={{ y: -8, transition: { duration: 0.3 } }}
-                className="relative"
-              >
+                className="relative">
+
                 <div className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-amber-400 h-full flex flex-col">
                   <div className="mb-6">
                     <h3 className="text-2xl font-bold text-slate-900 mb-2 flex items-center gap-2">
@@ -821,15 +821,15 @@ export default function BusinessLanding() {
 
             <Card className="bg-slate-50 border-0 shadow-lg">
               <CardContent className="p-1 sm:p-2" role="list">
-                {faqs.map((faq, i) => (
-                  <FAQItem
-                    key={i}
-                    question={faq.question}
-                    answer={faq.answer}
-                    isOpen={openFaq === i}
-                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                  />
-                ))}
+                {faqs.map((faq, i) =>
+                <FAQItem
+                  key={i}
+                  question={faq.question}
+                  answer={faq.answer}
+                  isOpen={openFaq === i}
+                  onClick={() => setOpenFaq(openFaq === i ? null : i)} />
+
+                )}
               </CardContent>
             </Card>
 
@@ -856,17 +856,17 @@ export default function BusinessLanding() {
           <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
 
             <h2 id="cta-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-4 sm:mb-6">
-              תפסיק להסתכל איך המתחרים מצליחים.<br/>
+              תפסיק להסתכל איך המתחרים מצליחים.<br />
               <span className="text-yellow-300">זה התור שלך.</span>
             </h2>
             
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
               <Link to={createPageUrl("ContactPage")} className="w-full sm:w-auto">
-                <Button 
-                  size="lg" 
-                  className="w-full sm:w-auto rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:opacity-90 text-white font-black px-8 sm:px-10 py-6 sm:py-8 text-lg sm:text-2xl shadow-2xl active:scale-95 sm:hover:scale-110 transition-all duration-300 touch-manipulation min-h-[52px] animate-pulse"
-                >
+                <Button
+                  size="lg"
+                  className="w-full sm:w-auto rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:opacity-90 text-white font-black px-8 sm:px-10 py-6 sm:py-8 text-lg sm:text-2xl shadow-2xl active:scale-95 sm:hover:scale-110 transition-all duration-300 touch-manipulation min-h-[52px] animate-pulse">
+
                   כן! תעצבו לי את העסק 
                   <Zap className="w-6 h-6 sm:w-7 sm:h-7 mr-2" aria-hidden="true" />
                 </Button>
@@ -879,7 +879,7 @@ export default function BusinessLanding() {
 
             <div className="mt-8 text-slate-300 text-xs sm:text-sm max-w-xl mx-auto">
               <strong className="text-white">הסיכון האמיתי?</strong> להישאר עם עמוד גנרי בזמן שהמתחרים גונבים את הלקוחות שלך.
-              <br/>
+              <br />
               <span className="text-cyan-400 font-bold">תהליך בימים ספורים. השקעה חכמה היום = לקוחות חדשים מחר.</span>
             </div>
           </div>
@@ -887,6 +887,6 @@ export default function BusinessLanding() {
       </main>
       
 
-    </div>
-  );
+    </div>);
+
 }
