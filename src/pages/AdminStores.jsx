@@ -33,6 +33,7 @@ export default function AdminStoresPage() {
         const [businessLandingPreview, setBusinessLandingPreview] = useState(null);
         const [selectedCity, setSelectedCity] = useState("all");
         const [availableCities, setAvailableCities] = useState([]);
+        const [recentFilter, setRecentFilter] = useState("all");
 
   // Form State
   const [formState, setFormState] = useState({
@@ -213,6 +214,31 @@ export default function AdminStoresPage() {
     });
   };
 
+  const filteredPages = useMemo(() => {
+    if (recentFilter === "all") return pages;
+    
+    const now = new Date();
+    return pages.filter(page => {
+      const createdDate = new Date(page.created_date);
+      
+      if (recentFilter === "today") {
+        return createdDate.toDateString() === now.toDateString();
+      }
+      
+      if (recentFilter === "week") {
+        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        return createdDate >= weekAgo;
+      }
+      
+      if (recentFilter === "month") {
+        const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+        return createdDate >= monthAgo;
+      }
+      
+      return true;
+    });
+  }, [pages, recentFilter]);
+
   const generateAiDescription = async () => {
     if (!formState.title) {
         alert("נא להזין כותרת לפני יצירת תוכן");
@@ -353,6 +379,19 @@ export default function AdminStoresPage() {
           <div>
             <h1 className="text-3xl font-bold text-slate-900">ניהול דפי SEO (Stores)</h1>
             <p className="text-slate-600">צור ונהל דפי נחיתה מקודמים עם סינונים מותאמים</p>
+            <div className="mt-3 flex gap-2">
+              <Select value={recentFilter} onValueChange={setRecentFilter}>
+                <SelectTrigger className="w-48 bg-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">כל הדפים</SelectItem>
+                  <SelectItem value="today">נוצרו היום</SelectItem>
+                  <SelectItem value="week">נוצרו השבוע</SelectItem>
+                  <SelectItem value="month">נוצרו החודש</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           </div>
           <div className="flex gap-2">
               <Button variant="outline" onClick={() => navigate(createPageUrl('AdminSeoAgent'))} className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white border-0 hover:from-purple-600 hover:to-indigo-700">
@@ -380,13 +419,14 @@ export default function AdminStoresPage() {
                   <TableHead className="text-right">כותרת</TableHead>
                   <TableHead className="text-right">Slug</TableHead>
                   <TableHead className="text-right">סוג</TableHead>
+                  <TableHead className="text-right">נוצר</TableHead>
                   <TableHead className="text-right">צפיות</TableHead>
                   <TableHead className="text-center">פעיל</TableHead>
                   <TableHead className="text-center">פעולות</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {pages.map((page) => (
+                {filteredPages.map((page) => (
                   <TableRow key={page.id}>
                     <TableCell className="font-medium">{page.title}</TableCell>
                     <TableCell className="font-mono text-xs text-slate-500">{page.slug}</TableCell>
@@ -396,6 +436,9 @@ export default function AdminStoresPage() {
                         ) : (
                             <Badge variant="secondary" className="bg-blue-100 text-blue-700">סינון אוטומטי</Badge>
                         )}
+                    </TableCell>
+                    <TableCell className="text-xs text-slate-500">
+                      {page.created_date ? new Date(page.created_date).toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: '2-digit', hour: '2-digit', minute: '2-digit' }) : '-'}
                     </TableCell>
                     <TableCell>{page.view_count || 0}</TableCell>
                     <TableCell className="text-center">
@@ -416,9 +459,9 @@ export default function AdminStoresPage() {
                     </TableCell>
                   </TableRow>
                 ))}
-                {pages.length === 0 && !loading && (
+                {filteredPages.length === 0 && !loading && (
                     <TableRow>
-                        <TableCell colSpan={6} className="text-center py-8 text-slate-500">
+                        <TableCell colSpan={7} className="text-center py-8 text-slate-500">
                             אין דפים להצגה
                         </TableCell>
                     </TableRow>
