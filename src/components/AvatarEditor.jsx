@@ -9,6 +9,35 @@ export default function AvatarEditorModal({ isOpen, imageUrl, onSave, onCancel, 
   const editorRef = useRef(null);
   const [scale, setScale] = useState(1);
   const [rotate, setRotate] = useState(0);
+  const [proxyImageUrl, setProxyImageUrl] = useState(null);
+
+  // Load image as blob to avoid CORS issues
+  React.useEffect(() => {
+    if (!imageUrl) {
+      setProxyImageUrl(null);
+      return;
+    }
+
+    const loadImage = async () => {
+      try {
+        const response = await fetch(imageUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        setProxyImageUrl(url);
+      } catch (error) {
+        console.error('Error loading image:', error);
+        setProxyImageUrl(imageUrl); // Fallback to original URL
+      }
+    };
+
+    loadImage();
+
+    return () => {
+      if (proxyImageUrl && proxyImageUrl.startsWith('blob:')) {
+        URL.revokeObjectURL(proxyImageUrl);
+      }
+    };
+  }, [imageUrl]);
 
   const handleSave = () => {
     if (editorRef.current) {
@@ -40,19 +69,24 @@ export default function AvatarEditorModal({ isOpen, imageUrl, onSave, onCancel, 
         <div className="space-y-6 py-4">
           {/* עורך התמונה */}
           <div className="flex justify-center bg-gradient-to-br from-slate-100 to-slate-200 rounded-xl p-6">
-            <AvatarEditor
-              ref={editorRef}
-              image={imageUrl}
-              width={300}
-              height={300}
-              border={20}
-              borderRadius={8}
-              color={[255, 255, 255, 0.8]}
-              scale={scale}
-              rotate={rotate}
-              crossOrigin="anonymous"
-              className="shadow-2xl"
-            />
+            {proxyImageUrl ? (
+              <AvatarEditor
+                ref={editorRef}
+                image={proxyImageUrl}
+                width={300}
+                height={300}
+                border={20}
+                borderRadius={8}
+                color={[255, 255, 255, 0.8]}
+                scale={scale}
+                rotate={rotate}
+                className="shadow-2xl"
+              />
+            ) : (
+              <div className="w-[300px] h-[300px] flex items-center justify-center bg-white rounded-xl">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              </div>
+            )}
           </div>
 
           {/* בקרות זום */}
