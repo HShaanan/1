@@ -242,8 +242,8 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
             {/* כותרת - בולטת וברורה */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.15] relative z-10 mb-2"
                 style={{ 
-                  fontFamily: '"Ronda", "Heebo", "Noto Sans Hebrew", system-ui, sans-serif',
-                  letterSpacing: '-0.02em'
+                  fontFamily: '"Assistant", "Rubik", "Heebo", system-ui, sans-serif',
+                  letterSpacing: '-0.01em'
                 }}>
               {title}
             </h1>
@@ -251,14 +251,15 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
             {/* תיאור קצר - בולט */}
             {shortDesc &&
               <p className="mt-5 text-lg sm:text-xl lg:text-2xl text-slate-700 leading-relaxed font-semibold relative z-10 max-w-4xl"
-                 style={{ fontFamily: '"Ronda", "Heebo", sans-serif' }}>
+                 style={{ fontFamily: '"Assistant", "Rubik", "Heebo", sans-serif' }}>
                 {shortDesc}
               </p>
             }
             
             {/* תיאור מלא - משני */}
             {restDesc &&
-              <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed whitespace-pre-line relative z-10 max-w-3xl font-normal">
+              <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed whitespace-pre-line relative z-10 max-w-3xl font-normal"
+                 style={{ fontFamily: '"Assistant", "Rubik", "Heebo", sans-serif' }}>
                 {restDesc}
               </p>
             }
