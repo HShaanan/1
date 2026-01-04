@@ -80,7 +80,7 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
           src={mainImage}
           alt={`תמונה ראשית של ${title}`}
           className="w-full h-full"
-          imgClassName="object-cover object-center w-full h-full"
+          imgClassName="object-contain object-center w-full h-full"
         />
       </div>
 
