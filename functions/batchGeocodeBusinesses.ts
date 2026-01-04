@@ -12,12 +12,6 @@ Deno.serve(async (req) => {
 
         const { mode = 'preview', limit = 10 } = await req.json().catch(() => ({}));
 
-        // Get API key
-        const apiKey = Deno.env.get("GOOGLE_MAPS_APIKEY");
-        if (!apiKey) {
-            return Response.json({ error: 'Google Maps API key not configured' }, { status: 500 });
-        }
-
         // Find businesses without coordinates
         const allBusinesses = await base44.asServiceRole.entities.BusinessPage.filter({
             is_active: true,
@@ -55,26 +49,30 @@ Deno.serve(async (req) => {
             try {
                 const fullAddress = `${business.address || ''}, ${business.city || 'ביתר עילית'}, Israel`;
                 
-                // Call Google Geocoding API
-                const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(fullAddress)}&key=${apiKey}`;
-                const response = await fetch(geocodeUrl);
+                // Call OpenStreetMap Nominatim API (free, no API key needed)
+                const geocodeUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(fullAddress)}&limit=1`;
+                const response = await fetch(geocodeUrl, {
+                    headers: {
+                        'User-Agent': 'Meshelanu/1.0 (contact@meshelanu.co.il)' // Required by Nominatim
+                    }
+                });
                 const data = await response.json();
 
-                if (data.status === 'OK' && data.results?.[0]) {
-                    const location = data.results[0].geometry.location;
+                if (data && data.length > 0) {
+                    const location = data[0];
                     
                     // Update business
                     await base44.asServiceRole.entities.BusinessPage.update(business.id, {
-                        lat: location.lat,
-                        lng: location.lng
+                        lat: parseFloat(location.lat),
+                        lng: parseFloat(location.lon)
                     });
 
                     results.push({
                         id: business.id,
                         business_name: business.business_name,
-                        lat: location.lat,
-                        lng: location.lng,
-                        formatted_address: data.results[0].formatted_address
+                        lat: parseFloat(location.lat),
+                        lng: parseFloat(location.lon),
+                        formatted_address: location.display_name
                     });
 
                     console.log(`✅ Geocoded: ${business.business_name}`);
@@ -82,13 +80,13 @@ Deno.serve(async (req) => {
                     errors.push({
                         id: business.id,
                         business_name: business.business_name,
-                        error: `Geocoding failed: ${data.status}`
+                        error: 'No results found'
                     });
-                    console.log(`❌ Failed: ${business.business_name} - ${data.status}`);
+                    console.log(`❌ Failed: ${business.business_name} - No results`);
                 }
 
-                // Rate limiting - wait between requests
-                await new Promise(resolve => setTimeout(resolve, 200));
+                // Rate limiting - Nominatim requires 1 second between requests
+                await new Promise(resolve => setTimeout(resolve, 1000));
 
             } catch (error) {
                 errors.push({

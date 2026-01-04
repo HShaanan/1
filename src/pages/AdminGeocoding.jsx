@@ -160,7 +160,7 @@ export default function AdminGeocoding() {
                         </div>
 
                         <p className="text-sm text-gray-600">
-                            💡 המערכת משתמשת ב-Google Maps Geocoding API. יש המתנה של 200ms בין כל בקשה למניעת rate limiting.
+                            💡 המערכת משתמשת ב-OpenStreetMap Nominatim (חינמי לגמרי). יש המתנה של שנייה בין כל בקשה כנדרש.
                         </p>
                     </CardContent>
                 </Card>
