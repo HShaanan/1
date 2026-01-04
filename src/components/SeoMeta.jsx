@@ -38,6 +38,10 @@ export default function SeoMeta({
 
   return (
     <Helmet>
+      {/* Favicon and Icons */}
+      <link rel="icon" type="image/png" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png" />
+      <link rel="apple-touch-icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png" />
+      
       {/* Standard Meta Tags */}
       <title>{fullTitle}</title>
       <meta name="description" content={finalDescription} />
@@ -46,15 +50,22 @@ export default function SeoMeta({
       <meta property="og:title" content={fullTitle} />
       <meta property="og:description" content={finalDescription} />
       <meta property="og:image" content={finalImage} />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:type" content="image/png" />
       <meta property="og:url" content={url} />
       <meta property="og:type" content="website" />
       <meta property="og:site_name" content="משלנו" />
+      <meta property="og:locale" content="he_IL" />
       
       {/* Twitter Card Tags */}
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={fullTitle} />
       <meta name="twitter:description" content={finalDescription} />
       <meta name="twitter:image" content={finalImage} />
+      
+      {/* Google/Bing Site Verification - if needed */}
+      <meta name="theme-color" content="#3B82F6" />
     </Helmet>
   );
 }
