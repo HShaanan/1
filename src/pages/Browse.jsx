@@ -55,7 +55,7 @@ export default function BrowsePage({ preSelectedState }) {
 
   // Handle URL params
   useEffect(() => {
-    if (categories.length === 0) return;
+    if (categories.length === 0 || activeListings.length === 0) return;
 
     const params = new URLSearchParams(window.location.search);
     const q = params.get("q");
@@ -74,6 +74,17 @@ export default function BrowsePage({ preSelectedState }) {
       );
       if (subcat) {
         setSelectedSubcategory(subcat);
+        
+        // Auto-switch to correct tab based on subcategory
+        const parentCat = categories.find(cat => cat.id === subcat.parent_id);
+        if (parentCat) {
+          const isFoodCategory = foodRegex.test(parentCat.name || "");
+          const isShopCategory = shopRegex.test(parentCat.name || "");
+          
+          if (isFoodCategory) setActiveTab("food");
+          else if (isShopCategory) setActiveTab("shopping");
+        }
+        
         console.log('Selected subcategory from URL:', subcat);
       } else {
         console.warn('Subcategory not found:', subcategoryParam);
@@ -92,7 +103,7 @@ export default function BrowsePage({ preSelectedState }) {
       setUserLocation({ city: cityParam });
       console.log('Applied city filter:', cityParam);
     }
-  }, [categories]);
+  }, [categories, activeListings, foodRegex, shopRegex]);
 
   // Advanced Filters State
   const [filters, setFilters] = useState({
