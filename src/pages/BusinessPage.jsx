@@ -203,23 +203,20 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
               <button
                 type="button"
                 onClick={onKashrutLogoClick}
-                className="relative group h-28 w-28 sm:h-36 sm:w-36 rounded-2xl bg-white flex items-center justify-center overflow-visible focus:outline-none focus:ring-2 focus:ring-blue-400/20 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
+                className="relative group h-32 w-32 sm:h-40 sm:w-40 rounded-2xl flex items-center justify-center overflow-visible focus:outline-none focus:ring-2 focus:ring-blue-400/20 cursor-pointer transition-all duration-300 hover:scale-110 active:scale-95"
                 style={{
-                  boxShadow: '0 15px 45px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.08), inset 0 2px 6px rgba(255, 255, 255, 0.95), inset 0 -2px 6px rgba(0, 0, 0, 0.04)'
+                  boxShadow: '0 15px 45px rgba(0, 0, 0, 0.12), 0 6px 12px rgba(0, 0, 0, 0.08)'
                 }}
                 aria-label="הצגת תעודת כשרות">
-
-                <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/30 to-transparent opacity-90 pointer-events-none rounded-2xl" />
-                <div className="absolute inset-0 bg-gradient-to-tl from-slate-50/40 via-transparent to-white/60 opacity-80 pointer-events-none rounded-2xl" />
-                <div className="absolute top-0 left-0 right-0 h-1/2 bg-gradient-to-b from-white/95 via-white/40 to-transparent pointer-events-none rounded-t-2xl" />
 
                 <LazyImage
                   src={kashrutLogo}
                   alt="לוגו כשרות"
                   className="w-full h-full relative z-10"
-                  imgClassName="object-contain w-full h-full p-3 transition-all duration-300 group-hover:brightness-110 group-hover:scale-105" />
+                  imgClassName="object-contain w-full h-full transition-all duration-300 group-hover:brightness-110 group-hover:scale-105"
+                  style={{ imageRendering: 'crisp-edges' }} />
 
-                <div className="absolute -inset-1.5 bg-gradient-to-br from-white/30 via-blue-50/20 to-indigo-50/20 rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500 -z-10" />
+                <div className="absolute -inset-1.5 bg-gradient-to-br from-blue-50/20 via-indigo-50/20 to-purple-50/20 rounded-2xl opacity-0 group-hover:opacity-100 blur-xl transition-all duration-500 -z-10" />
               </button>
             </div>
           }
