@@ -1,0 +1,123 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+
+Deno.serve(async (req) => {
+    try {
+        const base44 = createClientFromRequest(req);
+        const user = await base44.auth.me();
+
+        // Only admin can run this
+        if (user?.role !== 'admin') {
+            return Response.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
+        }
+
+        const { mode = 'preview', limit = 10 } = await req.json().catch(() => ({}));
+
+        // Get API key
+        const apiKey = Deno.env.get("GOOGLE_MAPS_APIKEY");
+        if (!apiKey) {
+            return Response.json({ error: 'Google Maps API key not configured' }, { status: 500 });
+        }
+
+        // Find businesses without coordinates
+        const allBusinesses = await base44.asServiceRole.entities.BusinessPage.filter({
+            is_active: true,
+            approval_status: 'approved'
+        });
+
+        const businessesNeedingGeocode = allBusinesses.filter(b => 
+            (!b.lat || !b.lng) && (b.address || b.city)
+        );
+
+        console.log(`Found ${businessesNeedingGeocode.length} businesses needing geocoding`);
+
+        if (mode === 'preview') {
+            return Response.json({
+                success: true,
+                preview: true,
+                total_needing_geocode: businessesNeedingGeocode.length,
+                will_process: Math.min(limit, businessesNeedingGeocode.length),
+                sample: businessesNeedingGeocode.slice(0, 5).map(b => ({
+                    id: b.id,
+                    business_name: b.business_name,
+                    address: b.address,
+                    city: b.city,
+                    has_coords: !!(b.lat && b.lng)
+                }))
+            });
+        }
+
+        // Process batch
+        const toProcess = businessesNeedingGeocode.slice(0, limit);
+        const results = [];
+        const errors = [];
+
+        for (const business of toProcess) {
+            try {
+                const fullAddress = `${business.address || ''}, ${business.city || 'ביתר עילית'}, Israel`;
+                
+                // Call Google Geocoding API
+                const geocodeUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(fullAddress)}&key=${apiKey}`;
+                const response = await fetch(geocodeUrl);
+                const data = await response.json();
+
+                if (data.status === 'OK' && data.results?.[0]) {
+                    const location = data.results[0].geometry.location;
+                    
+                    // Update business
+                    await base44.asServiceRole.entities.BusinessPage.update(business.id, {
+                        lat: location.lat,
+                        lng: location.lng
+                    });
+
+                    results.push({
+                        id: business.id,
+                        business_name: business.business_name,
+                        lat: location.lat,
+                        lng: location.lng,
+                        formatted_address: data.results[0].formatted_address
+                    });
+
+                    console.log(`✅ Geocoded: ${business.business_name}`);
+                } else {
+                    errors.push({
+                        id: business.id,
+                        business_name: business.business_name,
+                        error: `Geocoding failed: ${data.status}`
+                    });
+                    console.log(`❌ Failed: ${business.business_name} - ${data.status}`);
+                }
+
+                // Rate limiting - wait between requests
+                await new Promise(resolve => setTimeout(resolve, 200));
+
+            } catch (error) {
+                errors.push({
+                    id: business.id,
+                    business_name: business.business_name,
+                    error: error.message
+                });
+                console.error(`Error geocoding ${business.business_name}:`, error);
+            }
+        }
+
+        return Response.json({
+            success: true,
+            message: `עודכנו ${results.length} עסקים`,
+            stats: {
+                total_needing: businessesNeedingGeocode.length,
+                processed: toProcess.length,
+                successful: results.length,
+                failed: errors.length
+            },
+            results,
+            errors: errors.slice(0, 10)
+        });
+
+    } catch (error) {
+        console.error('Batch geocode error:', error);
+        return Response.json({
+            success: false,
+            error: error.message
+        }, { status: 500 });
+    }
+});

@@ -67,12 +67,13 @@ import MyBusinessPages from './pages/MyBusinessPages';
 import OrderCheckout from './pages/OrderCheckout';
 import OrderSuccess from './pages/OrderSuccess';
 import OrdersManagement from './pages/OrdersManagement';
+import ReferralDashboard from './pages/ReferralDashboard';
 import Search from './pages/Search';
 import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
-import ReferralDashboard from './pages/ReferralDashboard';
+import AdminGeocoding from './pages/AdminGeocoding';
 import __Layout from './Layout.jsx';
 
 
@@ -146,12 +147,13 @@ export const PAGES = {
     "OrderCheckout": OrderCheckout,
     "OrderSuccess": OrderSuccess,
     "OrdersManagement": OrdersManagement,
+    "ReferralDashboard": ReferralDashboard,
     "Search": Search,
     "Stores": Stores,
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
-    "ReferralDashboard": ReferralDashboard,
+    "AdminGeocoding": AdminGeocoding,
 }
 
 export const pagesConfig = {
