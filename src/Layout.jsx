@@ -10,12 +10,12 @@ import { Button } from "@/components/ui/button";
 import { createPageUrl } from "@/utils";
 import { HelmetProvider } from "react-helmet-async";
 import {
-  Menu, X, Store, Plus, Search, User as UserIcon, Heart,
-  Tag, UserCircle, LogOut, Shield,
-  AlertTriangle, Users, FileText, Settings, Sparkles, Zap, Mail, Wand2, Layers,
-  MessageSquare, Activity, Key, ImageIcon, Megaphone, FileText as ReviewsIcon,
-  Bug, Bot, ListChecks, Clock, Truck, ShoppingBag, Globe, Database
-  } from "lucide-react";
+        Menu, X, Store, Plus, Search, User as UserIcon, Heart,
+        Tag, UserCircle, LogOut, Shield,
+        AlertTriangle, Users, FileText, Settings, Sparkles, Zap, Mail, Wand2, Layers,
+        MessageSquare, Activity, Key, ImageIcon, Megaphone, FileText as ReviewsIcon,
+        Bug, Bot, ListChecks, Clock, Truck, ShoppingBag, Globe, Database, MapPin
+        } from "lucide-react";
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
@@ -664,6 +664,13 @@ export default function Layout({ children, currentPageName }) {
                         <Link to={createPageUrl('AdminDataQuality')} className="flex items-center gap-2 cursor-pointer">
                           <Database className="w-4 h-4 text-purple-600" aria-hidden="true" />
                           <span>איכות נתונים</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminGeocoding')} className="flex items-center gap-2 cursor-pointer">
+                          <MapPin className="w-4 h-4 text-orange-600" aria-hidden="true" />
+                          <span>עדכון קואורדינטות</span>
                         </Link>
                       </DropdownMenuItem>
 
