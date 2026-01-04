@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
+import { Helmet } from "react-helmet-async";
 import {
   ChevronLeft, ChevronDown, Store, TrendingUp, Users,
   Zap, DollarSign, CheckCircle, Star, ArrowLeft,
@@ -211,6 +212,113 @@ export default function BusinessLanding() {
 
   return (
     <div className="min-h-screen bg-white" dir="rtl">
+      {/* SEO Meta Tags */}
+      <Helmet>
+        <title>הצטרפו למשלנו - פלטפורמת העסקים החרדית | עיצוב עמוד עסק מקצועי</title>
+        <meta name="description" content="הצטרפו למשלנו והפכו את העסק שלכם לדיגיטלי! עיצוב עמוד עסק מקצועי, חיבור לגוגל, דאשבורד ניהול מתקדם, ומערכת הזמנות. מ-199₪/חודש בלבד." />
+        <link rel="canonical" href={typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}` : undefined} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="הצטרפו למשלנו - פלטפורמת העסקים החרדית" />
+        <meta property="og:description" content="עיצוב עמוד עסק מקצועי בימים ספורים. דאשבורד ניהול, חיבור לגוגל, מערכת הזמנות ווטסאפ. מ-199₪/חודש." />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : undefined} />
+        <meta property="og:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="הצטרפו למשלנו - פלטפורמת העסקים החרדית" />
+        <meta name="twitter:description" content="עיצוב עמוד עסק מקצועי בימים ספורים. מ-199₪/חודש." />
+        <meta name="twitter:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png" />
+
+        {/* FAQ Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            "mainEntity": faqs.map(faq => ({
+              "@type": "Question",
+              "name": faq.question,
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": faq.answer
+              }
+            }))
+          })}
+        </script>
+
+        {/* Organization Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Organization",
+            "name": "משלנו",
+            "url": typeof window !== 'undefined' ? window.location.origin : undefined,
+            "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png",
+            "description": "פלטפורמת העסקים והשירותים החרדית - עיצוב עמודי עסק מקצועיים, דאשבורד ניהול, וחיבור לגוגל",
+            "contactPoint": {
+              "@type": "ContactPoint",
+              "contactType": "customer service",
+              "areaServed": "IL",
+              "availableLanguage": "Hebrew"
+            }
+          })}
+        </script>
+
+        {/* Service Schema */}
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Service",
+            "serviceType": "עיצוב ופיתוח עמודי עסק דיגיטליים",
+            "provider": {
+              "@type": "Organization",
+              "name": "משלנו"
+            },
+            "areaServed": {
+              "@type": "Country",
+              "name": "Israel"
+            },
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "חבילות עיצוב עמוד עסק",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "חבילת חשיפה",
+                    "description": "פרופיל עסק בסיסי + עיצוב תמונת רקע ולוגו + דאשבורד ניהול"
+                  },
+                  "price": "199",
+                  "priceCurrency": "ILS"
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "חבילת תנופה",
+                    "description": "עיצוב מותאם + קידום באתר + תפריט והזמנות בווטסאפ + תמיכה מועדפת"
+                  },
+                  "price": "350",
+                  "priceCurrency": "ILS"
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "חבילת מהדרין",
+                    "description": "שותפות עסקית מלאה + עדכוני AI + ניהול פרסום + ייעוץ אסטרטגי"
+                  },
+                  "price": "699",
+                  "priceCurrency": "ILS"
+                }
+              ]
+            }
+          })}
+        </script>
+      </Helmet>
+      
       {/* Animations CSS */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap');

@@ -179,8 +179,26 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-[#FAFBFC] overflow-x-hidden" dir="rtl">
-      {/* Google Analytics / Google Ads Tracking */}
+      {/* SEO Meta Tags & Analytics */}
       <Helmet>
+        <title>משלנו - פלטפורמת העסקים והשירותים החרדית | מסעדות, משלוחים וקניות כשרות</title>
+        <meta name="description" content="משלנו - הפלטפורמה המובילה לעסקים ושירותים בקהילה החרדית. מצאו מסעדות כשרות, שירותי משלוחים, חנויות ועסקים מקומיים בביתר עילית והסביבה." />
+        <link rel="canonical" href={typeof window !== 'undefined' ? `${window.location.origin}${window.location.pathname}` : undefined} />
+        
+        {/* Open Graph */}
+        <meta property="og:title" content="משלנו - פלטפורמת העסקים והשירותים החרדית" />
+        <meta property="og:description" content="מצאו מסעדות כשרות, שירותי משלוחים, חנויות ועסקים מקומיים בביתר עילית והסביבה" />
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={typeof window !== 'undefined' ? window.location.href : undefined} />
+        <meta property="og:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="משלנו - פלטפורמת העסקים החרדית" />
+        <meta name="twitter:description" content="מצאו מסעדות כשרות, משלוחים וחנויות מקומיות" />
+        <meta name="twitter:image" content="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png" />
+
+        {/* Google Analytics */}
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-M5SP53RELQ"></script>
         <script>
           {`
