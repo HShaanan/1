@@ -278,7 +278,7 @@ export default function LandingPage() {
                 <img 
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/4fb3a81ef_image8.jpg"
                   alt="הצטרף כבעל עסק למשלנו - הראש שלכם בעסק, כל השאר עלינו"
-                  className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] object-contain bg-slate-950 transform group-hover:scale-[1.02] transition-transform duration-700 ease-out"
+                  className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] object-cover transform group-hover:scale-[1.02] transition-transform duration-700 ease-out"
                 />
 
                 {/* Light sweep effect */}
