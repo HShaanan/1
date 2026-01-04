@@ -824,6 +824,21 @@ export default function BusinessPageView() {
 
       const page = Array.isArray(pageData) ? pageData[0] : pageData;
 
+      // טעינת לוגו כשרות מטבלת Kashrut
+      if (page?.kashrut_authority_name) {
+        try {
+          const kashrutRecords = await base44.entities.Kashrut.filter({ 
+            name: page.kashrut_authority_name,
+            is_active: true 
+          });
+          if (kashrutRecords && kashrutRecords.length > 0) {
+            page.kashrutLogoFromDb = kashrutRecords[0].logo_url || null;
+          }
+        } catch (error) {
+          console.error('Error loading kashrut logo:', error);
+        }
+      }
+
       if (!page) {
         setError("עמוד העסק לא נמצא");
         setIsLoading(false);

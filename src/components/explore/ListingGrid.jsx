@@ -6,7 +6,7 @@ import { useWindowSize } from "@/components/hooks/useWindowSize";
 
 const GAP = 20;
 
-export default function ListingGrid({ listings = [], loading, onOpen, categories = [] }) {
+export default function ListingGrid({ listings = [], loading, onOpen, categories = [], kashrutData = [] }) {
   const { width } = useWindowSize();
 
   // Determine columns based on screen width
@@ -80,6 +80,7 @@ export default function ListingGrid({ listings = [], loading, onOpen, categories
               businessPage={page}
               onClick={onOpen}
               categories={categories}
+              kashrutData={kashrutData}
             />
           ))}
         </div>
