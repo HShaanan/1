@@ -40,47 +40,72 @@ Deno.serve(async (req) => {
         // קומבינציות: עיר + קטגוריה ראשית
         const combinations = [];
         
+        // וריאציות חיפוש סמנטי
+        const searchVariations = [
+            { prefix: '', suffix: '' }, // בסיסי: "פיצה ביתר עילית"
+            { prefix: 'חנות ', suffix: '' }, // "חנות פיצה ביתר עילית"
+            { prefix: '', suffix: ' קרוב אליי' }, // "פיצה ביתר עילית קרוב אליי"
+            { prefix: 'איפה למצוא ', suffix: '' }, // "איפה למצוא פיצה ביתר עילית"
+            { prefix: 'איפה לקנות ', suffix: '' }, // "איפה לקנות..." (לקניות)
+            { prefix: 'מתנה ל', suffix: '' }, // "מתנה ליום הולדת"
+            { prefix: 'המלצות על ', suffix: '' }, // "המלצות על..."
+            { prefix: '', suffix: ' זול' }, // "פיצה ביתר עילית זול"
+            { prefix: '', suffix: ' באיכות' }, // "פיצה ביתר עילית באיכות"
+        ];
+        
         cities.forEach(city => {
-            // קטגוריות ראשיות
+            // קטגוריות ראשיות עם וריאציות
             mainCategories.forEach(category => {
-                const slug = `${category.name}-${city}`
-                    .toLowerCase()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^\u0590-\u05FFa-z0-9-]/g, '');
+                searchVariations.forEach(variation => {
+                    const titleText = `${variation.prefix}${category.name}${variation.suffix} ב${city}`;
+                    const slug = titleText
+                        .toLowerCase()
+                        .replace(/\s+/g, '-')
+                        .replace(/[^\u0590-\u05FFa-z0-9-]/g, '');
 
-                if (!existingSlugs.has(slug)) {
-                    combinations.push({
-                        type: 'category',
-                        city,
-                        category,
-                        slug,
-                        title: `${category.name} ב${city}`,
-                        meta_title: `${category.name} ב${city} | משלנו - המדריך המלא`,
-                        meta_description: `מצאו את ${category.name} הטובים ביותר ב${city}. רשימה מקיפה של עסקים מומלצים עם ביקורות, מחירים, ופרטי קשר.`
-                    });
-                }
+                    if (!existingSlugs.has(slug) && slug.length > 5) {
+                        combinations.push({
+                            type: 'category_semantic',
+                            city,
+                            category,
+                            slug,
+                            title: titleText,
+                            meta_title: `${titleText} | משלנו - המדריך המלא`,
+                            meta_description: `${titleText} - מצאו את העסקים המומלצים ביותר ב${city}. ביקורות, מחירים, פרטי קשר ועוד.`
+                        });
+                    }
+                });
             });
 
-            // תת-קטגוריות פופולריות
-            subcategories.slice(0, 20).forEach(subcat => {
-                const slug = `${subcat.name}-${city}`
-                    .toLowerCase()
-                    .replace(/\s+/g, '-')
-                    .replace(/[^\u0590-\u05FFa-z0-9-]/g, '');
+            // תת-קטגוריות עם וריאציות מצומצמות (רק הפופולריות)
+            subcategories.slice(0, 15).forEach(subcat => {
+                const popularVariations = [
+                    { prefix: '', suffix: '' },
+                    { prefix: 'חנות ', suffix: '' },
+                    { prefix: 'איפה למצוא ', suffix: '' }
+                ];
+                
+                popularVariations.forEach(variation => {
+                    const titleText = `${variation.prefix}${subcat.name}${variation.suffix} ב${city}`;
+                    const slug = titleText
+                        .toLowerCase()
+                        .replace(/\s+/g, '-')
+                        .replace(/[^\u0590-\u05FFa-z0-9-]/g, '');
 
-                if (!existingSlugs.has(slug)) {
-                    const parent = mainCategories.find(c => c.id === subcat.parent_id);
-                    combinations.push({
-                        type: 'subcategory',
-                        city,
-                        category: parent,
-                        subcategory: subcat,
-                        slug,
-                        title: `${subcat.name} ב${city}`,
-                        meta_title: `${subcat.name} ב${city} | משלנו`,
-                        meta_description: `הרשימה המלאה של ${subcat.name} ב${city}. מצאו את העסק המושלם עבורכם.`
-                    });
-                }
+                    if (!existingSlugs.has(slug) && slug.length > 5) {
+                        const parent = mainCategories.find(c => c.id === subcat.parent_id);
+                        combinations.push({
+                            type: 'subcategory_semantic',
+                            city,
+                            category: parent,
+                            subcategory: subcat,
+                            slug,
+                            title: titleText,
+                            meta_title: `${titleText} | משלנו`,
+                            meta_description: `${titleText} - הרשימה המלאה של העסקים המובילים. מצאו את העסק המושלם עבורכם.`
+                        });
+                    }
+                });
             });
         });
 
@@ -119,26 +144,30 @@ Deno.serve(async (req) => {
 
         for (const combo of limitedCombinations) {
             try {
-                // יצירת תוכן AI
-                const promptText = combo.type === 'category'
-                    ? `צור תוכן SEO איכותי לדף נחיתה של "${combo.category.name}" ב${combo.city}.
+                // יצירת תוכן AI - התאמה לסוג החיפוש
+                let promptText = '';
+                
+                if (combo.type === 'category_semantic' || combo.type === 'category') {
+                    promptText = `צור תוכן SEO איכותי לדף נחיתה לחיפוש: "${combo.title}"
                     
 כתוב פסקה עשירה ב-150-250 מילים בעברית תקנית שכוללת:
-- למה ${combo.city} היא עיר מעולה ל${combo.category.name}
-- מה מייחד את העסקים המקומיים
-- מה כדאי לחפש בעסקים כאלה
-- קריאה לפעולה לגלות את העסקים
+- תשובה ישירה לשאלת המשתמש
+- למה ${combo.city} היא מקום מצוין למצוא את זה
+- מה חשוב לדעת לפני שבוחרים
+- קריאה לפעולה לגלות את העסקים המומלצים
 
-התוכן חייב להיות טבעי, אותנטי, ממוקד SEO.`
-                    : `צור תוכן SEO איכותי לדף נחיתה של "${combo.subcategory.name}" ב${combo.city}.
+התוכן חייב להיות טבעי, שיחתי, ועונה ישירות על כוונת החיפוש.`;
+                } else {
+                    promptText = `צור תוכן SEO איכותי לדף נחיתה לחיפוש: "${combo.title}"
                     
 כתוב פסקה עשירה ב-150-250 מילים בעברית תקנית שכוללת:
-- למה ${combo.subcategory.name} חשוב/פופולרי ב${combo.city}
-- איך לבחור ${combo.subcategory.name} טוב
-- טיפים ללקוחות
+- תשובה ישירות לשאלת המשתמש
+- טיפים לבחירה נכונה
+- מה מייחד את ${combo.city}
 - קריאה לפעולה
 
-התוכן חייב להיות טבעי, אותנטי, ממוקד SEO.`;
+התוכן חייב להיות טבעי, שיחתי, ועונה על כוונת החיפוש.`;
+                }
 
                 const contentResponse = await base44.asServiceRole.integrations.Core.InvokeLLM({
                     prompt: promptText,
