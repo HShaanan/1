@@ -4,11 +4,11 @@ import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Link } from "react-router-dom";
-import { 
-  ChevronLeft, ChevronRight, Store, Truck, Clock, Shield, Star, 
+import {
+  ChevronLeft, ChevronRight, Store, Truck, Clock, Shield, Star,
   CheckCircle, Phone, Sparkles, ShoppingCart, MapPin, Search,
-  Zap, Heart, ArrowLeft, Play, Users, TrendingUp, Award
-} from "lucide-react";
+  Zap, Heart, ArrowLeft, Play, Users, TrendingUp, Award } from
+"lucide-react";
 // Star is already imported for billboard decorations
 import { ScrollReveal, StaggerContainer, CountUp, RevealOnScroll } from "@/components/landing/ScrollAnimations";
 import WordSlider from "@/components/landing/WordSlider";
@@ -64,25 +64,25 @@ function AnimatedCounter({ target, suffix = "", prefix = "" }) {
 function LogoMarquee({ businesses }) {
   const displayLogos = businesses.slice(0, 20);
   const duplicated = [...displayLogos, ...displayLogos];
-  
+
   return (
     <div className="relative overflow-hidden py-8">
       <div className="flex animate-marquee">
-        {duplicated.map((biz, i) => (
-          <div 
-            key={i} 
-            className="flex-shrink-0 mx-6 w-24 h-24 bg-white rounded-2xl shadow-lg border border-slate-100 flex items-center justify-center p-3 hover:scale-110 transition-transform cursor-pointer"
-          >
-            {biz.images?.[0] ? (
-              <img src={biz.images[0]} alt={biz.business_name} className="w-full h-full object-contain rounded-xl" />
-            ) : (
-              <div className="text-4xl">🏪</div>
-            )}
+        {duplicated.map((biz, i) =>
+        <div
+          key={i}
+          className="flex-shrink-0 mx-6 w-24 h-24 bg-white rounded-2xl shadow-lg border border-slate-100 flex items-center justify-center p-3 hover:scale-110 transition-transform cursor-pointer">
+
+            {biz.images?.[0] ?
+          <img src={biz.images[0]} alt={biz.business_name} className="w-full h-full object-contain rounded-xl" /> :
+
+          <div className="text-4xl">🏪</div>
+          }
           </div>
-        ))}
+        )}
       </div>
-    </div>
-  );
+    </div>);
+
 }
 
 export default function LandingPage() {
@@ -96,9 +96,9 @@ export default function LandingPage() {
     const loadData = async () => {
       try {
         const [pages, cats] = await Promise.all([
-          base44.entities.BusinessPage.filter({ is_active: true, approval_status: 'approved' }, '-created_date', 50),
-          base44.entities.Category.list()
-        ]);
+        base44.entities.BusinessPage.filter({ is_active: true, approval_status: 'approved' }, '-created_date', 50),
+        base44.entities.Category.list()]
+        );
         setBusinessPages(pages || []);
         setCategories(cats || []);
       } catch (error) {
@@ -113,7 +113,7 @@ export default function LandingPage() {
   // Auto-rotate testimonials
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveTestimonial(prev => (prev + 1) % 3);
+      setActiveTestimonial((prev) => (prev + 1) % 3);
     }, 5000);
     return () => clearInterval(timer);
   }, []);
@@ -124,38 +124,38 @@ export default function LandingPage() {
   };
 
   const testimonials = [
-    { name: "ר' משה כהן", role: "אב למשפחה ברוכה", text: "השירות פשוט מדהים! הזמנתי ארוחת שבת שלמה והכל הגיע חם וטרי. חוסך לנו שעות יקרות!", rating: 5 },
-    { name: "יוסי לוי", role: "בעל מסעדה", text: "מאז שהצטרפתי למשלנו ההכנסות שלי עלו ב-40%. הפלטפורמה פשוטה וקלה לשימוש.", rating: 5 },
-    { name: "ר' אברהם גולדשטיין", role: "לקוח קבוע", text: "הכשרות ברמה הגבוהה ביותר והמחירים הוגנים. ממליץ בחום!", rating: 5 },
-  ];
+  { name: "ר' משה כהן", role: "אב למשפחה ברוכה", text: "השירות פשוט מדהים! הזמנתי ארוחת שבת שלמה והכל הגיע חם וטרי. חוסך לנו שעות יקרות!", rating: 5 },
+  { name: "יוסי לוי", role: "בעל מסעדה", text: "מאז שהצטרפתי למשלנו ההכנסות שלי עלו ב-40%. הפלטפורמה פשוטה וקלה לשימוש.", rating: 5 },
+  { name: "ר' אברהם גולדשטיין", role: "לקוח קבוע", text: "הכשרות ברמה הגבוהה ביותר והמחירים הוגנים. ממליץ בחום!", rating: 5 }];
+
 
   // Get subcategories with images for display - alternating food/shopping
   const getSubcategoriesWithImages = () => {
     const foodRegex = /(אוכל|מסעד|קייטר|מזון|גריל|בשר|דגים|פיצה|שווארמה|מאפ|קונדיט|חלבי|בשרי|שף|טבח|קפה|מתוקים|עוגות)/i;
     const shopRegex = /(חנות|קניות|ציוד|חשמל|אלקטרוניקה|מחשבים|ביגוד|אופנה|לבוש|הנעלה|ספרים|צעצוע|ריהוט|בית|קוסמטיקה|פארם|מתנות|כלי|מוצר|יודאיקה|ספרי)/i;
-    
-    const subcats = categories.filter(c => c.parent_id && c.image && c.is_active);
-    
+
+    const subcats = categories.filter((c) => c.parent_id && c.image && c.is_active);
+
     // Build map of parent names
     const parentNames = {};
-    categories.forEach(c => {
+    categories.forEach((c) => {
       if (!c.parent_id) parentNames[c.id] = c.name || "";
     });
-    
+
     // Check if category belongs to food or shopping by parent name
     const isFoodCat = (cat) => {
       const parentName = parentNames[cat.parent_id] || "";
       return foodRegex.test(parentName) || foodRegex.test(cat.name || "");
     };
-    
+
     const isShopCat = (cat) => {
       const parentName = parentNames[cat.parent_id] || "";
       return shopRegex.test(parentName) || shopRegex.test(cat.name || "");
     };
-    
+
     const foodCats = subcats.filter(isFoodCat).slice(0, 3);
     const shopCats = subcats.filter(isShopCat).slice(0, 3);
-    
+
     // Alternate: food, shop, food, shop, food, shop
     const result = [];
     for (let i = 0; i < 3; i++) {
@@ -166,16 +166,16 @@ export default function LandingPage() {
   };
 
   const topSubcategories = getSubcategoriesWithImages();
-  
+
   // Fallback gradients for categories without images
   const gradients = [
-    'from-orange-400 to-red-500',
-    'from-yellow-400 to-orange-500', 
-    'from-green-400 to-emerald-500',
-    'from-pink-400 to-rose-500',
-    'from-amber-400 to-yellow-500',
-    'from-blue-400 to-cyan-500',
-  ];
+  'from-orange-400 to-red-500',
+  'from-yellow-400 to-orange-500',
+  'from-green-400 to-emerald-500',
+  'from-pink-400 to-rose-500',
+  'from-amber-400 to-yellow-500',
+  'from-blue-400 to-cyan-500'];
+
 
   return (
     <div className="min-h-screen bg-[#FAFBFC] overflow-x-hidden" dir="rtl">
@@ -215,15 +215,15 @@ export default function LandingPage() {
       
       {/* ============== HERO SECTION - FULL IMAGE ============== */}
       <section className="relative w-full overflow-hidden">
-        <Link 
+        <Link
           to={createPageUrl("Browse")}
-          className="block w-full touch-manipulation group"
-        >
-          <img 
+          className="block w-full touch-manipulation group">
+
+          <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/fb8c8a10a_image3.jpg"
             alt="כל מה שטוב, כשר וקרוב - זירת המסחר הדיגיטלית החדשה של המגזר החרדי"
-            className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] object-cover transform group-hover:scale-[1.01] transition-transform duration-700"
-          />
+            className="w-full h-auto max-h-[50vh] sm:max-h-[60vh] lg:max-h-[70vh] object-cover transform group-hover:scale-[1.01] transition-transform duration-700" />
+
         </Link>
       </section>
 
@@ -237,7 +237,7 @@ export default function LandingPage() {
                   קטגוריות
                 </span>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 flex flex-wrap justify-center items-center gap-x-2">
-                  <span>משלנו - מסעדות כשרות, משלוחים וקניות ב</span>
+                  <span className="">משלנו - מסעדות כשרות, משלוחים וקניות ב:</span>
                   <WordSlider words={["ביתר עילית", "מודיעין עילית", "בית שמש", "ירושלים", "אלעד", "בני ברק"]} />
                 </h1>
                 <p className="text-slate-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto px-2">
@@ -247,31 +247,31 @@ export default function LandingPage() {
             </ScrollReveal>
 
             <StaggerContainer staggerDelay={80} className="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4 sm:gap-5 lg:gap-8">
-          {topSubcategories.length > 0 ? topSubcategories.map((cat, i) => (
-              <Link
-                key={cat.id}
-                to={createPageUrl(`Browse?q=${encodeURIComponent(cat.name)}`)}
-                className="group relative overflow-hidden rounded-2xl sm:rounded-3xl aspect-square flex flex-col items-center justify-end p-2 sm:p-4 text-white shadow-lg hover:shadow-2xl transition-all duration-300 active:scale-95 sm:hover:scale-[1.03] touch-manipulation"
-              >
-                <img 
-                  src={cat.image} 
-                  alt={cat.name}
-                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  loading="lazy"
-                />
+          {topSubcategories.length > 0 ? topSubcategories.map((cat, i) =>
+          <Link
+            key={cat.id}
+            to={createPageUrl(`Browse?q=${encodeURIComponent(cat.name)}`)}
+            className="group relative overflow-hidden rounded-2xl sm:rounded-3xl aspect-square flex flex-col items-center justify-end p-2 sm:p-4 text-white shadow-lg hover:shadow-2xl transition-all duration-300 active:scale-95 sm:hover:scale-[1.03] touch-manipulation">
+
+                <img
+              src={cat.image}
+              alt={cat.name}
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              loading="lazy" />
+
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
                 <div className="relative z-10 text-center pb-1 sm:pb-2">
                   <h3 className="font-bold text-sm sm:text-base lg:text-xl drop-shadow-lg line-clamp-2">{cat.name}</h3>
                 </div>
               </Link>
-            )) : (
-              // Fallback while loading
-              [...Array(6)].map((_, i) => (
-                <div key={i} className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl aspect-square flex flex-col items-center justify-center p-2 sm:p-4 text-white shadow-lg bg-gradient-to-br ${gradients[i]}`}>
+          ) :
+          // Fallback while loading
+          [...Array(6)].map((_, i) =>
+          <div key={i} className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl aspect-square flex flex-col items-center justify-center p-2 sm:p-4 text-white shadow-lg bg-gradient-to-br ${gradients[i]}`}>
                   <div className="w-8 sm:w-12 h-8 sm:h-12 bg-white/20 rounded-full animate-pulse" />
                 </div>
-              ))
-            )}
+          )
+          }
         </StaggerContainer>
 
         <ScrollReveal animation="fadeUp" delay={300}>
@@ -303,14 +303,14 @@ export default function LandingPage() {
             {/* Business Image */}
             <Link
               to={createPageUrl("BusinessLanding")}
-              className="block touch-manipulation group relative"
-            >
+              className="block touch-manipulation group relative">
+
               <div className="relative overflow-hidden">
-                <img 
+                <img
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/4fb3a81ef_image8.jpg"
                   alt="הצטרף כבעל עסק למשלנו - הראש שלכם בעסק, כל השאר עלינו"
-                  className="w-full h-auto object-cover transform group-hover:scale-[1.02] transition-transform duration-700 ease-out"
-                />
+                  className="w-full h-auto object-cover transform group-hover:scale-[1.02] transition-transform duration-700 ease-out" />
+
 
                 {/* Light sweep effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/15 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000 ease-out"></div>
@@ -485,6 +485,6 @@ export default function LandingPage() {
           animation: glow 3s ease-in-out infinite;
         }
       `}</style>
-    </div>
-  );
+    </div>);
+
 }
