@@ -690,7 +690,7 @@ export default function Layout({ children, currentPageName }) {
               <img
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/0305e7f48_ChatGPTImageJul29202502_28_50AM.png"
                 alt="לוגו משלנו - חזרה לדף הבית"
-                className="h-16 lg:h-20 w-auto object-contain hover:scale-105 transition-transform duration-200"
+                className="h-20 lg:h-24 w-auto object-cover hover:scale-105 transition-transform duration-200"
               />
             </Link>
 
