@@ -73,7 +73,7 @@ export const WebsiteSchema = ({ name = "משלנו", description, url }) => {
         "name": name,
         "url": siteUrl,
         "description": description || "הפלטפורמה הכשרה למשלוחים, מסעדות ועסקים בביתר עילית והסביבה.",
-        "image": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png",
+        "image": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/feeb2fcca_Gemini_Generated_Image_x2ms6ux2ms6ux2ms.png",
         "potentialAction": {
             "@type": "SearchAction",
             "target": `${siteUrl}/Browse?q={search_term_string}`,
@@ -84,7 +84,7 @@ export const WebsiteSchema = ({ name = "משלנו", description, url }) => {
             "name": "משלנו",
             "logo": {
                 "@type": "ImageObject",
-                "url": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png"
+                "url": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/feeb2fcca_Gemini_Generated_Image_x2ms6ux2ms6ux2ms.png"
             }
         }
     };
@@ -103,7 +103,7 @@ export const OrganizationSchema = () => {
         "@type": "Organization",
         "name": "משלנו",
         "url": siteUrl,
-        "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png",
+        "logo": "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/feeb2fcca_Gemini_Generated_Image_x2ms6ux2ms6ux2ms.png",
         "sameAs": [
             "https://www.facebook.com/meshelanu",
             "https://www.instagram.com/meshelanu"

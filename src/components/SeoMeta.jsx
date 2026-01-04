@@ -34,13 +34,13 @@ export default function SeoMeta({
   }
   
   const finalDescription = description || `משלנו - המקום למצוא עסקים, מקצוענים ושירותים בקהילה החרדית${city ? ` ב${city}` : ''}`;
-  const finalImage = imageUrl || "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png";
+  const finalImage = imageUrl || "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/feeb2fcca_Gemini_Generated_Image_x2ms6ux2ms6ux2ms.png";
 
   return (
     <Helmet>
       {/* Favicon and Icons */}
-      <link rel="icon" type="image/png" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png" />
-      <link rel="apple-touch-icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png" />
+      <link rel="icon" type="image/png" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/feeb2fcca_Gemini_Generated_Image_x2ms6ux2ms6ux2ms.png" />
+      <link rel="apple-touch-icon" href="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/feeb2fcca_Gemini_Generated_Image_x2ms6ux2ms6ux2ms.png" />
       
       {/* Standard Meta Tags */}
       <title>{fullTitle}</title>

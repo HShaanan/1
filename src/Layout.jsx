@@ -681,7 +681,7 @@ export default function Layout({ children, currentPageName }) {
 
             <Link to={createPageUrl("Browse")} className="flex-shrink-0" aria-label="חזרה לדף הבית - משלנו">
               <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/613960439_ChatGPT_Image_Jul_29__2025__02_28_50_AM-removebg-preview.png"
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/feeb2fcca_Gemini_Generated_Image_x2ms6ux2ms6ux2ms.png"
                 alt="לוגו משלנו - חזרה לדף הבית"
                 className="h-36 lg:h-42 w-auto object-contain hover:scale-105 transition-transform duration-200"
               />
