@@ -480,15 +480,15 @@ export default function BusinessLanding() {
                 <span className="text-red-700">תפסיק להפסיד כסף</span>
                 <AlertTriangle className="w-4 h-4 text-red-600" aria-hidden="true" />
               </div>
-              <h2 id="benefits-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 animate-fade-in-up px-2" style={{ animationDelay: '0.1s' }}>
-                המתחרה שלך <span className="relative inline-block">כבר פה
+              <h1 id="benefits-heading" className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 animate-fade-in-up px-2" style={{ animationDelay: '0.1s' }}>
+                עיצוב עמוד עסק מקצועי לעסקים חרדיים - <span className="relative inline-block">המתחרה שלך כבר פה
                   <svg className="absolute -bottom-2 left-0 w-full" height="8" viewBox="0 0 100 8" preserveAspectRatio="none">
                     <path d="M0,5 Q25,0 50,5 T100,5" fill="none" stroke="currentColor" strokeWidth="2" className="text-red-500" />
                   </svg>
                 </span>
                 <br/>
                 <span className="bg-gradient-to-r from-red-600 to-orange-600 bg-clip-text text-transparent">למה אתה מחכה?</span>
-              </h2>
+              </h1>
               <p className="text-slate-600 text-sm sm:text-lg max-w-2xl mx-auto animate-fade-in-up px-4 font-bold" style={{ animationDelay: '0.2s' }}>
                 כל יום בלי עמוד מקצועי = <span className="text-red-600">לקוחות שבוחרים במתחרה</span>
               </p>
@@ -583,7 +583,7 @@ export default function BusinessLanding() {
                   💎 בחר את המסלול המתאים לך
                 </span>
                 <h2 id="pricing-heading" className="text-3xl sm:text-4xl md:text-5xl font-bold text-slate-900 mb-4">
-                  מסלולים שמתאימים לכל עסק
+                  מחירון עיצוב עמוד עסק - חבילות החל מ-199₪ לחודש
                 </h2>
                 <p className="text-slate-600 text-lg max-w-2xl mx-auto">
                   מנוכחות דיגיטלית בסיסית ועד שותפות עסקית מלאה
@@ -832,6 +832,22 @@ export default function BusinessLanding() {
                 ))}
               </CardContent>
             </Card>
+
+            {/* SEO Content Section */}
+            <div className="mt-12 prose prose-lg max-w-4xl mx-auto">
+              <h2 className="text-2xl font-bold text-slate-900 mb-4">למה עסקים חרדיים בוחרים במשלנו?</h2>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                <strong>עיצוב עמוד עסק מקצועי</strong> הוא לא רק יופי חיצוני - זה הכרטיס שלכם להצלחה דיגיטלית. במשלנו אנחנו מתמחים ב<strong>בניית עמודי עסק כשרים</strong> עבור הקהילה החרדית, עם דגש על <strong>מסעדות כשרות, שירותי משלוחים, וחנויות מקומיות</strong>.
+              </p>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">מה כולל שירות עיצוב העמוד שלנו?</h3>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                כל עמוד שאנחנו מעצבים כולל <strong>אופטימיזציה למנועי חיפוש (SEO)</strong>, <strong>דאשבורד ניהול מתקדם</strong>, <strong>מערכת הזמנות בווטסאפ</strong>, ו<strong>חיבור אוטומטי לגוגל</strong>. אתם מקבלים לא רק עמוד יפה - אלא כלי שמביא לקוחות חדשים כל יום.
+              </p>
+              <h3 className="text-xl font-bold text-slate-900 mb-3">כמה זמן לוקח לעצב עמוד עסק?</h3>
+              <p className="text-slate-700 leading-relaxed mb-4">
+                בניגוד למעצבים רגילים שלוקחים שבועות, אנחנו מסיימים את <strong>עיצוב העמוד המקצועי תוך ימים ספורים</strong>. התהליך פשוט: אתם נותנים לנו את פרטי העסק, ואנחנו דואגים לכל השאר - מעיצוב גרפי ועד להופעה בגוגל.
+              </p>
+            </div>
           </div>
         </section>
 

@@ -236,13 +236,12 @@ export default function LandingPage() {
                 <span className="inline-block px-3 sm:px-4 py-1 bg-purple-100 text-purple-700 rounded-full text-xs sm:text-sm font-semibold mb-3 sm:mb-4">
                   קטגוריות
                 </span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 flex flex-wrap justify-center items-center gap-x-2">
-                  <span>בא לך</span>
-                  <WordSlider words={["פיצה", "סושי", "המבורגר", "גלידה", "שווארמה", "בשרים", "אסייתי", "מתוקים"]} />
-                  <span>היום?</span>
-                </h2>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 flex flex-wrap justify-center items-center gap-x-2">
+                  <span>משלנו - מסעדות כשרות, משלוחים וקניות ב</span>
+                  <WordSlider words={["ביתר עילית", "מודיעין עילית", "בית שמש", "ירושלים", "אלעד", "בני ברק"]} />
+                </h1>
                 <p className="text-slate-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto px-2">
-                  בחר קטגוריה וגלה את העסקים הכשרים הטובים ביותר באזורך
+                  פלטפורמת העסקים והשירותים המובילה בקהילה החרדית - מצאו מסעדות, שירותי משלוחים, חנויות ומקצוענים
                 </p>
               </div>
             </ScrollReveal>
