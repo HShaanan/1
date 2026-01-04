@@ -406,7 +406,7 @@ export default function SearchPage() {
                }}
                className="w-full h-full border-0"
              />
-             <div className="absolute bottom-2 left-2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs text-gray-600 z-[1000] pointer-events-none">
+             <div className="absolute bottom-2 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-sm px-2 py-1 rounded text-xs text-gray-600 z-[1000] pointer-events-none">
                Map data © OpenStreetMap contributors
              </div>
          </div>
