@@ -237,7 +237,7 @@ export default function LandingPage() {
                   קטגוריות
                 </span>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 mb-3 sm:mb-4 flex flex-wrap justify-center items-center gap-x-2">
-                  <span className="">משלנו - מסעדות כשרות, משלוחים וקניות ב:</span>
+                  <span className="">משלנו, כל מה שטוב כשר וקרוב ב:</span>
                   <WordSlider words={["ביתר עילית", "מודיעין עילית", "בית שמש", "ירושלים", "אלעד", "בני ברק"]} />
                 </h1>
                 <p className="text-slate-600 text-sm sm:text-base lg:text-lg max-w-2xl mx-auto px-2">
