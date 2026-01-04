@@ -120,11 +120,11 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
 
         {/* לוגו כשרות - ימין למטה, מוגדל באיכות מקסימלית */}
         {kashrutLogo && (
-          <div className="absolute bottom-2 right-2 bg-white p-1.5 rounded-xl shadow-lg z-10 w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center border-2 border-slate-200">
+          <div className="absolute bottom-2 right-2 p-1 rounded-xl shadow-lg z-10 w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
             <img
               src={kashrutLogo}
               alt="לוגו כשרות"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain rounded-xl"
               loading="eager"
               fetchpriority="high"
               style={{ imageRendering: 'crisp-edges' }}
