@@ -44,8 +44,9 @@ Deno.serve(async (req) => {
       debug: { columns: firstRowKeys }
     };
 
-    // Get all categories for mapping
+    // Get all categories and kashrut authorities once
     const categories = await base44.asServiceRole.entities.Category.list();
+    const allKashrut = await base44.asServiceRole.entities.Kashrut.list();
 
     for (let i = 0; i < jsonData.length; i++) {
       const row = jsonData[i];
@@ -68,9 +69,18 @@ Deno.serve(async (req) => {
         const phone = getColumnValue(['טלפון', 'פלאפון', 'נייד', 'טל']);
         const kashrut = getColumnValue(['מפקח', 'כשרות', 'רשות']);
 
-        if (!businessName) {
-          results.failed++;
-          results.errors.push(`שורה ${i + 2}: חסר שם עסק`);
+        // Skip empty or invalid rows
+        if (!businessName || !businessName.trim() || businessName.toLowerCase().includes('empty')) {
+          continue;
+        }
+
+        // Skip rows with clearly invalid data (headers, fax numbers, etc.)
+        const lowerName = businessName.toLowerCase().trim();
+        if (lowerName.includes('שעות פתיחה') || 
+            lowerName.includes('פקס:') || 
+            lowerName.includes('אימייל') ||
+            lowerName.includes('rate limit') ||
+            lowerName.length < 3) {
           continue;
         }
 
@@ -82,8 +92,7 @@ Deno.serve(async (req) => {
 
         // Find kashrut authority if provided
         let kashrutAuthority = null;
-        if (kashrut) {
-          const allKashrut = await base44.asServiceRole.entities.Kashrut.list();
+        if (kashrut && kashrut.trim()) {
           kashrutAuthority = allKashrut.find(k => 
             k.name?.includes(kashrut.trim()) || 
             kashrut.trim().includes(k.name || '')
