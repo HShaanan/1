@@ -675,6 +675,13 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild role="menuitem">
+                        <Link to={createPageUrl('AdminImportCSV')} className="flex items-center gap-2 cursor-pointer">
+                          <FileText className="w-4 h-4 text-green-600" aria-hidden="true" />
+                          <span>ייבוא עסקים Excel/CSV</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminSettings')} className="flex items-center gap-2 cursor-pointer bg-slate-50">
                           <Settings className="w-4 h-4 text-slate-700" aria-hidden="true" />
                           <span className="font-bold text-slate-700">הגדרות מערכת</span>
@@ -830,6 +837,13 @@ export default function Layout({ children, currentPageName }) {
                         <Link to={createPageUrl("AdminDataQuality")} className="w-full flex items-center cursor-pointer">
                           <Database className="w-4 h-4 ml-2 text-purple-600" aria-hidden="true" />
                           <span>איכות נתונים</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("AdminImportCSV")} className="w-full flex items-center cursor-pointer">
+                          <FileText className="w-4 h-4 ml-2 text-green-600" aria-hidden="true" />
+                          <span>ייבוא עסקים Excel/CSV</span>
                         </Link>
                       </DropdownMenuItem>
 
