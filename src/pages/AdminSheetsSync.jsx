@@ -1,14 +1,21 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { base44 } from "@/api/base44Client";
-import { ArrowRight, FileSpreadsheet, Loader2, CheckCircle2, ExternalLink } from "lucide-react";
+import { ArrowRight, FileSpreadsheet, Loader2, CheckCircle2, ExternalLink, Download, Upload } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function AdminSheetsSync() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [result, setResult] = useState(null);
+  const [isExporting, setIsExporting] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
+  const [exportResult, setExportResult] = useState(null);
+  const [importResult, setImportResult] = useState(null);
   const [error, setError] = useState(null);
+  const [spreadsheetUrl, setSpreadsheetUrl] = useState('https://docs.google.com/spreadsheets/d/1QPym2hFwmc-55sfswzYU4SB9_0M0cdu-xTb8T3iQPFw/edit?gid=1235836669#gid=1235836669');
+  const [sheetName, setSheetName] = useState('');
 
   const handleSync = async () => {
     setIsLoading(true);
