@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 403 });
     }
 
-    const { fileData, fileName } = await req.json();
+    const { fileData, fileName, startRow = 0, batchSize = 50 } = await req.json();
     
     if (!fileData) {
       return Response.json({ error: 'No file provided' }, { status: 400 });
@@ -41,6 +41,9 @@ Deno.serve(async (req) => {
       success: 0,
       failed: 0,
       errors: [],
+      startRow,
+      endRow: Math.min(startRow + batchSize, jsonData.length),
+      hasMore: startRow + batchSize < jsonData.length,
       debug: { columns: firstRowKeys }
     };
 
@@ -48,7 +51,8 @@ Deno.serve(async (req) => {
     const categories = await base44.asServiceRole.entities.Category.list();
     const allKashrut = await base44.asServiceRole.entities.Kashrut.list();
 
-    for (let i = 0; i < jsonData.length; i++) {
+    const endIndex = Math.min(startRow + batchSize, jsonData.length);
+    for (let i = startRow; i < endIndex; i++) {
       const row = jsonData[i];
 
       try {

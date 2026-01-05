@@ -31,6 +31,7 @@ import AdminReviews from './pages/AdminReviews';
 import AdminSecrets from './pages/AdminSecrets';
 import AdminSeoAgent from './pages/AdminSeoAgent';
 import AdminSettings from './pages/AdminSettings';
+import AdminSheetsSync from './pages/AdminSheetsSync';
 import AdminStats from './pages/AdminStats';
 import AdminStores from './pages/AdminStores';
 import AdminSupport from './pages/AdminSupport';
@@ -74,7 +75,6 @@ import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
-import AdminSheetsSync from './pages/AdminSheetsSync';
 import __Layout from './Layout.jsx';
 
 
@@ -112,6 +112,7 @@ export const PAGES = {
     "AdminSecrets": AdminSecrets,
     "AdminSeoAgent": AdminSeoAgent,
     "AdminSettings": AdminSettings,
+    "AdminSheetsSync": AdminSheetsSync,
     "AdminStats": AdminStats,
     "AdminStores": AdminStores,
     "AdminSupport": AdminSupport,
@@ -155,7 +156,6 @@ export const PAGES = {
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
-    "AdminSheetsSync": AdminSheetsSync,
 }
 
 export const pagesConfig = {

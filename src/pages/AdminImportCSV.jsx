@@ -9,33 +9,55 @@ export default function AdminImportCSV() {
   const [file, setFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [results, setResults] = useState(null);
+  const [fileData, setFileData] = useState(null);
+  const [currentBatch, setCurrentBatch] = useState(0);
 
   const handleFileChange = (e) => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
       setResults(null);
+      setFileData(null);
+      setCurrentBatch(0);
     }
   };
 
-  const handleUpload = async () => {
-    if (!file) return;
-
+  const handleUpload = async (startRow = 0) => {
     setUploading(true);
-    setResults(null);
 
     try {
-      // Convert file to base64 for backend function
-      const arrayBuffer = await file.arrayBuffer();
-      const base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+      let base64 = fileData;
+      
+      // First upload - convert file to base64
+      if (!base64) {
+        const arrayBuffer = await file.arrayBuffer();
+        base64 = btoa(String.fromCharCode(...new Uint8Array(arrayBuffer)));
+        setFileData(base64);
+      }
 
       const response = await base44.functions.invoke('importBusinessesFromCSV', {
         fileData: base64,
-        fileName: file.name
+        fileName: file.name,
+        startRow,
+        batchSize: 50
       });
 
       if (response.data?.success) {
-        setResults(response.data.results);
+        const batchResults = response.data.results;
+        
+        // Accumulate results
+        if (startRow === 0) {
+          setResults(batchResults);
+        } else {
+          setResults(prev => ({
+            ...batchResults,
+            success: prev.success + batchResults.success,
+            failed: prev.failed + batchResults.failed,
+            errors: [...prev.errors, ...batchResults.errors]
+          }));
+        }
+        
+        setCurrentBatch(batchResults.endRow);
       } else {
         setResults({
           total: 0,
@@ -46,15 +68,17 @@ export default function AdminImportCSV() {
       }
     } catch (error) {
       console.error('Upload error:', error);
-      setResults({
-        total: 0,
-        success: 0,
-        failed: 0,
-        errors: [error.message || 'Upload failed']
-      });
+      setResults(prev => ({
+        ...prev,
+        errors: [...(prev?.errors || []), error.message || 'Upload failed']
+      }));
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleContinue = () => {
+    handleUpload(currentBatch);
   };
 
   return (
@@ -101,13 +125,23 @@ export default function AdminImportCSV() {
                 </div>
               </label>
 
-              {file && (
+              {file && !results && (
                 <Button
-                  onClick={handleUpload}
+                  onClick={() => handleUpload(0)}
                   disabled={uploading}
                   className="w-full"
                 >
                   {uploading ? 'מייבא...' : 'התחל ייבוא'}
+                </Button>
+              )}
+
+              {results?.hasMore && (
+                <Button
+                  onClick={handleContinue}
+                  disabled={uploading}
+                  className="w-full bg-green-600 hover:bg-green-700"
+                >
+                  {uploading ? 'מייבא...' : `המשך ייבוא (${currentBatch}/${results.total})`}
                 </Button>
               )}
             </div>
@@ -115,6 +149,14 @@ export default function AdminImportCSV() {
             {/* Results */}
             {results && (
               <div className="space-y-3">
+                {results.hasMore && (
+                  <Alert className="bg-blue-50 border-blue-200">
+                    <AlertDescription className="text-blue-800">
+                      <strong>התקדמות:</strong> עובד על שורות {results.startRow + 1} - {results.endRow} מתוך {results.total}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="grid grid-cols-3 gap-3">
                   <Card className="bg-blue-50">
                     <CardContent className="p-4 text-center">
