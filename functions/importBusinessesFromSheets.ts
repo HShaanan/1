@@ -5,6 +5,8 @@ Deno.serve(async (req) => {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
 
+    console.log('User authenticated:', user?.email, 'Role:', user?.role);
+
     if (!user || user.role !== 'admin') {
       return Response.json({ error: 'Unauthorized - Admin access required' }, { status: 403 });
     }
@@ -12,26 +14,37 @@ Deno.serve(async (req) => {
     // Get request body
     const { spreadsheetId, sheetName } = await req.json();
 
+    console.log('Request params:', { spreadsheetId, sheetName });
+
     if (!spreadsheetId) {
       return Response.json({ error: 'Spreadsheet ID is required' }, { status: 400 });
     }
 
     // Get Google Sheets access token
+    console.log('Fetching Google Sheets access token...');
     const accessToken = await base44.asServiceRole.connectors.getAccessToken('googlesheets');
+    console.log('Access token received:', accessToken ? 'Yes' : 'No');
     
     if (!accessToken) {
-      return Response.json({ error: 'Google Sheets not connected. Please authorize first.' }, { status: 400 });
+      return Response.json({ 
+        error: 'לא נמצא חיבור ל-Google Sheets. יש לאשר את החיבור תחילה.',
+        helpText: 'עבור להגדרות מערכת > אינטגרציות וחבר את Google Sheets'
+      }, { status: 400 });
     }
 
     // Fetch data from Google Sheets
     const range = sheetName ? `${sheetName}!A:Z` : 'A:Z';
     const url = `https://sheets.googleapis.com/v4/spreadsheets/${spreadsheetId}/values/${encodeURIComponent(range)}`;
     
+    console.log('Fetching from Google Sheets:', { url, range });
+    
     const response = await fetch(url, {
       headers: {
         'Authorization': `Bearer ${accessToken}`
       }
     });
+
+    console.log('Google Sheets response status:', response.status);
 
     if (!response.ok) {
       const error = await response.text();
