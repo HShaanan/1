@@ -77,7 +77,28 @@ export default function AdminSheetsSync() {
     } catch (err) {
       console.error('Import error:', err);
       console.error('Full error details:', err);
-      setError(err.message || 'An error occurred during import');
+      
+      // נסה לחלץ את הודעת השגיאה מהשרת
+      let errorMessage = 'שגיאה בייבוא';
+      
+      if (err.response && err.response.data) {
+        console.log('Error response data:', err.response.data);
+        if (err.response.data.error) {
+          errorMessage = err.response.data.error;
+          if (err.response.data.details) {
+            errorMessage += '\n\nפרטים: ' + err.response.data.details;
+          }
+          if (err.response.data.helpText) {
+            errorMessage += '\n\n' + err.response.data.helpText;
+          }
+        } else if (typeof err.response.data === 'string') {
+          errorMessage = err.response.data;
+        }
+      } else if (err.message) {
+        errorMessage = err.message;
+      }
+      
+      setError(errorMessage);
     } finally {
       setIsImporting(false);
     }

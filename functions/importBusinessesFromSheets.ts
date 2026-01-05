@@ -235,9 +235,11 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Error importing from Google Sheets:', error);
+    console.error('Full error stack:', error.stack);
     return Response.json({
-      error: 'Internal server error',
-      details: error.message
+      error: 'שגיאה בעיבוד הייבוא',
+      details: error.message,
+      stack: error.stack
     }, { status: 500 });
   }
 });
