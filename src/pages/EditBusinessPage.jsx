@@ -158,14 +158,24 @@ export default function EditBusinessPage() {
       const current = prev.subcategory_ids || [];
       const isSelected = current.includes(subcatId);
 
+      // אם מסירים תת-קטגוריה, צריך גם להסיר את התת-תת שלה
+      if (isSelected) {
+        const subSubsToRemove = categories
+          .filter(c => c.parent_id === subcatId)
+          .map(c => c.id);
+        
+        return {
+          ...prev,
+          subcategory_ids: current.filter(id => id !== subcatId && !subSubsToRemove.includes(id))
+        };
+      }
+
       return {
         ...prev,
-        subcategory_ids: isSelected
-          ? current.filter(id => id !== subcatId)
-          : [...current, subcatId]
+        subcategory_ids: [...current, subcatId]
       };
     });
-  }, []);
+  }, [categories]);
 
   // קטגוריות ראשיות (אלו ללא parent_id)
   const mainCategories = useMemo(() => categories.filter(c => !c.parent_id), [categories]);
@@ -177,6 +187,19 @@ export default function EditBusinessPage() {
       : [],
     [form.category_id, categories]
   );
+
+  // תת-תת-קטגוריות של התתי-קטגוריות הנבחרות
+  const subSubcategories = useMemo(() => {
+    if (!form.subcategory_ids || form.subcategory_ids.length === 0) return [];
+    
+    // מצא את כל התת-תת-קטגוריות של התתי-קטגוריות הנבחרות
+    const allSubSubs = [];
+    form.subcategory_ids.forEach(subcatId => {
+      const subSubs = categories.filter(c => c.parent_id === subcatId);
+      allSubSubs.push(...subSubs);
+    });
+    return allSubSubs;
+  }, [form.subcategory_ids, categories]);
 
   useEffect(() => {
     const loadData = async () => {
@@ -1162,6 +1185,40 @@ export default function EditBusinessPage() {
                           </p>
                         </div>
                       )}
+                    </div>
+                  )}
+
+                  {/* תת-תת-קטגוריות */}
+                  {subSubcategories.length > 0 && (
+                    <div className="mt-6">
+                      <Label className="text-base font-semibold mb-3 block text-indigo-800">
+                        תת-תת-קטגוריות (בחר לפירוט נוסף)
+                      </Label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        {subSubcategories.map((subSubcat) => {
+                          const isSelected = form.subcategory_ids.includes(subSubcat.id);
+                          return (
+                            <button
+                              key={subSubcat.id}
+                              type="button"
+                              onClick={() => handleSubcategoryToggle(subSubcat.id)}
+                              className={`p-3 rounded-xl border-2 transition-all text-right flex items-center gap-3 ${
+                                isSelected
+                                  ? 'border-indigo-500 bg-indigo-100 shadow-md'
+                                  : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                              }`}
+                            >
+                              <div className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-all ${
+                                isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-gray-300'
+                              }`}>
+                                {isSelected && <Check className="w-3 h-3 text-white" />}
+                              </div>
+                              <span className="text-xl">{subSubcat.icon || '✨'}</span>
+                              <span className="font-medium flex-1 text-sm">{subSubcat.name}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>
