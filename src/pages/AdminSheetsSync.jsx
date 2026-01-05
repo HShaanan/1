@@ -17,24 +17,61 @@ export default function AdminSheetsSync() {
   const [spreadsheetUrl, setSpreadsheetUrl] = useState('https://docs.google.com/spreadsheets/d/1QPym2hFwmc-55sfswzYU4SB9_0M0cdu-xTb8T3iQPFw/edit?gid=1235836669#gid=1235836669');
   const [sheetName, setSheetName] = useState('');
 
-  const handleSync = async () => {
-    setIsLoading(true);
+  const handleExport = async () => {
+    setIsExporting(true);
     setError(null);
-    setResult(null);
+    setExportResult(null);
 
     try {
       const response = await base44.functions.invoke('syncBusinessToSheets', {});
       
       if (response.data.success) {
-        setResult(response.data);
+        setExportResult(response.data);
       } else {
-        setError(response.data.error || 'Failed to sync');
+        setError(response.data.error || 'Failed to export');
       }
     } catch (err) {
-      console.error('Sync error:', err);
-      setError(err.message || 'An error occurred during sync');
+      console.error('Export error:', err);
+      setError(err.message || 'An error occurred during export');
     } finally {
-      setIsLoading(false);
+      setIsExporting(false);
+    }
+  };
+
+  const extractSpreadsheetId = (url) => {
+    const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+    return match ? match[1] : null;
+  };
+
+  const handleImport = async () => {
+    setIsImporting(true);
+    setError(null);
+    setImportResult(null);
+
+    try {
+      const spreadsheetId = extractSpreadsheetId(spreadsheetUrl);
+      
+      if (!spreadsheetId) {
+        setError('כתובת URL של הגיליון לא תקינה. נא להזין כתובת מלאה מ-Google Sheets');
+        setIsImporting(false);
+        return;
+      }
+
+      const response = await base44.functions.invoke('importBusinessesFromSheets', {
+        spreadsheetId,
+        sheetName: sheetName.trim() || undefined
+      });
+      
+      if (response.data.success) {
+        setImportResult(response.data);
+      } else {
+        setError(response.data.error || 'Failed to import');
+      }
+    } catch (err) {
+      console.error('Import error:', err);
+      setError(err.message || 'An error occurred during import');
+    } finally {
+      setIsImporting(false);
     }
   };
 
