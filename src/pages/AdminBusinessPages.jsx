@@ -868,6 +868,17 @@ export default function AdminBusinessPages() {
     return categories.filter(c => c.parent_id === selectedCategoryForImport);
   }, [selectedCategoryForImport, categories]);
 
+  const subSubcategoriesForImport = useMemo(() => {
+    if (!selectedSubcategoriesForImport || selectedSubcategoriesForImport.length === 0) return [];
+    
+    const allSubSubs = [];
+    selectedSubcategoriesForImport.forEach(subcatId => {
+      const subSubs = categories.filter(c => c.parent_id === subcatId);
+      allSubSubs.push(...subSubs);
+    });
+    return allSubSubs;
+  }, [selectedSubcategoriesForImport, categories]);
+
   const handleRefresh = async () => {
     console.log("🔄 Manual refresh triggered");
     setIsLoading(true);
@@ -1027,12 +1038,28 @@ export default function AdminBusinessPages() {
   };
 
   const toggleSubcatForAssignment = (subcatId) => {
-    setSelectedSubcatsForAssignment(prev =>
-      prev.includes(subcatId)
-        ? prev.filter(id => id !== subcatId)
-        : [...prev, subcatId]
-    );
+    setSelectedSubcatsForAssignment(prev => {
+      if (prev.includes(subcatId)) {
+        // הסר תת-קטגוריה וכל התת-תת שלה
+        const subSubsToRemove = categories
+          .filter(c => c.parent_id === subcatId)
+          .map(c => c.id);
+        return prev.filter(id => id !== subcatId && !subSubsToRemove.includes(id));
+      }
+      return [...prev, subcatId];
+    });
   };
+
+  const subSubcategoriesForAssignment = useMemo(() => {
+    if (!selectedSubcatsForAssignment || selectedSubcatsForAssignment.length === 0) return [];
+    
+    const allSubSubs = [];
+    selectedSubcatsForAssignment.forEach(subcatId => {
+      const subSubs = categories.filter(c => c.parent_id === subcatId);
+      allSubSubs.push(...subSubs);
+    });
+    return allSubSubs;
+  }, [selectedSubcatsForAssignment, categories]);
 
   const handleBulkKashrutUpdate = async () => {
     if (selectedPageIds.length === 0) return;
@@ -1659,7 +1686,7 @@ export default function AdminBusinessPages() {
                 </Label>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-2 bg-gray-50 rounded-lg p-3 border max-h-96 overflow-y-auto">
                   {(subcatDialog.isBulk 
-                    ? categories.filter(c => c.parent_id)
+                    ? categories.filter(c => c.parent_id && !categories.some(parent => parent.id === c.parent_id && parent.parent_id))
                     : categories.filter(c => c.parent_id === subcatDialog.page?.category_id)
                   ).map(subcat => {
                     const isSelected = selectedSubcatsForAssignment.includes(subcat.id);
@@ -1691,6 +1718,40 @@ export default function AdminBusinessPages() {
                   </p>
                 )}
               </div>
+
+              {/* תת-תת-קטגוריות */}
+              {subSubcategoriesForAssignment.length > 0 && (
+                <div>
+                  <Label className="text-sm font-medium mb-2 block text-purple-900">
+                    תת-תת-קטגוריות (בחר לפירוט נוסף):
+                  </Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 bg-purple-50 rounded-lg p-3 border border-purple-200">
+                    {subSubcategoriesForAssignment.map((subSubcat) => {
+                      const isSelected = selectedSubcatsForAssignment.includes(subSubcat.id);
+                      return (
+                        <button
+                          key={subSubcat.id}
+                          type="button"
+                          onClick={() => toggleSubcatForAssignment(subSubcat.id)}
+                          className={`p-2 rounded-lg border-2 transition-all text-right flex items-center gap-2 ${
+                            isSelected
+                              ? 'border-purple-500 bg-purple-100 shadow-sm'
+                              : 'border-gray-200 hover:border-purple-300 hover:bg-white'
+                          }`}
+                        >
+                          <div className={`w-4 h-4 rounded border-2 flex items-center justify-center ${
+                            isSelected ? 'bg-purple-500 border-purple-500' : 'border-gray-300'
+                          }`}>
+                            {isSelected && <Check className="w-2 h-2 text-white" />}
+                          </div>
+                          <span className="text-lg">{subSubcat.icon || '✨'}</span>
+                          <span className="font-medium text-xs flex-1">{subSubcat.name}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
             </div>
 
             <DialogFooter>
@@ -1851,11 +1912,16 @@ export default function AdminBusinessPages() {
                               key={subcat.id}
                               type="button"
                               onClick={() => {
-                                setSelectedSubcategoriesForImport(prev => 
-                                  prev.includes(subcat.id)
-                                    ? prev.filter(id => id !== subcat.id)
-                                    : [...prev, subcat.id]
-                                );
+                                setSelectedSubcategoriesForImport(prev => {
+                                  if (prev.includes(subcat.id)) {
+                                    // הסר תת-קטגוריה וכל התת-תת שלה
+                                    const subSubsToRemove = categories
+                                      .filter(c => c.parent_id === subcat.id)
+                                      .map(c => c.id);
+                                    return prev.filter(id => id !== subcat.id && !subSubsToRemove.includes(id));
+                                  }
+                                  return [...prev, subcat.id];
+                                });
                               }}
                               className={`p-3 rounded-lg border-2 transition-all text-right flex items-center gap-2 ${
                                 isSelected
@@ -1879,6 +1945,46 @@ export default function AdminBusinessPages() {
                           ✅ נבחרו {selectedSubcategoriesForImport.length} תתי-קטגוריות
                         </p>
                       )}
+                    </div>
+                  )}
+
+                  {/* תת-תת-קטגוריות */}
+                  {subSubcategoriesForImport.length > 0 && (
+                    <div>
+                      <label className="text-sm font-medium mb-2 block text-indigo-900">
+                        תת-תת-קטגוריות (בחר לפירוט נוסף):
+                      </label>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 bg-white rounded-lg p-3 border border-indigo-200">
+                        {subSubcategoriesForImport.map((subSubcat) => {
+                          const isSelected = selectedSubcategoriesForImport.includes(subSubcat.id);
+                          return (
+                            <button
+                              key={subSubcat.id}
+                              type="button"
+                              onClick={() => {
+                                setSelectedSubcategoriesForImport(prev => 
+                                  prev.includes(subSubcat.id)
+                                    ? prev.filter(id => id !== subSubcat.id)
+                                    : [...prev, subSubcat.id]
+                                );
+                              }}
+                              className={`p-2 rounded-lg border-2 transition-all text-right flex items-center gap-2 ${
+                                isSelected
+                                  ? 'border-indigo-500 bg-indigo-50 shadow-sm'
+                                  : 'border-gray-200 hover:border-indigo-300 hover:bg-gray-50'
+                              }`}
+                            >
+                              <div className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all ${
+                                isSelected ? 'bg-indigo-500 border-indigo-500' : 'border-gray-300'
+                              }`}>
+                                {isSelected && <Check className="w-2 h-2 text-white" />}
+                              </div>
+                              <span className="text-lg">{subSubcat.icon || '✨'}</span>
+                              <span className="font-medium text-xs">{subSubcat.name}</span>
+                            </button>
+                          );
+                        })}
+                      </div>
                     </div>
                   )}
                 </div>
