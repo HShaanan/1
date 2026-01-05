@@ -36,7 +36,18 @@ Deno.serve(async (req) => {
     if (!response.ok) {
       const error = await response.text();
       console.error('Failed to read spreadsheet:', error);
-      return Response.json({ error: 'Failed to read spreadsheet', details: error }, { status: 500 });
+      
+      if (response.status === 403 || response.status === 401) {
+        return Response.json({ 
+          error: 'אין הרשאה לקרוא את הגיליון. ודא שהגיליון משותף עם החשבון שלך או שהוא ציבורי.',
+          details: error 
+        }, { status: 403 });
+      }
+      
+      return Response.json({ 
+        error: 'לא ניתן לקרוא את הגיליון. ודא שהכתובת נכונה והגיליון נגיש.',
+        details: error 
+      }, { status: 500 });
     }
 
     const data = await response.json();

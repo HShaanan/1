@@ -64,12 +64,15 @@ export default function AdminSheetsSync() {
         sheetName: sheetName.trim() || undefined
       });
       
-      console.log('Import response:', response.data);
+      console.log('Import response:', response);
+      console.log('Import data:', response.data);
       
-      if (response.data.success) {
+      if (response.data && response.data.success) {
         setImportResult(response.data);
+      } else if (response.data && response.data.error) {
+        setError(response.data.error + (response.data.details ? '\n\nפרטים: ' + response.data.details : ''));
       } else {
-        setError(response.data.error || 'Failed to import');
+        setError('התקבלה תשובה לא צפויה מהשרת');
       }
     } catch (err) {
       console.error('Import error:', err);
@@ -263,41 +266,78 @@ export default function AdminSheetsSync() {
               </div>
 
               {importResult && (
-                <Alert className="mb-6 bg-green-50 border-green-200">
-                  <CheckCircle2 className="w-4 h-4 text-green-600" />
+                <Alert className="mb-6 bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-300 shadow-lg">
+                  <CheckCircle2 className="w-5 h-5 text-green-600" />
                   <AlertDescription className="text-right">
-                    <div className="space-y-3">
-                      <p className="font-semibold text-green-900">
-                        הייבוא הושלם! 🎉
-                      </p>
-                      <div className="grid grid-cols-2 gap-4 text-sm">
-                        <div className="bg-white p-3 rounded-lg">
-                          <p className="text-slate-600">סה"כ שורות</p>
-                          <p className="text-2xl font-bold text-slate-900">{importResult.summary.total}</p>
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xl font-bold text-green-900 mb-1">
+                          הייבוא הושלם בהצלחה! 🎉
+                        </p>
+                        <p className="text-sm text-green-700">
+                          {importResult.summary.imported} עסקים חדשים נוספו למערכת
+                        </p>
+                      </div>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                        <div className="bg-white p-4 rounded-xl border-2 border-slate-200 shadow-sm">
+                          <p className="text-xs text-slate-600 mb-1">סה"כ שורות</p>
+                          <p className="text-3xl font-bold text-slate-900">{importResult.summary.total}</p>
                         </div>
-                        <div className="bg-white p-3 rounded-lg">
-                          <p className="text-slate-600">יובאו בהצלחה</p>
-                          <p className="text-2xl font-bold text-green-600">{importResult.summary.imported}</p>
+                        <div className="bg-white p-4 rounded-xl border-2 border-green-200 shadow-sm">
+                          <p className="text-xs text-green-700 mb-1">✓ יובאו בהצלחה</p>
+                          <p className="text-3xl font-bold text-green-600">{importResult.summary.imported}</p>
                         </div>
-                        <div className="bg-white p-3 rounded-lg">
-                          <p className="text-slate-600">שגיאות</p>
-                          <p className="text-2xl font-bold text-red-600">{importResult.summary.errors}</p>
+                        <div className="bg-white p-4 rounded-xl border-2 border-red-200 shadow-sm">
+                          <p className="text-xs text-red-700 mb-1">✗ שגיאות</p>
+                          <p className="text-3xl font-bold text-red-600">{importResult.summary.errors}</p>
                         </div>
-                        <div className="bg-white p-3 rounded-lg">
-                          <p className="text-slate-600">דולגו</p>
-                          <p className="text-2xl font-bold text-slate-600">{importResult.summary.skipped}</p>
+                        <div className="bg-white p-4 rounded-xl border-2 border-slate-200 shadow-sm">
+                          <p className="text-xs text-slate-600 mb-1">⊘ דולגו</p>
+                          <p className="text-3xl font-bold text-slate-600">{importResult.summary.skipped}</p>
                         </div>
                       </div>
 
-                      {importResult.details.errors.length > 0 && (
-                        <div className="bg-red-50 border border-red-200 rounded-lg p-3 max-h-40 overflow-y-auto">
-                          <p className="font-semibold text-red-900 mb-2 text-sm">שגיאות:</p>
-                          <ul className="text-xs text-red-800 space-y-1">
+                      {importResult.summary.imported > 0 && (
+                        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                          <p className="text-sm font-semibold text-blue-900 mb-2">
+                            ✓ {importResult.summary.imported} עסקים נוצרו בהצלחה
+                          </p>
+                          <p className="text-xs text-blue-800">
+                            העסקים החדשים נמצאים בסטטוס "ממתין לאישור" ומחכים לסקירה במערכת
+                          </p>
+                        </div>
+                      )}
+
+                      {importResult.details.errors && importResult.details.errors.length > 0 && (
+                        <div className="bg-red-50 border-2 border-red-200 rounded-lg p-4 max-h-48 overflow-y-auto">
+                          <p className="font-semibold text-red-900 mb-3 flex items-center gap-2">
+                            <span className="text-lg">⚠️</span>
+                            שגיאות שנתקלו ({importResult.details.errors.length}):
+                          </p>
+                          <ul className="space-y-2">
                             {importResult.details.errors.map((err, idx) => (
-                              <li key={idx}>שורה {err.row}: {err.name} - {err.error}</li>
+                              <li key={idx} className="text-sm text-red-800 bg-white p-2 rounded border border-red-100">
+                                <span className="font-bold">שורה {err.row}:</span> {err.name}
+                                <br />
+                                <span className="text-xs text-red-600">שגיאה: {err.error}</span>
+                              </li>
                             ))}
                           </ul>
                         </div>
+                      )}
+
+                      {importResult.details.skipped && importResult.details.skipped.length > 0 && (
+                        <details className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                          <summary className="cursor-pointer text-sm font-semibold text-slate-700">
+                            שורות שדולגו ({importResult.details.skipped.length})
+                          </summary>
+                          <ul className="mt-2 space-y-1 text-xs text-slate-600">
+                            {importResult.details.skipped.map((skip, idx) => (
+                              <li key={idx}>שורה {skip.row}: {skip.reason}</li>
+                            ))}
+                          </ul>
+                        </details>
                       )}
                     </div>
                   </AlertDescription>
