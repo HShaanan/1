@@ -63,18 +63,14 @@ Deno.serve(async (req) => {
           return '';
         };
 
-        const businessName = getColumnValue(['שם עסק', 'עסק', 'שם']);
-        const phone = getColumnValue(['טלפון', 'פלאפון', 'נייד', 'טל']);
-        const phoneExtra = getColumnValue(['טלפון נוסף', 'נוסף', 'טלפון 2']);
+        const businessName = getColumnValue(['שם העסק', 'שם עסק', 'עסק', 'שם']);
         const address = getColumnValue(['כתובת', 'רחוב', 'מען']);
-        const city = getColumnValue(['עיר', 'יישוב']);
-        const kashrutStartDate = getColumnValue(['ממתי תוקף', 'תוקף מ', 'תחילת']);
-        const kashrutEndDate = getColumnValue(['עד מתי תוקף', 'תוקף עד', 'סיום']);
-        const email = getColumnValue(['אימייל', 'מייל', 'email', 'דוא"ל']);
+        const phone = getColumnValue(['טלפון', 'פלאפון', 'נייד', 'טל']);
+        const kashrut = getColumnValue(['מפקח', 'כשרות', 'רשות']);
 
-        if (!businessName || !phone) {
+        if (!businessName) {
           results.failed++;
-          results.errors.push(`Row ${i + 2}: Missing name="${businessName || 'EMPTY'}" or phone="${phone || 'EMPTY'}"`);
+          results.errors.push(`שורה ${i + 2}: חסר שם עסק`);
           continue;
         }
 
@@ -84,23 +80,32 @@ Deno.serve(async (req) => {
           categoryId = categories[0].id;
         }
 
+        // Find kashrut authority if provided
+        let kashrutAuthority = null;
+        if (kashrut) {
+          const allKashrut = await base44.asServiceRole.entities.Kashrut.list();
+          kashrutAuthority = allKashrut.find(k => 
+            k.name?.includes(kashrut.trim()) || 
+            kashrut.trim().includes(k.name || '')
+          );
+        }
+
         const businessData = {
           business_name: businessName.trim(),
           display_title: businessName.trim(),
           description: `${businessName.trim()} - עסק כשר`,
-          contact_phone: phone.trim(),
-          city: city?.trim() || 'בית-שמש',
+          contact_phone: phone?.trim() || '',
+          city: 'ביתר עילית',
           address: address?.trim() || '',
-          business_owner_email: email?.trim() || user.email,
+          business_owner_email: user.email,
           category_id: categoryId,
-          is_active: false, // Requires approval
+          is_active: false,
           approval_status: 'pending',
+          kashrut_id: kashrutAuthority?.id || null,
           metadata: {
             imported_from_csv: true,
             import_date: new Date().toISOString(),
-            phone_extra: phoneExtra?.trim() || null,
-            kashrut_start_date: kashrutStartDate?.trim() || null,
-            kashrut_end_date: kashrutEndDate?.trim() || null
+            kashrut_text: kashrut?.trim() || null
           }
         };
 
