@@ -51,6 +51,8 @@ export default function AdminSheetsSync() {
     try {
       const spreadsheetId = extractSpreadsheetId(spreadsheetUrl);
       
+      console.log('Starting import with:', { spreadsheetId, sheetName });
+      
       if (!spreadsheetId) {
         setError('כתובת URL של הגיליון לא תקינה. נא להזין כתובת מלאה מ-Google Sheets');
         setIsImporting(false);
@@ -62,6 +64,8 @@ export default function AdminSheetsSync() {
         sheetName: sheetName.trim() || undefined
       });
       
+      console.log('Import response:', response.data);
+      
       if (response.data.success) {
         setImportResult(response.data);
       } else {
@@ -69,6 +73,7 @@ export default function AdminSheetsSync() {
       }
     } catch (err) {
       console.error('Import error:', err);
+      console.error('Full error details:', err);
       setError(err.message || 'An error occurred during import');
     } finally {
       setIsImporting(false);

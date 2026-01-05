@@ -42,6 +42,8 @@ Deno.serve(async (req) => {
     const data = await response.json();
     const rows = data.values;
 
+    console.log('Total rows from sheet:', rows?.length);
+
     if (!rows || rows.length === 0) {
       return Response.json({ error: 'No data found in spreadsheet' }, { status: 400 });
     }
@@ -49,6 +51,9 @@ Deno.serve(async (req) => {
     // First row is headers
     const headers = rows[0].map(h => h.trim());
     const dataRows = rows.slice(1);
+
+    console.log('Headers found:', headers);
+    console.log('Data rows count:', dataRows.length);
 
     // Find column indices
     const getColumnIndex = (possibleNames) => {
@@ -71,6 +76,8 @@ Deno.serve(async (req) => {
     const websiteIdx = getColumnIndex(['אתר', 'website', 'אתר אינטרנט']);
     const kashrutIdx = getColumnIndex(['כשרות', 'kashrut']);
     const descriptionIdx = getColumnIndex(['תיאור', 'description']);
+
+    console.log('Column mapping:', { nameIdx, categoryIdx, subcategoryIdx, cityIdx, addressIdx, phoneIdx });
 
     if (nameIdx === -1) {
       return Response.json({ 
@@ -187,7 +194,7 @@ Deno.serve(async (req) => {
       }
     }
 
-    return Response.json({
+    const finalResult = {
       success: true,
       summary: {
         total: dataRows.length,
@@ -196,7 +203,11 @@ Deno.serve(async (req) => {
         skipped: results.skipped.length
       },
       details: results
-    });
+    };
+
+    console.log('Import completed:', finalResult.summary);
+
+    return Response.json(finalResult);
 
   } catch (error) {
     console.error('Error importing from Google Sheets:', error);
