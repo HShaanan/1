@@ -1020,8 +1020,8 @@ export default function AdminCategoriesPage() {
                                         className="scale-75"
                                       />
 
-                                      {/* NEW: add sub-subcategory button for 'אנשי מקצוע' */}
-                                      {professionalsMain && subcategory.parent_id === professionalsMain.id && !isEditingSubcat && (
+                                      {/* Add sub-subcategory button for any subcategory */}
+                                      {!isEditingSubcat && (
                                         <Button
                                           size="sm"
                                           variant="outline"
