@@ -131,6 +131,115 @@ const SubcategoryDropdown = ({ page, categories, onSave }) => {
   );
 };
 
+const SubSubcategoryDropdown = ({ page, categories, onSave }) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [selected, setSelected] = useState(page.subcategory_ids || []);
+  const [hasChanges, setHasChanges] = useState(false);
+
+  const availableSubSubcats = useMemo(() => {
+    const subcategoryIds = (page.subcategory_ids || []).filter(id => {
+      const cat = categories.find(c => c.id === id);
+      return cat && cat.parent_id === page.category_id;
+    });
+    
+    if (subcategoryIds.length === 0) return [];
+    
+    const allSubSubs = [];
+    subcategoryIds.forEach(subcatId => {
+      const subSubs = categories.filter(c => c.parent_id === subcatId);
+      allSubSubs.push(...subSubs);
+    });
+    return allSubSubs;
+  }, [categories, page.category_id, page.subcategory_ids]);
+
+  const toggleSubSubcat = (subSubcatId) => {
+    const newSelected = selected.includes(subSubcatId)
+      ? selected.filter(id => id !== subSubcatId)
+      : [...selected, subSubcatId];
+    setSelected(newSelected);
+    setHasChanges(true);
+  };
+
+  const handleSave = async () => {
+    await onSave(page.id, selected);
+    setHasChanges(false);
+    setIsOpen(false);
+  };
+
+  const currentSubSubIds = useMemo(() => {
+    return (page.subcategory_ids || []).filter(id => {
+      const cat = categories.find(c => c.id === id);
+      return cat && categories.some(parent => parent.id === cat.parent_id && parent.parent_id === page.category_id);
+    });
+  }, [page.subcategory_ids, categories, page.category_id]);
+
+  const displayText = useMemo(() => {
+    if (currentSubSubIds.length === 0) return "לא נבחר";
+    if (currentSubSubIds.length === 1) {
+      return categories.find(c => c.id === currentSubSubIds[0])?.name || "לא ידוע";
+    }
+    return `${currentSubSubIds.length} תת-תת-קטגוריות`;
+  }, [currentSubSubIds, categories]);
+
+  if (availableSubSubcats.length === 0) {
+    return <span className="text-gray-400 text-xs">אין תת-תת</span>;
+  }
+
+  return (
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
+        <Button variant="outline" size="sm" className="w-full justify-between text-xs">
+          <span className="truncate">{displayText}</span>
+          <ChevronDown className="w-3 h-3 mr-1" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="w-64 p-3" dir="rtl">
+        <div className="space-y-2 max-h-80 overflow-y-auto">
+          {availableSubSubcats.map(subSubcat => {
+            const isSelected = selected.includes(subSubcat.id);
+            return (
+              <div
+                key={subSubcat.id}
+                onClick={() => toggleSubSubcat(subSubcat.id)}
+                className={`flex items-center gap-2 p-2 rounded cursor-pointer transition-colors ${
+                  isSelected ? 'bg-purple-100 border border-purple-300' : 'hover:bg-gray-100'
+                }`}
+              >
+                <div className={`w-4 h-4 rounded border flex items-center justify-center ${
+                  isSelected ? 'bg-purple-600 border-purple-600' : 'border-gray-300'
+                }`}>
+                  {isSelected && <Check className="w-3 h-3 text-white" />}
+                </div>
+                <span className="text-sm">{subSubcat.icon} {subSubcat.name}</span>
+              </div>
+            );
+          })}
+        </div>
+        {hasChanges && (
+          <div className="mt-3 pt-3 border-t flex gap-2">
+            <Button size="sm" onClick={handleSave} className="flex-1 bg-purple-600 hover:bg-purple-700">
+              <Check className="w-3 h-3 ml-1" />
+              שמור
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setSelected(page.subcategory_ids || []);
+                setHasChanges(false);
+                setIsOpen(false);
+              }}
+              className="flex-1"
+            >
+              ביטול
+            </Button>
+          </div>
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 const KashrutDropdown = ({ page, kashrutList, onSave }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState(page.kashrut_authority_name || "");
@@ -1270,6 +1379,7 @@ export default function AdminBusinessPages() {
                   <div className="flex items-center gap-1 cursor-pointer">קטגוריה {getSortIcon('category_id')}</div>
                 </th>
                 <th className="p-3">תת-קטגוריה</th>
+                <th className="p-3">תת-תת-קטגוריה</th>
                 <th className="p-3">כשרות</th>
                 <th className="p-3" onClick={() => requestSort('created_date')}>
                   <div className="flex items-center gap-1 cursor-pointer">תאריך יצירה {getSortIcon('created_date')}</div>
@@ -1322,6 +1432,13 @@ export default function AdminBusinessPages() {
                     </td>
                     <td className="p-3">
                       <SubcategoryDropdown
+                        page={page}
+                        categories={categories}
+                        onSave={handleSubcategoryChange}
+                      />
+                    </td>
+                    <td className="p-3">
+                      <SubSubcategoryDropdown
                         page={page}
                         categories={categories}
                         onSave={handleSubcategoryChange}
@@ -1381,7 +1498,7 @@ export default function AdminBusinessPages() {
                   </tr>
                   {expandedPageId === page.id && (
                     <tr className="bg-red-50">
-                      <td colSpan="9" className="p-4">
+                      <td colSpan="10" className="p-4">
                         <h4 className="font-semibold mb-2">סיבת דחייה:</h4>
                         <Input
                           placeholder="לדוגמה: תיאור העסק חסר, תמונות לא רלוונטיות וכו'."
