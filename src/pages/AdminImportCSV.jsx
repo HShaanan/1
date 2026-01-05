@@ -74,7 +74,13 @@ export default function AdminImportCSV() {
               <AlertDescription>
                 <strong>פורמט נדרש:</strong>
                 <br />
-                קובץ Excel (.xls/.xlsx) עם העמודות: שם עסק, טלפון, טלפון נוסף, כתובת, עיר, ממתי תוקף הכשרות, עד מתי תוקף הכשרות, אימייל
+                קובץ Excel (.xls/.xlsx/.csv) עם 4 עמודות בדיוק:
+                <div className="mt-2 space-y-1 text-sm">
+                  <div>1. <strong>שם העסק</strong></div>
+                  <div>2. <strong>כתובת</strong></div>
+                  <div>3. <strong>טלפון</strong></div>
+                  <div>4. <strong>מפקח</strong> (רשות כשרות)</div>
+                </div>
               </AlertDescription>
             </Alert>
 
@@ -85,12 +91,12 @@ export default function AdminImportCSV() {
                   <Upload className="w-12 h-12 mx-auto mb-3 text-gray-400" />
                   <input
                     type="file"
-                    accept=".xls,.xlsx"
+                    accept=".xls,.xlsx,.csv"
                     onChange={handleFileChange}
                     className="hidden"
                   />
                   <p className="text-sm text-gray-600">
-                    {file ? file.name : 'לחץ לבחירת קובץ Excel'}
+                    {file ? file.name : 'לחץ לבחירת קובץ Excel או CSV'}
                   </p>
                 </div>
               </label>
