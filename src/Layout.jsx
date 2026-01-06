@@ -862,6 +862,13 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild>
+                        <Link to={createPageUrl("CodeCleanupDashboard")} className="w-full flex items-center cursor-pointer">
+                          <Zap className="w-4 h-4 ml-2 text-yellow-600" aria-hidden="true" />
+                          <span>ניקוי קוד</span>
+                        </Link>
+                      </DropdownMenuItem>
+
+                      <DropdownMenuItem asChild>
                         <Link to={createPageUrl("AdminSettings")} className="w-full flex items-center cursor-pointer bg-slate-50 font-bold">
                           <Settings className="w-4 h-4 ml-2 text-slate-700" aria-hidden="true" />
                           <span>הגדרות מערכת</span>
