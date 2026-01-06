@@ -1,7 +1,6 @@
 import AccessibilityStatement from './pages/AccessibilityStatement';
 import Add from './pages/Add';
 import AdminAddDefaultLogo from './pages/AdminAddDefaultLogo';
-import AdminBanners from './pages/AdminBanners';
 import AdminBulkImprove from './pages/AdminBulkImprove';
 import AdminBusinessOwnership from './pages/AdminBusinessOwnership';
 import AdminBusinessPages from './pages/AdminBusinessPages';
@@ -42,6 +41,7 @@ import BusinessAnalytics from './pages/BusinessAnalytics';
 import BusinessLanding from './pages/BusinessLanding';
 import BusinessManage from './pages/BusinessManage';
 import BusinessPage from './pages/BusinessPage';
+import CodeCleanupDashboard from './pages/CodeCleanupDashboard';
 import ContactPage from './pages/ContactPage';
 import CourierDashboard from './pages/CourierDashboard';
 import CourierFleetManagement from './pages/CourierFleetManagement';
@@ -75,7 +75,6 @@ import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
 import TestWhatsApp from './pages/TestWhatsApp';
 import UserProfile from './pages/UserProfile';
-import CodeCleanupDashboard from './pages/CodeCleanupDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -83,7 +82,6 @@ export const PAGES = {
     "AccessibilityStatement": AccessibilityStatement,
     "Add": Add,
     "AdminAddDefaultLogo": AdminAddDefaultLogo,
-    "AdminBanners": AdminBanners,
     "AdminBulkImprove": AdminBulkImprove,
     "AdminBusinessOwnership": AdminBusinessOwnership,
     "AdminBusinessPages": AdminBusinessPages,
@@ -124,6 +122,7 @@ export const PAGES = {
     "BusinessLanding": BusinessLanding,
     "BusinessManage": BusinessManage,
     "BusinessPage": BusinessPage,
+    "CodeCleanupDashboard": CodeCleanupDashboard,
     "ContactPage": ContactPage,
     "CourierDashboard": CourierDashboard,
     "CourierFleetManagement": CourierFleetManagement,
@@ -157,7 +156,6 @@ export const PAGES = {
     "TermsOfUsePage": TermsOfUsePage,
     "TestWhatsApp": TestWhatsApp,
     "UserProfile": UserProfile,
-    "CodeCleanupDashboard": CodeCleanupDashboard,
 }
 
 export const pagesConfig = {
