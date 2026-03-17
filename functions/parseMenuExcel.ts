@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 import * as XLSX from 'npm:xlsx@0.18.5';
 
 function json(data, status = 200) {
@@ -159,7 +159,11 @@ function buildMenuFromRows(rows) {
   return Array.from(catMap.values());
 }
 
-Deno.serve(async (req) => {
+export const config = {
+  path: "/parseMenuExcel",
+};
+
+export default async function handler(req: Request) {
   try {
     const base44 = createClientFromRequest(req);
     const user = await base44.auth.me();
@@ -223,4 +227,4 @@ Deno.serve(async (req) => {
     console.error('parseMenuExcel error', err);
     return json({ ok: false, error: 'Internal server error' }, 500);
   }
-});
+}
