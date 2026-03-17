@@ -1,6 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
-Deno.serve(async (req) => {
+export const config = {
+  path: "/createPaymentPage",
+};
+
+export default async function handler(req: Request) {
     try {
         const base44 = createClientFromRequest(req);
         
@@ -32,49 +36,31 @@ Deno.serve(async (req) => {
             return Response.json({ success: false, error: "Payment configuration error" }, { status: 500 });
         }
 
-        // Build items array for Sumit - with business name prefix
         const businessDisplayName = businessName || 'העסק';
-        console.log("Building items with businessName:", businessDisplayName);
         
-        const sumitItems = items.map(item => {
+        const sumitItems = items.map((item: any) => {
             const itemName = `${businessDisplayName} - ${item.name || 'פריט'}`;
             const qty = item.quantity || 1;
             const unitPrice = item.price || 0;
-            console.log("Item:", itemName, "Qty:", qty, "Price:", unitPrice);
             return {
-                Item: {
-                    Name: itemName,
-                    Description: item.description || ''
-                },
+                Item: { Name: itemName, Description: item.description || '' },
                 Quantity: qty,
                 UnitPrice: unitPrice,
                 TotalPrice: unitPrice * qty
             };
         });
 
-        // Add delivery fee as separate item if applicable
         if (deliveryType === 'delivery' && deliveryFee > 0) {
             sumitItems.push({
-                Item: {
-                    Name: `${businessDisplayName} - דמי משלוח`,
-                    Description: deliveryAddress || ''
-                },
+                Item: { Name: `${businessDisplayName} - דמי משלוח`, Description: deliveryAddress || '' },
                 Quantity: 1,
                 UnitPrice: deliveryFee,
                 TotalPrice: deliveryFee
             });
         }
 
-        // Calculate total
-        const totalAmount = sumitItems.reduce((sum, item) => sum + item.TotalPrice, 0);
-        console.log("Total amount:", totalAmount);
-
-        // Build the redirect request payload according to Sumit API
         const payload = {
-            Credentials: {
-                CompanyID: companyId,
-                APIKey: apiKey
-            },
+            Credentials: { CompanyID: companyId, APIKey: apiKey },
             Items: sumitItems,
             VATIncluded: true,
             Customer: {
@@ -94,21 +80,25 @@ Deno.serve(async (req) => {
             DocumentDescription: businessName ? `הזמנה מ-${businessName}` : 'הזמנה מהאתר'
         };
 
-        console.log("Sending BeginRedirect request to Sumit...");
-        console.log("Payload:", JSON.stringify(payload, null, 2));
+        // timeout של 10 שניות לסומיט
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
 
-        const response = await fetch('https://api.sumit.co.il/billing/payments/beginredirect/', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
+        let response: Response;
+        try {
+            response = await fetch('https://api.sumit.co.il/billing/payments/beginredirect/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                signal: controller.signal
+            });
+        } finally {
+            clearTimeout(timeout);
+        }
 
         const result = await response.json();
-        console.log("Sumit BeginRedirect response:", JSON.stringify(result));
+        console.log("Sumit BeginRedirect response status:", result.Status);
 
-        // Check for success - Status 0 means success
         const isSuccess = result.Status === 0 || 
                           result.Status === "0" || 
                           (typeof result.Status === 'string' && result.Status.toLowerCase().includes("success"));
@@ -128,8 +118,12 @@ Deno.serve(async (req) => {
             });
         }
 
-    } catch (error) {
+    } catch (error: any) {
+        if (error.name === 'AbortError') {
+            console.error("Sumit API timeout after 10s");
+            return Response.json({ success: false, error: "שירות התשלום לא הגיב בזמן, נסה שוב" }, { status: 504 });
+        }
         console.error("CreatePaymentPage error:", error);
         return Response.json({ success: false, error: error.message }, { status: 500 });
     }
-});
+}
