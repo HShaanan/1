@@ -1,6 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
-Deno.serve(async (req) => {
+export const config = {
+  path: "/notifyNewOrder",
+};
+
+export default async function handler(req: Request) {
   try {
     const base44 = createClientFromRequest(req);
     
@@ -271,7 +275,11 @@ ${itemsDetailTelegram}
 
                 console.log(`📤 Attempting Zapier WhatsApp to ${targetPhone}...`);
                 
-                const waResponse = await fetch(zapierWebhookUrl, {
+                const zapierController = new AbortController();
+                const zapierTimeout = setTimeout(() => zapierController.abort(), 8000);
+                let waResponse: Response;
+                try {
+                waResponse = await fetch(zapierWebhookUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(zapierPayload)
@@ -494,4 +502,4 @@ ${itemsDetailTelegram}
       error: error.message 
     }, { status: 500 });
   }
-});
+}
