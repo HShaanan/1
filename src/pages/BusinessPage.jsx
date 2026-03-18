@@ -11,7 +11,6 @@ import {
   Globe, AlertTriangle, Flag,
   Edit, Navigation, Settings, ClipboardList, Store, Sparkles, Wand2
 } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import ImageGallery from "@/components/ImageGallery";
 import BusinessHoursDisplay from "@/components/BusinessHoursDisplay";
 import InfiniteImageMarquee from "@/components/listing/InfiniteImageMarquee";
@@ -27,6 +26,9 @@ import ExecutiveSummarySection from "@/components/business/ExecutiveSummarySecti
 import RelatedBusinesses from "@/components/business/RelatedBusinesses";
 import ReviewsSection from "@/components/business/ReviewsSection";
 import MenuSection from "@/components/business/MenuSection";
+import EditableField from "@/components/admin/EditableField";
+import InlineEditBar from "@/components/admin/InlineEditBar";
+import EditableTagsField from "@/components/admin/EditableTagsField";
 
 // Helper function to convert hex to rgba
 const hexToRgba = (hex, alpha) => {
@@ -47,7 +49,7 @@ const hexToRgba = (hex, alpha) => {
   return `rgba(${r}, ${g}, ${b}, ${alpha})`;
 };
 
-const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onShare, onEditClick, onManageClick, onLogoClick, onKashrutLogoClick, theme, onOrdersManageClick, onGenerateAiSummary }) => {
+const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onShare, onEditClick, onManageClick, onLogoClick, onKashrutLogoClick, theme, onOrdersManageClick, onGenerateAiSummary, isEditMode, onFieldChange }) => {
   const defaultHeroImage = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/e8b173c76_image2.jpg";
   const defaultLogo = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/3f9cfac9b_Gemini_Generated_Image_xr0kiexr0kiexr0k.png";
   
@@ -232,29 +234,48 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
             <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-blue-400/5 to-transparent rounded-full blur-3xl pointer-events-none" />
             
             {/* כותרת - בולטת וברורה */}
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.15] relative z-10 mb-2"
-                style={{ 
-                  fontFamily: '"Assistant", "Rubik", "Heebo", system-ui, sans-serif',
-                  letterSpacing: '-0.01em'
-                }}>
-              {title}
-            </h1>
-            
-            {/* תיאור קצר - בולט */}
-            {shortDesc &&
-              <p className="mt-5 text-lg sm:text-xl lg:text-2xl text-slate-700 leading-relaxed font-semibold relative z-10 max-w-4xl"
-                 style={{ fontFamily: '"Assistant", "Rubik", "Heebo", sans-serif' }}>
-                {shortDesc}
-              </p>
-            }
-            
-            {/* תיאור מלא - משני */}
-            {restDesc &&
-              <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed whitespace-pre-line relative z-10 max-w-3xl font-normal"
-                 style={{ fontFamily: '"Assistant", "Rubik", "Heebo", sans-serif' }}>
-                {restDesc}
-              </p>
-            }
+            <EditableField
+              value={businessPage.display_title || businessPage.business_name}
+              onSave={(v) => onFieldChange('display_title', v)}
+              isEditMode={isEditMode}
+              type="text"
+              label="כותרת / שם עסק"
+              className="relative z-10 mb-2"
+            >
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black text-slate-900 leading-[1.15]"
+                  style={{ fontFamily: '"Assistant", "Rubik", "Heebo", system-ui, sans-serif', letterSpacing: '-0.01em' }}>
+                {title}
+              </h1>
+            </EditableField>
+
+            {/* תיאור - עריכה inline */}
+            <EditableField
+              value={description}
+              onSave={(v) => onFieldChange('description', v)}
+              isEditMode={isEditMode}
+              type="textarea"
+              label="תיאור העסק"
+              placeholder="הוסף תיאור לעסק..."
+              className="relative z-10 mt-4"
+            >
+              <div>
+                {shortDesc &&
+                  <p className="mt-5 text-lg sm:text-xl lg:text-2xl text-slate-700 leading-relaxed font-semibold max-w-4xl"
+                     style={{ fontFamily: '"Assistant", "Rubik", "Heebo", sans-serif' }}>
+                    {shortDesc}
+                  </p>
+                }
+                {restDesc &&
+                  <p className="mt-4 text-base sm:text-lg text-slate-600 leading-relaxed whitespace-pre-line max-w-3xl font-normal"
+                     style={{ fontFamily: '"Assistant", "Rubik", "Heebo", sans-serif' }}>
+                    {restDesc}
+                  </p>
+                }
+                {!description && isEditMode && (
+                  <p className="mt-4 text-slate-400 italic">לחץ להוספת תיאור...</p>
+                )}
+              </div>
+            </EditableField>
             
             {/* קו דקורטיבי תחתון */}
             <div className="absolute bottom-0 right-8 left-8 h-1.5 bg-gradient-to-l from-blue-500/0 via-blue-500/30 to-blue-500/0 rounded-full" />
@@ -265,7 +286,7 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
 
 };
 
-const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigationClick, onWebsiteClick }) => {
+const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigationClick, onWebsiteClick, isEditMode, onFieldChange }) => {
   const [phoneRevealed, setPhoneRevealed] = React.useState(false);
   const [navMenuOpen, setNavMenuOpen] = React.useState(false);
   
@@ -299,30 +320,42 @@ const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigati
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           
           {/* כפתור טלפון */}
-          {cleanPhone && (
-            <button
-              onClick={handlePhoneClick}
-              className="group relative bg-gradient-to-br from-violet-500 to-fuchsia-600 hover:from-violet-600 hover:to-fuchsia-700 text-white p-5 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-95 overflow-hidden"
-              aria-label={phoneRevealed ? 'חייג לעסק' : 'הצג מספר טלפון'}>
-              
-              <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
-              
-              <div className="relative z-10 flex items-center justify-center gap-3">
-                <Phone className="w-6 h-6 flex-shrink-0" />
-                <div className="text-right flex-1">
-                  <div className="font-bold text-lg">
-                    {phoneRevealed ? formatPhone(businessPage.contact_phone) : 'הצג מספר'}
-                  </div>
-                  <div className="text-xs text-white/80 mt-0.5">
-                    {phoneRevealed ? 'לחץ להתקשר' : 'לחץ לצפייה'}
+          {(cleanPhone || isEditMode) && (
+            <div className="relative">
+              <button
+                onClick={isEditMode ? undefined : handlePhoneClick}
+                className={`group w-full relative bg-gradient-to-br from-violet-500 to-fuchsia-600 hover:from-violet-600 hover:to-fuchsia-700 text-white p-5 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-95 overflow-hidden ${isEditMode ? 'cursor-default' : ''}`}
+                aria-label={phoneRevealed ? 'חייג לעסק' : 'הצג מספר טלפון'}>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
+                <div className="relative z-10 flex items-center justify-center gap-3">
+                  <Phone className="w-6 h-6 flex-shrink-0" />
+                  <div className="text-right flex-1">
+                    <div className="font-bold text-lg">
+                      {isEditMode ? (businessPage.contact_phone || 'ללא טלפון') : (phoneRevealed ? formatPhone(businessPage.contact_phone) : 'הצג מספר')}
+                    </div>
+                    <div className="text-xs text-white/80 mt-0.5">
+                      {isEditMode ? 'טלפון' : (phoneRevealed ? 'לחץ להתקשר' : 'לחץ לצפייה')}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </button>
+              </button>
+              {isEditMode && (
+                <div className="mt-2">
+                  <EditableField
+                    value={businessPage.contact_phone || ''}
+                    onSave={(v) => onFieldChange('contact_phone', v)}
+                    isEditMode={true}
+                    type="phone"
+                    label="מספר טלפון"
+                    placeholder="050-000-0000"
+                  />
+                </div>
+              )}
+            </div>
           )}
 
           {/* כפתור כתובת + ניווט */}
-          {address && (
+          {(address || isEditMode) && (
             <div className="relative">
               <button
                 onClick={() => setNavMenuOpen(!navMenuOpen)}
@@ -347,24 +380,17 @@ const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigati
               </button>
 
               {/* תפריט ניווט */}
-              {navMenuOpen && (
+              {navMenuOpen && !isEditMode && (
                 <div className="absolute top-full mt-2 right-0 left-0 bg-white rounded-xl shadow-2xl border-2 border-slate-200 p-3 z-30 grid grid-cols-2 gap-3">
                   <button
-                    onClick={() => {
-                      onNavigationClick(address, 'waze');
-                      setNavMenuOpen(false);
-                    }}
+                    onClick={() => { onNavigationClick(address, 'waze'); setNavMenuOpen(false); }}
                     className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 transition-all hover:scale-105 shadow-md"
                     aria-label="פתח ב-Waze">
                     <Navigation className="w-7 h-7" />
                     <span className="text-sm font-bold">Waze</span>
                   </button>
-                  
                   <button
-                    onClick={() => {
-                      onNavigationClick(address, 'google');
-                      setNavMenuOpen(false);
-                    }}
+                    onClick={() => { onNavigationClick(address, 'google'); setNavMenuOpen(false); }}
                     className="flex flex-col items-center gap-2 p-4 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 text-white hover:from-emerald-600 hover:to-teal-700 transition-all hover:scale-105 shadow-md"
                     aria-label="פתח ב-Google Maps">
                     <Globe className="w-7 h-7" />
@@ -372,29 +398,55 @@ const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigati
                   </button>
                 </div>
               )}
+              {isEditMode && (
+                <div className="mt-2">
+                  <EditableField
+                    value={businessPage.address || ''}
+                    onSave={(v) => onFieldChange('address', v)}
+                    isEditMode={true}
+                    type="text"
+                    label="כתובת"
+                    placeholder="רחוב, מספר, עיר"
+                  />
+                </div>
+              )}
             </div>
           )}
 
           {/* כפתור אתר */}
-          {websiteUrl && (
+          {(websiteUrl || isEditMode) && (
+            <div className="relative">
             <button
-              onClick={() => onWebsiteClick(websiteUrl)}
-              className="group bg-gradient-to-br from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white p-5 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-95 overflow-hidden"
+              onClick={isEditMode ? undefined : () => onWebsiteClick(websiteUrl)}
+              className={`group w-full bg-gradient-to-br from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white p-5 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-[1.02] active:scale-95 overflow-hidden ${isEditMode ? 'cursor-default' : ''}`}
               aria-label="עבור לאתר העסק">
-              
+
               <div className="absolute inset-0 bg-gradient-to-t from-black/10 to-transparent pointer-events-none" />
-              
+
               <div className="relative z-10 flex items-center justify-center gap-3">
                 <Globe className="w-6 h-6 flex-shrink-0" />
                 <div className="text-right flex-1">
                   <div className="font-bold text-lg">לאתר העסק</div>
                   <div className="text-xs text-white/80 mt-0.5 truncate">
-                    {websiteUrl.replace(/^https?:\/\/(www\.)?/, '')}
+                    {websiteUrl ? websiteUrl.replace(/^https?:\/\/(www\.)?/, '') : 'ללא אתר'}
                   </div>
                 </div>
-                <ExternalLink className="w-4 h-4 opacity-70" />
+                {!isEditMode && <ExternalLink className="w-4 h-4 opacity-70" />}
               </div>
             </button>
+            {isEditMode && (
+              <div className="mt-2">
+                <EditableField
+                  value={businessPage.website_url || ''}
+                  onSave={(v) => onFieldChange('website_url', v)}
+                  isEditMode={true}
+                  type="url"
+                  label="כתובת אתר"
+                  placeholder="https://example.com"
+                />
+              </div>
+            )}
+            </div>
           )}
 
           {/* כפתור ביקורות */}
@@ -456,7 +508,11 @@ export default function BusinessPageView() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
+  const [isEditMode, setIsEditMode] = useState(false);
+  const [editedData, setEditedData] = useState({});
+  const [isSaving, setIsSaving] = useState(false);
   const [showReviewForm, setShowReviewForm] = useState(false);
+
   const [activeTab, setActiveTab] = useState('');
   const [isFavorited, setIsFavorited] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
@@ -473,7 +529,44 @@ export default function BusinessPageView() {
   const reviewsRef = useRef(null);
   const menuSectionRefs = useRef({});
 
-  const tags = businessPage?.special_fields?.tags;
+  // Live preview: merge saved data with pending edits
+  const displayPage = useMemo(
+    () => businessPage ? { ...businessPage, ...editedData } : null,
+    [businessPage, editedData]
+  );
+
+  const handleFieldChange = useCallback((field, value) => {
+    setEditedData(prev => ({ ...prev, [field]: value }));
+  }, []);
+
+  const handleSpecialFieldChange = useCallback((field, value) => {
+    setEditedData(prev => ({
+      ...prev,
+      special_fields: { ...businessPage?.special_fields, ...(prev.special_fields || {}), [field]: value }
+    }));
+  }, [businessPage?.special_fields]);
+
+  const handleSaveAllChanges = useCallback(async () => {
+    if (!Object.keys(editedData).length) { setIsEditMode(false); return; }
+    setIsSaving(true);
+    try {
+      await base44.entities.BusinessPage.update(businessPage.id, editedData);
+      setBusinessPage(prev => ({ ...prev, ...editedData }));
+      setEditedData({});
+      setIsEditMode(false);
+    } catch {
+      alert("שגיאה בשמירת השינויים. נסה שוב.");
+    } finally {
+      setIsSaving(false);
+    }
+  }, [editedData, businessPage?.id]);
+
+  const handleDiscardChanges = useCallback(() => {
+    setEditedData({});
+    setIsEditMode(false);
+  }, []);
+
+  const tags = displayPage?.special_fields?.tags;
 
   // הוספת מעקב אנליטיקה
   const { trackEvent } = useBusinessAnalytics(businessPage?.id);
@@ -1275,7 +1368,7 @@ export default function BusinessPageView() {
       )}
 
       <WoltBusinessHero
-        businessPage={businessPage}
+        businessPage={displayPage}
         canEdit={canEdit}
         isFavorited={isFavorited}
         onFavorite={handleFavoriteToggle}
@@ -1286,16 +1379,20 @@ export default function BusinessPageView() {
         onGenerateAiSummary={handleGenerateAiSummary}
         onLogoClick={handleLogoClick}
         onKashrutLogoClick={handleKashrutLogoClick}
-        theme={theme} />
+        theme={theme}
+        isEditMode={isEditMode}
+        onFieldChange={handleFieldChange} />
 
 
       <BusinessInfoBar
-        businessPage={businessPage}
+        businessPage={displayPage}
         onRatingClick={scrollToReviews}
         onPhoneClick={handlePhoneClick}
         onNavigationClick={handleNavigationClick}
         onWebsiteClick={handleWebsiteClick}
-        theme={theme} />
+        theme={theme}
+        isEditMode={isEditMode}
+        onFieldChange={handleFieldChange} />
 
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 relative z-10">
@@ -1303,7 +1400,7 @@ export default function BusinessPageView() {
           <div className="space-y-8">
 
             {/* AI Executive Summary (Why Us) */}
-            <ExecutiveSummarySection aiSummary={businessPage.ai_executive_summary} />
+            <ExecutiveSummarySection aiSummary={displayPage.ai_executive_summary} />
 
             {galleryImages.length > 0 &&
               <InfiniteImageMarquee
@@ -1323,36 +1420,14 @@ export default function BusinessPageView() {
               </ScrollReveal>
             )}
 
-            {/* תגיות - דינמי לפי צבע העסק */}
-            {Array.isArray(tags) && tags.length > 0 &&
-              <div className="bg-transparent p-6 rounded-2xl shadow-xl border border-slate-200/80">
-                <h3 className="text-xl font-bold text-slate-800 mb-3">תגיות</h3>
-                <div className="flex flex-wrap gap-2">
-                  {tags.map((tag, idx) =>
-                    <Badge
-                      key={idx}
-                      variant="secondary"
-                      className="text-white px-3 py-2 text-sm font-medium rounded-full inline-flex items-center border transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 border-transparent cursor-pointer"
-                      style={{
-                        backgroundColor: 'var(--theme-primary)',
-                        color: 'white',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = 'white';
-                        e.currentTarget.style.color = 'var(--theme-primary)';
-                        e.currentTarget.style.borderColor = 'var(--theme-primary)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = 'var(--theme-primary)';
-                        e.currentTarget.style.color = 'white';
-                        e.currentTarget.style.borderColor = 'transparent';
-                      }}>
-                      #{tag}
-                    </Badge>
-                  )}
-                </div>
-              </div>
-            }
+            {/* תגיות */}
+            {(isEditMode || (Array.isArray(tags) && tags.length > 0)) && (
+              <EditableTagsField
+                tags={tags || []}
+                onSave={(updated) => handleSpecialFieldChange('tags', updated)}
+                isEditMode={isEditMode}
+              />
+            )}
 
             {/* תפריט */}
             <MenuSection
@@ -1383,7 +1458,7 @@ export default function BusinessPageView() {
 
             {/* ביקורות */}
             <ReviewsSection
-              businessPage={businessPage}
+              businessPage={displayPage}
               user={user}
               showReviewForm={showReviewForm}
               setShowReviewForm={setShowReviewForm}
@@ -1416,6 +1491,19 @@ export default function BusinessPageView() {
           alt="לוגו ותעודת כשרות" />
 
       }
+
+      {/* סרגל עריכה inline - לאדמין/בעלים בלבד */}
+      {canEdit && (
+        <InlineEditBar
+          isEditMode={isEditMode}
+          onToggle={() => setIsEditMode(prev => !prev)}
+          hasChanges={Object.keys(editedData).length > 0}
+          onSave={handleSaveAllChanges}
+          onDiscard={handleDiscardChanges}
+          isSaving={isSaving}
+          changeCount={Object.keys(editedData).length}
+        />
+      )}
 
       {/* מודל תוספות */}
       <ModificationModal
