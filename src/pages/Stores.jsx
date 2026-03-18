@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
+import DOMPurify from "dompurify";
 import { base44 } from "@/api/base44Client";
 import SeoMeta from "@/components/SeoMeta";
 import { Loader2, Store, Search } from "lucide-react";
@@ -147,7 +148,7 @@ export default function StoresPage() {
         {storePage.description && (
             <div 
                 className="sr-only"
-                dangerouslySetInnerHTML={{ __html: storePage.description }}
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(storePage.description) }}
             />
         )}
 
