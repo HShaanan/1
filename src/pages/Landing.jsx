@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import DOMPurify from "dompurify";
 import { base44 } from "@/api/base44Client";
 import SeoMeta from "@/components/SeoMeta";
 import { Loader2, ArrowRight } from "lucide-react";
@@ -64,7 +65,7 @@ export default function LandingPage() {
             />
             <h1 className="sr-only">{landingPage.title}</h1>
             {landingPage.description && (
-              <div className="sr-only" dangerouslySetInnerHTML={{ __html: landingPage.description }} />
+              <div className="sr-only" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(landingPage.description) }} />
             )}
           </>
         )}

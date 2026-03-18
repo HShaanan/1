@@ -1,39 +1,32 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
-import { useNavigate } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
 import { createPageUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { LazyImage } from "@/components/PerformanceOptimizations";
 import SeoMeta from "@/components/SeoMeta";
-import { useInView } from "react-intersection-observer";
-import CountUp from "react-countup";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import {
   MapPin, Phone, ExternalLink, Heart, Share2, Star,
-  Clock, Globe, AlertTriangle, ChevronLeft, Flag,
-  MessageSquare, MessageCircle, ThumbsUp, Loader2, Calendar, ImageIcon,
-  Edit, Menu as MenuIcon, Info, DollarSign, Camera, Utensils, Building, ShoppingCart, Plus, Minus,
-  Copy, Mail, Link as LinkIcon, Navigation, Settings, ClipboardList, Store, Sparkles, Wand2
-} from
-  "lucide-react";
+  Globe, AlertTriangle, Flag,
+  Edit, Navigation, Settings, ClipboardList, Store, Sparkles, Wand2
+} from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import ImageGallery from "@/components/ImageGallery";
 import BusinessHoursDisplay from "@/components/BusinessHoursDisplay";
-import SpecialFieldsDisplay from "@/components/listing/SpecialFieldsDisplay";
-import ReviewForm from "@/components/reviews/ReviewForm";
-import ReviewList from "@/components/reviews/ReviewList";
-import StarRating from "@/components/reviews/StarRating";
-import KashrutBox from "@/components/kashrut/KashrutBox";
 import InfiniteImageMarquee from "@/components/listing/InfiniteImageMarquee";
-import EmojiReviewPrompt from "@/components/reviews/EmojiReviewPrompt";
 import BrandsCarousel from "@/components/listing/BrandsCarousel";
 import { useBusinessAnalytics } from "@/components/analytics/useBusinessAnalytics";
 import OrderSidebar from "@/components/order/OrderSidebar";
 import ModificationModal from "@/components/order/ModificationModal";
 import { LocalBusinessSchema } from "@/components/seo/SchemaOrg";
 import { checkBusinessOpen } from "@/components/utils/checkBusinessOpen";
+import { BUSINESS_COLOR_SCHEMES, DEFAULT_THEME } from "@/constants/businessThemes";
+import ScrollReveal from "@/components/ScrollReveal";
+import ExecutiveSummarySection from "@/components/business/ExecutiveSummarySection";
+import RelatedBusinesses from "@/components/business/RelatedBusinesses";
+import ReviewsSection from "@/components/business/ReviewsSection";
+import MenuSection from "@/components/business/MenuSection";
 
 // Helper function to convert hex to rgba
 const hexToRgba = (hex, alpha) => {
@@ -64,7 +57,6 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
 
   // קריאת הגדרות מיקום לוגו מה-metadata
   // Default values for logo position: zoom 1, center (50% x, 50% y), no rotation (0)
-  const logoPosition = businessPage.metadata?.logo_position || { zoom: 1, x: 50, y: 50, rotation: 0 };
 
   const title = businessPage.display_title || businessPage.business_name;
   const description = businessPage.description ? businessPage.description : "";
@@ -273,7 +265,7 @@ const WoltBusinessHero = ({ businessPage, canEdit, onFavorite, isFavorited, onSh
 
 };
 
-const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigationClick, onWebsiteClick, theme }) => {
+const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigationClick, onWebsiteClick }) => {
   const [phoneRevealed, setPhoneRevealed] = React.useState(false);
   const [navMenuOpen, setNavMenuOpen] = React.useState(false);
   
@@ -432,109 +424,7 @@ const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigati
   );
 };
 
-function MenuItem({ item, theme, isBlackTheme, onOpenModifications }) {
-  const [imageError, setImageError] = React.useState(false);
-  const [imageLoaded, setImageLoaded] = React.useState(false);
-  const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
-
-  const hasAddons = item.addons && item.addons.length > 0;
-
-  return (
-    <motion.article
-      ref={ref}
-      initial={{ opacity: 0, y: 20 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
-      transition={{ duration: 0.5 }}
-      className={`rounded-2xl shadow-lg border p-4 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex items-start gap-4 ${
-      isBlackTheme
-        ? 'bg-slate-800/90 border-red-500/30'
-        : 'bg-white border-slate-200'
-    }`}>
-      <div className="flex-1 min-w-0">
-        <h4 className={`font-semibold text-base ${isBlackTheme ? 'text-white' : 'text-gray-800'}`}>
-          {item.name}
-        </h4>
-        {item.note && (
-          <p className={`text-sm mt-1 ${isBlackTheme ? 'text-gray-400' : 'text-gray-600'}`}>
-            {item.note}
-          </p>
-        )}
-        {hasAddons && (
-          <p className="text-xs text-indigo-600 mt-1" role="status">✨ זמין עם תוספות</p>
-        )}
-        <div className="flex items-center justify-between mt-2">
-          <p
-            className="font-bold"
-            style={{ color: isBlackTheme ? '#EF4444' : 'var(--theme-primary)' }}
-            aria-label={`מחיר: ${item.price}`}
-          >
-            {item.price}
-          </p>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-            <Button
-              onClick={() => onOpenModifications(item)}
-              size="sm"
-              className="text-white gap-1 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all"
-              style={{
-                backgroundColor: theme.colors.primary,
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = theme.colors.primaryHover;
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = theme.colors.primary;
-              }}
-              aria-label={`הוסף ${item.name} לסל`}>
-              <Plus className="w-3 h-3" aria-hidden="true" />
-              הוסף
-            </Button>
-          </motion.div>
-        </div>
-      </div>
-      {item.image && !imageError ? (
-        <div className="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 shadow-md ml-4 relative bg-gray-100">
-          {!imageLoaded && (
-            <div className="absolute inset-0 flex items-center justify-center" aria-label="טוען תמונה">
-              <div
-                className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin"
-                style={{
-                  borderColor: isBlackTheme ? '#EF4444' : 'var(--theme-primary)',
-                  borderTopColor: 'transparent'
-                }}
-                aria-hidden="true"></div>
-            </div>
-          )}
-          <img
-            src={item.image}
-            alt={`תמונה של ${item.name}`}
-            className={`object-cover w-full h-full transition-opacity duration-300 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`}
-            onLoad={() => setImageLoaded(true)}
-            onError={() => {
-              console.warn(`Failed to load image for ${item.name}:`, item.image);
-              setImageError(true);
-            }}
-            loading="lazy"
-          />
-        </div>
-      ) : item.image && imageError ? (
-        <div
-          className="w-24 h-24 rounded-xl flex-shrink-0 ml-4 flex items-center justify-center shadow-md"
-          style={{
-            background: isBlackTheme
-              ? 'linear-gradient(to bottom right, #991B1B, #7F1D1D)'
-              : `linear-gradient(to bottom right, var(--theme-primary-light), var(--theme-primary-light))`
-          }}
-          role="img"
-          aria-label="תמונה לא זמינה">
-          <span className="text-3xl" role="img" aria-label="מזון">🍽️</span>
-        </div>
-      ) : null}
-    </motion.article>
-  );
-}
-
 export default function BusinessPageView() {
-  const navigate = useNavigate();
   const urlParams = new URLSearchParams(window.location.search);
   const pageId = urlParams.get("id");
   const pageSlug = urlParams.get("slug");
@@ -570,7 +460,6 @@ export default function BusinessPageView() {
   const [activeTab, setActiveTab] = useState('');
   const [isFavorited, setIsFavorited] = useState(false);
   const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-  const [galleryInitialIndex, setGalleryInitialIndex] = useState(0);
   const [isLogoGalleryOpen, setIsLogoGalleryOpen] = useState(false);
   const [logoGalleryImages, setLogoGalleryImages] = useState([]);
   const [selectedMoodForReview, setSelectedMoodForReview] = useState(null);
@@ -604,101 +493,17 @@ export default function BusinessPageView() {
         };
       }
 
-      // מיפוי ערכות צבעים מוגדרות מראש - כולם עם רקע לבן
-      const schemes = {
-        'pink': {
-          colors: {
-            primary: '#EC4899',
-            primaryHover: '#DB2777',
-            primaryLight: '#FCE7F3',
-            primaryDark: '#831843',
-          },
-          gradient: 'bg-white-elegant',
-          name: 'ורוד'
-        },
-        'gold': {
-          colors: {
-            primary: '#F59E0B',
-            primaryHover: '#D97706',
-            primaryLight: '#FEF3C7',
-            primaryDark: '#92400E',
-          },
-          gradient: 'bg-white-elegant',
-          name: 'זהב'
-        },
-        'green': {
-          colors: {
-            primary: '#10B981',
-            primaryHover: '#059669',
-            primaryLight: '#D1FAE5',
-            primaryDark: '#065F46',
-          },
-          gradient: 'bg-white-elegant',
-          name: 'ירוק'
-        },
-        'red': {
-          colors: {
-            primary: '#EF4444',
-            primaryHover: '#DC2626',
-            primaryLight: '#FEE2E2',
-            primaryDark: '#991B1B',
-          },
-          gradient: 'bg-white-elegant',
-          name: 'אדום'
-        },
-        'blue': {
-          colors: {
-            primary: '#3B82F6',
-            primaryHover: '#2563EB',
-            primaryLight: '#DBEAFE',
-            primaryDark: '#1E40AF',
-          },
-          gradient: 'bg-white-elegant',
-          name: 'כחול'
-        },
-        'purple': {
-          colors: {
-            primary: '#A855F7',
-            primaryHover: '#9333EA',
-            primaryLight: '#F3E8FF',
-            primaryDark: '#6B21A8',
-          },
-          gradient: 'bg-white-elegant',
-          name: 'סגול'
-        },
-        'orange': {
-          colors: {
-            primary: '#F97316',
-            primaryHover: '#EA580C',
-            primaryLight: '#FFEDD5',
-            primaryDark: '#9A3412',
-          },
-          gradient: 'bg-white-elegant',
-          name: 'כתום'
-        }
-      };
-
-      if (schemes[customTheme.color_scheme]) {
-        return schemes[customTheme.color_scheme];
+      // מיפוי ערכות צבעים מוגדרות מראש
+      if (BUSINESS_COLOR_SCHEMES[customTheme.color_scheme]) {
+        return BUSINESS_COLOR_SCHEMES[customTheme.color_scheme];
       }
     }
 
-    // ברירת מחדל - כחול (רקע לבן אלגנטי תמיד)
-    return {
-      colors: {
-        primary: '#3B82F6',
-        primaryHover: '#2563EB',
-        primaryLight: '#DBEAFE',
-        primaryDark: '#1E40AF'
-      },
-      gradient: 'bg-white-elegant',
-      name: 'ברירת מחדל'
-    };
+    return DEFAULT_THEME;
   }, [businessPage?.theme_settings]);
 
   const theme = getBusinessTheme();
   const isBlackTheme = theme.gradient === 'bg-black-solid'; // This will effectively always be false now
-  const isWhiteTheme = theme.gradient === 'bg-white-elegant'; // This will effectively always be true now
 
   // עטיפה בטוחה לפונקציות tracking
   const safeTrackEvent = useCallback((eventType, metadata = {}) => {
@@ -743,21 +548,6 @@ export default function BusinessPageView() {
     }));
   }, [businessPage]);
 
-  const shareInfo = useMemo(() => {
-    const title = businessPage?.display_title || businessPage?.business_name || document.title;
-    const url = typeof window !== "undefined" ? window.location.href : "";
-    const text = `בדקו את ${title} במשֻלנו!`;
-    return {
-      title,
-      url,
-      text,
-      whatsapp: `https://wa.me/?text=${encodeURIComponent(text)}%20${encodeURIComponent(url)}`,
-      facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`,
-      telegram: `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
-      twitter: `https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`,
-      email: `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text)}%20${encodeURIComponent(url)}`
-    };
-  }, [businessPage]);
 
 
   // The useEffect for setIsMobileView was removed from here, as it's not used.
@@ -784,8 +574,8 @@ export default function BusinessPageView() {
         const fav = await base44.entities.Favorite.filter({ user_email: currentUser.email, business_page_id: page.id });
         setIsFavorited(fav.length > 0);
       }
-    } catch (err) {
-      console.log("User not logged in or error checking favorite:", err);
+    } catch {
+      // User not logged in or error checking favorite - expected behavior
     }
   }, []);
 
@@ -808,7 +598,6 @@ export default function BusinessPageView() {
         
         // If slug looks like an ID (long string without hyphens), try by ID as fallback
         if ((!pageData || (Array.isArray(pageData) && pageData.length === 0)) && pageSlug.length > 20 && !pageSlug.includes('-')) {
-          console.log('Slug looks like ID, trying ID lookup:', pageSlug);
           pageData = await base44.entities.BusinessPage.filter({ id: pageSlug });
         }
       }
@@ -956,10 +745,7 @@ export default function BusinessPageView() {
   // עדכון כל הפונקציות עם tracking:
 
   const handlePhoneClick = useCallback((phone) => {
-    console.log('📞 Phone button clicked!');
-    console.log('📊 About to track phone_click event');
     safeTrackEvent('phone_click', { phone });
-    console.log('📊 Track event called');
     window.location.href = `tel:${phone}`;
   }, [safeTrackEvent]);
 
@@ -1001,8 +787,7 @@ export default function BusinessPageView() {
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-      } catch (err) {
-        console.log('Native share failed or cancelled:', err);
+      } catch {
         // Fallback to clipboard if native share fails or user cancels
         try {
           await navigator.clipboard.writeText(url);
@@ -1053,11 +838,6 @@ export default function BusinessPageView() {
       alert("שגיאה בשינוי מועדפים.");
     }
   }, [user, isFavorited, businessPage?.id, safeTrackEvent, pageId]);
-
-  const handleImageClick = (index) => {
-    setGalleryInitialIndex(index);
-    setIsGalleryOpen(true);
-  };
 
   const handleLogoClick = useCallback(() => {
     if (!businessPage) return;
@@ -1112,7 +892,6 @@ export default function BusinessPageView() {
       image: itemWithMods.image
     };
 
-    console.log('🛒 Adding to cart:', cartItem);
     
     setCart((prevCart) => [...prevCart, cartItem]);
     safeTrackEvent('add_to_cart', {
@@ -1323,21 +1102,6 @@ export default function BusinessPageView() {
     }
   };
 
-  // ScrollReveal wrapper component
-  const ScrollReveal = ({ children, delay = 0 }) => {
-    const { ref, inView } = useInView({ triggerOnce: true, threshold: 0.1 });
-    return (
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, y: 30 }}
-        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
-        transition={{ duration: 0.6, delay }}
-      >
-        {children}
-      </motion.div>
-    );
-  };
-
   return (
     <div className="min-h-screen relative overflow-hidden" dir="rtl" style={{
       '--theme-primary': theme.colors.primary,
@@ -1464,7 +1228,7 @@ export default function BusinessPageView() {
                     });
                     alert("הדיווח נשלח בהצלחה. נבדוק את הבקשה בהקדם.");
                     safeTrackEvent('removal_request', { from_page: businessPage.id });
-                  } catch (error) {
+                  } catch {
                     alert("שגיאה בשליחת הדיווח. נסה שוב.");
                   }
                 }}
@@ -1538,24 +1302,8 @@ export default function BusinessPageView() {
         <div className="grid grid-cols-1 gap-8 items-start">
           <div className="space-y-8">
 
-            {/* AI Executive Summary (Why Us) - With Scroll Animation */}
-            {businessPage.ai_executive_summary && (
-              <ScrollReveal>
-                <div className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 p-6 rounded-2xl shadow-lg border border-indigo-100 relative overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                   <div className="absolute top-0 left-0 p-4 opacity-5 pointer-events-none">
-                      <Sparkles className="w-32 h-32 text-indigo-600" />
-                   </div>
-                   <h3 className="text-xl font-bold text-indigo-900 mb-4 flex items-center gap-2 relative z-10">
-                      <Sparkles className="w-5 h-5 text-indigo-600" />
-                      למה לבחור בנו?
-                   </h3>
-                   <div 
-                      className="prose prose-sm max-w-none text-slate-700 relative z-10 leading-relaxed [&>ul]:list-disc [&>ul]:pr-4 [&>ul>li]:mb-1"
-                      dangerouslySetInnerHTML={{ __html: businessPage.ai_executive_summary }}
-                   />
-                </div>
-              </ScrollReveal>
-            )}
+            {/* AI Executive Summary (Why Us) */}
+            <ExecutiveSummarySection aiSummary={businessPage.ai_executive_summary} />
 
             {galleryImages.length > 0 &&
               <InfiniteImageMarquee
@@ -1606,67 +1354,15 @@ export default function BusinessPageView() {
               </div>
             }
 
-            {/* תפריט - כפתורים דינמיים */}
-            {menuCategories.length > 0 &&
-              <div className="bg-transparent py-4 sticky top-0 z-10 border-b">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-xs text-slate-500 italic">
-                    * התמונות להמחשה בלבד
-                  </div>
-                </div>
-                <div className="bg-transparent pb-2 flex items-center space-x-3 overflow-x-auto hide-scrollbar">
-                  {menuCategories.map((category) =>
-                    <button
-                      key={category.id}
-                      onClick={() => scrollToCategory(category.id)}
-                      className={`text-slate-50 px-6 py-3 text-sm font-semibold rounded-full whitespace-nowrap transition-all duration-300 hover:scale-105 shadow-md hover:bg-gray-50 hover:shadow-lg border ${
-                        isBlackTheme
-                          ? 'bg-red-600 hover:bg-red-500 border-red-500'
-                          : 'border-gray-200'
-                      }`}
-                      style={!isBlackTheme ? {
-                        backgroundColor: 'var(--theme-primary)',
-                        color: 'white',
-                      } : {}}
-                      onMouseEnter={(e) => {
-                        if (!isBlackTheme) {
-                          e.currentTarget.style.color = 'var(--theme-primary-hover)';
-                        }
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isBlackTheme) {
-                          e.currentTarget.style.color = 'white';
-                        }
-                      }}>
-                      {category.name}
-                    </button>
-                  )}
-                </div>
-              </div>
-            }
-
-            {/* תפריט - פריטים */}
-            <div className="space-y-12">
-              {menuCategories.map((category) =>
-                <div key={category.id} ref={(el) => menuSectionRefs.current[category.id] = el}>
-                  <h2 className="text-3xl font-bold text-gray-900 mb-6 flex items-center gap-3">
-                    <div className="rounded-full w-2 h-8" style={{ backgroundColor: 'var(--theme-primary-hover)' }}></div>
-                    {category.name}
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {category.items?.map((item) =>
-                      <MenuItem
-                        key={item.id || item.name}
-                        item={{ ...item, categoryName: category.name }}
-                        theme={theme}
-                        isBlackTheme={isBlackTheme}
-                        onOpenModifications={handleOpenModifications}
-                      />
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
+            {/* תפריט */}
+            <MenuSection
+              menuCategories={menuCategories}
+              isBlackTheme={isBlackTheme}
+              scrollToCategory={scrollToCategory}
+              menuSectionRefs={menuSectionRefs}
+              theme={theme}
+              handleOpenModifications={handleOpenModifications}
+            />
 
             {/* SEO Content Footer - Only for thin content */}
             {businessPage.description && businessPage.description.split(' ').length < 50 && (
@@ -1679,86 +1375,24 @@ export default function BusinessPageView() {
               </div>
             )}
 
-            {/* Related Businesses Section - With Scroll Animation */}
-            {relatedBusinesses.length > 0 && (
-              <ScrollReveal delay={0.2}>
-                <div className="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-xl border border-slate-200/80">
-                  <h3 className="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-2">
-                    <Store className="w-6 h-6" style={{ color: 'var(--theme-primary)' }} />
-                    עוד עסקים בקטגוריה
-                  </h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                    {relatedBusinesses.map((related) => (
-                      <a
-                        key={related.id}
-                        href={createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`)}
-                        className="group block bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-slate-200"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          safeTrackEvent('related_business_click', { business_id: related.id });
-                          window.location.href = createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`);
-                        }}
-                      >
-                        <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">
-                          {related.preview_image || related.images?.[0] ? (
-                            <LazyImage
-                              src={related.preview_image || related.images?.[0]}
-                              alt={related.business_name}
-                              className="w-full h-full"
-                              imgClassName="object-cover w-full h-full group-hover:scale-110 transition-transform duration-300"
-                            />
-                          ) : (
-                            <div className="w-full h-full flex items-center justify-center">
-                              <Store className="w-12 h-12 text-slate-400" />
-                            </div>
-                          )}
-                        </div>
-                        <div className="p-3">
-                          <h4 className="font-bold text-sm text-slate-900 line-clamp-2 group-hover:text-blue-600 transition-colors">
-                            {related.business_name}
-                          </h4>
-                          {related.smart_rating > 0 && (
-                            <div className="flex items-center gap-1 mt-1">
-                              <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
-                              <span className="text-xs text-slate-600">{related.smart_rating.toFixed(1)}</span>
-                            </div>
-                          )}
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                  </div>
-                  </ScrollReveal>
-                  )}
+            {/* Related Businesses */}
+            <RelatedBusinesses
+              businesses={relatedBusinesses}
+              onBusinessClick={(id) => safeTrackEvent('related_business_click', { business_id: id })}
+            />
 
-                  {/* ביקורות - With Scroll Animation */}
-                  <ScrollReveal delay={0.3}>
-                  <div id="reviews-section" ref={reviewsRef} className="pt-8 border-t">
-                <div className="bg-white rounded-2xl shadow-xl border border-slate-200/80 p-8 space-y-6">
-                  <EmojiReviewPrompt
-                    businessName={businessPage.business_name || businessPage.display_title || "העסק"}
-                    onOpenForm={(mood) => {
-                      setSelectedMoodForReview(mood);
-                      setShowReviewForm(true);
-                    }}
-                    theme={theme} />
-
-                  <div className="pt-2">
-                    {user && showReviewForm &&
-                      <div className="mb-8 bg-gradient-to-r from-slate-50 to-indigo-50 p-6 rounded-xl border border-indigo-200 shadow-lg">
-                        <ReviewForm
-                          businessPageId={businessPage.id}
-                          onSubmit={onReviewSubmitted}
-                          onCancel={() => setShowReviewForm(false)}
-                          initialMood={selectedMoodForReview} />
-                      </div>
-                    }
-
-                    <ReviewList businessPageId={businessPage.id} />
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
+            {/* ביקורות */}
+            <ReviewsSection
+              businessPage={businessPage}
+              user={user}
+              showReviewForm={showReviewForm}
+              setShowReviewForm={setShowReviewForm}
+              selectedMoodForReview={selectedMoodForReview}
+              setSelectedMoodForReview={setSelectedMoodForReview}
+              theme={theme}
+              reviewsRef={reviewsRef}
+              onReviewSubmitted={onReviewSubmitted}
+            />
                   </div>
                   </div>
                   </div>
@@ -1768,7 +1402,7 @@ export default function BusinessPageView() {
           images={businessPage.images}
           isOpen={isGalleryOpen}
           onClose={() => setIsGalleryOpen(false)}
-          initialIndex={galleryInitialIndex}
+          initialIndex={0}
           alt={businessPage.display_title} />
 
       }
