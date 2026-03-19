@@ -138,7 +138,7 @@ export default function Layout({ children, currentPageName }) {
 
           // TERMS ENFORCEMENT - STRICT BLOCKING
           const CURRENT_TERMS_VERSION = '1.0';
-          const isExemptPage = currentPageName === 'TermsOfUsePage' || currentPageName === 'LandingPage';
+          const isExemptPage = currentPageName === 'TermsOfUsePage' || currentPageName === 'LandingPage' || currentPageName === 'ContactPage';
 
           if (!isExemptPage) {
             const cached = sessionStorage.getItem(`terms_accepted_${CURRENT_TERMS_VERSION}`);
