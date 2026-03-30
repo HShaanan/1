@@ -1,0 +1,3 @@
+import { base44 } from '@/api/base44Client';
+export const Listing = base44.entities.Listing;
+export default base44.entities.Listing;
