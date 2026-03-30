@@ -63,6 +63,7 @@ import EditListing from './pages/EditListing';
 import Favorites from './pages/Favorites';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
+import Login from './pages/Login';
 import LandingPage from './pages/LandingPage';
 import MediaCreator from './pages/MediaCreator';
 import MyBusinessPages from './pages/MyBusinessPages';
@@ -145,6 +146,7 @@ export const PAGES = {
     "Home": Home,
     "Landing": Landing,
     "LandingPage": LandingPage,
+    "Login": Login,
     "MediaCreator": MediaCreator,
     "MyBusinessPages": MyBusinessPages,
     "OrderCheckout": OrderCheckout,
