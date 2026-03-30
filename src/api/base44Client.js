@@ -309,7 +309,8 @@ const integrations = {
       const { data: urlData } = supabase.storage
         .from('uploads')
         .getPublicUrl(data.path);
-      return { url: urlData.publicUrl, path: data.path };
+      // Return both `file_url` (Base44 compat) and `url` (Supabase native)
+      return { file_url: urlData.publicUrl, url: urlData.publicUrl, path: data.path };
     },
     async GenerateImage(params) {
       const { data, error } = await supabase.functions.invoke('generate-image', { body: params });
@@ -333,10 +334,32 @@ const functions = {
   },
 };
 
+// ─── appLogs shim ───────────────────────────────────────────────────────
+// Base44 used appLogs for in-app activity tracking (e.g. NavigationTracker).
+// We keep the method signatures as no-ops so callers don't crash.
+const appLogs = {
+  async logUserInApp(_pageName) { /* no-op: tracked via Supabase analytics */ },
+  async logEvent(_event, _data) { /* no-op */ },
+};
+
+// ─── Agents shim ────────────────────────────────────────────────────────
+// Base44 agents handled support chat / SEO agent conversations.
+// Return empty/safe values so SupportWidget and AdminSeoAgent don't crash.
+const agents = {
+  async getConversation(_id) { return null; },
+  async listConversations(_params) { return []; },
+  async createConversation(_params) { return { id: null, messages: [] }; },
+  subscribeToConversation(_id, _cb) { return () => {}; },
+  async addMessage(_id, _msg) { return null; },
+  async getWhatsAppConnectURL(_params) { return ''; },
+};
+
 // ─── Export the drop-in replacement ─────────────────────────────────────
 export const base44 = {
   entities: entitiesProxy,
   auth,
   integrations,
   functions,
+  appLogs,
+  agents,
 };
