@@ -55,6 +55,8 @@ import MyBusinessPages from './pages/MyBusinessPages';
 import OrderCheckout from './pages/OrderCheckout';
 import OrderSuccess from './pages/OrderSuccess';
 import OrdersManagement from './pages/OrdersManagement';
+import RegisterBusiness from './pages/RegisterBusiness';
+import RegistrationSuccess from './pages/RegistrationSuccess';
 import ReferralDashboard from './pages/ReferralDashboard';
 import Search from './pages/Search';
 import Stores from './pages/Stores';
@@ -121,6 +123,8 @@ export const PAGES = {
     "OrderCheckout": OrderCheckout,
     "OrderSuccess": OrderSuccess,
     "OrdersManagement": OrdersManagement,
+    "RegisterBusiness": RegisterBusiness,
+    "RegistrationSuccess": RegistrationSuccess,
     "ReferralDashboard": ReferralDashboard,
     "Search": Search,
     "Stores": Stores,

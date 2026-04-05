@@ -637,7 +637,7 @@ export default function BusinessLanding() {
                   </div>
 
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Link to={createPageUrl("ContactPage")} className="block">
+                    <Link to={createPageUrl("RegisterBusiness")} className="block">
                       <Button className="w-full bg-slate-900 hover:bg-slate-800 text-white py-6 rounded-xl font-semibold">
                         התחל עכשיו
                       </Button>
@@ -722,7 +722,7 @@ export default function BusinessLanding() {
                     </div>
 
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <Link to={createPageUrl("ContactPage")} className="block">
+                      <Link to={createPageUrl("RegisterBusiness")} className="block">
                         <Button className="w-full bg-white hover:bg-amber-50 text-indigo-700 py-6 rounded-xl font-semibold shadow-lg">
                           בחר תנופה
                         </Button>
@@ -784,7 +784,7 @@ export default function BusinessLanding() {
                   </div>
 
                   <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Link to={createPageUrl("ContactPage")} className="block">
+                    <Link to={createPageUrl("RegisterBusiness")} className="block">
                       <Button className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700 text-white py-6 rounded-xl font-semibold shadow-lg">
                         דברו איתנו
                       </Button>
@@ -862,7 +862,7 @@ export default function BusinessLanding() {
             
             
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
-              <Link to={createPageUrl("ContactPage")} className="w-full sm:w-auto">
+              <Link to={createPageUrl("RegisterBusiness")} className="w-full sm:w-auto">
                 <Button
                   size="lg"
                   className="w-full sm:w-auto rounded-full bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 hover:opacity-90 text-white font-black px-8 sm:px-10 py-6 sm:py-8 text-lg sm:text-2xl shadow-2xl active:scale-95 sm:hover:scale-110 transition-all duration-300 touch-manipulation min-h-[52px] animate-pulse">
