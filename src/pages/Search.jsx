@@ -8,6 +8,7 @@ import { createPageUrl, createBusinessUrl } from "@/utils";
 import InteractiveMap from "../components/InteractiveMap";
 import AdvancedSearchBar from "../components/search/AdvancedSearchBar";
 import { useDebounce, dataCache, LazyImage } from "@/components/PerformanceOptimizations";
+import { activityTracker } from "@/services/activityTracker";
 
 export default function SearchPage() {
   const [listings, setListings] = useState([]);
@@ -45,6 +46,13 @@ export default function SearchPage() {
     loadData();
     getUserLocation();
   }, []);
+
+  // Track search queries for personalization
+  useEffect(() => {
+    if (debouncedSearchQuery.trim()) {
+      activityTracker.trackSearch(debouncedSearchQuery.trim());
+    }
+  }, [debouncedSearchQuery]);
 
   // לאחר שקיבלנו מיקום – קבע אוטומטית רדיוס עירוני אם עוד לא נקבע אוטומטית
   useEffect(() => {
