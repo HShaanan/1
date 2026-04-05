@@ -1,7 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
-import { BusinessPage } from "@/entities/BusinessPage";
-import { Category } from "@/entities/Category";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +17,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import {
   Plus, Edit, Eye, Clock, CheckCircle, XCircle, AlertTriangle,
-  MapPin, Phone, Globe, Star, Trash2, Search, Snowflake, Play, Loader2
+  MapPin, Phone, Globe, Star, Trash2, Search, Snowflake, Play, Loader2, Crown
 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import ListingGrid from "@/components/explore/ListingGrid";
@@ -55,18 +53,9 @@ export default function MyBusinessPagesPage() {
         setUser(currentUser);
 
         // טעינת כל העמודים שלי - כולל מוקפאים!
-        const pages = await base44.entities.BusinessPage.filter({ 
-          business_owner_email: currentUser.email 
+        const pages = await base44.entities.BusinessPage.filter({
+          business_owner_email: currentUser.email
         });
-        
-        console.log('📊 All my business pages:', pages.map(p => ({
-          id: p.id,
-          name: p.business_name,
-          is_frozen: p.is_frozen,
-          frozen_at: p.frozen_at,
-          frozen_reason: p.frozen_reason
-        })));
-        
         setBusinessPages(pages);
 
         const cats = await base44.entities.Category.list();
@@ -92,54 +81,26 @@ export default function MyBusinessPagesPage() {
 
   const handleFreezePage = async () => {
     if (!freezeDialog.page) return;
-    
-    console.log('[pages/MyBusinessPages.js] 🧊 === FREEZE PAGE DEBUG ===');
-    console.log('[pages/MyBusinessPages.js] 📄 Page to freeze:', freezeDialog.page);
-    console.log('[pages/MyBusinessPages.js] 🆔 Page ID:', freezeDialog.page.id);
-    console.log('[pages/MyBusinessPages.js] 📝 Business name:', freezeDialog.page.business_name);
-    console.log('[pages/MyBusinessPages.js] 📋 Freeze reason:', freezeReason);
-    console.log('[pages/MyBusinessPages.js] 📊 Current pages count:', businessPages.length);
-    console.log('[pages/MyBusinessPages.js] 📊 Current pages:', businessPages.map(p => ({ id: p.id, name: p.business_name, frozen: p.is_frozen })));
-    
+
     setProcessingFreeze(true);
     try {
-      const updateData = {
+      await base44.entities.BusinessPage.update(freezeDialog.page.id, {
         is_frozen: true,
         frozen_at: new Date().toISOString(),
         frozen_reason: freezeReason || null
-      };
-      
-      console.log('[pages/MyBusinessPages.js] 🔄 Updating page with data:', updateData);
-      console.log('[pages/MyBusinessPages.js] 🎯 Updating page ID:', freezeDialog.page.id);
-      
-      const result = await base44.entities.BusinessPage.update(freezeDialog.page.id, updateData);
-      
-      console.log('[pages/MyBusinessPages.js] ✅ Update result:', result);
-
-      // עדכון ה-state בזהירות - רק את העמוד הספציפי
-      setBusinessPages(prev => {
-        console.log('[pages/MyBusinessPages.js] 🔄 Updating state - before:', prev.map(p => ({ id: p.id, name: p.business_name, frozen: p.is_frozen })));
-        
-        const updated = prev.map(p => {
-          if (p.id === freezeDialog.page.id) {
-            console.log('[pages/MyBusinessPages.js] ✅ Freezing page:', p.business_name, 'ID:', p.id);
-            return { ...p, is_frozen: true, frozen_at: new Date().toISOString(), frozen_reason: freezeReason };
-          }
-          console.log('[pages/MyBusinessPages.js] ⏭️ Skipping page:', p.business_name, 'ID:', p.id);
-          return p;
-        });
-        
-        console.log('[pages/MyBusinessPages.js] 🔄 Updating state - after:', updated.map(p => ({ id: p.id, name: p.business_name, frozen: p.is_frozen })));
-        return updated;
       });
+
+      setBusinessPages(prev =>
+        prev.map(p =>
+          p.id === freezeDialog.page.id
+            ? { ...p, is_frozen: true, frozen_at: new Date().toISOString(), frozen_reason: freezeReason }
+            : p
+        )
+      );
 
       setFreezeDialog({ open: false, page: null });
       setFreezeReason("");
-      
-      console.log('[pages/MyBusinessPages.js] ✅ Freeze completed successfully');
     } catch (err) {
-      console.error('[pages/MyBusinessPages.js] ❌ Freeze error:', err);
-      console.error('[pages/MyBusinessPages.js] ❌ Error details:', err.message, err.stack);
       alert("שגיאה בהקפאת העמוד: " + err.message);
     } finally {
       setProcessingFreeze(false);
@@ -148,49 +109,25 @@ export default function MyBusinessPagesPage() {
 
   const handleUnfreezePage = async () => {
     if (!unfreezeDialog.page) return;
-    
-    console.log('[pages/MyBusinessPages.js] 🔥 === UNFREEZE PAGE DEBUG ===');
-    console.log('[pages/MyBusinessPages.js] 📄 Page to unfreeze:', unfreezeDialog.page);
-    console.log('[pages/MyBusinessPages.js] 🆔 Page ID:', unfreezeDialog.page.id);
-    console.log('[pages/MyBusinessPages.js] 📝 Business name:', unfreezeDialog.page.business_name);
-    
+
     setProcessingFreeze(true);
     try {
-      const updateData = {
+      await base44.entities.BusinessPage.update(unfreezeDialog.page.id, {
         is_frozen: false,
         frozen_at: null,
         frozen_reason: null
-      };
-      
-      console.log('[pages/MyBusinessPages.js] 🔄 Updating page with data:', updateData);
-      console.log('[pages/MyBusinessPages.js] 🎯 Updating page ID:', unfreezeDialog.page.id);
-      
-      const result = await base44.entities.BusinessPage.update(unfreezeDialog.page.id, updateData);
-      
-      console.log('[pages/MyBusinessPages.js] ✅ Update result:', result);
-
-      setBusinessPages(prev => {
-        console.log('[pages/MyBusinessPages.js] 🔄 Updating state - before:', prev.map(p => ({ id: p.id, name: p.business_name, frozen: p.is_frozen })));
-        
-        const updated = prev.map(p => {
-          if (p.id === unfreezeDialog.page.id) {
-            console.log('[pages/MyBusinessPages.js] ✅ Unfreezing page:', p.business_name, 'ID:', p.id);
-            return { ...p, is_frozen: false, frozen_at: null, frozen_reason: null };
-          }
-          console.log('[pages/MyBusinessPages.js] ⏭️ Skipping page:', p.business_name, 'ID:', p.id);
-          return p;
-        });
-        
-        console.log('[pages/MyBusinessPages.js] 🔄 Updating state - after:', updated.map(p => ({ id: p.id, name: p.business_name, frozen: p.is_frozen })));
-        return updated;
       });
 
+      setBusinessPages(prev =>
+        prev.map(p =>
+          p.id === unfreezeDialog.page.id
+            ? { ...p, is_frozen: false, frozen_at: null, frozen_reason: null }
+            : p
+        )
+      );
+
       setUnfreezeDialog({ open: false, page: null });
-      
-      console.log('[pages/MyBusinessPages.js] ✅ Unfreeze completed successfully');
     } catch (err) {
-      console.error('[pages/MyBusinessPages.js] ❌ Unfreeze error:', err);
-      console.error('[pages/MyBusinessPages.js] ❌ Error details:', err.message, err.stack);
       alert("שגיאה בהפשרת העמוד: " + err.message);
     } finally {
       setProcessingFreeze(false);
@@ -283,6 +220,12 @@ export default function MyBusinessPagesPage() {
                             מוקפא
                           </Badge>
                         </div>
+                      )}
+                      {page.subscription_type && page.subscription_type !== 'basic' && (
+                        <Badge className={`mt-1 ${page.subscription_type === 'enterprise' ? 'bg-amber-100 text-amber-800 border-amber-300' : 'bg-indigo-100 text-indigo-800 border-indigo-300'}`}>
+                          <Crown className="w-3 h-3 ml-1" />
+                          {page.subscription_type === 'enterprise' ? 'עסקי פלוס' : 'פרימיום'}
+                        </Badge>
                       )}
                     </div>
                     {!page.is_frozen && getStatusBadge(page.approval_status)}

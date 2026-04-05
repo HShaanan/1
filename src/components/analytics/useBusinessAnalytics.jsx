@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { base44 } from '@/api/base44Client';
+import { activityTracker } from '@/services/activityTracker';
 
 // יצירת/קבלת session ID ייחודי
 const getSessionId = () => {
@@ -87,6 +88,9 @@ export const useBusinessAnalytics = (businessPageId) => {
         
         console.log('✅ Impression recorded successfully:', result);
         setImpressionRecorded(true);
+
+        // Also track in user activity for personalization
+        activityTracker.trackPageView(businessPageId);
       } catch (error) {
         console.error('❌ Failed to record impression:', error);
         console.error('📋 Error name:', error.name);
@@ -145,6 +149,17 @@ export const useBusinessAnalytics = (businessPageId) => {
       const result = await base44.entities.BusinessPageAnalytics.create(eventData);
       
       console.log('✅ Event tracked successfully:', result);
+
+      // Also track in user activity for personalization
+      const activityMap = {
+        phone_click: () => activityTracker.trackPhoneClick(businessPageId),
+        navigation_click: () => activityTracker.trackNavigationClick(businessPageId),
+        website_click: () => activityTracker.trackWebsiteClick(businessPageId),
+        whatsapp_click: () => activityTracker.trackWhatsAppClick(businessPageId),
+        share_click: () => activityTracker.trackShareClick(businessPageId),
+        favorite_click: () => activityTracker.trackFavoriteAdd(businessPageId),
+      };
+      if (activityMap[eventType]) activityMap[eventType]();
     } catch (error) {
       console.error('❌ Failed to track event:', error);
       console.error('📋 Error name:', error.name);

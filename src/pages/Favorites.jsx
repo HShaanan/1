@@ -1,13 +1,10 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { Favorite } from "@/entities/Favorite";
-import { BusinessPage } from "@/entities/BusinessPage";
-import { User } from "@/entities/User";
+import { base44 } from "@/api/base44Client";
 import ListingGrid from "@/components/explore/ListingGrid";
 import { createPageUrl } from "@/utils";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Heart, Loader2 } from "lucide-react";
-import { Category } from "@/entities/Category";
 import BannerCarousel from "@/components/banners/BannerCarousel";
 
 export default function FavoritesPage() {
@@ -19,16 +16,14 @@ export default function FavoritesPage() {
 
   const loadFavorites = useCallback(async (currentUser) => {
     if (!currentUser) return;
-    
+
     setLoading(true);
     try {
-      // 1. קבל את כל המועדפים של המשתמש
-      const favs = await Favorite.filter({ user_email: currentUser.email });
+      const favs = await base44.entities.Favorite.filter({ user_email: currentUser.email });
       const businessPageIds = favs.map((f) => f.business_page_id);
 
       if (businessPageIds.length > 0) {
-        // 2. קבל את כל עמודי העסק המתאימים
-        const pages = await BusinessPage.filter({
+        const pages = await base44.entities.BusinessPage.filter({
           id: { "$in": businessPageIds },
           is_active: true,
           approval_status: 'approved'
@@ -49,8 +44,8 @@ export default function FavoritesPage() {
     setLoading(true);
     try {
       const [currentUser, cats] = await Promise.all([
-        User.me().catch(() => null),
-        Category.list()
+        base44.auth.me().catch(() => null),
+        base44.entities.Category.list()
       ]);
 
       setUser(currentUser);
@@ -86,13 +81,13 @@ export default function FavoritesPage() {
       <div className="text-center py-16" dir="rtl">
         <h2 className="text-2xl font-bold mb-2">עמוד המועדפים</h2>
         <p className="text-slate-600 mb-4">עליך להתחבר כדי לראות את העסקים ששמרת.</p>
-        <Button onClick={() => User.loginWithRedirect(window.location.href)}>
+        <Button onClick={() => base44.auth.redirectToLogin(window.location.href)}>
           התחברות
         </Button>
       </div>
     );
   }
-  
+
   if (error) {
       return <div className="text-center py-16 text-red-500">{error}</div>
   }
@@ -109,8 +104,8 @@ export default function FavoritesPage() {
 
         {favoritePages.length > 0 ? (
           <div className="space-y-8">
-            <ListingGrid 
-                listings={favoritePages} 
+            <ListingGrid
+                listings={favoritePages}
                 loading={loading}
                 categories={categories}
             />
