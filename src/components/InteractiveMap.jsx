@@ -3,7 +3,7 @@ import { GoogleMap, useJsApiLoader, Marker, InfoWindow, Circle } from "@react-go
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { MapPin, Loader2, AlertTriangle, Navigation } from "lucide-react";
-import { createPageUrl } from "@/utils";
+import { createPageUrl, createBusinessUrl } from "@/utils";
 import { getGoogleMapsKey } from "@/functions/getGoogleMapsKey";
 
 const libraries = ["geometry", "places"];
@@ -105,7 +105,7 @@ function MapContent({ apiKey, listings, userLocation, onMarkerClick, className, 
   }, [onMarkerClick]);
 
   const handleMarkerDoubleClick = useCallback((listing) => {
-    window.location.href = createPageUrl(`BusinessPage?slug=${listing.url_slug || listing.id}`);
+    window.location.href = createBusinessUrl(listing.url_slug || listing.id);
   }, []);
 
   const validListings = useMemo(() => 
@@ -229,7 +229,7 @@ function MapContent({ apiKey, listings, userLocation, onMarkerClick, className, 
                 <Button
                   size="sm"
                   onClick={() => {
-                    window.location.href = createPageUrl(`BusinessPage?slug=${selectedMarker.url_slug || selectedMarker.id}`);
+                    window.location.href = createBusinessUrl(selectedMarker.url_slug || selectedMarker.id);
                   }}
                   className="flex-1 bg-blue-600 hover:bg-blue-700"
                 >

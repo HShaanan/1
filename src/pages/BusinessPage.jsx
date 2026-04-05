@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useParams } from "react-router-dom";
 import { base44 } from "@/api/base44Client";
-import { createPageUrl } from "@/utils";
+import { createPageUrl, createBusinessUrl } from "@/utils";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { LazyImage } from "@/components/PerformanceOptimizations";
@@ -477,15 +478,17 @@ const BusinessInfoBar = ({ businessPage, onRatingClick, onPhoneClick, onNavigati
 };
 
 export default function BusinessPageView() {
+  // Support both /business/:slug (new) and ?slug=&id= (legacy)
+  const { slug: routeSlug } = useParams();
   const urlParams = new URLSearchParams(window.location.search);
   const pageId = urlParams.get("id");
-  const pageSlug = urlParams.get("slug");
+  const pageSlug = routeSlug || urlParams.get("slug");
 
-  // Update URL to friendly format without redirect (SEO-friendly)
+  // Update URL to clean /business/slug format
   useEffect(() => {
-    if (pageSlug && window.location.search.includes('slug=')) {
-      // Change URL in browser without reload
-      const newUrl = `${window.location.origin}/BusinessPage?slug=${pageSlug}`;
+    if (pageSlug && !routeSlug) {
+      // Legacy URL — update to clean format
+      const newUrl = `${window.location.origin}/business/${pageSlug}`;
       window.history.replaceState({}, '', newUrl);
     } else if (pageId && !pageSlug) {
       // If only ID exists, load page first to get slug and update URL
@@ -494,7 +497,7 @@ export default function BusinessPageView() {
           const pageData = await base44.entities.BusinessPage.filter({ id: pageId });
           const page = Array.isArray(pageData) ? pageData[0] : pageData;
           if (page?.url_slug) {
-            const newUrl = `${window.location.origin}/BusinessPage?slug=${page.url_slug}`;
+            const newUrl = `${window.location.origin}/business/${page.url_slug}`;
             window.history.replaceState({}, '', newUrl);
           }
         } catch (e) {
@@ -502,7 +505,7 @@ export default function BusinessPageView() {
         }
       })();
     }
-  }, [pageId, pageSlug]);
+  }, [pageId, pageSlug, routeSlug]);
 
   const [businessPage, setBusinessPage] = useState(null);
   const [user, setUser] = useState(null);

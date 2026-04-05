@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, ShoppingBag } from "lucide-react";
-import { createPageUrl } from "@/utils";
+import { createPageUrl, createBusinessUrl } from "@/utils";
 import { LazyImage } from "@/components/PerformanceOptimizations";
 import { base44 } from "@/api/base44Client";
 
@@ -57,7 +57,7 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
       return;
     }
     const slug = businessPage.url_slug || businessPage.id;
-    navigate(createPageUrl("BusinessPage") + `?slug=${slug}`);
+    navigate(createBusinessUrl(slug));
   };
 
   const defaultImage = "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68815c70a48dd08622dbaf69/e8b173c76_image2.jpg";
