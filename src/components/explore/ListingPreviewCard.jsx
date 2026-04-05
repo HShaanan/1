@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Truck, ShoppingBag } from "lucide-react";
+import { TrendingUp, ShoppingBag } from "lucide-react";
 import { createPageUrl } from "@/utils";
 import { LazyImage } from "@/components/PerformanceOptimizations";
 import { base44 } from "@/api/base44Client";
@@ -100,21 +100,13 @@ export default function ListingPreviewCard({ businessPage, onClick, categories =
           </div>
         )}
 
-        {/* Delivery & Pickup Badges */}
-        {(businessPage.has_delivery || businessPage.has_pickup) && (
+        {/* Pickup Badge */}
+        {businessPage.has_pickup && (
           <div className="absolute bottom-2 left-2 flex gap-1">
-            {businessPage.has_delivery && (
-              <Badge className="bg-blue-600 text-white shadow-md flex items-center gap-1 text-xs">
-                <Truck className="w-3 h-3" />
-                משלוח
-              </Badge>
-            )}
-            {businessPage.has_pickup && (
-              <Badge className="bg-green-600 text-white shadow-md flex items-center gap-1 text-xs">
-                <ShoppingBag className="w-3 h-3" />
-                איסוף
-              </Badge>
-            )}
+            <Badge className="bg-green-600 text-white shadow-md flex items-center gap-1 text-xs">
+              <ShoppingBag className="w-3 h-3" />
+              איסוף
+            </Badge>
           </div>
         )}
 

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { 
-  Filter, X, Check, Truck, Clock, DollarSign, 
+  Filter, X, Check, Clock, DollarSign,
   Utensils, ShoppingBag, ChevronDown 
 } from "lucide-react";
 import {
@@ -56,10 +56,9 @@ export default function FilterBar({
   };
 
   const activeFilterCount = (
-    (filters.kashrut?.length || 0) + 
-    (filters.price?.length || 0) + 
-    (filters.delivery ? 1 : 0) + 
-    (filters.pickup ? 1 : 0) + 
+    (filters.kashrut?.length || 0) +
+    (filters.price?.length || 0) +
+    (filters.pickup ? 1 : 0) +
     (filters.openNow ? 1 : 0)
   );
 
@@ -90,17 +89,6 @@ export default function FilterBar({
           >
             <Clock className="w-3.5 h-3.5 ml-1.5" />
             פתוח עכשיו
-          </Button>
-
-          {/* Delivery Toggle */}
-          <Button
-            variant={filters.delivery ? "secondary" : "outline"}
-            size="sm"
-            onClick={() => handleBoolToggle('delivery')}
-            className={`rounded-full shrink-0 h-8 ${filters.delivery ? 'bg-blue-100 text-blue-700 border-blue-200' : 'border-slate-300 text-slate-600'}`}
-          >
-            <Truck className="w-3.5 h-3.5 ml-1.5" />
-            משלוח
           </Button>
 
           {/* Pickup Toggle */}

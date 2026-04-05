@@ -113,7 +113,6 @@ export default function BrowsePage({ preSelectedState }) {
   const [filters, setFilters] = useState({
     kashrut: [],
     price: [],
-    delivery: false,
     pickup: false,
     openNow: false,
   });
@@ -123,7 +122,6 @@ export default function BrowsePage({ preSelectedState }) {
       setFilters({
         kashrut: [],
         price: [],
-        delivery: false,
         pickup: false,
         openNow: false,
       });
@@ -161,7 +159,6 @@ export default function BrowsePage({ preSelectedState }) {
         setFilters(prev => ({
             ...prev,
             kashrut: preSelectedState.kashrut || [],
-            delivery: preSelectedState.delivery || false,
             pickup: preSelectedState.pickup || false,
             openNow: preSelectedState.openNow || false,
             // Add other filters as needed
@@ -477,10 +474,6 @@ export default function BrowsePage({ preSelectedState }) {
 
     if (filters.price.length > 0) {
       base = base.filter(l => filters.price.includes(l.price_range));
-    }
-
-    if (filters.delivery) {
-      base = base.filter(l => l.has_delivery);
     }
 
     if (filters.pickup) {
