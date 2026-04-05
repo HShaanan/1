@@ -2,7 +2,7 @@
 import React from "react";
 import { Category } from "@/entities/Category";
 import { Badge } from "@/components/ui/badge";
-import { createPageUrl } from "@/utils";
+import { createPageUrl, createBusinessUrl } from "@/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Star, Building } from "lucide-react"; // Added Building icon
 import { getRecentBusinessPages } from "@/functions/getRecentBusinessPages";
@@ -173,10 +173,7 @@ export default function RecentListings() {
                 key={page.id || index} 
                 className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden cursor-pointer border border-slate-100 hover:-translate-y-1"
                 onClick={() => {
-                  const param = page.url_slug 
-                    ? `slug=${page.url_slug}` 
-                    : `id=${page.id}`;
-                  window.location.href = createPageUrl(`BusinessPage?${param}`);
+                  window.location.href = createBusinessUrl(page.url_slug || page.id);
                 }}
               >
                 <div className="relative h-48 bg-gradient-to-br from-indigo-50 to-blue-50 overflow-hidden">

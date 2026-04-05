@@ -1,7 +1,7 @@
 import { Store, Star } from "lucide-react";
 import { LazyImage } from "@/components/PerformanceOptimizations";
 import ScrollReveal from "@/components/ScrollReveal";
-import { createPageUrl } from "@/utils";
+import { createPageUrl, createBusinessUrl } from "@/utils";
 
 export default function RelatedBusinesses({ businesses, onBusinessClick }) {
   if (!businesses || businesses.length === 0) return null;
@@ -16,12 +16,12 @@ export default function RelatedBusinesses({ businesses, onBusinessClick }) {
           {businesses.map((related) => (
             <a
               key={related.id}
-              href={createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`)}
+              href={createBusinessUrl(related.url_slug || related.id)}
               className="group block bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 hover:scale-105 border border-slate-200"
               onClick={(e) => {
                 e.preventDefault();
                 onBusinessClick(related.id);
-                window.location.href = createPageUrl(`BusinessPage?slug=${related.url_slug || related.id}`);
+                window.location.href = createBusinessUrl(related.url_slug || related.id);
               }}
             >
               <div className="aspect-square bg-gradient-to-br from-slate-100 to-slate-200 relative overflow-hidden">

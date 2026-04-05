@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { MapPin, Phone, ExternalLink, Navigation, Star, Search, ArrowRight, AlertCircle, Loader2 } from "lucide-react";
-import { createPageUrl } from "@/utils";
+import { createPageUrl, createBusinessUrl } from "@/utils";
 import InteractiveMap from "../components/InteractiveMap";
 import AdvancedSearchBar from "../components/search/AdvancedSearchBar";
 import { useDebounce, dataCache, LazyImage } from "@/components/PerformanceOptimizations";
@@ -341,7 +341,7 @@ export default function SearchPage() {
                     }
                   }}
                   onDoubleClick={() => {
-                    window.location.href = createPageUrl(`BusinessPage?slug=${listing.url_slug || listing.id}`);
+                    window.location.href = createBusinessUrl(listing.url_slug || listing.id);
                   }}
                 >
                   <CardContent className="p-3 flex gap-3">

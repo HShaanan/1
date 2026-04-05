@@ -13,8 +13,8 @@ import {
   Menu, X, Store, Plus, Search, User as UserIcon, Heart,
   Tag, UserCircle, LogOut, Shield,
   AlertTriangle, Users, FileText, Settings, Sparkles, Zap, Mail, Wand2, Layers,
-  MessageSquare, Activity, Key, ImageIcon, Megaphone, FileText as ReviewsIcon,
-  Bug, Bot, ListChecks, Clock, Truck, ShoppingBag, Globe, Database, MapPin } from
+  MessageSquare, Activity, ImageIcon, Megaphone, FileText as ReviewsIcon,
+  Bot, ListChecks, Clock, ShoppingBag, Globe, Database, MapPin } from
 "lucide-react";
 
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
@@ -428,6 +428,19 @@ export default function Layout({ children, currentPageName }) {
                   </Button>
                 </Link>
 
+                <Link to={createPageUrl("ExpertsBrowse")} aria-label="מומחים משלנו">
+                  <Button
+                      variant="ghost"
+                      className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
+                      currentPageName === "ExpertsBrowse" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"}`
+                      }
+                      aria-current={currentPageName === "ExpertsBrowse" ? "page" : undefined}>
+
+                    <Users className="w-4 h-4 ml-2" aria-hidden="true" />
+                    מומחים משלנו
+                  </Button>
+                </Link>
+
                 <Link to={createPageUrl("BusinessLanding")} aria-label="הצטרף למשלנו והוסף עסק">
                   <Button
                       variant="ghost"
@@ -570,13 +583,6 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild role="menuitem">
-                        <Link to={createPageUrl('AdminBanners')} className="flex items-center gap-2 cursor-pointer">
-                          <Megaphone className="w-4 h-4 text-fuchsia-600" aria-hidden="true" />
-                          <span>ניהול באנרים</span>
-                        </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminTimezone')} className="flex items-center gap-2 cursor-pointer">
                           <Clock className="w-4 h-4 text-blue-600" aria-hidden="true" />
                           <span>הגדרות זמן</span>
@@ -591,37 +597,12 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild role="menuitem">
-                        <Link to={createPageUrl('DeliveryManagement')} className="flex items-center gap-2 cursor-pointer">
-                          <Truck className="w-4 h-4 text-indigo-600" aria-hidden="true" />
-                          <span>ניהול משלוחים</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild role="menuitem">
-                        <Link to={createPageUrl('CourierFleetManagement')} className="flex items-center gap-2 cursor-pointer">
-                          <Users className="w-4 h-4 text-cyan-600" aria-hidden="true" />
-                          <span>ניהול צי שליחים</span>
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild role="menuitem">
-                        <Link to={createPageUrl('AdminPaymentDebug')} className="flex items-center gap-2 cursor-pointer">
-                          <Key className="w-4 h-4 text-red-600" aria-hidden="true" />
-                          <span>אבחון תשלומים</span>
-                        </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminBulkImprove')} className="flex items-center gap-2 cursor-pointer">
                           <Wand2 className="w-4 h-4 text-purple-600" aria-hidden="true" />
                           <span>שיפור אוטומטי</span>
                         </Link>
                       </DropdownMenuItem>
 
-                      <DropdownMenuItem asChild role="menuitem">
-                        <Link to={createPageUrl('AdminAddDefaultLogo')} className="flex items-center gap-2 cursor-pointer">
-                          <ImageIcon className="w-4 h-4 text-blue-600" aria-hidden="true" />
-                          <span>הוסף לוגו ברירת מחדל</span>
-                        </Link>
-                      </DropdownMenuItem>
 
                       <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminDeleteRecent')} className="flex items-center gap-2 cursor-pointer">
@@ -689,13 +670,6 @@ export default function Layout({ children, currentPageName }) {
                       </DropdownMenuItem>
 
                       <DropdownMenuItem asChild role="menuitem">
-                        <Link to={createPageUrl('CodeCleanupDashboard')} className="flex items-center gap-2 cursor-pointer">
-                          <Zap className="w-4 h-4 text-yellow-600" aria-hidden="true" />
-                          <span>ניקוי קוד</span>
-                        </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild role="menuitem">
                         <Link to={createPageUrl('AdminSettings')} className="flex items-center gap-2 cursor-pointer bg-slate-50">
                           <Settings className="w-4 h-4 text-slate-700" aria-hidden="true" />
                           <span className="font-bold text-slate-700">הגדרות מערכת</span>
@@ -748,6 +722,13 @@ export default function Layout({ children, currentPageName }) {
                     <Link to={createPageUrl("Browse")} className="w-full flex items-center cursor-pointer">
                       <Store className="w-4 h-4 ml-2 text-green-600" aria-hidden="true" />
                       <span>משלנו ביזנעס</span>
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("ExpertsBrowse")} className="w-full flex items-center cursor-pointer">
+                      <Users className="w-4 h-4 ml-2 text-purple-600" aria-hidden="true" />
+                      <span>מומחים משלנו</span>
                     </Link>
                   </DropdownMenuItem>
 
@@ -858,13 +839,6 @@ export default function Layout({ children, currentPageName }) {
                         <Link to={createPageUrl("AdminImportCSV")} className="w-full flex items-center cursor-pointer">
                           <FileText className="w-4 h-4 ml-2 text-green-600" aria-hidden="true" />
                           <span>ייבוא עסקים Excel/CSV</span>
-                        </Link>
-                      </DropdownMenuItem>
-
-                      <DropdownMenuItem asChild>
-                        <Link to={createPageUrl("CodeCleanupDashboard")} className="w-full flex items-center cursor-pointer">
-                          <Zap className="w-4 h-4 ml-2 text-yellow-600" aria-hidden="true" />
-                          <span>ניקוי קוד</span>
                         </Link>
                       </DropdownMenuItem>
 

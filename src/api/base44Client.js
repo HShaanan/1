@@ -34,8 +34,6 @@ const TABLE_MAP = {
   NotificationLog: 'notification_logs',
   BusinessPageImpression: 'business_page_impressions',
   BusinessPageAnalytics: 'business_page_analytics',
-  Courier: 'couriers',
-  DeliveryRecord: 'delivery_records',
   LandingPage: 'landing_pages',
   User: 'users',
 };
