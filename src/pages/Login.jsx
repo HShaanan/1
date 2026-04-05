@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
 import { useNavigate } from 'react-router-dom';
+import { activityTracker } from '@/services/activityTracker';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -37,6 +38,7 @@ export default function Login() {
       setError(error.message);
       setLoading(false);
     } else {
+      activityTracker.trackLogin();
       const returnUrl = localStorage.getItem('auth_return_url');
       localStorage.removeItem('auth_return_url');
       navigate(returnUrl || '/');
@@ -59,6 +61,7 @@ export default function Login() {
     if (error) {
       setError(error.message);
     } else {
+      activityTracker.trackSignup();
       setMessage('נשלח אליך מייל אימות. אנא בדוק את תיבת הדואר שלך.');
     }
     setLoading(false);

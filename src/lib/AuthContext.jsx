@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { activityTracker } from '@/services/activityTracker';
 
 const AuthContext = createContext();
 
@@ -50,6 +51,8 @@ export const AuthProvider = ({ children }) => {
 
       setUser(fullUser);
       setIsAuthenticated(true);
+      // Update last_activity for online presence tracking
+      activityTracker.touchActivity();
     } catch (err) {
       console.error('Failed to load user profile:', err);
       // Still mark as authenticated even without profile

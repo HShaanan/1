@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import {
   ArrowRight, Settings, Image, Clock, Shield, Tag,
   UtensilsCrossed, Sparkles, Palette, ChevronLeft, AlertTriangle, Edit, BarChart3,
-  TrendingUp, Truck, ShoppingBag, Loader2, Check
+  TrendingUp, Truck, ShoppingBag, Loader2, Check, Crown
 } from "lucide-react";
 import { createPageUrl } from "@/utils";
 
@@ -337,6 +337,14 @@ export default function BusinessManagePage() {
             >
               <UtensilsCrossed className="w-4 h-4" />
               ניהול הזמנות
+            </Button>
+            <Button
+              onClick={() => window.location.href = createPageUrl(`SubscriptionManagement?business_id=${pageId}`)}
+              variant="outline"
+              className="gap-2"
+            >
+              <Crown className="w-4 h-4" />
+              ניהול מנוי
             </Button>
           </CardContent>
         </Card>
