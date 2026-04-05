@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useMemo, useCallback } from "react";
-import { User } from "@/entities/User";
 import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -86,11 +85,11 @@ export default function AdminUsersPage() {
   const loadUsers = useCallback(async () => {
     try {
       setError("");
-      const usersData = await User.list("-created_date");
-      
+      const usersData = await base44.entities.User.list("-created_date");
+
       const enrichedUsers = usersData.map(user => ({
           ...user,
-          last_activity: user.last_activity || user.updated_date, // Fallback to updated_date for activity
+          last_activity: user.last_activity || user.updated_date,
       }));
       setUsers(enrichedUsers);
 
@@ -98,13 +97,13 @@ export default function AdminUsersPage() {
       // First attempt failed, try again after a delay
       try {
         await new Promise(resolve => setTimeout(resolve, 2000));
-        const usersData = await User.list("-created_date");
+        const usersData = await base44.entities.User.list("-created_date");
         const enrichedUsers = usersData.map(user => ({
             ...user,
             last_activity: user.last_activity || user.updated_date,
         }));
         setUsers(enrichedUsers);
-        
+
       } catch (retryErr) {
         if (retryErr.message && retryErr.message.includes('Network Error')) {
           setError("שגיאת חיבור לשרת. בדוק את החיבור לאינטרנט ונסה לרענן את הדף.");
@@ -117,9 +116,9 @@ export default function AdminUsersPage() {
 
   const checkAdminAccess = useCallback(async () => {
     try {
-      const userData = await User.me().catch(() => null);
+      const userData = await base44.auth.me().catch(() => null);
       if (!userData) {
-        await User.loginWithRedirect(window.location.href);
+        base44.auth.redirectToLogin(window.location.href);
         return;
       }
 
@@ -154,7 +153,7 @@ export default function AdminUsersPage() {
 
   const handleRoleUpdate = async (userId, newRole) => {
     try {
-      await User.update(userId, { role: newRole });
+      await base44.entities.User.update(userId, { role: newRole });
       await loadUsers();
       toast.success(`תפקיד המשתמש עודכן בהצלחה ל-${newRole === 'admin' ? 'מנהל' : 'משתמש רגיל'}.`);
     } catch (err) {
@@ -165,9 +164,7 @@ export default function AdminUsersPage() {
 
   const handleDeleteUser = async (userId, userName) => {
     try {
-      // Assuming a User.delete method exists. Placeholder for actual API call.
-      // await User.delete(userId); 
-      console.log(`Deleting user with ID: ${userId}`); // This is a placeholder for the actual delete operation
+      await base44.entities.User.delete(userId);
       await loadUsers();
       toast.success(`המשתמש '${userName || userId}' נמחק בהצלחה.`);
     } catch (err) {

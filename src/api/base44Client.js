@@ -35,7 +35,10 @@ const TABLE_MAP = {
   BusinessPageImpression: 'business_page_impressions',
   BusinessPageAnalytics: 'business_page_analytics',
   LandingPage: 'landing_pages',
-  User: 'users',
+  User: 'profiles',
+  UserActivity: 'user_activity',
+  UserPreference: 'user_preferences',
+  SubscriptionPlan: 'subscription_plans',
 };
 
 /** Convert PascalCase to snake_case and pluralize as fallback. */
@@ -247,17 +250,18 @@ const auth = {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('Not authenticated');
 
-    // Update auth metadata
-    if (updates.full_name) {
-      await supabase.auth.updateUser({
-        data: { full_name: updates.full_name },
-      });
+    // Update auth metadata for fields that belong there
+    const metadataUpdates = {};
+    if (updates.full_name) metadataUpdates.full_name = updates.full_name;
+    if (Object.keys(metadataUpdates).length > 0) {
+      await supabase.auth.updateUser({ data: metadataUpdates });
     }
 
-    // Update profile table
+    // Update profile table with all fields
+    const profileUpdates = { ...updates };
     const { error } = await supabase
       .from('profiles')
-      .update(updates)
+      .update(profileUpdates)
       .eq('id', user.id);
     if (error) throw error;
   },

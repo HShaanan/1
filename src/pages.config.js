@@ -61,6 +61,7 @@ import ReferralDashboard from './pages/ReferralDashboard';
 import Search from './pages/Search';
 import Stores from './pages/Stores';
 import TermsOfUsePage from './pages/TermsOfUsePage';
+import SubscriptionManagement from './pages/SubscriptionManagement';
 import UserProfile from './pages/UserProfile';
 import __Layout from './Layout.jsx';
 
@@ -129,6 +130,7 @@ export const PAGES = {
     "Search": Search,
     "Stores": Stores,
     "TermsOfUsePage": TermsOfUsePage,
+    "SubscriptionManagement": SubscriptionManagement,
     "UserProfile": UserProfile,
 }
 
