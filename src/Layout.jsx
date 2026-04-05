@@ -428,6 +428,19 @@ export default function Layout({ children, currentPageName }) {
                   </Button>
                 </Link>
 
+                <Link to={createPageUrl("ExpertsBrowse")} aria-label="מומחים משלנו">
+                  <Button
+                      variant="ghost"
+                      className={`button-hover rounded-xl text-sm px-3 py-2 focus-ring ${
+                      currentPageName === "ExpertsBrowse" ? "bg-blue-100 text-blue-700" : "text-slate-600 hover:text-slate-900 hover:bg-gray-100"}`
+                      }
+                      aria-current={currentPageName === "ExpertsBrowse" ? "page" : undefined}>
+
+                    <Users className="w-4 h-4 ml-2" aria-hidden="true" />
+                    מומחים משלנו
+                  </Button>
+                </Link>
+
                 <Link to={createPageUrl("BusinessLanding")} aria-label="הצטרף למשלנו והוסף עסק">
                   <Button
                       variant="ghost"
@@ -709,6 +722,13 @@ export default function Layout({ children, currentPageName }) {
                     <Link to={createPageUrl("Browse")} className="w-full flex items-center cursor-pointer">
                       <Store className="w-4 h-4 ml-2 text-green-600" aria-hidden="true" />
                       <span>משלנו ביזנעס</span>
+                    </Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link to={createPageUrl("ExpertsBrowse")} className="w-full flex items-center cursor-pointer">
+                      <Users className="w-4 h-4 ml-2 text-purple-600" aria-hidden="true" />
+                      <span>מומחים משלנו</span>
                     </Link>
                   </DropdownMenuItem>
 

@@ -28,6 +28,8 @@ import AdminSupport from './pages/AdminSupport';
 import AdminTimezone from './pages/AdminTimezone';
 import AdminUsers from './pages/AdminUsers';
 import Browse from './pages/Browse';
+import NewBrowse from './pages/NewBrowse';
+import ExpertsBrowse from './pages/ExpertsBrowse';
 import BusinessAnalytics from './pages/BusinessAnalytics';
 import BusinessLanding from './pages/BusinessLanding';
 import BusinessManage from './pages/BusinessManage';
@@ -91,7 +93,9 @@ export const PAGES = {
     "AdminSupport": AdminSupport,
     "AdminTimezone": AdminTimezone,
     "AdminUsers": AdminUsers,
-    "Browse": Browse,
+    "Browse": NewBrowse,
+    "BrowseLegacy": Browse,
+    "ExpertsBrowse": ExpertsBrowse,
     "BusinessAnalytics": BusinessAnalytics,
     "BusinessLanding": BusinessLanding,
     "BusinessManage": BusinessManage,
